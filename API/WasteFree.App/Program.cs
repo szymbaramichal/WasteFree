@@ -1,3 +1,5 @@
+using WasteFree.Core;
+
 var builder = WebApplication.CreateBuilder(args);
 //test
 // Add services to the container.
@@ -21,7 +23,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -32,6 +34,16 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+app.MapGet("/test", () =>
+{
+    var testObject = new Test
+    {
+        Id = 123
+    };
+
+    return testObject;
+});
 
 app.Run();
 
