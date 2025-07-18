@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  api:
+    build:
+      context: ./API/WasteFree.App
+      dockerfile: Dockerfile
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+  ui:
+    build:
+      context: ./UI
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
