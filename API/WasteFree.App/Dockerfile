@@ -8,6 +8,7 @@ WORKDIR /src
 COPY . ./
 
 RUN ls -la
+RUN ls -la ./WasteFree.App/
 RUN dotnet restore WasteFree.App.csproj
 RUN dotnet publish WasteFree.App.csproj -c Release -o /app/publish
 
