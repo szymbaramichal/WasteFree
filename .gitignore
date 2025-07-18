@@ -1,0 +1,43 @@
+# Node.js/Angular dependencies (UI)
+UI/node_modules/
+UI/dist/
+UI/build/
+UI/.angular/cache/
+UI/.env
+UI/.env.*
+UI/npm-debug.log*
+UI/yarn-debug.log*
+UI/yarn-error.log*
+UI/.vscode
+
+# .NET build artifacts (API)
+API/**/bin/
+API/**/obj/
+API/*.user
+API/*.suo
+API/*.userosscache
+API/*.sln.docstates
+API/.vs/
+API/*.db
+API/*.log
+API/*.cache
+API/*.pdb
+API/*.mdb
+API/*.pidb
+API/*.svclog
+API/*.sdf
+API/*.v12.suo
+API/*.suo
+API/*.userprefs
+API/*.userosscache
+API/*.sln.docstates
+API/.vscode/
+API/.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+*.local
+*.env.*
