@@ -5,7 +5,7 @@ EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-COPY ../../API/WasteFree.App/ ./WasteFree.App/
+COPY ./WasteFree.App/ ./WasteFree.App/
 WORKDIR /src/WasteFree.App
 RUN dotnet restore WasteFree.App.csproj
 RUN dotnet publish WasteFree.App.csproj -c Release -o /app/publish
