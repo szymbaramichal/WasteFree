@@ -34,7 +34,7 @@ jobs:
         run: dotnet publish API/WasteFree.App/WasteFree.App.csproj --configuration Release --output ./publish
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest -f API/WasteFree.App/Dockerfile 
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest -f API/WasteFree.App/Dockerfile .
 
       - name: Log in to DockerHub
         uses: docker/login-action@v3
