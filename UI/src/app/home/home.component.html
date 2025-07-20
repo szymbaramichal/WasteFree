@@ -1,0 +1,264 @@
+
+
+<style>
+  body {
+    font-family: 'Montserrat', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #fffde4 100%);
+    min-height: 100vh;
+  }
+  .navbar {
+    background: linear-gradient(180deg, #ffffff 0%, #fff 100%);
+    backdrop-filter: blur(12px);
+    border-radius: 0;
+    box-shadow: 0 4px 16px rgba(44,44,44,0.18);
+    border: 1px solid rgba(44,44,44,0.10);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    animation: navbarFadeIn 1s cubic-bezier(.4,0,.2,1);
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    min-height: 56px;
+  }
+  @keyframes navbarFadeIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .navbar-brand {
+    font-weight: 900;
+    font-size: 2rem;
+    color: #2a562b !important;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 12px rgba(44,44,44,0.25), 0 1px 0 #23272f;
+    padding-left: 4px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    transition: color 0.2s;
+  }
+  .navbar-brand:hover {
+    color: #81c784 !important;
+    text-shadow: 0 2px 16px #81c784, 0 1px 0 #23272f;
+  }
+  .navbar-nav .nav-link {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff !important;
+    margin-right: 8px;
+    border-radius: 16px;
+    padding: 6px 14px;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(44,44,44,0.08);
+  }
+  .navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+    background: #444851;
+    color: #81c784 !important;
+    box-shadow: 0 4px 16px rgba(44,44,44,0.12);
+  }
+  .nav-link.btn-success {
+    background: linear-gradient(90deg, #444851 0%, #23272f 100%);
+    color: #fff !important;
+    font-weight: 700;
+    border-radius: 24px;
+    box-shadow: 0 4px 16px rgba(44,44,44,0.14);
+    padding: 7px 20px;
+    margin-left: 8px;
+    border: none;
+    font-size: 1rem;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+  }
+  .nav-link.btn-success:hover {
+    background: linear-gradient(90deg, #23272f 0%, #444851 100%);
+    color: #81c784 !important;
+    transform: scale(1.07);
+    box-shadow: 0 8px 32px rgba(44,44,44,0.22);
+  }
+  .hero {
+    background: linear-gradient(135deg, #28a745 0%, #81c784 100%);
+    color: #fff;
+    padding: 100px 0 80px 0;
+    text-align: center;
+    border-radius: 0 0 40px 40px;
+    box-shadow: 0 8px 32px rgba(40,167,69,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -60px;
+    transform: translateX(-50%);
+    width: 80vw;
+    height: 120px;
+    background: radial-gradient(circle, #fffde4 0%, transparent 70%);
+    opacity: 0.5;
+    z-index: 0;
+  }
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  }
+  .hero-desc {
+    font-size: 1.7rem;
+    margin-bottom: 48px;
+    font-weight: 500;
+    text-shadow: 0 2px 8px rgba(40,167,69,0.10);
+  }
+  .btn-cta {
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 30px;
+    padding: 18px 48px;
+    box-shadow: 0 4px 24px rgba(40,167,69,0.18);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+  }
+  .btn-cta:hover {
+    background: #28a745;
+    color: #fff;
+    transform: scale(1.05);
+  }
+  .features {
+    margin-top: 80px;
+  }
+  .feature-card {
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card:hover {
+    transform: translateY(-8px) scale(1.04);
+    box-shadow: 0 8px 32px rgba(40,167,69,0.18);
+    background: linear-gradient(135deg, #e0f7fa 0%, #fffde4 100%);
+  }
+  .feature-icon {
+    font-size: 3rem;
+    color: #28a745;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 8px rgba(40,167,69,0.10);
+  }
+  .footer {
+    background: #28a745;
+    color: #fff;
+    padding: 32px 0;
+    text-align: center;
+    margin-top: 80px;
+    border-radius: 40px 40px 0 0;
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    box-shadow: 0 -4px 24px rgba(40,167,69,0.10);
+  }
+  .card .btn-success {
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.10);
+  }
+  .card .btn-success:hover {
+    background: #218838;
+    color: #fff;
+  }
+  .card input, .card textarea {
+    border-radius: 12px;
+    font-size: 1.1rem;
+  }
+  .card label {
+    font-weight: 600;
+    color: #28a745;
+  }
+</style>
+
+
+<nav class="navbar navbar-expand-lg shadow-sm py-3">
+  <div class="container">
+    <a class="navbar-brand" href="#">WasteFree</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link btn btn-success" href="#contact">Kontakt</a></li>
+        <li class="nav-item"><a routerLink="portal" class="nav-link btn btn-success">Przejdź do aplikacji</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <h1 class="hero-title">Oszczędzaj, dbaj o środowisko, żyj WasteFree!</h1>
+    <p class="hero-desc">Innowacyjna platforma do zarządzania odpadami i optymalizacji zużycia zasobów. Dołącz do rewolucji ekologicznej!</p>
+    <a routerLink="portal" class="btn btn-success btn-cta px-5 py-3 fw-bold">Przejdź do aplikacji</a>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold">Funkcjonalności</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card feature-card p-4 text-center">
+          <div class="feature-icon"><i class="bi bi-bar-chart"></i></div>
+          <h5 class="fw-bold mb-2">Statystyki i raporty</h5>
+          <p>Analizuj swoje zużycie, generuj raporty i śledź postępy w redukcji odpadów.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card feature-card p-4 text-center">
+          <div class="feature-icon"><i class="bi bi-people"></i></div>
+          <h5 class="fw-bold mb-2">Społeczność</h5>
+          <p>Współpracuj z innymi użytkownikami, dziel się pomysłami i osiągnięciami.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card feature-card p-4 text-center">
+          <div class="feature-icon"><i class="bi bi-lightbulb"></i></div>
+          <h5 class="fw-bold mb-2">Inteligentne sugestie</h5>
+          <p>Otrzymuj spersonalizowane wskazówki, jak ograniczyć odpady i oszczędzać zasoby.</p>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col text-center">
+        <a href="#" class="btn btn-success btn-lg px-5 py-3 fw-bold">Zobacz więcej funkcji</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container mt-5" id="contact">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card p-4 shadow-lg border-0">
+        <h3 class="fw-bold mb-3">Masz pytania? Skontaktuj się z nami!</h3>
+        <form>
+          <div class="mb-3">
+            <label for="name" class="form-label">Imię i nazwisko</label>
+            <input type="text" class="form-control" id="name" placeholder="Wpisz swoje imię i nazwisko">
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Wpisz swój email">
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label">Wiadomość</label>
+            <textarea class="form-control" id="message" rows="4" placeholder="Wpisz swoją wiadomość"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success px-4 py-2">Wyślij</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p class="mb-0">&copy; 2025 WasteFree. Wszystkie prawa zastrzeżone.</p>
+  </div>
+</footer>

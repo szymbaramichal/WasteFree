@@ -1,0 +1,131 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  background: #f6f8fa;
+}
+
+.landing-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  padding: 32px 24px;
+}
+
+.landing-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.landing-header h1 {
+  font-size: 2.8rem;
+  color: #2e7d32;
+  margin-bottom: 10px;
+}
+.landing-header p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 18px;
+}
+.cta-btn {
+  display: inline-block;
+  background: linear-gradient(90deg, #43a047 0%, #388e3c 100%);
+  color: #fff;
+  padding: 14px 36px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  text-decoration: none;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(67,160,71,0.15);
+  transition: background 0.2s;
+}
+.cta-btn:hover {
+  background: linear-gradient(90deg, #388e3c 0%, #43a047 100%);
+}
+
+.features {
+  margin-bottom: 40px;
+}
+.features h2 {
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 24px;
+}
+.feature-list {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.feature-item {
+  background: #e8f5e9;
+  border-radius: 12px;
+  padding: 24px 18px;
+  min-width: 220px;
+  box-shadow: 0 2px 8px rgba(67,160,71,0.08);
+  text-align: center;
+}
+.feature-item h3 {
+  color: #388e3c;
+  margin-bottom: 8px;
+}
+.feature-item p {
+  color: #444;
+}
+
+.about {
+  margin-bottom: 40px;
+  text-align: center;
+}
+.about h2 {
+  color: #2e7d32;
+  margin-bottom: 12px;
+}
+.about p {
+  color: #555;
+  font-size: 1.1rem;
+}
+
+.contact {
+  background: #e3f2fd;
+  border-radius: 12px;
+  padding: 32px 18px;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.08);
+  max-width: 500px;
+  margin: 0 auto;
+}
+.contact h2 {
+  color: #1976d2;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.contact form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.contact input,
+.contact textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #bdbdbd;
+  font-size: 1rem;
+  resize: none;
+}
+.contact button {
+  background: linear-gradient(90deg, #1976d2 0%, #2196f3 100%);
+  color: #fff;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(33,150,243,0.12);
+  transition: background 0.2s;
+}
+.contact button:hover {
+  background: linear-gradient(90deg, #2196f3 0%, #1976d2 100%);
+}

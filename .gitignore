@@ -1,5 +1,6 @@
 # Node.js/Angular dependencies (UI)
 UI/node_modules/
+UI/node_modules
 UI/dist/
 UI/build/
 UI/.angular/cache/
