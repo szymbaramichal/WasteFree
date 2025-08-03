@@ -12,7 +12,7 @@ public class User : DatabaseEntity
     public required string Email { get; set; }
     
     [MaxLength(500)]
-    public required string Description { get; set; }
+    public string? Description { get; set; }
     
     public required byte[] PasswordHash { get; set; }
 
