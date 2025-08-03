@@ -12,16 +12,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Scalar.AspNetCore" Version="2.6.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WasteFree.Business\WasteFree.Business.csproj" />
     <ProjectReference Include="..\WasteFree.Core\WasteFree.Core.csproj" />
     <ProjectReference Include="..\WasteFree.Infrastructure\WasteFree.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Endpoints\" />
   </ItemGroup>
 
 </Project>
