@@ -12,7 +12,7 @@ using WasteFree.Infrastructure;
 namespace WasteFree.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    [Migration("20250803110331_CreateUserTable")]
+    [Migration("20250812182309_CreateUserTable")]
     partial class CreateUserTable
     {
         /// <inheritdoc />
@@ -27,11 +27,9 @@ namespace WasteFree.Infrastructure.Migrations
 
             modelBuilder.Entity("WasteFree.Shared.Entities.User", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("CreatedBy")
                         .HasColumnType("int");
@@ -40,7 +38,6 @@ namespace WasteFree.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 

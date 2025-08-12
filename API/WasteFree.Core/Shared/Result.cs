@@ -4,9 +4,9 @@ namespace WasteFree.Shared.Shared;
 
 public sealed class Result<T>
 {    
-    public T ResultModel { get; set; }
-    public string ErrorMessage { get; set; } = string.Empty;
-    public HttpStatusCode ErrorCode { get; set; } = HttpStatusCode.OK;
+    public T? ResultModel { get; set; }
+    public string ErrorMessage { get; } = string.Empty;
+    public HttpStatusCode ErrorCode { get; } = HttpStatusCode.OK;
 
     public bool IsValid => string.IsNullOrEmpty(ErrorMessage) && ErrorCode is HttpStatusCode.OK;
 

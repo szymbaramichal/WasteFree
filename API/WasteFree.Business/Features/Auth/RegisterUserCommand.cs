@@ -31,6 +31,6 @@ public class RegisterUserCommandHandler(ApplicationDataContext context) : IComma
         context.Users.Add(newUser);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new Result<UserDto>(UserDto.MapTo(newUser));
+        return new Result<UserDto>(newUser.MapToUserDto());
     }
 }

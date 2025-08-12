@@ -2,11 +2,22 @@
 
 namespace WasteFree.Business.Features;
 
-public class UserDto
-{
+public record UserDto(
+    Guid Id,
+    string Email,
+    string Username,
+    string? Token
+);
 
-    public static UserDto MapTo(User user)
+public static class UserDtoExtensions
+{
+    public static UserDto MapToUserDto(this User user, string token = "")
     {
-        return new UserDto();
+        return new UserDto(
+            user.Id,
+            user.Email,
+            user.Username,
+            token
+        );
     }
 }
