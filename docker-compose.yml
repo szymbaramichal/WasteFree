@@ -1,18 +1,29 @@
 version: '3.8'
 services:
-  api:
-    build:
-      context: ./API/WasteFree.App
-      dockerfile: Dockerfile
-    ports:
-      - "5000:8080"
+  wastefree-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-  ui:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=yourStrong(!)Password
+    ports:
+      - "1433:1433"
+
+  wastefree-api:
     build:
-      context: ./UI
+      context: ./API
       dockerfile: Dockerfile
     ports:
-      - "4200:80"
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
-      - api
+      -  wastefree-db
+
+#  ui:
+#    build:
+#      context: ./UI
+#      dockerfile: Dockerfile
+#    ports:
+#      - "5000:80"
+#    depends_on:
+#      - api
