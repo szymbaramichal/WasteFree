@@ -129,3 +129,175 @@ body, html {
 .contact button:hover {
   background: linear-gradient(90deg, #2196f3 0%, #1976d2 100%);
 }
+
+body {
+  font-family: 'Montserrat', Arial, sans-serif;
+  background: linear-gradient(135deg, #e0f7fa 0%, #fffde4 100%);
+  min-height: 100vh;
+}
+.navbar {
+  background: linear-gradient(180deg, #ffffff 0%, #fff 100%);
+  backdrop-filter: blur(12px);
+  border-radius: 0;
+  box-shadow: 0 4px 16px rgba(44,44,44,0.18);
+  border: 1px solid rgba(44,44,44,0.10);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  animation: navbarFadeIn 1s cubic-bezier(.4,0,.2,1);
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  min-height: 56px;
+}
+@keyframes navbarFadeIn {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.navbar-brand {
+  font-weight: 900;
+  font-size: 2rem;
+  color: #2a562b !important;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 12px rgba(44,44,44,0.25), 0 1px 0 #23272f;
+  padding-left: 4px;
+  font-family: 'Montserrat', Arial, sans-serif;
+  transition: color 0.2s;
+}
+.navbar-brand:hover {
+  color: #81c784 !important;
+  text-shadow: 0 2px 16px #81c784, 0 1px 0 #23272f;
+}
+.navbar-nav .nav-link {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff !important;
+  margin-right: 8px;
+  border-radius: 16px;
+  padding: 6px 14px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(44,44,44,0.08);
+}
+.navbar-nav .nav-link:hover, .navbar-nav .nav-link.active {
+  background: #444851;
+  color: #81c784 !important;
+  box-shadow: 0 4px 16px rgba(44,44,44,0.12);
+}
+.nav-link.btn-success {
+  background: linear-gradient(90deg, #444851 0%, #23272f 100%);
+  color: #fff !important;
+  font-weight: 700;
+  border-radius: 24px;
+  box-shadow: 0 4px 16px rgba(44,44,44,0.14);
+  padding: 7px 20px;
+  margin-left: 8px;
+  border: none;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.nav-link.btn-success:hover {
+  background: linear-gradient(90deg, #23272f 0%, #444851 100%);
+  color: #81c784 !important;
+  transform: scale(1.07);
+  box-shadow: 0 8px 32px rgba(44,44,44,0.22);
+}
+.hero {
+  background: linear-gradient(135deg, #28a745 0%, #81c784 100%);
+  color: #fff;
+  padding: 100px 0 80px 0;
+  text-align: center;
+  border-radius: 0 0 40px 40px;
+  box-shadow: 0 8px 32px rgba(40,167,69,0.15);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -60px;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 120px;
+  background: radial-gradient(circle, #fffde4 0%, transparent 70%);
+  opacity: 0.5;
+  z-index: 0;
+}
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+.hero-desc {
+  font-size: 1.7rem;
+  margin-bottom: 48px;
+  font-weight: 500;
+  text-shadow: 0 2px 8px rgba(40,167,69,0.10);
+}
+.btn-cta {
+  font-size: 1.3rem;
+  font-weight: 700;
+  border-radius: 30px;
+  padding: 18px 48px;
+  box-shadow: 0 4px 24px rgba(40,167,69,0.18);
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.btn-cta:hover {
+  background: #28a745;
+  color: #fff;
+  transform: scale(1.05);
+}
+.features {
+  margin-top: 80px;
+}
+.feature-card {
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 8px 32px rgba(40,167,69,0.18);
+  background: linear-gradient(135deg, #e0f7fa 0%, #fffde4 100%);
+}
+.feature-icon {
+  font-size: 3rem;
+  color: #28a745;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 8px rgba(40,167,69,0.10);
+}
+.footer {
+  background: #28a745;
+  color: #fff;
+  padding: 32px 0;
+  text-align: center;
+  margin-top: 80px;
+  border-radius: 40px 40px 0 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  box-shadow: 0 -4px 24px rgba(40,167,69,0.10);
+}
+.card .btn-success {
+  border-radius: 30px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 0 2px 8px rgba(40,167,69,0.10);
+}
+.card .btn-success:hover {
+  background: #218838;
+  color: #fff;
+}
+.card input, .card textarea {
+  border-radius: 12px;
+  font-size: 1.1rem;
+}
+.card label {
+  font-weight: 600;
+  color: #28a745;
+}
