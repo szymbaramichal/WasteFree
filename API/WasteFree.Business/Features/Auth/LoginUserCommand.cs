@@ -15,7 +15,7 @@ public class LoginUserCommandHandler(ApplicationDataContext context, IConfigurat
     public async Task<Result<UserDto>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
     {
         var user = await context.Users
-            .FirstOrDefaultAsync(x => x.Username == command.Username, cancellationToken);
+            .FirstOrDefaultAsync(x => x.Username.ToLower() == command.Username.ToLower(), cancellationToken);
         
         if (user is null)
             return new Result<UserDto>("Login or password is incorrect", HttpStatusCode.BadRequest);

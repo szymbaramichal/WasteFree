@@ -14,10 +14,15 @@ public class RegisterUserCommandHandler(ApplicationDataContext context) : IComma
 {
     public async Task<Result<UserDto>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        var user = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == command.Email.ToLower(), cancellationToken);
+        var userByUsername = await context.Users.FirstOrDefaultAsync(x => x.Username.ToLower() == command.Username.ToLower(), cancellationToken);
         
-        if(user is not null)
-            return new Result<UserDto>("User already exists", HttpStatusCode.BadRequest);
+        if(userByUsername is not null)
+            return new Result<UserDto>("Username is already taken", HttpStatusCode.BadRequest);
+        
+        var userByEmail = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == command.Email.ToLower(), cancellationToken);
+        
+        if(userByEmail is not null)
+            return new Result<UserDto>("Username is already taken", HttpStatusCode.BadRequest);
         
         var hashAndSalt = PasswordHasher.GeneratePasswordHashAndSalt(command.Password);
         

@@ -11,6 +11,11 @@ public static class TokenHelper
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var keyArray = Encoding.UTF8.GetBytes(key);
+        
+        if (keyArray.Length < 32)
+        {
+            throw new ArgumentException("Key must be at least 32 bytes long.");
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

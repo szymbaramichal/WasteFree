@@ -21,10 +21,12 @@ public static class HostExtensions
             {
                 if (context is not null)
                 {
+                    context.Database.EnsureDeleted();
+                    
                     logger.LogInformation("Migrating database associated with context {DbContextName}", typeof(TContext).Name);
-
+                    
                     context.Database.Migrate();
-
+                    
                     logger.LogInformation("Migrated database associated with context {DbContextName}", typeof(TContext).Name);
                 }
             }

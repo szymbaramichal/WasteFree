@@ -18,21 +18,36 @@ public static class AuthEndpoints
             var command = new RegisterUserCommand(request.Email, request.Username, request.Password);
             
             var result = await handler.Handle(command, cancellationToken);
-
-            return result;
+            
+            if(!result.IsValid)
+            {
+                return Results.BadRequest(result.ErrorMessage);
+            }
+            
+            return Results.Ok(result);
         })
         .WithOpenApi();
 
-        app.MapPost("/auth/login", async (HttpContext context) =>
+        app.MapPost("/auth/login", async (
+                [FromBody] LoginRequest request,
+                ICommandHandler<LoginUserCommand, UserDto> handler,
+                CancellationToken cancellationToken) =>
         {
-            // Placeholder for user login logic
-            await context.Response.WriteAsync("Login endpoint placeholder");
+            var command = new LoginUserCommand(request.Username, request.Password);
+            
+            var result = await handler.Handle(command, cancellationToken);
+            
+            if(!result.IsValid)
+            {
+                return Results.BadRequest(result.ErrorMessage);
+            }
+
+            return Results.Ok(result);
         })
         .WithOpenApi();
     }
 }
 
 public record RegisterUserRequest(string Username, string Email, string Password);
-
 
 public record LoginRequest(string Username, string Password);
