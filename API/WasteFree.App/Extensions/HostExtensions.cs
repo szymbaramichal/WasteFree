@@ -25,7 +25,7 @@ public static class HostExtensions
                     
                     logger.LogInformation("Migrating database associated with context {DbContextName}", typeof(TContext).Name);
                     
-                    context.Database.EnsureCreated();
+                    context.Database.Migrate();
                     
                     logger.LogInformation("Migrated database associated with context {DbContextName}", typeof(TContext).Name);
                 }
