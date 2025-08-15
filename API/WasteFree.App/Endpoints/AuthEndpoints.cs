@@ -12,16 +12,16 @@ public static class AuthEndpoints
     {
         app.MapPost("/auth/register", async (
                 [FromBody] RegisterUserRequest request,
-                ICommandHandler<RegisterUserCommand, UserDto> handler,
+                IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
             var command = new RegisterUserCommand(request.Email, request.Username, request.Password);
             
-            var result = await handler.Handle(command, cancellationToken);
+            var result = await mediator.SendAsync(command, cancellationToken);
             
             if(!result.IsValid)
             {
-                return Results.BadRequest(result.ErrorMessage);
+                return Results.BadRequest(result);
             }
             
             return Results.Ok(result);
@@ -30,16 +30,16 @@ public static class AuthEndpoints
 
         app.MapPost("/auth/login", async (
                 [FromBody] LoginRequest request,
-                ICommandHandler<LoginUserCommand, UserDto> handler,
+                IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
             var command = new LoginUserCommand(request.Username, request.Password);
             
-            var result = await handler.Handle(command, cancellationToken);
+            var result = await mediator.SendAsync(command, cancellationToken);
             
             if(!result.IsValid)
             {
-                return Results.BadRequest(result.ErrorMessage);
+                return Results.BadRequest(result);
             }
 
             return Results.Ok(result);

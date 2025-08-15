@@ -8,25 +8,25 @@ using WasteFree.Shared.Shared;
 
 namespace WasteFree.Business.Features.Auth;
 
-public record LoginUserCommand(string Username, string Password) : ICommand<UserDto>;
+public record LoginUserCommand(string Username, string Password) : IRequest<UserDto>;
 
-public class LoginUserCommandHandler(ApplicationDataContext context, IConfiguration configuration) : ICommandHandler<LoginUserCommand, UserDto>
+public class LoginUserCommandHandler(ApplicationDataContext context, IConfiguration configuration) : IRequestHandler<LoginUserCommand, UserDto>
 {
-    public async Task<Result<UserDto>> Handle(LoginUserCommand command, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> HandleAsync(LoginUserCommand command, CancellationToken cancellationToken)
     {
         var user = await context.Users
             .FirstOrDefaultAsync(x => x.Username.ToLower() == command.Username.ToLower(), cancellationToken);
         
         if (user is null)
-            return new Result<UserDto>("Login or password is incorrect", HttpStatusCode.BadRequest);
+            return Result<UserDto>.Failure("Login or password is incorrect", HttpStatusCode.BadRequest);
         
         var isPasswordValid = PasswordHasher.IsPasswordValid(command.Password, user.PasswordHash, user.PasswordSalt);
         
         if(!isPasswordValid)
-            return new Result<UserDto>("Login or password is incorrect", HttpStatusCode.BadRequest);
-            
-        var token = TokenHelper.GenerateJwtToken(user.Username, 
-                            configuration["Security:Jwt:Key"] ?? throw new InvalidOperationException());
+            return Result<UserDto>.Failure("Login or password is incorrect", HttpStatusCode.BadRequest);
+
+        var token = TokenHelper.GenerateJwtToken(user.Username,
+            configuration["Security:Jwt:Key"]);
 
         var dto = user.MapToUserDto(token);
         

@@ -12,6 +12,10 @@ public sealed class Result<T>
     [JsonIgnore]
     public bool IsValid => string.IsNullOrEmpty(ErrorMessage) && ResponseCode is HttpStatusCode.OK;
 
+    public static Result<T> Success(T value) => new(value);
+
+    public static Result<T> Failure(string error, HttpStatusCode errorCode = HttpStatusCode.InternalServerError) => new(error, errorCode);
+
     public Result(T resultModel)
     {
         ResultModel = resultModel;

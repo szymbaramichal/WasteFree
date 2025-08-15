@@ -8,12 +8,14 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterBusinessServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Scan(scan =>
-            scan.FromAssembliesOf(typeof(ServiceCollectionExtension))
-                .AddClasses(classes => classes.AssignableTo(typeof(IQueryHandler<,>)), publicOnly: false)
-                    .AsImplementedInterfaces().WithScopedLifetime()
-                .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
-                    .AsImplementedInterfaces().WithScopedLifetime());
+        services.AddSingleton<IMediator, Mediator>();
+
+        services.Scan(scan => scan
+            .FromAssembliesOf(typeof(IRequest<>))
+            .AddClasses(classes => classes.AssignableTo(typeof(IRequestHandler<,>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime()
+        );
         
         return services;
     }
