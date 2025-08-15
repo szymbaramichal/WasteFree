@@ -4,7 +4,8 @@ using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Helpers;
 using WasteFree.Infrastructure;
 using WasteFree.Shared.Entities;
-using WasteFree.Shared.Shared;
+using WasteFree.Shared.Enums;
+using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
 
@@ -30,7 +31,8 @@ public class RegisterUserCommandHandler(ApplicationDataContext context) : IReque
             Email = command.Email,
             PasswordHash = hashAndSalt.passwordHash,
             PasswordSalt = hashAndSalt.passwordSalt,
-            Username = command.Username
+            Username = command.Username,
+            Role = UserRole.User
         };
         
         context.Users.Add(newUser);

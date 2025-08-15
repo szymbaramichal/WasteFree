@@ -7,7 +7,7 @@ namespace WasteFree.Business.Helpers;
 
 public static class TokenHelper
 {
-    public static string GenerateJwtToken(string userName, string key)
+    public static string GenerateJwtToken(string userName, int role, string key)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var keyArray = Encoding.UTF8.GetBytes(key);
@@ -20,7 +20,8 @@ public static class TokenHelper
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity([
-                new Claim(ClaimTypes.NameIdentifier, userName)
+                new Claim(ClaimTypes.NameIdentifier, userName),
+                new Claim(ClaimTypes.Role, role.ToString())
             ]),
             Expires = DateTime.UtcNow.AddMinutes(15),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(keyArray), SecurityAlgorithms.HmacSha256Signature)

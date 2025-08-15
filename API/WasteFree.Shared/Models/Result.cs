@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json.Serialization;
 
-namespace WasteFree.Shared.Shared;
+namespace WasteFree.Shared.Models;
 
 public sealed class Result<T>
 {    

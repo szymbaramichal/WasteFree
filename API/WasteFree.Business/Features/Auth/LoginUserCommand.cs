@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Helpers;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Shared;
+using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
 
@@ -25,7 +25,7 @@ public class LoginUserCommandHandler(ApplicationDataContext context, IConfigurat
         if(!isPasswordValid)
             return Result<UserDto>.Failure("Login or password is incorrect", HttpStatusCode.BadRequest);
 
-        var token = TokenHelper.GenerateJwtToken(user.Username,
+        var token = TokenHelper.GenerateJwtToken(user.Username, (int)user.Role,
             configuration["Security:Jwt:Key"]);
 
         var dto = user.MapToUserDto(token);
