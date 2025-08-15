@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WasteFree.App.Filters;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features;
 using WasteFree.Business.Features.Auth;
@@ -25,14 +26,15 @@ public static class AuthEndpoints
             
             return Results.Ok(result);
         })
+        .AddEndpointFilter(new ValidationFilter<RegisterUserRequest>())
         .WithOpenApi();
 
         app.MapPost("/auth/login", async (
-                [FromBody] LoginRequest request,
+                [FromBody] LoginUserRequest userRequest,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
-            var command = new LoginUserCommand(request.Username, request.Password);
+            var command = new LoginUserCommand(userRequest.Username, userRequest.Password);
             
             var result = await mediator.SendAsync(command, cancellationToken);
             
@@ -43,10 +45,11 @@ public static class AuthEndpoints
 
             return Results.Ok(result);
         })
+        .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
         .WithOpenApi();
     }
 }
 
 public record RegisterUserRequest(string Username, string Email, string Password);
 
-public record LoginRequest(string Username, string Password);
+public record LoginUserRequest(string Username, string Password);
