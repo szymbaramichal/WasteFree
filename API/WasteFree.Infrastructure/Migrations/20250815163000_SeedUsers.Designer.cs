@@ -12,7 +12,7 @@ using WasteFree.Infrastructure;
 namespace WasteFree.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    [Migration("20250813173909_SeedUsers")]
+    [Migration("20250815163000_SeedUsers")]
     partial class SeedUsers
     {
         /// <inheritdoc />
@@ -59,6 +59,9 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
+                    
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()

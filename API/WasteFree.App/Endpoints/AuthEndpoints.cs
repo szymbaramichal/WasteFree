@@ -2,7 +2,6 @@
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features;
 using WasteFree.Business.Features.Auth;
-using WasteFree.Shared.Shared;
 
 namespace WasteFree.App.Endpoints;
 

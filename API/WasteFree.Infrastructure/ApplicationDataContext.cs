@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WasteFree.Shared.Entities;
 using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Shared;
+using WasteFree.Shared.Models;
 
 namespace WasteFree.Infrastructure;
 public class ApplicationDataContext(DbContextOptions options, ICurrentUserService currentUserService) : DbContext(options)

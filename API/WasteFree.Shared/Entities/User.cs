@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WasteFree.Shared.Shared;
+using WasteFree.Shared.Enums;
+using WasteFree.Shared.Models;
 
 namespace WasteFree.Shared.Entities;
 
@@ -17,4 +18,6 @@ public class User : DatabaseEntity
     public required byte[] PasswordHash { get; set; }
 
     public required byte[] PasswordSalt { get; set; }
+
+    public required UserRole Role { get; set; }
 }

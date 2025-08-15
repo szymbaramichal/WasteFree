@@ -1,4 +1,4 @@
-﻿using WasteFree.Shared.Shared;
+﻿using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Abstractions.Messaging;
 

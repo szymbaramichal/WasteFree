@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Migrations;
+using WasteFree.Shared.Enums;
 
 #nullable disable
 
@@ -27,7 +28,8 @@ namespace WasteFree.Infrastructure.Migrations
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     CreatedDateUtc = DateTime.UtcNow,
-                    CreatedBy = Guid.Empty
+                    CreatedBy = Guid.Empty,
+                    Role = (int)UserRole.User
                 },
                 new {
                     Id = Guid.NewGuid(),
@@ -37,7 +39,8 @@ namespace WasteFree.Infrastructure.Migrations
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     CreatedDateUtc = DateTime.UtcNow,
-                    CreatedBy = Guid.Empty
+                    CreatedBy = Guid.Empty,
+                    Role = (int)UserRole.User
                 },
                 new {
                     Id = Guid.NewGuid(),
@@ -47,7 +50,8 @@ namespace WasteFree.Infrastructure.Migrations
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     CreatedDateUtc = DateTime.UtcNow,
-                    CreatedBy = Guid.Empty
+                    CreatedBy = Guid.Empty,
+                    Role = (int)UserRole.User
                 },
                 new {
                     Id = Guid.NewGuid(),
@@ -57,7 +61,8 @@ namespace WasteFree.Infrastructure.Migrations
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     CreatedDateUtc = DateTime.UtcNow,
-                    CreatedBy = Guid.Empty
+                    CreatedBy = Guid.Empty,
+                    Role = (int)UserRole.User
                 },
                 new {
                     Id = Guid.NewGuid(),
@@ -67,7 +72,8 @@ namespace WasteFree.Infrastructure.Migrations
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     CreatedDateUtc = DateTime.UtcNow,
-                    CreatedBy = Guid.Empty
+                    CreatedBy = Guid.Empty,
+                    Role = (int)UserRole.User
                 }
             };
 
@@ -75,8 +81,8 @@ namespace WasteFree.Infrastructure.Migrations
             {
                 migrationBuilder.InsertData(
                     table: "Users",
-                    columns: new[] { "Id", "Username", "Email", "Description", "PasswordHash", "PasswordSalt", "CreatedDateUtc", "CreatedBy" },
-                    values: new object[] { user.Id, user.Username, user.Email, user.Description, user.PasswordHash, user.PasswordSalt, user.CreatedDateUtc, user.CreatedBy }
+                    columns: new[] { "Id", "Username", "Email", "Description", "PasswordHash", "PasswordSalt", "CreatedDateUtc", "CreatedBy", "Role" },
+                    values: new object[] { user.Id, user.Username, user.Email, user.Description, user.PasswordHash, user.PasswordSalt, user.CreatedDateUtc, user.CreatedBy, user.Role }
                 );
             }
         }

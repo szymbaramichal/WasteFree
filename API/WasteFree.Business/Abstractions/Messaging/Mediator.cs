@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
-using WasteFree.Shared.Shared;
+using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Abstractions.Messaging;
 
