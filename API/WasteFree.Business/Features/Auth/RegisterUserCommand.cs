@@ -8,21 +8,21 @@ using WasteFree.Shared.Shared;
 
 namespace WasteFree.Business.Features.Auth;
 
-public record RegisterUserCommand(string Email, string Username, string Password) : ICommand<UserDto>;
+public record RegisterUserCommand(string Email, string Username, string Password) : IRequest<UserDto>;
 
-public class RegisterUserCommandHandler(ApplicationDataContext context) : ICommandHandler<RegisterUserCommand, UserDto>
+public class RegisterUserCommandHandler(ApplicationDataContext context) : IRequestHandler<RegisterUserCommand, UserDto>
 {
-    public async Task<Result<UserDto>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
+    public async Task<Result<UserDto>> HandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
     {
         var userByUsername = await context.Users.FirstOrDefaultAsync(x => x.Username.ToLower() == command.Username.ToLower(), cancellationToken);
         
         if(userByUsername is not null)
-            return new Result<UserDto>("Username is already taken", HttpStatusCode.BadRequest);
+            return Result<UserDto>.Failure("Username is already taken", HttpStatusCode.BadRequest);
         
         var userByEmail = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == command.Email.ToLower(), cancellationToken);
         
         if(userByEmail is not null)
-            return new Result<UserDto>("Username is already taken", HttpStatusCode.BadRequest);
+            return Result<UserDto>.Failure("Email is already taken", HttpStatusCode.BadRequest);
         
         var hashAndSalt = PasswordHasher.GeneratePasswordHashAndSalt(command.Password);
         
