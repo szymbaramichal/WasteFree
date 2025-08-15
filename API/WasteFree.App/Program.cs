@@ -4,7 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using WasteFree.App.Endpoints;
 using WasteFree.App.Extensions;
+using WasteFree.App.Services;
 using WasteFree.Infrastructure;
+using WasteFree.Shared.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false // no audience in token
         };
     });
+
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\WasteFree.Core\WasteFree.Core.csproj" />
+    <ProjectReference Include="..\WasteFree.Shared\WasteFree.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

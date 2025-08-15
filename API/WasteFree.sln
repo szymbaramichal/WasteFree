@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.App", "WasteFree.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Business", "WasteFree.Business\WasteFree.Business.csproj", "{5013980D-AF74-479F-AF9A-34376ABBB357}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Core", "WasteFree.Core\WasteFree.Core.csproj", "{3602BE2B-6120-4D2A-9923-FCB2D30E0FC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Shared", "WasteFree.Shared\WasteFree.Shared.csproj", "{3602BE2B-6120-4D2A-9923-FCB2D30E0FC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Infrastructure", "WasteFree.Infrastructure\WasteFree.Infrastructure.csproj", "{ED40128B-B9B3-4CF8-B552-DBCF8299AD4D}"
 EndProject

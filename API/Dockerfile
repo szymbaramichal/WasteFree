@@ -7,7 +7,7 @@ WORKDIR /src
 
 COPY ["WasteFree.App/WasteFree.App.csproj", "WasteFree.App/"]
 COPY ["WasteFree.Business/WasteFree.Business.csproj", "WasteFree.Business/"]
-COPY ["WasteFree.Core/WasteFree.Core.csproj", "WasteFree.Core/"]
+COPY ["WasteFree.Shared/WasteFree.Shared.csproj", "WasteFree.Shared/"]
 COPY ["WasteFree.Infrastructure/WasteFree.Infrastructure.csproj", "WasteFree.Infrastructure/"]
 
 # Restore jako oddzielna warstwa

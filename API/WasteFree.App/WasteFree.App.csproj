@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WasteFree.Business\WasteFree.Business.csproj" />
-    <ProjectReference Include="..\WasteFree.Core\WasteFree.Core.csproj" />
+    <ProjectReference Include="..\WasteFree.Shared\WasteFree.Shared.csproj" />
     <ProjectReference Include="..\WasteFree.Infrastructure\WasteFree.Infrastructure.csproj" />
   </ItemGroup>
 
