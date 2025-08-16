@@ -7,6 +7,8 @@ namespace WasteFree.Infrastructure;
 public class ApplicationDataContext(DbContextOptions options, ICurrentUserService currentUserService) : DbContext(options)
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<GarbageGroup> GarbageGroups { get; set; }
+    public DbSet<UserGarbageGroup> UserGarbageGroups { get; set; }
 
     public override int SaveChanges()
     {
