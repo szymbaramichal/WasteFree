@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using WasteFree.App.Filters;
 using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Auth;
 using WasteFree.Business.Features.GarbageGroups;
 
 namespace WasteFree.App.Endpoints;
@@ -35,16 +34,7 @@ public static class GarbageGroupsEndpoints
             IMediator mediator,
             CancellationToken cancellationToken) =>
         {
-            var command = new LoginUserCommand(userRequest.Username, userRequest.Password);
-
-            var result = await mediator.SendAsync(command, cancellationToken);
-
-            if (!result.IsValid)
-            {
-                return Results.BadRequest(result);
-            }
-
-            return Results.Ok(result);
+            return Results.Ok();
         })
         .RequireAuthorization()
         .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
@@ -55,16 +45,7 @@ public static class GarbageGroupsEndpoints
             IMediator mediator,
             CancellationToken cancellationToken) =>
         {
-            var command = new LoginUserCommand(userRequest.Username, userRequest.Password);
-
-            var result = await mediator.SendAsync(command, cancellationToken);
-
-            if (!result.IsValid)
-            {
-                return Results.BadRequest(result);
-            }
-
-            return Results.Ok(result);
+            return Results.Ok();
         })
         .RequireAuthorization()
         .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
@@ -73,4 +54,5 @@ public static class GarbageGroupsEndpoints
 }
 
 public record RegisterGarbageGroupRequest(string GroupName, string GroupDescription);
+public record JoinGarbageGroupRequest(Guid groupId, string invitationToken);
 public record InviteUserToGarbageGroupRequest(string userName, Guid groupId);
