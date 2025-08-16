@@ -38,6 +38,6 @@ public class RegisterUserCommandHandler(ApplicationDataContext context) : IReque
         context.Users.Add(newUser);
         await context.SaveChangesAsync(cancellationToken);
 
-        return new Result<UserDto>(newUser.MapToUserDto());
+        return Result<UserDto>.Success(newUser.MapToUserDto());
     }
 }

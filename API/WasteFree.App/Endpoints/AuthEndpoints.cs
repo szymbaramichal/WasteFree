@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WasteFree.App.Filters;
 using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features;
 using WasteFree.Business.Features.Auth;
 
 namespace WasteFree.App.Endpoints;

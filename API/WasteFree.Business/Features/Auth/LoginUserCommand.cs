@@ -25,11 +25,11 @@ public class LoginUserCommandHandler(ApplicationDataContext context, IConfigurat
         if(!isPasswordValid)
             return Result<UserDto>.Failure("Login or password is incorrect", HttpStatusCode.BadRequest);
 
-        var token = TokenHelper.GenerateJwtToken(user.Username, (int)user.Role,
+        var token = TokenHelper.GenerateJwtToken(user.Username, user.Id.ToString(), (int)user.Role,
             configuration["Security:Jwt:Key"]);
 
         var dto = user.MapToUserDto(token);
-        
-        return new Result<UserDto>(dto);
+
+        return Result<UserDto>.Success(dto);
     }
 }
