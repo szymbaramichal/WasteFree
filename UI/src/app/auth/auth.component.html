@@ -1,1 +1,36 @@
-<p>auth works!</p>
+<div class="auth-container">
+  <h2 *ngIf="isLoginMode">Logowanie</h2>
+  <h2 *ngIf="!isLoginMode">Rejestracja</h2>
+
+  <form *ngIf="isLoginMode" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <label for="username">Nazwa użytkownika</label>
+    <input id="username" formControlName="username" type="text" />
+
+    <label for="password">Hasło</label>
+    <input id="password" formControlName="password" type="password" />
+
+    <button type="submit" [disabled]="loginForm.invalid">Zaloguj</button>
+  </form>
+
+  <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegister()">
+    <label for="username">Nazwa użytkownika</label>
+    <input id="username" formControlName="username" type="text" />
+
+    <label for="email">Email</label>
+    <input id="email" formControlName="email" type="email" />
+
+    <label for="password">Hasło</label>
+    <input id="password" formControlName="password" type="password" />
+
+    <button type="submit" [disabled]="registerForm.invalid">Zarejestruj</button>
+  </form>
+
+  <p>
+    <a href="#" (click)="toggleMode($event)">
+      {{ isLoginMode ? 'Nie masz konta? Zarejestruj się' : 'Masz już konto? Zaloguj się' }}
+    </a>
+  </p>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>
+
