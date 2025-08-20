@@ -1,9 +1,13 @@
 using System.Reflection;
+using System.Security.Claims;
+using System.Threading.RateLimiting;
 using FluentValidation;
 using Scalar.AspNetCore;
 using WasteFree.App.Endpoints;
 using WasteFree.App.Extensions;
 using WasteFree.Infrastructure;
+
+const string allowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
  
 var builder = WebApplication.CreateBuilder(args);
  
@@ -17,17 +21,8 @@ builder.Services
  
 builder.Services.AddHttpContextAccessor();
 
-const string AllowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: AllowLocalFrontendOrigins,
-        policy  =>
-        {
-            policy.AllowAnyHeader()
-                .AllowAnyMethod()
-                .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:5000", "https://localhost:5000");
-        });
-});
+builder.Services.RegisterCorsPolicy(allowLocalFrontendOrigins);
+builder.Services.RegisterRateLimiting();
 
 var app = builder.Build();
 
@@ -44,10 +39,12 @@ app.MapGarbageGroupsEndpoints();
  
 app.UseHttpsRedirection();
  
-app.UseCors(AllowLocalFrontendOrigins);
+app.UseCors(allowLocalFrontendOrigins);
 
 app.UseAuthentication();
  
 app.UseAuthorization();
- 
+
+app.UseRateLimiter();
+
 app.Run();
