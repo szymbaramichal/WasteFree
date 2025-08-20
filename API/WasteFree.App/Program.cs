@@ -4,17 +4,17 @@ using Scalar.AspNetCore;
 using WasteFree.App.Endpoints;
 using WasteFree.App.Extensions;
 using WasteFree.Infrastructure;
-
+ 
 var builder = WebApplication.CreateBuilder(args);
-
+ 
 builder.Services.AddOpenApi();
 builder.Services.RegisterLayers(builder.Configuration);
 builder.Services.RegisterAuthentication(builder.Configuration);
 builder.Services.RegisterServices();
-
+ 
 builder.Services
     .AddValidatorsFromAssembly(Assembly.GetCallingAssembly());
-
+ 
 builder.Services.AddHttpContextAccessor();
 
 const string AllowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
@@ -36,18 +36,18 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
-
+ 
 app.MigrateDatabase<ApplicationDataContext>();
-
+ 
 app.MapAuthEndpoints();
 app.MapGarbageGroupsEndpoints();
-
+ 
 app.UseHttpsRedirection();
-
+ 
 app.UseCors(AllowLocalFrontendOrigins);
 
 app.UseAuthentication();
-
+ 
 app.UseAuthorization();
-
+ 
 app.Run();
