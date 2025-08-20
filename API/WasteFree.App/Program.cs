@@ -16,7 +16,7 @@ builder.Services
     .AddValidatorsFromAssembly(Assembly.GetCallingAssembly());
  
 builder.Services.AddHttpContextAccessor();
- 
+
 const string AllowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
 builder.Services.AddCors(options =>
 {
@@ -28,9 +28,9 @@ builder.Services.AddCors(options =>
                 .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:5000", "https://localhost:5000");
         });
 });
- 
+
 var app = builder.Build();
- 
+
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 {
     app.MapOpenApi();
@@ -45,7 +45,7 @@ app.MapGarbageGroupsEndpoints();
 app.UseHttpsRedirection();
  
 app.UseCors(AllowLocalFrontendOrigins);
- 
+
 app.UseAuthentication();
  
 app.UseAuthorization();
