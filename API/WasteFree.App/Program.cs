@@ -1,6 +1,4 @@
 using System.Reflection;
-using System.Security.Claims;
-using System.Threading.RateLimiting;
 using FluentValidation;
 using Scalar.AspNetCore;
 using WasteFree.App.Endpoints;
