@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using WasteFree.App.Services;
@@ -42,6 +43,43 @@ public static class ServiceCollectionExtension
     {
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+        return services;
+    }
+    
+    public static IServiceCollection RegisterRateLimiting(this IServiceCollection services)
+    {
+        services.AddRateLimiter(options =>
+        {
+            options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+            options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
+                RateLimitPartition.GetFixedWindowLimiter(
+                    partitionKey: httpContext.User.Identity?.Name ?? httpContext.Request.Headers.Host.ToString(),
+                    factory: partition => new FixedWindowRateLimiterOptions
+                    {
+                        AutoReplenishment = true,
+                        PermitLimit = 40,
+                        Window = TimeSpan.FromMinutes(1)
+                    }
+                )
+            );
+        });
+
+        return services;
+    }
+
+    public static IServiceCollection RegisterCorsPolicy(this IServiceCollection services, string corsPolicyName)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy(name: corsPolicyName,
+                policy  =>
+                {
+                    policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:5000", "https://localhost:5000");
+                });
+        });
+        
         return services;
     }
 }
