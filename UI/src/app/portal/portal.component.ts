@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthComponent } from '../auth/auth.component';
 
 @Component({
@@ -9,5 +9,14 @@ import { AuthComponent } from '../auth/auth.component';
   styleUrl: './portal.component.css'
 })
 export class PortalComponent {
+  private bodyClass = 'portal-bg';
+
+  ngOnInit(): void {
+    document.body.classList.add(this.bodyClass);
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove(this.bodyClass);
+  }
 
 }

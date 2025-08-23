@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './auth.service';
@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
   styleUrls: ['./auth.component.css']
 })
 export class AuthComponent {
+  private bodyClass = 'auth-bg';
   isLoginMode = true;
   loginForm: FormGroup;
   registerForm: FormGroup;
@@ -27,6 +28,14 @@ export class AuthComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
+  }
+
+  ngOnInit(): void {
+    document.body.classList.add(this.bodyClass);
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove(this.bodyClass);
   }
 
   toggleMode(event: Event) {
@@ -68,12 +77,19 @@ export class AuthComponent {
   private formatErrorResponse(err: any): string {
     if (!err) return 'Nieznany błąd';
 
+    // Helper to translate specific backend error messages to Polish
+    function translateToPolish(msg: string): string {
+      if (!msg) return msg;
+      if (msg === 'Login or password is incorrect') return 'Nieprawidłowy login lub hasło';
+      if (msg === "Hasło: 'Password' is required and must be at least 8 characters long.") return "Hasło jest wymagane i musi mieć co najmniej 8 znaków.";
+      if (msg === 'Username is already taken') return 'Nazwa użytkownika jest już zajęta';
+      // Add more translations as needed
+      return msg;
+    }
+
     // Handle 422 Unprocessable Entity (validation errors)
     if (err.status === 422) {
       const payload = err.error || {};
-
-      // Common shapes: { errors: { field: [msg, ...] } } or { errorMessage: '...' }
-      // also handle payload directly like { Password: ["..."] }
       const errorsObj = payload.errors || payload.Errors || payload.validationErrors || payload?.modelState || (typeof payload === 'object' ? payload : null);
       if (errorsObj && typeof errorsObj === 'object') {
         const messages: string[] = [];
@@ -90,11 +106,14 @@ export class AuthComponent {
           if (Array.isArray(val)) {
             messages.push(...val.map((v: any) => {
               const field = fieldNames[key] || key;
-              return (typeof v === 'string' ? `${field}: ${v}` : `${field}: ${JSON.stringify(v)}`);
+              if (typeof v === 'string') {
+                return translateToPolish(`${field}: ${v}`);
+              }
+              return `${field}: ${JSON.stringify(v)}`;
             }));
           } else if (typeof val === 'string') {
             const field = fieldNames[key] || key;
-            messages.push(`${field}: ${val}`);
+            messages.push(translateToPolish(`${field}: ${val}`));
           } else if (typeof val === 'object') {
             const field = fieldNames[key] || key;
             messages.push(`${field}: ${JSON.stringify(val)}`);
@@ -102,12 +121,14 @@ export class AuthComponent {
         }
         if (messages.length) return messages.join('; ');
       }
-
       // fallback to errorMessage or message
-      return payload.errorMessage || payload.message || 'Wystąpiły błędy walidacji';
+      if (payload.errorMessage) return translateToPolish(payload.errorMessage);
+      if (payload.message) return translateToPolish(payload.message);
+      return 'Wystąpiły błędy walidacji';
     }
 
     // Generic handling for other statuses
-    return err?.error?.errorMessage || err?.error?.message || (err?.message ? String(err.message) : 'Błąd sieci');
+    let msg = err?.error?.errorMessage || err?.error?.message || (err?.message ? String(err.message) : 'Błąd sieci');
+    return translateToPolish(msg);
   }
 }
