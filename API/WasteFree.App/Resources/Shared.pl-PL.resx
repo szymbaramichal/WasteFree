@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="USERNAME_TAKEN" xml:space="preserve"><value>Nazwa użytkownika jest już zajęta</value></data>
+  <data name="EMAIL_TAKEN" xml:space="preserve"><value>Adres e-mail jest już zajęty</value></data>
+  <data name="LOGIN_FAILED" xml:space="preserve"><value>Login lub hasło są nieprawidłowe</value></data>
+  <data name="ERR_EMAIL_REQUIRED"><value>Adres e-mail jest wymagany</value></data>
+  <data name="ERR_EMAIL_INVALID"><value>Adres e-mail jest nieprawidłowy</value></data>
+  <data name="ERR_USERNAME_REQUIRED"><value>Nazwa użytkownika jest wymagana</value></data>
+  <data name="ERR_PASSWORD_REQUIRED"><value>Hasło jest wymagane</value></data>
+  <data name="ERR_PASSWORD_TOO_SHORT"><value>Hasło musi mieć co najmniej 8 znaków</value></data>
+  <data name="ERR_GROUP_NAME_REQUIRED"><value>Nazwa grupy jest wymagana</value></data>
+  <data name="ERR_GROUP_DESCRIPTION_REQUIRED"><value>Opis grupy jest wymagany</value></data>
+</root>

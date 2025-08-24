@@ -6,7 +6,8 @@ namespace WasteFree.Shared.Models;
 public sealed class Result<T>
 {    
     public T? ResultModel { get; set; }
-    public string ErrorMessage { get; } = string.Empty;
+    public string ErrorMessage { get; set; } = string.Empty;
+    public string ErrorCode { get; } = string.Empty;
     public HttpStatusCode ResponseCode { get; } = HttpStatusCode.OK;
 
     [JsonIgnore]
@@ -14,16 +15,16 @@ public sealed class Result<T>
 
     public static Result<T> Success(T value) => new(value);
 
-    public static Result<T> Failure(string error, HttpStatusCode errorCode = HttpStatusCode.InternalServerError) => new(error, errorCode);
+    public static Result<T> Failure(string errorCode, HttpStatusCode responseCode = HttpStatusCode.InternalServerError) => new(errorCode, responseCode);
 
     public Result(T resultModel)
     {
         ResultModel = resultModel;
     }
 
-    public Result(string errorMessage, HttpStatusCode errorCode)
+    public Result(string errorCode, HttpStatusCode responseCode)
     {
-        ErrorMessage = errorMessage;
-        ResponseCode = errorCode;
+        ErrorCode = errorCode;
+        ResponseCode = responseCode;
     }
 }

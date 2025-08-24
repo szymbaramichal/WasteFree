@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using WasteFree.App.Filters;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups;
@@ -11,6 +12,7 @@ public static class GarbageGroupsEndpoints
     {
         app.MapPost("/garbage-groups/register", async (
             [FromBody] RegisterGarbageGroupRequest request,
+            IStringLocalizer localizer,
             IMediator mediator,
             CancellationToken cancellationToken) =>
         {
@@ -18,8 +20,9 @@ public static class GarbageGroupsEndpoints
 
             var result = await mediator.SendAsync(command, cancellationToken);
 
-            if (!result.IsValid)
+            if(!result.IsValid)
             {
+                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
                 return Results.BadRequest(result);
             }
 

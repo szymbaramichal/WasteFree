@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using WasteFree.App.Filters;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.Auth;
@@ -11,6 +12,7 @@ public static class AuthEndpoints
     {
         app.MapPost("/auth/register", async (
                 [FromBody] RegisterUserRequest request,
+                IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
@@ -20,6 +22,7 @@ public static class AuthEndpoints
             
             if(!result.IsValid)
             {
+                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
                 return Results.BadRequest(result);
             }
             
@@ -30,6 +33,7 @@ public static class AuthEndpoints
 
         app.MapPost("/auth/login", async (
                 [FromBody] LoginUserRequest userRequest,
+                IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
@@ -39,6 +43,7 @@ public static class AuthEndpoints
             
             if(!result.IsValid)
             {
+                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
                 return Results.BadRequest(result);
             }
 

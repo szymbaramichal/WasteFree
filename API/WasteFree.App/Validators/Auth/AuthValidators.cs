@@ -1,29 +1,42 @@
 ﻿using FluentValidation;
+using Microsoft.Extensions.Localization;
 using WasteFree.App.Endpoints;
 
 namespace WasteFree.App.Validators.Auth;
 
 public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
 {
-    public RegisterUserRequestValidator()
+    public RegisterUserRequestValidator(IStringLocalizer localizer)
     {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress()
-            .WithMessage("'Email' is required and must be a valid email address.");
-        
-        RuleFor(x => x.Username).NotEmpty().WithMessage("'Username' is required.");
-        
-        RuleFor(x => x.Password).NotEmpty().MinimumLength(8)
-            .WithMessage("'Password' is required and must be at least 8 characters long.");
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .WithMessage(localizer["ERR_EMAIL_REQUIRED"])
+            .EmailAddress()
+            .WithMessage(localizer["ERR_EMAIL_INVALID"]);
+
+        RuleFor(x => x.Username)
+            .NotEmpty()
+            .WithMessage(localizer["ERR_USERNAME_REQUIRED"]);
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .WithMessage(localizer["ERR_PASSWORD_REQUIRED"])
+            .MinimumLength(8)
+            .WithMessage(localizer["ERR_PASSWORD_TOO_SHORT"]);
     }
 }
 
+
 public class LoginUserRequestValidator : AbstractValidator<LoginUserRequest>
 {
-    public LoginUserRequestValidator()
+    public LoginUserRequestValidator(IStringLocalizer localizer)
     {
-        RuleFor(x => x.Username).NotEmpty().WithMessage("'Username' is required.");
-        
-        RuleFor(x => x.Password).NotEmpty().MinimumLength(8)
-            .WithMessage("'Password' is required and must be at least 8 characters long.");
+        RuleFor(x => x.Username)
+            .NotEmpty()
+            .WithMessage(localizer["ERR_USERNAME_REQUIRED"]);
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .WithMessage(localizer["ERR_PASSWORD_REQUIRED"]);
     }
 }
