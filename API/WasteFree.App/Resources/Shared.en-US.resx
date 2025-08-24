@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="USERNAME_TAKEN" xml:space="preserve"><value>Username is already taken</value></data>
+  <data name="EMAIL_TAKEN" xml:space="preserve"><value>Email is already taken</value></data>
+  <data name="LOGIN_FAILED" xml:space="preserve"><value>Login or password is incorrect</value></data>
+  <data name="ERR_EMAIL_REQUIRED"><value>Email is required</value></data>
+  <data name="ERR_EMAIL_INVALID"><value>Email must be a valid email address</value></data>
+  <data name="ERR_USERNAME_REQUIRED"><value>Username is required</value></data>
+  <data name="ERR_PASSWORD_REQUIRED"><value>Password is required</value></data>
+  <data name="ERR_PASSWORD_TOO_SHORT"><value>Password must be at least 8 characters long</value></data>
+  <data name="ERR_GROUP_NAME_REQUIRED"><value>Group name is required</value></data>
+  <data name="ERR_GROUP_DESCRIPTION_REQUIRED"><value>Group description is required</value></data>
+</root>

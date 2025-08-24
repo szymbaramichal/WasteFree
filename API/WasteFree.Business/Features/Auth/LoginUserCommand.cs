@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Helpers;
 using WasteFree.Infrastructure;
+using WasteFree.Shared.Constants;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
@@ -18,12 +19,12 @@ public class LoginUserCommandHandler(ApplicationDataContext context, IConfigurat
             .FirstOrDefaultAsync(x => x.Username.ToLower() == command.Username.ToLower(), cancellationToken);
         
         if (user is null)
-            return Result<UserDto>.Failure("Login or password is incorrect", HttpStatusCode.BadRequest);
+            return Result<UserDto>.Failure(ApiErrorCodes.LoginFailed, HttpStatusCode.BadRequest);
         
         var isPasswordValid = PasswordHasher.IsPasswordValid(command.Password, user.PasswordHash, user.PasswordSalt);
         
         if(!isPasswordValid)
-            return Result<UserDto>.Failure("Login or password is incorrect", HttpStatusCode.BadRequest);
+            return Result<UserDto>.Failure(ApiErrorCodes.LoginFailed, HttpStatusCode.BadRequest);
 
         var token = TokenHelper.GenerateJwtToken(user.Username, user.Id.ToString(), (int)user.Role,
             configuration["Security:Jwt:Key"]);
