@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.Extensions.Localization;
 using WasteFree.App.Endpoints;
+using WasteFree.Shared.Constants;
 
 namespace WasteFree.App.Validators.GarbageGroups;
 
@@ -10,10 +11,10 @@ public class RegisterGarbageGroupRequestValidator : AbstractValidator<RegisterGa
     {
         RuleFor(x => x.GroupName)
             .NotEmpty()
-            .WithMessage(localizer["ERR_GROUP_NAME_REQUIRED"]);
+            .WithMessage(localizer[ValidationErrorCodes.GroupNameRequired]);
 
         RuleFor(x => x.GroupDescription)
             .NotEmpty()
-            .WithMessage(localizer["ERR_GROUP_DESCRIPTION_REQUIRED"]);
+            .WithMessage(localizer[ValidationErrorCodes.GroupDescriptionRequired]);
     }
 }

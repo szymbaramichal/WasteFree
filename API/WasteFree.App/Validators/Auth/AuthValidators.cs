@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
 using WasteFree.App.Endpoints;
+using WasteFree.Shared.Constants;
 
 namespace WasteFree.App.Validators.Auth;
 
@@ -10,19 +11,19 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
     {
         RuleFor(x => x.Email)
             .NotEmpty()
-            .WithMessage(localizer["ERR_EMAIL_REQUIRED"])
+            .WithMessage(localizer[ValidationErrorCodes.EmailRequired])
             .EmailAddress()
-            .WithMessage(localizer["ERR_EMAIL_INVALID"]);
+            .WithMessage(localizer[ValidationErrorCodes.InvalidEmail]);
 
         RuleFor(x => x.Username)
             .NotEmpty()
-            .WithMessage(localizer["ERR_USERNAME_REQUIRED"]);
+            .WithMessage(localizer[ValidationErrorCodes.UsernameRequired]);
 
         RuleFor(x => x.Password)
             .NotEmpty()
-            .WithMessage(localizer["ERR_PASSWORD_REQUIRED"])
+            .WithMessage(localizer[ValidationErrorCodes.PasswordRequired])
             .MinimumLength(8)
-            .WithMessage(localizer["ERR_PASSWORD_TOO_SHORT"]);
+            .WithMessage(localizer[ValidationErrorCodes.TooShort]);
     }
 }
 
@@ -33,10 +34,10 @@ public class LoginUserRequestValidator : AbstractValidator<LoginUserRequest>
     {
         RuleFor(x => x.Username)
             .NotEmpty()
-            .WithMessage(localizer["ERR_USERNAME_REQUIRED"]);
+            .WithMessage(localizer[ValidationErrorCodes.UsernameRequired]);
 
         RuleFor(x => x.Password)
             .NotEmpty()
-            .WithMessage(localizer["ERR_PASSWORD_REQUIRED"]);
+            .WithMessage(localizer[ValidationErrorCodes.PasswordRequired]);
     }
 }

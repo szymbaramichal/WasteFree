@@ -9,7 +9,6 @@ public static class ApiErrorCodes
 
 public static class ValidationErrorCodes
 {
-    public const string NotEmpty = "ERR_NOT_EMPTY";
     public const string InvalidEmail = "ERR_INVALID_EMAIL";
     public const string TooShort = "ERR_TOO_SHORT";
 
