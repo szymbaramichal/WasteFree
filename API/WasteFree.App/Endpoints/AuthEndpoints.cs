@@ -16,7 +16,7 @@ public static class AuthEndpoints
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
-            var command = new RegisterUserCommand(request.Email, request.Username, request.Password);
+            var command = new RegisterUserCommand(request.Email, request.Username, request.Password, request.Role);
             
             var result = await mediator.SendAsync(command, cancellationToken);
             
@@ -54,6 +54,6 @@ public static class AuthEndpoints
     }
 }
 
-public record RegisterUserRequest(string Username, string Email, string Password);
+public record RegisterUserRequest(string Username, string Email, string Password, string Role);
 
 public record LoginUserRequest(string Username, string Password);
