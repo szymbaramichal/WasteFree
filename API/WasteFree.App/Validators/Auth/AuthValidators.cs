@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Localization;
 using WasteFree.App.Endpoints;
 using WasteFree.Shared.Constants;
+using WasteFree.Shared.Enums;
 
 namespace WasteFree.App.Validators.Auth;
 
@@ -24,6 +25,12 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
             .WithMessage(localizer[ValidationErrorCodes.PasswordRequired])
             .MinimumLength(8)
             .WithMessage(localizer[ValidationErrorCodes.TooShort]);
+        
+        
+        RuleFor(x => x.Role)
+            .Must(role => role.Equals(nameof(UserRole.User), StringComparison.InvariantCultureIgnoreCase) || 
+                          role.Equals(nameof(UserRole.GarbageAdmin), StringComparison.InvariantCultureIgnoreCase))
+            .WithMessage(localizer[ValidationErrorCodes.InvalidRole]);
     }
 }
 
