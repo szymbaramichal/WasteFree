@@ -6,13 +6,15 @@ using WasteFree.Infrastructure;
 using WasteFree.Shared.Constants;
 using WasteFree.Shared.Entities;
 using WasteFree.Shared.Enums;
+using WasteFree.Shared.Interfaces;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
 
 public record RegisterUserCommand(string Email, string Username, string Password) : IRequest<UserDto>;
 
-public class RegisterUserCommandHandler(ApplicationDataContext context) : IRequestHandler<RegisterUserCommand, UserDto>
+public class RegisterUserCommandHandler(ApplicationDataContext context, 
+    IEmailService emailService) : IRequestHandler<RegisterUserCommand, UserDto>
 {
     public async Task<Result<UserDto>> HandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
     {
@@ -38,6 +40,8 @@ public class RegisterUserCommandHandler(ApplicationDataContext context) : IReque
         
         context.Users.Add(newUser);
         await context.SaveChangesAsync(cancellationToken);
+
+        await emailService.SendEmailAsync(newUser.Email, "Test", "Test");
 
         return Result<UserDto>.Success(newUser.MapToUserDto());
     }
