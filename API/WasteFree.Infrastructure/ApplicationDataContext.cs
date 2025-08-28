@@ -9,6 +9,7 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
     public DbSet<User> Users { get; set; }
     public DbSet<GarbageGroup> GarbageGroups { get; set; }
     public DbSet<UserGarbageGroup> UserGarbageGroups { get; set; }
+    public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
 
     public override int SaveChanges()
     {

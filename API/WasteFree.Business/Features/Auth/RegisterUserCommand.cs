@@ -40,8 +40,13 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
         
         context.Users.Add(newUser);
         await context.SaveChangesAsync(cancellationToken);
+        
+        var notificationTemplate = await context.NotificationTemplates
+            .FirstOrDefaultAsync(x => x.Type == NotificationType.RegisterationConfirmation 
+                                      && x.Channel == NotificationChannel.Email, cancellationToken);
 
-        await emailService.SendEmailAsync(newUser.Email, "Test", "Test");
+        await emailService.SendEmailAsync(newUser.Email, notificationTemplate?.Subject ?? "Welcome!", 
+            notificationTemplate?.Body ?? "Welcome to our app!");
 
         return Result<UserDto>.Success(newUser.MapToUserDto());
     }

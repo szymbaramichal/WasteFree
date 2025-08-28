@@ -15,12 +15,12 @@ public static class ServiceCollectionExtension
             opt.UseSqlServer(connectionString);
         });
         
-        services.AddSingleton<IEmailService>(sp =>
+        services.AddSingleton<IEmailService>(_ =>
             new EmailService(
-                smtpServer: configuration["Integrations:Smtp:Server"],
-                smtpPort: int.Parse(configuration["Integrations:Smtp:Port"]),
-                smtpUser: configuration["Integrations:Smtp:Username"],
-                smtpPass: configuration["Integrations:Smtp:Password"],
+                smtpServer: configuration["Integrations:Smtp:Server"] ?? string.Empty,
+                smtpPort: int.TryParse(configuration["Integrations:Smtp:Port"], out var port) ? port : 25,
+                smtpUser: configuration["Integrations:Smtp:Username"] ?? string.Empty,
+                smtpPass: configuration["Integrations:Smtp:Password"] ?? string.Empty,
                 from: "wastefreecloud@noreply.com"
             ));
 
