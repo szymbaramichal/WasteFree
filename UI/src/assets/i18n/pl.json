@@ -1,0 +1,44 @@
+{
+  "brand": "WasteFree",
+  "nav.contact": "Kontakt",
+  "nav.goApp": "Przejdź do aplikacji",
+
+  "home.title": "Oszczędzaj, dbaj o środowisko, żyj WasteFree!",
+  "home.desc": "Innowacyjna platforma do zarządzania odpadami i optymalizacji zużycia zasobów. Dołącz do rewolucji ekologicznej!",
+  "home.cta": "Przejdź do aplikacji",
+
+  "features.header": "Funkcjonalności",
+  "features.stat.title": "Statystyki i raporty",
+  "features.stat.desc": "Analizuj swoje zużycie, generuj raporty i śledź postępy w redukcji odpadów.",
+  "features.community.title": "Społeczność",
+  "features.community.desc": "Współpracuj z innymi użytkownikami, dziel się pomysłami i osiągnięciami.",
+  "features.suggestions.title": "Inteligentne sugestie",
+  "features.suggestions.desc": "Otrzymuj spersonalizowane wskazówki, jak ograniczyć odpady i oszczędzać zasoby.",
+  "features.more": "Zobacz więcej funkcji",
+
+  "contact.header": "Masz pytania? Skontaktuj się z nami!",
+  "contact.name": "Imię i nazwisko",
+  "contact.email": "Email",
+  "contact.message": "Wiadomość",
+  "contact.submit": "Wyślij",
+
+  "footer.copyright": "© 2025 WasteFree. Wszystkie prawa zastrzeżone.",
+
+  "auth.login": "Logowanie",
+  "auth.register": "Rejestracja",
+  "auth.username": "Nazwa użytkownika",
+  "auth.password": "Hasło",
+  "auth.email": "Email",
+  "auth.role": "Rola",
+  "auth.role.user": "Użytkownik",
+  "auth.role.garbageAdmin": "Zarządca odpadów",
+  "auth.role.user.desc": "Możesz dołączać do grup i zgłaszać wywozy",
+  "auth.role.garbageAdmin.desc": "Możesz wywozić odpady",
+  "auth.login.btn": "Zaloguj",
+  "auth.register.btn": "Zarejestruj",
+  "auth.toggle.noAccount": "Nie masz konta? Zarejestruj się",
+  "auth.toggle.haveAccount": "Masz już konto? Zaloguj się",
+  "auth.account.created.title": "Konto utworzone!",
+  "auth.account.created.desc": "Na podany adres e-mail zostanie wysłany link aktywacyjny. Proszę sprawdź skrzynkę pocztową i kliknij w link, aby aktywować konto.",
+  "auth.backToLogin": "Wróć do logowania"
+}

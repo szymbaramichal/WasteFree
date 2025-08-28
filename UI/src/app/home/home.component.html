@@ -1,13 +1,14 @@
 <nav class="navbar navbar-expand-lg shadow-sm py-3">
   <div class="container">
-    <a class="navbar-brand" href="#">WasteFree</a>
+  <a class="navbar-brand" href="#">{{ 'brand' | translate }}</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link btn btn-success" href="#contact">Kontakt</a></li>
-        <li class="nav-item"><a routerLink="/portal" class="nav-link btn btn-success">Przejdź do aplikacji</a></li>
+      <ul class="navbar-nav ms-auto" style="display:flex;align-items:center;gap:10px;">
+        <li class="nav-item"><a class="nav-link btn btn-success" href="#contact">{{ 'nav.contact' | translate }}</a></li>
+        <li class="nav-item"><a routerLink="/portal" class="nav-link btn btn-success">{{ 'nav.goApp' | translate }}</a></li>
+  <!-- language selector removed from navbar — global selector is used instead -->
       </ul>
     </div>
   </div>
@@ -15,41 +16,41 @@
 
 <section class="hero">
   <div class="container">
-    <h1 class="hero-title">Oszczędzaj, dbaj o środowisko, żyj WasteFree!</h1>
-    <p class="hero-desc">Innowacyjna platforma do zarządzania odpadami i optymalizacji zużycia zasobów. Dołącz do rewolucji ekologicznej!</p>
-    <a routerLink="portal" class="btn btn-success btn-cta px-5 py-3 fw-bold">Przejdź do aplikacji</a>
+    <h1 class="hero-title">{{ 'home.title' | translate }}</h1>
+    <p class="hero-desc">{{ 'home.desc' | translate }}</p>
+    <a routerLink="portal" class="btn btn-success btn-cta px-5 py-3 fw-bold">{{ 'home.cta' | translate }}</a>
   </div>
 </section>
 
 <section class="features" id="features">
   <div class="container">
-    <h2 class="text-center mb-5 fw-bold">Funkcjonalności</h2>
+  <h2 class="text-center mb-5 fw-bold">{{ 'features.header' | translate }}</h2>
     <div class="row g-4">
       <div class="col-md-4">
         <div class="card feature-card p-4 text-center">
           <div class="feature-icon"><i class="bi bi-bar-chart"></i></div>
-          <h5 class="fw-bold mb-2">Statystyki i raporty</h5>
-          <p>Analizuj swoje zużycie, generuj raporty i śledź postępy w redukcji odpadów.</p>
+          <h5 class="fw-bold mb-2">{{ 'features.stat.title' | translate }}</h5>
+          <p>{{ 'features.stat.desc' | translate }}</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card feature-card p-4 text-center">
           <div class="feature-icon"><i class="bi bi-people"></i></div>
-          <h5 class="fw-bold mb-2">Społeczność</h5>
-          <p>Współpracuj z innymi użytkownikami, dziel się pomysłami i osiągnięciami.</p>
+          <h5 class="fw-bold mb-2">{{ 'features.community.title' | translate }}</h5>
+          <p>{{ 'features.community.desc' | translate }}</p>
         </div>
       </div>
       <div class="col-md-4">
         <div class="card feature-card p-4 text-center">
           <div class="feature-icon"><i class="bi bi-lightbulb"></i></div>
-          <h5 class="fw-bold mb-2">Inteligentne sugestie</h5>
-          <p>Otrzymuj spersonalizowane wskazówki, jak ograniczyć odpady i oszczędzać zasoby.</p>
+          <h5 class="fw-bold mb-2">{{ 'features.suggestions.title' | translate }}</h5>
+          <p>{{ 'features.suggestions.desc' | translate }}</p>
         </div>
       </div>
     </div>
     <div class="row mt-5">
       <div class="col text-center">
-        <a href="#" class="btn btn-success btn-lg px-5 py-3 fw-bold">Zobacz więcej funkcji</a>
+    <a href="#" class="btn btn-success btn-lg px-5 py-3 fw-bold">{{ 'features.more' | translate }}</a>
       </div>
     </div>
   </div>
@@ -59,21 +60,21 @@
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card p-4 shadow-lg border-0">
-        <h3 class="fw-bold mb-3">Masz pytania? Skontaktuj się z nami!</h3>
+  <h3 class="fw-bold mb-3">{{ 'contact.header' | translate }}</h3>
         <form>
           <div class="mb-3">
-            <label for="name" class="form-label">Imię i nazwisko</label>
-            <input type="text" class="form-control" id="name" placeholder="Wpisz swoje imię i nazwisko">
+            <label for="name" class="form-label">{{ 'contact.name' | translate }}</label>
+            <input type="text" class="form-control" id="name" placeholder="{{ 'contact.name' | translate }}">
           </div>
           <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Wpisz swój email">
+            <label for="email" class="form-label">{{ 'contact.email' | translate }}</label>
+            <input type="email" class="form-control" id="email" placeholder="{{ 'contact.email' | translate }}">
           </div>
           <div class="mb-3">
-            <label for="message" class="form-label">Wiadomość</label>
-            <textarea class="form-control" id="message" rows="4" placeholder="Wpisz swoją wiadomość"></textarea>
+            <label for="message" class="form-label">{{ 'contact.message' | translate }}</label>
+            <textarea class="form-control" id="message" rows="4" placeholder="{{ 'contact.message' | translate }}"></textarea>
           </div>
-          <button type="submit" class="btn btn-success px-4 py-2">Wyślij</button>
+            <button type="submit" class="btn btn-success px-4 py-2">{{ 'contact.submit' | translate }}</button>
         </form>
       </div>
     </div>
@@ -82,6 +83,6 @@
 
 <footer class="footer">
   <div class="container">
-    <p class="mb-0">&copy; 2025 WasteFree. Wszystkie prawa zastrzeżone.</p>
+    <p class="mb-0">{{ 'footer.copyright' | translate }}</p>
   </div>
 </footer>
