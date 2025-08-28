@@ -1,0 +1,44 @@
+{
+  "brand": "WasteFree",
+  "nav.contact": "Contact",
+  "nav.goApp": "Go to app",
+
+  "home.title": "Save, protect the environment, live WasteFree!",
+  "home.desc": "An innovative platform for waste management and resource optimization. Join the ecological revolution!",
+  "home.cta": "Go to app",
+
+  "features.header": "Features",
+  "features.stat.title": "Statistics & reports",
+  "features.stat.desc": "Analyze your consumption, generate reports and track progress in waste reduction.",
+  "features.community.title": "Community",
+  "features.community.desc": "Collaborate with other users, share ideas and achievements.",
+  "features.suggestions.title": "Smart suggestions",
+  "features.suggestions.desc": "Receive personalized tips on how to reduce waste and save resources.",
+  "features.more": "See more features",
+
+  "contact.header": "Have questions? Contact us!",
+  "contact.name": "Name and surname",
+  "contact.email": "Email",
+  "contact.message": "Message",
+  "contact.submit": "Send",
+
+  "footer.copyright": "© 2025 WasteFree. All rights reserved.",
+
+  "auth.login": "Login",
+  "auth.register": "Register",
+  "auth.username": "Username",
+  "auth.password": "Password",
+  "auth.email": "Email",
+  "auth.role": "Role",
+  "auth.role.user": "User",
+  "auth.role.garbageAdmin": "Garbage manager",
+  "auth.role.user.desc": "Join groups and report pickups",
+  "auth.role.garbageAdmin.desc": "You can collect waste",
+  "auth.login.btn": "Login",
+  "auth.register.btn": "Register",
+  "auth.toggle.noAccount": "Don't have an account? Register",
+  "auth.toggle.haveAccount": "Already have an account? Login",
+  "auth.account.created.title": "Account created!",
+  "auth.account.created.desc": "An activation link will be sent to the provided email address. Please check your inbox and click the link to activate the account.",
+  "auth.backToLogin": "Back to login"
+}
