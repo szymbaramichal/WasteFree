@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="USERNAME_TAKEN" xml:space="preserve"><value>Nazwa użytkownika jest już zajęta</value></data>
+  <data name="INVALID_ROLE" xml:space="preserve"><value>Niepoprawna rola użytkownika</value></data>
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Adres e-mail jest już zajęty</value></data>
   <data name="LOGIN_FAILED" xml:space="preserve"><value>Login lub hasło są nieprawidłowe</value></data>
   <data name="ERR_EMAIL_REQUIRED"><value>Adres e-mail jest wymagany</value></data>

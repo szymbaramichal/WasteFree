@@ -11,7 +11,7 @@ using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
 
-public record RegisterUserCommand(string Email, string Username, string Password) : IRequest<UserDto>;
+public record RegisterUserCommand(string Email, string Username, string Password, string Role) : IRequest<UserDto>;
 
 public class RegisterUserCommandHandler(ApplicationDataContext context, 
     IEmailService emailService) : IRequestHandler<RegisterUserCommand, UserDto>
@@ -35,7 +35,7 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             PasswordHash = hashAndSalt.passwordHash,
             PasswordSalt = hashAndSalt.passwordSalt,
             Username = command.Username,
-            Role = UserRole.User
+            Role = Enum.TryParse<UserRole>(command.Role, true, out var role) ? role : UserRole.User,
         };
         
         context.Users.Add(newUser);

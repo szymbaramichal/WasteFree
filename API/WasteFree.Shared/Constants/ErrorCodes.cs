@@ -17,4 +17,5 @@ public static class ValidationErrorCodes
     public const string EmailRequired = "ERR_EMAIL_REQUIRED";
     public const string GroupNameRequired = "ERR_GROUP_NAME_REQUIRED";
     public const string GroupDescriptionRequired = "ERR_GROUP_DESCRIPTION_REQUIRED";
+    public const string InvalidRole = "INVALID_ROLE";
 }
