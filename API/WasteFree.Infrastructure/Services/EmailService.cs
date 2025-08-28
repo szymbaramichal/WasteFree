@@ -18,10 +18,11 @@ public class EmailService(string smtpServer, int smtpPort, string smtpUser, stri
         message.Body = bodyBuilder.ToMessageBody();
 
         using var client = new SmtpClient();
-        await client.ConnectAsync(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
-        await client.AuthenticateAsync(smtpUser, smtpPass);
         try
         {
+            await client.ConnectAsync(smtpServer, smtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(smtpUser, smtpPass);
+            
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
         }
@@ -29,7 +30,6 @@ public class EmailService(string smtpServer, int smtpPort, string smtpUser, stri
         {
             await client.DisconnectAsync(true);
             Console.WriteLine(e);
-            throw;
         }
     }
 }

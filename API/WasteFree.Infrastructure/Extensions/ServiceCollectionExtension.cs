@@ -15,12 +15,26 @@ public static class ServiceCollectionExtension
             opt.UseSqlServer(connectionString);
         });
         
+        var smtpServer = configuration["Integrations:Smtp:Server"];
+        var smtpPortStr = configuration["Integrations:Smtp:Port"];
+        var smtpUser = configuration["Integrations:Smtp:Username"];
+        var smtpPass = configuration["Integrations:Smtp:Password"];
+
+        // Cant validate, for local dev purposes 
+        // if (string.IsNullOrWhiteSpace(smtpServer) ||
+        //     string.IsNullOrWhiteSpace(smtpPortStr) ||
+        //     string.IsNullOrWhiteSpace(smtpUser) ||
+        //     string.IsNullOrWhiteSpace(smtpPass))
+        // {
+        //     throw new InvalidOperationException("Missing required SMTP configuration.");
+        // }
+
         services.AddSingleton<IEmailService>(_ =>
             new EmailService(
-                smtpServer: configuration["Integrations:Smtp:Server"] ?? string.Empty,
-                smtpPort: int.TryParse(configuration["Integrations:Smtp:Port"], out var port) ? port : 25,
-                smtpUser: configuration["Integrations:Smtp:Username"] ?? string.Empty,
-                smtpPass: configuration["Integrations:Smtp:Password"] ?? string.Empty,
+                smtpServer: smtpServer,
+                smtpPort: int.Parse(smtpPortStr),
+                smtpUser: smtpUser,
+                smtpPass: smtpPass,
                 from: "wastefreecloud@noreply.com"
             ));
 
