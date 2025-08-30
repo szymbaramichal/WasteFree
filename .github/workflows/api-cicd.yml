@@ -29,42 +29,24 @@ jobs:
       - name: Publish API
         run: dotnet publish API/WasteFree.App/WasteFree.App.csproj --configuration Release --output ./publish
 
-      - name: Deploy API on remote host
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          HOST: ${{ secrets.DEPLOY_HOST }}
-          USER: ${{ secrets.DEPLOY_USER }}
-          PORT: ${{ secrets.DEPLOY_PORT }}
-        run: |
-          mkdir -p ~/.ssh
-          touch ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-          if ! ssh-keyscan -T 5 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts; then
-            echo "::error::ssh-keyscan failed (host unreachable or wrong HOST/PORT)"
-            exit 1
-          fi
+      - name: Deploy API over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script_stop: true
+          envs: DOCKERHUB_USERNAME
+          script: |
+            set -e
+            IMAGE="${DOCKERHUB_USERNAME}/wastefree-api:latest"
 
-          if ! grep -q "\[$HOST\]:$PORT" ~/.ssh/known_hosts; then
-            echo "::error::No host keys added for [$HOST]:$PORT (check DNS/PORT/firewall)"
-            exit 1
-          fi
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_key
-          chmod 600 id_key
+            docker pull "$IMAGE"
+            docker rm -f wastefree-api || true
+            docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production "$IMAGE"
 
-          IMAGE="${DOCKERHUB_USERNAME}/wastefree-api:latest"
-          echo "Using IMAGE=${IMAGE}"
-
-          ssh -i id_key -T $USER@$HOST -p $PORT << 'EOF'
-          set -e
-          IMAGE="${DOCKERHUB_USERNAME}/wastefree-api:latest"
-          echo "Using IMAGE=${IMAGE}"
-          docker pull $IMAGE
-          docker rm -f wastefree-api || true
-          docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production $DOCKERHUB_USERNAME/wastefree-api:latest
-          # Optional cleanup of dangling images
-          docker image prune -f || true
-          EOF
-
+            docker image prune -f || true
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest -f API/Dockerfile ./API
