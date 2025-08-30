@@ -1,14 +1,16 @@
 <nav class="navbar navbar-expand-lg shadow-sm py-3">
   <div class="container">
-  <a class="navbar-brand" href="#">{{ 'brand' | translate }}</a>
+  <a class="navbar-brand d-flex align-items-center" href="#" style="gap:10px;">
+  <img src="/assets/images/logo.svg" alt="WasteFree logo" width="60" height="60" style="display:inline-block; margin-left:-6px;">
+    <span>{{ 'brand' | translate }}</span>
+  </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto" style="display:flex;align-items:center;gap:10px;">
         <li class="nav-item"><a class="nav-link btn btn-success" href="#contact">{{ 'nav.contact' | translate }}</a></li>
-        <li class="nav-item"><a routerLink="/portal" class="nav-link btn btn-success">{{ 'nav.goApp' | translate }}</a></li>
-  <!-- language selector removed from navbar — global selector is used instead -->
+        <li class="nav-item"><a routerLink="/auth" class="nav-link btn btn-success">{{ 'nav.goApp' | translate }}</a></li>
       </ul>
     </div>
   </div>

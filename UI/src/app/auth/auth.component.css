@@ -6,10 +6,9 @@
   align-items: center;
   justify-content: center;
   padding: 38px 18px 28px 18px;
-  background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 8px 36px 0 rgba(60,179,113,0.13), 0 2px 8px 0 rgba(44,62,80,0.07);
-  border: 1.5px solid #e4efe7;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
   margin-top: 18px;
 }
 
@@ -45,7 +44,7 @@
   transform: translateY(-2px) scale(1.025);
   box-shadow: 0 6px 24px 0 rgba(60,179,113,0.18);
 }
-/* Stylowanie kafelków wyboru roli */
+
 .role-tiles {
   display: flex;
   gap: 18px;
@@ -125,16 +124,25 @@
 }
 
 .auth-container {
-  max-width: 425px;
-  margin: 56px auto;
-  padding: 38px 38px 28px 38px;
-  background: #fff; /* zmiana z gradientu na czystą biel */
-  border-radius: 22px;
-  box-shadow: 0 8px 36px 0 rgba(60,179,113,0.18), 0 2px 8px 0 rgba(44,62,80,0.07);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  border: 1.5px solid #e4efe7; /* delikatna ramka dla lepszej widoczności */
+  align-items: center;
+}
+
+.auth-content {
+  width: 100%;
+  max-width: 480px;
+  padding: 28px;
+  background: rgba(255,255,255,0.96);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 20px rgba(44,62,80,0.06);
 }
 
 .auth-container h2 {
@@ -209,6 +217,9 @@ button[type="submit"] {
   transition: background 0.18s, box-shadow 0.18s, transform 0.13s;
   box-shadow: 0 2px 12px 0 rgba(60,179,113,0.13);
   letter-spacing: 0.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 button[type="submit"]:hover:not(:disabled),

@@ -14,6 +14,12 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 export class AuthComponent {
   private bodyClass = 'auth-bg';
   isLoginMode = true;
+  isLoading = false;
+  private loadingTimer: ReturnType<typeof setTimeout> | null = null;
+  showLoadingText = false;
+  isRegisterLoading = false;
+  private registerLoadingTimer: ReturnType<typeof setTimeout> | null = null;
+  showRegisterLoadingText = false;
   loginForm: FormGroup;
   registerForm: FormGroup;
   error: string | null = null;
@@ -39,6 +45,8 @@ export class AuthComponent {
 
   ngOnDestroy(): void {
     document.body.classList.remove(this.bodyClass);
+  if (this.loadingTimer) clearTimeout(this.loadingTimer);
+  if (this.registerLoadingTimer) clearTimeout(this.registerLoadingTimer);
   }
 
   toggleMode(event: Event) {
@@ -49,20 +57,43 @@ export class AuthComponent {
   onLogin() {
     if (!this.loginForm.valid) return;
     this.error = null;
+    this.isLoading = true;
+    const start = Date.now();
+    // clear previous timer if any
+    if (this.loadingTimer) {
+      clearTimeout(this.loadingTimer);
+      this.loadingTimer = null;
+    }
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
         console.log('Zalogowano!', res);
         this.error = null;
+        // Only show the localized loading text when login succeeded
+        this.showLoadingText = true;
         // saving token to localStorage
         const token = res?.resultModel?.token;
         if (token) {
           localStorage.setItem('authToken', token);
         }
-        // TODO: navigate
+        const elapsed = Date.now() - start;
+        const wait = Math.max(0, 1000 - elapsed);
+        this.loadingTimer = setTimeout(() => {
+          this.isLoading = false;
+          this.showLoadingText = false;
+          this.loadingTimer = null;
+        }, wait);
       },
       error: (err) => {
         console.error('Błąd logowania', err);
         this.error = this.formatErrorResponse(err);
+        // On error hide loading immediately (no spinner, no text)
+        this.showLoadingText = false;
+        if (this.loadingTimer) {
+          clearTimeout(this.loadingTimer);
+          this.loadingTimer = null;
+        }
+        this.isLoading = false;
       }
     });
   }
@@ -72,16 +103,39 @@ export class AuthComponent {
     this.error = null;
     this.showActivationSection = false;
     const { username, email, password, role } = this.registerForm.value;
+    this.isRegisterLoading = true;
+    const start = Date.now();
+    if (this.registerLoadingTimer) {
+      clearTimeout(this.registerLoadingTimer);
+      this.registerLoadingTimer = null;
+    }
+
     this.authService.register({ username, email, password, role }).subscribe({
       next: (res) => {
         console.log('Zarejestrowano!', res);
         this.error = null;
+        // show loading text only on success
+        this.showRegisterLoadingText = true;
         this.showActivationSection = true;
+        const elapsed = Date.now() - start;
+        const wait = Math.max(0, 1000 - elapsed);
+        this.registerLoadingTimer = setTimeout(() => {
+          this.isRegisterLoading = false;
+          this.showRegisterLoadingText = false;
+          this.registerLoadingTimer = null;
+        }, wait);
       },
       error: (err) => {
         console.error('Błąd rejestracji', err);
         this.error = this.formatErrorResponse(err);
         this.showActivationSection = false;
+        // hide loading immediately on error
+        this.showRegisterLoadingText = false;
+        if (this.registerLoadingTimer) {
+          clearTimeout(this.registerLoadingTimer);
+          this.registerLoadingTimer = null;
+        }
+        this.isRegisterLoading = false;
       }
     });
   }
