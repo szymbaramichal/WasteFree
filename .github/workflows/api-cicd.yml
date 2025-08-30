@@ -45,8 +45,22 @@ jobs:
 
       - name: Add known hosts
         run: |
+          set -e
+          HOST='${{ secrets.DEPLOY_HOST }}'
+          if [ -z "$HOST" ]; then
+            echo "ERROR: Secret DEPLOY_HOST nie jest ustawiony." >&2
+            exit 1
+          fi
           mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.DEPLOY_HOST }} >> ~/.ssh/known_hosts
+          # Próba pobrania kilku typów kluczy; ignoruj stderr (GitHub maskuje)
+          for t in ed25519 rsa ecdsa; do
+            ssh-keyscan -T 10 -t $t -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+          done
+          # Sprawdź czy coś faktycznie dodano
+          if ! grep -q "$HOST" ~/.ssh/known_hosts; then
+            echo "ERROR: Nie udało się pobrać klucza hosta dla $HOST." >&2
+            exit 1
+          fi
 
       - name: Start ssh agent
         uses: webfactory/ssh-agent@v0.9.0
