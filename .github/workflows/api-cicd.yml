@@ -51,7 +51,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_key
           chmod 600 id_key
 
-          IMAGE="${U}/wastefree-api:latest"
+          IMAGE="${DOCKERHUB_USERNAME}/wastefree-api:latest"
           echo "Using IMAGE=${IMAGE}"
 
           ssh -i id_key -T $USER@$HOST -p $PORT << 'EOF'
