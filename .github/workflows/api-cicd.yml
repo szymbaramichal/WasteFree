@@ -63,6 +63,10 @@ jobs:
             IMAGE="${U}/wastefree-api:latest"
             echo "Using IMAGE=${IMAGE}"
 
+            # zatrzymaj i usuń stary kontener, jeśli istnieje
+            docker stop wastefree-api || true
+            docker rm wastefree-api || true
+
             docker pull "$IMAGE"
-            docker run -d --name wastefree-api -p 8080:80 wastefreecloud/wastefree-api:latest
+            docker run -d --name wastefree-api -p 8080:80 "$IMAGE"
             docker image prune -f || true
