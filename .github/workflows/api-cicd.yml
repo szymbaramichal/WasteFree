@@ -44,7 +44,7 @@ jobs:
 
             U=$(printf "%s" "${DOCKERHUB_USERNAME}" | tr -d '\r\n' | tr '[:upper:]' '[:lower:]')
             if [ -z "$U" ]; then
-              echo "::error::DOCKERHUB_USERNAME is empty"
+              echo "::errorr::DOCKERHUB_USERNAME is empty"
               exit 1
             fi
             IMAGE="${U}/wastefree-api:latest"
