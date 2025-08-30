@@ -35,25 +35,6 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-ui:latest
 
-      - name: Add known hosts
-        run: |
-          set -e
-          HOST="${{ secrets.DEPLOY_HOST }}"
-          PORT="${{ secrets.DEPLOY_PORT }}"; [ -z "$PORT" ] && PORT=10222
-          if [ -z "$HOST" ]; then echo "ERROR: DEPLOY_HOST pusty" >&2; exit 1; fi
-          mkdir -p ~/.ssh
-          if [ -n "${{ secrets.DEPLOY_KNOWN_HOST }}" ]; then
-            echo "${{ secrets.DEPLOY_KNOWN_HOST }}" >> ~/.ssh/known_hosts
-          else
-            ssh-keyscan -T 5 -p "$PORT" -t ed25519 -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
-          fi
-          grep -q "$HOST" ~/.ssh/known_hosts || { echo "Brak wpisu hosta (użyj sekretu DEPLOY_KNOWN_HOST)." >&2; exit 1; }
-
-      - name: Start ssh agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - name: Deploy API over SSH
         uses: appleboy/ssh-action@v1
         env:
@@ -73,13 +54,13 @@ jobs:
               echo "::error::DOCKERHUB_USERNAME is empty"
               exit 1
             fi
-            IMAGE="${U}/wastefree-api:latest"
+            IMAGE="${U}/wastefree-ui:latest"
             echo "Using IMAGE=${IMAGE}"
 
             # zatrzymaj i usuń stary kontener, jeśli istnieje
-            docker stop wastefree-api || true
-            docker rm wastefree-api || true
+            docker stop wastefree-ui || true
+            docker rm wastefree-ui || true
 
             docker pull "$IMAGE"
-            docker run -d --name wastefree-api -p 8080:80 "$IMAGE"
+            docker run -d --name wastefree-ui -p 80:80 "$IMAGE"
             docker image prune -f || true
