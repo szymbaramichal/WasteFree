@@ -54,7 +54,7 @@ jobs:
           mkdir -p ~/.ssh
           # Próba pobrania kilku typów kluczy; ignoruj stderr (GitHub maskuje)
           for t in ed25519 rsa ecdsa; do
-            ssh-keyscan -T 10 -t $t -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+            ssh-keyscan -T 10 -p "$PORT" -t $t -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
           done
           # Sprawdź czy coś faktycznie dodano
           if ! grep -q "$HOST" ~/.ssh/known_hosts; then
