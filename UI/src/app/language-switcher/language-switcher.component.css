@@ -1,0 +1,1 @@
+.lang-switcher { position: relative; display:inline-block; } .dropdown-menu{ background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 2px 12px rgba(0,0,0,0.06); border-radius:6px; padding:6px 0;} .dropdown-item{ display:block; padding:8px 12px; cursor:pointer; color:#212529; text-decoration:none;} .dropdown-item:hover{ background:#f6f6f6;}
