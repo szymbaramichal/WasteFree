@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Helpers;
+using WasteFree.Business.Jobs;
+using WasteFree.Business.Jobs.Dtos;
 using WasteFree.Infrastructure;
 using WasteFree.Shared.Constants;
 using WasteFree.Shared.Entities;
@@ -13,17 +15,19 @@ namespace WasteFree.Business.Features.Auth;
 
 public record RegisterUserCommand(string Email, string Username, string Password, string Role) : IRequest<UserDto>;
 
-public class RegisterUserCommandHandler(ApplicationDataContext context, 
-    IEmailService emailService) : IRequestHandler<RegisterUserCommand, UserDto>
+public class RegisterUserCommandHandler(ApplicationDataContext context, IJobSchedulerFacade jobScheduler) 
+    : IRequestHandler<RegisterUserCommand, UserDto>
 {
     public async Task<Result<UserDto>> HandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
     {
-        var userByUsername = await context.Users.FirstOrDefaultAsync(x => x.Username.ToLower() == command.Username.ToLower(), cancellationToken);
+        var userByUsername = await context.Users
+            .FirstOrDefaultAsync(x => x.Username.ToLower() == command.Username.ToLower(), cancellationToken);
         
         if(userByUsername is not null)
             return Result<UserDto>.Failure(ApiErrorCodes.UsernameTaken, HttpStatusCode.BadRequest);
         
-        var userByEmail = await context.Users.FirstOrDefaultAsync(x => x.Email.ToLower() == command.Email.ToLower(), cancellationToken);
+        var userByEmail = await context.Users
+            .FirstOrDefaultAsync(x => x.Email.ToLower() == command.Email.ToLower(), cancellationToken);
         
         if(userByEmail is not null)
             return Result<UserDto>.Failure(ApiErrorCodes.EmailTaken, HttpStatusCode.BadRequest);
@@ -39,14 +43,30 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
         };
         
         context.Users.Add(newUser);
-        await context.SaveChangesAsync(cancellationToken);
         
         var notificationTemplate = await context.NotificationTemplates
             .FirstOrDefaultAsync(x => x.Type == NotificationType.RegisterationConfirmation 
                                       && x.Channel == NotificationChannel.Email, cancellationToken);
 
-        await emailService.SendEmailAsync(newUser.Email, notificationTemplate?.Subject ?? "Welcome!", 
-            notificationTemplate?.Body ?? "Welcome to our app!");
+        if (notificationTemplate is null)
+            return Result<UserDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
+
+        notificationTemplate.Body = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
+        {
+            {"Username", newUser.Username}
+        });
+        
+        await context.SaveChangesAsync(cancellationToken);
+        
+        await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob), 
+            new SendEmailDto
+            {
+                Email = newUser.Email,
+                Subject = notificationTemplate.Subject,
+                Body = notificationTemplate.Body
+            },
+            "Send registration confirmation email", 
+            cancellationToken);
 
         return Result<UserDto>.Success(newUser.MapToUserDto());
     }

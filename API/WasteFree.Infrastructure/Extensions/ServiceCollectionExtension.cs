@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TickerQ.Dashboard.DependencyInjection;
+using TickerQ.DependencyInjection;
+using TickerQ.EntityFrameworkCore.DependencyInjection;
 using WasteFree.Infrastructure.Services;
 using WasteFree.Shared.Interfaces;
 
@@ -13,6 +16,21 @@ public static class ServiceCollectionExtension
         var connectionString = configuration.GetConnectionString("SqlServerDatabase");
         services.AddDbContext<ApplicationDataContext>(opt => {
             opt.UseSqlServer(connectionString);
+        });
+
+        services.AddTickerQ(opt =>
+        {
+            opt.AddOperationalStore<ApplicationDataContext>(efOptions =>
+            {
+                efOptions.UseModelCustomizerForMigrations();
+                efOptions.CancelMissedTickersOnAppStart();
+            });
+            
+            opt.AddDashboard(opt =>
+            {
+                opt.BasePath = "/tickerq";
+                opt.EnableBasicAuth = true;
+            });
         });
         
         var smtpServer = configuration["Integrations:Smtp:Server"];
@@ -38,6 +56,8 @@ public static class ServiceCollectionExtension
                 from: "wastefreecloud@noreply.com"
             ));
 
+        services.AddScoped<IJobSchedulerFacade, JobSchedulerFacade>();
+        
         return services;
     }
 

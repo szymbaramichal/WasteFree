@@ -36,7 +36,21 @@ namespace WasteFree.Infrastructure.Migrations
                 values: new object[] {
                     new Guid("11111111-1111-1111-1111-111111111111"),
                     "Welcome to WasteFree!",
-                    "<html><body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:40px;'><div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'><h2 style='color:#2e7d32;'>Welcome to WasteFree!</h2><p>Thank you for registering. We are excited to have you join our community.<br><br><b>Get started by exploring our features and reducing waste today!</b></p><hr style='margin:24px 0;'><p style='font-size:12px;color:#888;'>If you did not register, please ignore this email.</p></div></body></html>",
+                    @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:40px;'>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;'>Welcome {{Username}} to WasteFree!</h2>
+                          <p>
+                            Thank you for registering. We are excited to have you join our community.<br><br>
+                            <b>Get started by exploring our features and reducing waste today!</b>
+                          </p>
+                          <hr style='margin:24px 0;'>
+                          <p style='font-size:12px;color:#888;'>
+                            If you did not register, please ignore this email.
+                          </p>
+                        </div>
+                      </body>
+                    </html>",
                     0, // Channel: Email
                     0, // Type: RegisterationConfirmation
                     DateTime.UtcNow,
