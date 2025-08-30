@@ -38,42 +38,32 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest
 
-      - name: Add known hosts
-        run: |
-          set -e
-          HOST='${{ secrets.DEPLOY_HOST }}'
-          if [ -z "$HOST" ]; then
-            echo "ERROR: Secret DEPLOY_HOST nie jest ustawiony." >&2
-            exit 1
-          fi
-          mkdir -p ~/.ssh
-          # Próba pobrania kilku typów kluczy; ignoruj stderr (GitHub maskuje)
-          for t in ed25519 rsa ecdsa; do
-            ssh-keyscan -T 10 -p "$PORT" -t $t -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
-          done
-          # Sprawdź czy coś faktycznie dodano
-          if ! grep -q "$HOST" ~/.ssh/known_hosts; then
-            echo "ERROR: Nie udało się pobrać klucza hosta dla $HOST." >&2
-            exit 1
-          fi
-
-      - name: Start ssh agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Deploy API on remote host
+      - name: Deploy API over SSH
+        uses: appleboy/ssh-action@v1
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          HOST: ${{ secrets.DEPLOY_HOST }}
-          USER: ${{ secrets.DEPLOY_USER }}
-          PORT: ${{ secrets.DEPLOY_PORT }}
-        run: |
-          ssh -p ${PORT:-22} $USER@$HOST << 'EOF'
-          set -e
-          docker pull $DOCKERHUB_USERNAME/wastefree-api:latest
-          docker rm -f wastefree-api || true
-          docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production $DOCKERHUB_USERNAME/wastefree-api:latest
-          # Optional cleanup of dangling images
-          docker image prune -f || true
-          EOF
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          script_stop: true
+          envs: DOCKERHUB_USERNAME
+          script: |
+            set -euo pipefail
+
+            U=$(printf "%s" "${DOCKERHUB_USERNAME}" | tr -d '\r\n' | tr '[:upper:]' '[:lower:]')
+            if [ -z "$U" ]; then
+              echo "::error::DOCKERHUB_USERNAME is empty"
+              exit 1
+            fi
+            IMAGE="${U}/wastefree-api:latest"
+            echo "Using IMAGE=${IMAGE}"
+
+            # zatrzymaj i usuń stary kontener, jeśli istnieje
+            docker stop wastefree-api || true
+            docker rm wastefree-api || true
+
+            docker pull "$IMAGE"
+            docker run -d --name wastefree-api -p 8080:80 "$IMAGE"
+            docker image prune -f || true
