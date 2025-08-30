@@ -1,0 +1,81 @@
+name: Build and Push API Docker Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'API/**'
+
+jobs:
+  build-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore API/WasteFree.sln
+
+      - name: Build API
+        run: dotnet build API/WasteFree.sln --configuration Release --no-restore
+
+      - name: Publish API
+        run: dotnet publish API/WasteFree.App/WasteFree.App.csproj --configuration Release --output ./publish
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest -f API/Dockerfile ./API
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest
+
+      - name: Add known hosts
+        run: |
+          set -e
+          HOST='${{ secrets.DEPLOY_HOST }}'
+          if [ -z "$HOST" ]; then
+            echo "ERROR: Secret DEPLOY_HOST nie jest ustawiony." >&2
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          # Próba pobrania kilku typów kluczy; ignoruj stderr (GitHub maskuje)
+          for t in ed25519 rsa ecdsa; do
+            ssh-keyscan -T 10 -p "$PORT" -t $t -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+          done
+          # Sprawdź czy coś faktycznie dodano
+          if ! grep -q "$HOST" ~/.ssh/known_hosts; then
+            echo "ERROR: Nie udało się pobrać klucza hosta dla $HOST." >&2
+            exit 1
+          fi
+
+      - name: Start ssh agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy API on remote host
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
+        run: |
+          ssh -p ${PORT:-22} $USER@$HOST << 'EOF'
+          set -e
+          docker pull $DOCKERHUB_USERNAME/wastefree-api:latest
+          docker rm -f wastefree-api || true
+          docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production $DOCKERHUB_USERNAME/wastefree-api:latest
+          # Optional cleanup of dangling images
+          docker image prune -f || true
+          EOF
