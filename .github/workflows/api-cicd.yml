@@ -64,6 +64,6 @@ jobs:
             echo "Using IMAGE=${IMAGE}"
 
             docker pull "$IMAGE"
-            docker rm -f wastefree-api || true
-            docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production "$IMAGE"
+            docker rm -f  "$IMAGE" || true
+            docker run -d --name "$IMAGE" --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production "$IMAGE"
             docker image prune -f || true
