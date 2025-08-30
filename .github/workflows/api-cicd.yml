@@ -39,8 +39,7 @@ jobs:
           mkdir -p ~/.ssh
           touch ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-          echo "Scanning host key for $HOST:$PORT ..."
-          if ! ssh-keyscan -T 5 -p "$PORT" -t rsa "$HOST" 2>/dev/null >> ~/.ssh/known_hosts; then
+          if ! ssh-keyscan -T 5 -p "$PORT" -t rsa,ecdsa,ed25519 "$HOST" 2>/dev/null >> ~/.ssh/known_hosts; then
             echo "::error::ssh-keyscan failed (host unreachable or wrong HOST/PORT)"
             exit 1
           fi
@@ -52,9 +51,12 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_key
           chmod 600 id_key
 
+          IMAGE="${U}/wastefree-api:latest"
+          echo "Using IMAGE=${IMAGE}"
+
           ssh -i id_key -T $USER@$HOST -p $PORT << 'EOF'
           set -e
-          docker pull $DOCKERHUB_USERNAME/wastefree-api:latest
+          docker pull "$IMAGE"
           docker rm -f wastefree-api || true
           docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production $DOCKERHUB_USERNAME/wastefree-api:latest
           # Optional cleanup of dangling images
