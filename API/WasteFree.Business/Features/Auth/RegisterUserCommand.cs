@@ -43,18 +43,27 @@ public class RegisterUserCommandHandler(ApplicationDataContext context, IJobSche
         };
         
         context.Users.Add(newUser);
-        await context.SaveChangesAsync(cancellationToken);
         
         var notificationTemplate = await context.NotificationTemplates
             .FirstOrDefaultAsync(x => x.Type == NotificationType.RegisterationConfirmation 
                                       && x.Channel == NotificationChannel.Email, cancellationToken);
 
+        if (notificationTemplate is null)
+            return Result<UserDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
+
+        notificationTemplate.Body = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
+        {
+            {"Username", newUser.Username}
+        });
+        
+        await context.SaveChangesAsync(cancellationToken);
+        
         await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob), 
             new SendEmailDto
             {
                 Email = newUser.Email,
-                Subject = notificationTemplate?.Subject ?? "Welcome!",
-                Body = (notificationTemplate?.Body ?? "Thank you for registering.")
+                Subject = notificationTemplate.Subject,
+                Body = notificationTemplate.Body
             },
             "Send registration confirmation email", 
             cancellationToken);
