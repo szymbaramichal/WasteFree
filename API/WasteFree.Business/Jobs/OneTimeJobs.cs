@@ -1,0 +1,17 @@
+﻿using TickerQ.Utilities.Base;
+using TickerQ.Utilities.Models;
+using WasteFree.Business.Jobs.Dtos;
+using WasteFree.Shared.Interfaces;
+
+namespace WasteFree.Business.Jobs;
+
+public class OneTimeJobs(IEmailService emailService)
+{
+    [TickerFunction(nameof(SendEmailJob))]
+    public async Task SendEmailJob(TickerFunctionContext<SendEmailDto> sendEmailDto)
+    {
+        Console.WriteLine($"Starting SendEmailJob for {sendEmailDto.Request.Email}");
+        await emailService.SendEmailAsync(sendEmailDto.Request.Email, sendEmailDto.Request.Subject, sendEmailDto.Request.Body);
+        Console.WriteLine($"Ending SendEmailJob for {sendEmailDto.Request.Email}");
+    }
+}

@@ -8,6 +8,9 @@
     <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.7" />
+    <PackageReference Include="TickerQ" Version="2.5.2" />
+    <PackageReference Include="TickerQ.Dashboard" Version="2.5.2" />
+    <PackageReference Include="TickerQ.EntityFrameworkCore" Version="2.5.2" />
   </ItemGroup>
 
   <PropertyGroup>
