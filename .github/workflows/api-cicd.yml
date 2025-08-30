@@ -65,5 +65,5 @@ jobs:
 
             docker pull "$IMAGE"
             docker rm -f  "$IMAGE" || true
-            docker run -d --name "$IMAGE" --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production "$IMAGE"
+            docker run -d --name wastefree-api -p 8080:80 "${DOCKERHUB_USERNAME}"/wastefree-api:latest
             docker image prune -f || true
