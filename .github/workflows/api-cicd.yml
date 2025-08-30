@@ -56,7 +56,9 @@ jobs:
 
           ssh -i id_key -T $USER@$HOST -p $PORT << 'EOF'
           set -e
-          docker pull "$IMAGE"
+          IMAGE="${DOCKERHUB_USERNAME}/wastefree-api:latest"
+          echo "Using IMAGE=${IMAGE}"
+          docker pull $IMAGE
           docker rm -f wastefree-api || true
           docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production $DOCKERHUB_USERNAME/wastefree-api:latest
           # Optional cleanup of dangling images
