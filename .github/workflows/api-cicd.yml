@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-api:
@@ -38,30 +41,6 @@ jobs:
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest
 
-      - name: Add known hosts
-        run: |
-          set -e
-          HOST='${{ secrets.DEPLOY_HOST }}'
-          if [ -z "$HOST" ]; then
-            echo "ERROR: Secret DEPLOY_HOST nie jest ustawiony." >&2
-            exit 1
-          fi
-          mkdir -p ~/.ssh
-          # Próba pobrania kilku typów kluczy; ignoruj stderr (GitHub maskuje)
-          for t in ed25519 rsa ecdsa; do
-            ssh-keyscan -T 10 -p "$PORT" -t $t -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
-          done
-          # Sprawdź czy coś faktycznie dodano
-          if ! grep -q "$HOST" ~/.ssh/known_hosts; then
-            echo "ERROR: Nie udało się pobrać klucza hosta dla $HOST." >&2
-            exit 1
-          fi
-
-      - name: Start ssh agent
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - name: Deploy API on remote host
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -69,7 +48,7 @@ jobs:
           USER: ${{ secrets.DEPLOY_USER }}
           PORT: ${{ secrets.DEPLOY_PORT }}
         run: |
-          ssh -p ${PORT:-22} $USER@$HOST << 'EOF'
+          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} $USER@$HOST -p $PORT << 'EOF'
           set -e
           docker pull $DOCKERHUB_USERNAME/wastefree-api:latest
           docker rm -f wastefree-api || true
