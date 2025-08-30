@@ -1,0 +1,76 @@
+name: Build and Push UI Docker Image
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        run: cd UI && npm ci
+
+      - name: Build UI
+        run: cd UI && npm run build --if-present
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-ui:latest -f UI/Dockerfile UI
+
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-ui:latest
+
+      - name: Add known hosts
+        run: |
+          set -e
+          HOST='${{ secrets.DEPLOY_HOST }}'
+          if [ -z "$HOST" ]; then
+            echo "ERROR: Secret DEPLOY_HOST nie jest ustawiony." >&2
+            exit 1
+          fi
+          mkdir -p ~/.ssh
+          # Próba pobrania kilku typów kluczy; ignoruj stderr (GitHub maskuje)
+          for t in ed25519 rsa ecdsa; do
+            ssh-keyscan -T 10 -p "$PORT" -t $t -H "$HOST" 2>/dev/null >> ~/.ssh/known_hosts || true
+          done
+          # Sprawdź czy coś faktycznie dodano
+          if ! grep -q "$HOST" ~/.ssh/known_hosts; then
+            echo "ERROR: Nie udało się pobrać klucza hosta dla $HOST." >&2
+            exit 1
+          fi
+
+      - name: Start ssh agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy UI on remote host
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
+          USER: ${{ secrets.DEPLOY_USER }}
+          PORT: ${{ secrets.DEPLOY_PORT }}
+        run: |
+          ssh -p ${PORT:-22} $USER@$HOST << 'EOF'
+          set -e
+            docker pull $DOCKERHUB_USERNAME/wastefree-ui:latest
+            docker rm -f wastefree-ui || true
+            # Map host port 5000 to container 80 (adjust if needed)
+            docker run -d --name wastefree-ui --restart=always -p 5000:80 $DOCKERHUB_USERNAME/wastefree-ui:latest
+            docker image prune -f || true
+          EOF

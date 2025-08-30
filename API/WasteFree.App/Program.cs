@@ -4,6 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
+using TickerQ.DependencyInjection;
 using WasteFree.App.Endpoints;
 using WasteFree.App.Extensions;
 using WasteFree.Infrastructure;
@@ -60,6 +61,8 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 
  
 app.MigrateDatabase<ApplicationDataContext>();
+
+app.UseTickerQ();
  
 app.MapAuthEndpoints();
 app.MapGarbageGroupsEndpoints();

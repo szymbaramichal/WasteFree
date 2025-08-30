@@ -5,6 +5,7 @@ public static class ApiErrorCodes
     public const string UsernameTaken = "USERNAME_TAKEN";
     public const string EmailTaken = "EMAIL_TAKEN";
     public const string LoginFailed = "LOGIN_FAILED";
+    public const string GenericError = "STH_WENT_WRONG";
 }
 
 public static class ValidationErrorCodes
