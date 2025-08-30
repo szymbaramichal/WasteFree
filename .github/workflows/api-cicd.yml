@@ -48,7 +48,10 @@ jobs:
           USER: ${{ secrets.DEPLOY_USER }}
           PORT: ${{ secrets.DEPLOY_PORT }}
         run: |
-          ssh -i ${{ secrets.SSH_PRIVATE_KEY }} $USER@$HOST -p $PORT << 'EOF'
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_key
+          chmod 600 id_key
+
+          ssh -i id_key $USER@$HOST -p $PORT << 'EOF'
           set -e
           docker pull $DOCKERHUB_USERNAME/wastefree-api:latest
           docker rm -f wastefree-api || true
