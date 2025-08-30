@@ -41,7 +41,7 @@ jobs:
           script: |
             set -e
             IMAGE="${DOCKERHUB_USERNAME}/wastefree-api:latest"
-
+            echo "$IMAGE"
             docker pull "$IMAGE"
             docker rm -f wastefree-api || true
             docker run -d --name wastefree-api --restart=always -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production "$IMAGE"
