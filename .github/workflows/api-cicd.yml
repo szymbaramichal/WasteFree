@@ -64,6 +64,5 @@ jobs:
             echo "Using IMAGE=${IMAGE}"
 
             docker pull "$IMAGE"
-            docker rm -f  "$IMAGE" || true
-            docker run -d --name wastefree-api -p 8080:80 "${DOCKERHUB_USERNAME}"/wastefree-api:latest
+            docker run -d --name wastefree-api -p 8080:80 wastefreecloud/wastefree-api:latest
             docker image prune -f || true
