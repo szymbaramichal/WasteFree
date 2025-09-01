@@ -52,18 +52,14 @@ jobs:
           script: |
             set -euo pipefail
 
-            U=$(printf "%s" "${DOCKERHUB_USERNAME}" | tr -d '\r\n' | tr '[:upper:]' '[:lower:]')
-            if [ -z "$U" ]; then
-              echo "::error::DOCKERHUB_USERNAME is empty"
-              exit 1
-            fi
+            U=${DOCKERHUB_USERNAME,,}
+
             IMAGE="${U}/wastefree-api:latest"
             echo "Using IMAGE=${IMAGE}"
 
-            # zatrzymaj i usuń stary kontener, jeśli istnieje
             docker stop wastefree-api || true
             docker rm wastefree-api || true
 
             docker pull "$IMAGE"
-            docker run -d --name wastefree-api -p 8080:80 "$IMAGE"
+            docker run -d --restart unless-stopped --name wastefree-api -p 8080:8080 "$IMAGE"
             docker image prune -f || true
