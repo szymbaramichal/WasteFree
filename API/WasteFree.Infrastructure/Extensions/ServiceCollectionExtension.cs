@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TickerQ.Dashboard.DependencyInjection;
 using TickerQ.DependencyInjection;
 using TickerQ.EntityFrameworkCore.DependencyInjection;
+using WasteFree.Infrastructure.Seeders;
 using WasteFree.Infrastructure.Services;
 using WasteFree.Shared.Interfaces;
 
@@ -57,6 +58,10 @@ public static class ServiceCollectionExtension
             ));
 
         services.AddScoped<IJobSchedulerFacade, JobSchedulerFacade>();
+        
+        // Seeder registrations
+        services.AddScoped<UserSeeder>();
+        services.AddScoped<NotificationTemplateSeeder>();
         
         return services;
     }
