@@ -42,13 +42,15 @@ jobs:
         uses: appleboy/ssh-action@v1
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DB_CONN_STRING: ${{ secrets.DB_CONN_STRING }}
+          INTEGRATIONS__SMTP__PASSWORD: ${{ secrets.INTEGRATIONS__SMTP__PASSWORD }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script_stop: true
-          envs: DOCKERHUB_USERNAME
+          envs: DOCKERHUB_USERNAME,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD
           script: |
             set -euo pipefail
 
@@ -61,5 +63,9 @@ jobs:
             docker rm wastefree-api || true
 
             docker pull "$IMAGE"
-            docker run -d --restart unless-stopped --name wastefree-api -p 8080:8080 "$IMAGE"
+            docker run -d --restart unless-stopped --name wastefree-api \
+              -p 8080:8080 \
+              -e "ConnectionStrings__SqlServerDatabase=$DB_CONN_STRING" \
+              -e "Integrations__Smtp__Password=$INTEGRATIONS__SMTP__PASSWORD" \
+              "$IMAGE"
             docker image prune -f || true
