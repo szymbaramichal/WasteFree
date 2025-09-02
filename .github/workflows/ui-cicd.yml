@@ -1,4 +1,4 @@
-name: Build and Push UI Docker Image
+name: Build and Deploy UI Docker Image
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-ui:
+  build-and-deploy-ui:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
