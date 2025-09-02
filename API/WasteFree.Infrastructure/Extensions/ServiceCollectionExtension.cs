@@ -15,7 +15,7 @@ public static class ServiceCollectionExtension
     {
         var connectionString = configuration.GetConnectionString("SqlServerDatabase");
         services.AddDbContext<ApplicationDataContext>(opt => {
-            opt.UseSqlServer(connectionString);
+            opt.UseSqlite(connectionString);
         });
 
         services.AddTickerQ(opt =>
