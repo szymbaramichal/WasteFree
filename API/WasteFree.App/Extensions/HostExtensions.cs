@@ -1,6 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Seeders;
+using WasteFree.Infrastructure.Services;
 
 namespace WasteFree.App.Extensions;
 
@@ -28,6 +30,21 @@ public static class HostExtensions
                     context.Database.Migrate();
                     
                     logger.LogInformation("Migrated database associated with context {DbContextName}", typeof(TContext).Name);
+
+                    // Run seeders
+                    var userSeeder = services.GetService<UserSeeder>();
+                    if (userSeeder != null)
+                    {
+                        userSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed UserSeeder.SeedAsync");
+                    }
+
+                    var notificationTemplateSeeder = services.GetService<NotificationTemplateSeeder>();
+                    if (notificationTemplateSeeder != null)
+                    {
+                        notificationTemplateSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed NotificationTemplateSeeder.SeedAsync");
+                    }
                 }
             }
             catch (SqlException ex)
