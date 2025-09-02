@@ -1,12 +1,12 @@
 version: '3.8'
 services:
-  wastefree-db:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=yourStrong(!)Password
-    ports:
-      - "1433:1433"
+  # wastefree-db:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=yourStrong(!)Password
+  #   ports:
+  #     - "1433:1433"
 
   wastefree-api:
     build:
@@ -16,8 +16,8 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-    depends_on:
-      -  wastefree-db
+    # depends_on:
+    #   -  wastefree-db
 
 #  ui:
 #    build:
