@@ -1,10 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
 
 body {
 	background: initial;
 }
 
-/* Scoped backgrounds for specific routes/components */
+
 body.auth-bg, body.portal-bg {
 	background-image: url('/assets/images/auth_background.jpg');
 	background-size: cover;
@@ -12,5 +11,22 @@ body.auth-bg, body.portal-bg {
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	min-height: 100vh;
-	background-color: #f0fff5; /* fallback color */
+	background-color: #f0fff5;
+}
+
+.navbar .navbar-nav {
+	flex-wrap: nowrap;
+}
+.navbar .nav-item .btn {
+	white-space: nowrap;
+	min-width: 88px; 
+}
+
+@media (max-width: 575px) {
+	.navbar .navbar-nav {
+		flex-wrap: wrap;
+	}
+	.navbar .nav-item .btn {
+		min-width: 0;
+	}
 }
