@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://wastefree-api:8080/auth';
+  private apiUrl = 'https://dev.wastefreecloud.pl/api/auth';
 
   constructor(private http: HttpClient) {}
 
