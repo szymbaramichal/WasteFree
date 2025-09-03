@@ -58,8 +58,8 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
 
         await context.SaveChangesAsync(cancellationToken);
         
-        var baseUrl = configuration["BaseApiUrl"] ?? throw new NotImplementedException();
-        var aesToken = configuration["AesEncryptionKey"] ?? throw new NotImplementedException();
+        var baseUrl = configuration["BaseUiUrl"] ?? throw new NotImplementedException();
+        var aesToken = configuration["Security:AesEncryptionKey"] ?? throw new NotImplementedException();
         
         notificationTemplate.Body = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
         {

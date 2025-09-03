@@ -22,8 +22,8 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                           <p>
                             Thank you for registering. We are excited to have you join our community.<br><br>
                             <b>Get started by exploring our features and reducing waste today!</b> <br><br>
-                            Activation link: <a href=""{{Link}}"" style='color:#2e7d32;text-decoration:underline;' target=""_blank"">Activate your account</a>
-                          </p>
+                            <a href=""""{{Link}"""" target=""_blank"" style='display:inline-block;background:#2e7d32;color:#fff !important;padding:12px 24px;font-size:18px;font-weight:600;text-decoration:none;border-radius:6px;border:1px solid #1b5e20;box-shadow:0 2px 6px rgba(0,0,0,0.2);'>Activate your account ➜</a>
+                            </p>
                           <hr style='margin:24px 0;'>
                           <p style='font-size:12px;color:#888;'>
                             If you did not register, please ignore this email.
