@@ -5,6 +5,7 @@
   <data name="INVALID_USER" xml:space="preserve"><value>Invalid user</value></data>
   <data name="STH_WENT_WRONG" xml:space="preserve"><value>Oops, something went wrong. Please try again!</value></data>
   <data name="INVALID_ROLE" xml:space="preserve"><value>Invalid user role</value></data>
+  <data name="INVALID_LANG" xml:space="preserve"><value>Invalid language</value></data>
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Email is already taken</value></data>
   <data name="LOGIN_FAILED" xml:space="preserve"><value>Login or password is incorrect</value></data>
   <data name="ERR_EMAIL_REQUIRED"><value>Email is required</value></data>

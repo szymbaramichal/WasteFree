@@ -46,14 +46,15 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             PasswordSalt = hashAndSalt.passwordSalt,
             Username = command.Username,
             Role = Enum.TryParse<UserRole>(command.Role, true, out var role) ? role : UserRole.User,
-            LanguagePreference= Enum.TryParse<LanguagePreference>(command.Role, true, out var language) ? language : LanguagePreference.English,
+            LanguagePreference= Enum.TryParse<LanguagePreference>(command.LanguagePreference, true, out var language) ? language : LanguagePreference.English,
         };
         
         context.Users.Add(newUser);
         
         var notificationTemplate = await context.NotificationTemplates
             .FirstOrDefaultAsync(x => x.Type == NotificationType.RegisterationConfirmation 
-                                      && x.Channel == NotificationChannel.Email, cancellationToken);
+                                      && x.Channel == NotificationChannel.Email
+                                      && x.LanguagePreference == newUser.LanguagePreference, cancellationToken);
 
         if (notificationTemplate is null)
             return Result<UserDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);

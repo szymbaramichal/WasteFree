@@ -5,6 +5,7 @@
   <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Niepoprawny użytkownik</value></data>
   <data name="STH_WENT_WRONG" xml:space="preserve"><value>Ups, coś poszło nie tak. Spróbuj jeszcze raz!</value></data>
   <data name="INVALID_ROLE" xml:space="preserve"><value>Niepoprawna rola użytkownika</value></data>
+  <data name="INVALID_LANG" xml:space="preserve"><value>Niepoprawny język</value></data>
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Adres e-mail jest już zajęty</value></data>
   <data name="LOGIN_FAILED" xml:space="preserve"><value>Login lub hasło są nieprawidłowe</value></data>
   <data name="ERR_EMAIL_REQUIRED"><value>Adres e-mail jest wymagany</value></data>
