@@ -15,6 +15,12 @@ export class TranslationService {
   this.loadLang(this.lang);
   }
 
+  private normalizeLang(lang: string | undefined): string {
+    if (!lang) return 'pl';
+    const m = /^([a-z]{2})/i.exec(lang);
+    return m ? m[1].toLowerCase() : lang.toLowerCase();
+  }
+
   get onLangChange() {
     return this.lang$.asObservable();
   }
@@ -25,26 +31,29 @@ export class TranslationService {
 
   setLanguage(lang: string) {
     if (!lang) return;
-    if (this.lang === lang) return;
-    this.lang = lang;
-    localStorage.setItem('lang', lang);
-    this.loadLang(lang);
-    this.lang$.next(lang);
+  const short = this.normalizeLang(lang);
+  if (this.lang === short) return;
+  this.lang = short;
+  localStorage.setItem('lang', short);
+  this.loadLang(short);
+  this.lang$.next(short);
   }
 
   private loadLang(lang: string) {
-    if (this.cache[lang]) return;
-    this.http.get(`/assets/i18n/${lang}.json`).subscribe((res) => {
-      this.cache[lang] = res || {};
+    const short = this.normalizeLang(lang);
+    if (this.cache[short]) return;
+    this.http.get(`/assets/i18n/${short}.json`).subscribe((res) => {
+      this.cache[short] = res || {};
       this.lang$.next(this.lang); // notify subscribers when loaded
     }, () => {
-      this.cache[lang] = {}; // fallback to empty
+      this.cache[short] = {}; // fallback to empty
     });
   }
 
   // Promise-based loader usable by APP_INITIALIZER to block bootstrap until translations are ready
   async loadLangPromise(lang?: string): Promise<void> {
-    const target = lang || this.lang;
+    const targetRaw = lang || this.lang;
+    const target = this.normalizeLang(targetRaw);
     if (this.cache[target]) return;
     try {
       const obs = this.http.get(`/assets/i18n/${target}.json`);
