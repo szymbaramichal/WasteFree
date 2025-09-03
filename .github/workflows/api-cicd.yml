@@ -44,16 +44,16 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DB_CONN_STRING: ${{ secrets.DB_CONN_STRING }}
           INTEGRATIONS__SMTP__PASSWORD: ${{ secrets.INTEGRATIONS__SMTP__PASSWORD }}
-          Security__AesEncryptionKey: ${{ secrets.SECURITY__AESENCRYPTIONKEY }}
-          TickerQBasicAuth__Username: ${{ secrets.TICKERQBASICAUTH__USERNAME }}
-          TickerQBasicAuth__Password: ${{ secrets.TICKERQBASICAUTH__PASSWORD }}
-          Security__Jwt__Key: ${{ secrets.SECURITY__JWT__KEY }}
+          SECURITY__AESENCRYPTIONKEY: ${{ secrets.SECURITY__AESENCRYPTIONKEY }}
+          TICKERQBASICAUTH__USERNAME: ${{ secrets.TICKERQBASICAUTH__USERNAME }}
+          TICKERQBASICAUTH__PASSWORD: ${{ secrets.TICKERQBASICAUTH__PASSWORD }}
+          SECURITY__JWT__KEY: ${{ secrets.SECURITY__JWT__KEY }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
-          envs: DOCKERHUB_USERNAME,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD,Security__AesEncryptionKey,TickerQBasicAuth__Username,TickerQBasicAuth__Password,Security__Jwt__Key
+          envs: DOCKERHUB_USERNAME,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD,SECURITY__AESENCRYPTIONKEY,TICKERQBASICAUTH__USERNAME,TICKERQBASICAUTH__PASSWORD,SECURITY__JWT__KEY
           script: |
             set -euo pipefail
 
@@ -70,9 +70,9 @@ jobs:
               -p 8080:8080 \
               -e "ConnectionStrings__SqlServerDatabase=$DB_CONN_STRING" \
               -e "Integrations__Smtp__Password=$INTEGRATIONS__SMTP__PASSWORD" \
-              -e "Security__AesEncryptionKey=$Security__AesEncryptionKey" \
-              -e "TickerQBasicAuth__Username=$TickerQBasicAuth__Username" \
-              -e "TickerQBasicAuth__Password=$TickerQBasicAuth__Password" \
-              -e "Security__Jwt__Key=$Security__Jwt__Key" \
+              -e "Security__AesEncryptionKey=$SECURITY__AESENCRYPTIONKEY" \
+              -e "TickerQBasicAuth__Username=$TICKERQBASICAUTH__USERNAME" \
+              -e "TickerQBasicAuth__Password=$TICKERQBASICAUTH__PASSWORD" \
+              -e "Security__Jwt__Key=$SECURITY__JWT__KEY" \
               "$IMAGE"
             docker image prune -f || true
