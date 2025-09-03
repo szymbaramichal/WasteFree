@@ -16,7 +16,8 @@ using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
 
-public record RegisterUserCommand(string Email, string Username, string Password, string Role) : IRequest<UserDto>;
+public record RegisterUserCommand(string Email, string Username, string Password, string Role, string LanguagePreference) 
+    : IRequest<UserDto>;
 
 public class RegisterUserCommandHandler(ApplicationDataContext context, 
     IJobSchedulerFacade jobScheduler,
@@ -45,6 +46,7 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             PasswordSalt = hashAndSalt.passwordSalt,
             Username = command.Username,
             Role = Enum.TryParse<UserRole>(command.Role, true, out var role) ? role : UserRole.User,
+            LanguagePreference= Enum.TryParse<LanguagePreference>(command.Role, true, out var language) ? language : LanguagePreference.English,
         };
         
         context.Users.Add(newUser);
