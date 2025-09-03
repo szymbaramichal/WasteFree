@@ -53,8 +53,8 @@ public static class AuthEndpoints
             .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
             .WithOpenApi();
         
-        app.MapPost("/auth/activate-account/{token}", async (
-                [FromRoute] string token,
+        app.MapPost("/auth/activate-account", async (
+                [FromQuery] string token,
                 IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>

@@ -20,7 +20,7 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
         try
         {
             var decryptedToken = AesEncryptor.Decrypt(request.AesToken, 
-                configuration["AesEncryptionKey"] ?? throw new NotImplementedException());
+                configuration["Security:AesEncryptionKey"] ?? throw new NotImplementedException());
             if (string.IsNullOrEmpty(decryptedToken))
                 return Result<ActivateAccountDto>.Failure(ApiErrorCodes.InvalidRegistrationToken, HttpStatusCode.BadRequest);
         

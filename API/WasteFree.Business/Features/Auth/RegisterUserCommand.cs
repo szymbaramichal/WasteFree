@@ -69,8 +69,7 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             {"Username", newUser.Username},
             {
                 "Link", 
-                $"{baseUrl}/activate-account/{AesEncryptor.Encrypt(
-                Convert.ToBase64String(Encoding.UTF8.GetBytes(newUser.Id.ToString())),
+                $"{baseUrl}/activate-account/{AesEncryptor.Encrypt(newUser.Id.ToString(),
                 aesToken)}"
             }
         });
