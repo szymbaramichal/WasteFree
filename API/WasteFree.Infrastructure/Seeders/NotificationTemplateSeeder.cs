@@ -21,7 +21,8 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                           <h2 style='color:#2e7d32;'>Welcome {{Username}} to WasteFree!</h2>
                           <p>
                             Thank you for registering. We are excited to have you join our community.<br><br>
-                            <b>Get started by exploring our features and reducing waste today!</b>
+                            <b>Get started by exploring our features and reducing waste today!</b> <br><br>
+                            <a href=""{{Link}}"" target=""_blank"" style='display:inline-block;background:#2e7d32;color:#fff !important;padding:12px 24px;font-size:18px;font-weight:600;text-decoration:none;border-radius:6px;border:1px solid #1b5e20;box-shadow:0 2px 6px rgba(0,0,0,0.2);'>Activate your account ➜</a>
                           </p>
                           <hr style='margin:24px 0;'>
                           <p style='font-size:12px;color:#888;'>
@@ -33,7 +34,40 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Channel = NotificationChannel.Email,
                 Type = NotificationType.RegisterationConfirmation,
                 CreatedDateUtc = DateTime.UtcNow,
-                CreatedBy = Guid.Empty
+                CreatedBy = Guid.Empty,
+                LanguagePreference = LanguagePreference.English
+            });
+            await context.SaveChangesAsync();
+        }
+
+        var welcomePlId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+        if (!await context.NotificationTemplates.AnyAsync(t => t.Id == welcomePlId))
+        {
+            context.NotificationTemplates.Add(new NotificationTemplate
+            {
+                Id = welcomePlId,
+                Subject = "Witamy w WasteFree!",
+                Body = @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:40px;'>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;'>Witamy {{Username}} w WasteFree!</h2>
+                          <p>
+                            Dziękujemy za rejestrację. Cieszymy się, że dołączasz do naszej społeczności.<br><br>
+                            <b>Rozpocznij, odkrywając nasze funkcje i ograniczając marnowanie już dziś!</b> <br><br>
+                            <a href=""{{Link}}"" target=""_blank"" style='display:inline-block;background:#2e7d32;color:#fff !important;padding:12px 24px;font-size:18px;font-weight:600;text-decoration:none;border-radius:6px;border:1px solid #1b5e20;box-shadow:0 2px 6px rgba(0,0,0,0.2);'>Aktywuj swoje konto ➜</a>
+                          </p>
+                          <hr style='margin:24px 0;'>
+                          <p style='font-size:12px;color:#888;'>
+                            Jeśli to nie Ty się rejestrowałeś, zignoruj tę wiadomość.
+                          </p>
+                        </div>
+                      </body>
+                    </html>",
+                Channel = NotificationChannel.Email,
+                Type = NotificationType.RegisterationConfirmation,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                LanguagePreference = LanguagePreference.Polish
             });
             await context.SaveChangesAsync();
         }

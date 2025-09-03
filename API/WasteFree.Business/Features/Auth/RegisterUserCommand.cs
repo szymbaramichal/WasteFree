@@ -1,5 +1,8 @@
 ﻿using System.Net;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Helpers;
 using WasteFree.Business.Jobs;
@@ -13,9 +16,12 @@ using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
 
-public record RegisterUserCommand(string Email, string Username, string Password, string Role) : IRequest<UserDto>;
+public record RegisterUserCommand(string Email, string Username, string Password, string Role, string LanguagePreference) 
+    : IRequest<UserDto>;
 
-public class RegisterUserCommandHandler(ApplicationDataContext context, IJobSchedulerFacade jobScheduler) 
+public class RegisterUserCommandHandler(ApplicationDataContext context, 
+    IJobSchedulerFacade jobScheduler,
+    IConfiguration configuration) 
     : IRequestHandler<RegisterUserCommand, UserDto>
 {
     public async Task<Result<UserDto>> HandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
@@ -40,23 +46,33 @@ public class RegisterUserCommandHandler(ApplicationDataContext context, IJobSche
             PasswordSalt = hashAndSalt.passwordSalt,
             Username = command.Username,
             Role = Enum.TryParse<UserRole>(command.Role, true, out var role) ? role : UserRole.User,
+            LanguagePreference= Enum.TryParse<LanguagePreference>(command.LanguagePreference, true, out var language) ? language : LanguagePreference.English,
         };
         
         context.Users.Add(newUser);
         
         var notificationTemplate = await context.NotificationTemplates
             .FirstOrDefaultAsync(x => x.Type == NotificationType.RegisterationConfirmation 
-                                      && x.Channel == NotificationChannel.Email, cancellationToken);
+                                      && x.Channel == NotificationChannel.Email
+                                      && x.LanguagePreference == newUser.LanguagePreference, cancellationToken);
 
         if (notificationTemplate is null)
             return Result<UserDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
 
+        await context.SaveChangesAsync(cancellationToken);
+        
+        var baseUrl = configuration["BaseUiUrl"] ?? throw new NotImplementedException();
+        var aesToken = configuration["Security:AesEncryptionKey"] ?? throw new NotImplementedException();
+        
         notificationTemplate.Body = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
         {
-            {"Username", newUser.Username}
+            {"Username", newUser.Username},
+            {
+                "Link", 
+                $"{baseUrl}/activate-account/{AesEncryptor.Encrypt(newUser.Id.ToString(),
+                aesToken)}"
+            }
         });
-        
-        await context.SaveChangesAsync(cancellationToken);
         
         await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob), 
             new SendEmailDto

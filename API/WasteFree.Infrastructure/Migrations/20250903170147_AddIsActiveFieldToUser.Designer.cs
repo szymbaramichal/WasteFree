@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WasteFree.Infrastructure;
 
@@ -10,9 +11,11 @@ using WasteFree.Infrastructure;
 namespace WasteFree.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    partial class ApplicationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20250903170147_AddIsActiveFieldToUser")]
+    partial class AddIsActiveFieldToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -234,9 +237,6 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDateUtc")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("LanguagePreference")
-                        .HasColumnType("INTEGER");
-
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("TEXT");
 
@@ -277,9 +277,6 @@ namespace WasteFree.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("LanguagePreference")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid?>("ModifiedBy")

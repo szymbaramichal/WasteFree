@@ -16,7 +16,8 @@ public static class AuthEndpoints
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
         {
-            var command = new RegisterUserCommand(request.Email, request.Username, request.Password, request.Role);
+            var command = new RegisterUserCommand(request.Email, request.Username, request.Password, 
+                request.Role, request.LanguagePreference);
             
             var result = await mediator.SendAsync(command, cancellationToken);
             
@@ -36,24 +37,42 @@ public static class AuthEndpoints
                 IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
-        {
-            var command = new LoginUserCommand(userRequest.Username, userRequest.Password);
-            
-            var result = await mediator.SendAsync(command, cancellationToken);
-            
-            if(!result.IsValid)
             {
-                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                return Results.BadRequest(result);
-            }
+                var command = new LoginUserCommand(userRequest.Username, userRequest.Password);
+            
+                var result = await mediator.SendAsync(command, cancellationToken);
+            
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.BadRequest(result);
+                }
 
-            return Results.Ok(result);
-        })
-        .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
-        .WithOpenApi();
+                return Results.Ok(result);
+            })
+            .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
+            .WithOpenApi();
+        
+        app.MapPost("/auth/activate-account", async (
+                [FromQuery] string token,
+                IStringLocalizer localizer,
+                IMediator mediator,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await mediator.SendAsync(new ActivateAccountCommand(token), cancellationToken);
+            
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.BadRequest(result);
+                }
+
+                return Results.Ok(result);
+            })
+            .WithOpenApi();
     }
 }
 
-public record RegisterUserRequest(string Username, string Email, string Password, string Role);
+public record RegisterUserRequest(string Username, string Email, string Password, string Role, string LanguagePreference);
 
 public record LoginUserRequest(string Username, string Password);

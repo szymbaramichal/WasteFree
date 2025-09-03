@@ -26,7 +26,8 @@ public class UserSeeder(ApplicationDataContext context)
                 PasswordSalt = passwordSalt,
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
-                Role = UserRole.User
+                Role = UserRole.User,
+                LanguagePreference = LanguagePreference.Polish
             },
             new User
             {
@@ -38,7 +39,8 @@ public class UserSeeder(ApplicationDataContext context)
                 PasswordSalt = passwordSalt,
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
-                Role = UserRole.User
+                Role = UserRole.User,
+                LanguagePreference = LanguagePreference.Polish
             },
             new User
             {
@@ -50,7 +52,8 @@ public class UserSeeder(ApplicationDataContext context)
                 PasswordSalt = passwordSalt,
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
-                Role = UserRole.User
+                Role = UserRole.User,
+                LanguagePreference = LanguagePreference.Polish
             },
             new User
             {
@@ -62,7 +65,8 @@ public class UserSeeder(ApplicationDataContext context)
                 PasswordSalt = passwordSalt,
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
-                Role = UserRole.User
+                Role = UserRole.User,
+                LanguagePreference = LanguagePreference.Polish
             },
             new User
             {
@@ -74,7 +78,8 @@ public class UserSeeder(ApplicationDataContext context)
                 PasswordSalt = passwordSalt,
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
-                Role = UserRole.User
+                Role = UserRole.User,
+                LanguagePreference = LanguagePreference.Polish
             }
         };
 
