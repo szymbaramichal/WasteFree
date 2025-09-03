@@ -18,6 +18,8 @@ public class User : DatabaseEntity
     public required byte[] PasswordHash { get; set; }
 
     public required byte[] PasswordSalt { get; set; }
+    
+    public bool IsActive { get; set; } = false;
 
     public required UserRole Role { get; set; }
     

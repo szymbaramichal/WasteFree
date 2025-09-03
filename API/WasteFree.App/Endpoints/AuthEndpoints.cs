@@ -36,21 +36,39 @@ public static class AuthEndpoints
                 IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
-        {
-            var command = new LoginUserCommand(userRequest.Username, userRequest.Password);
-            
-            var result = await mediator.SendAsync(command, cancellationToken);
-            
-            if(!result.IsValid)
             {
-                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                return Results.BadRequest(result);
-            }
+                var command = new LoginUserCommand(userRequest.Username, userRequest.Password);
+            
+                var result = await mediator.SendAsync(command, cancellationToken);
+            
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.BadRequest(result);
+                }
 
-            return Results.Ok(result);
-        })
-        .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
-        .WithOpenApi();
+                return Results.Ok(result);
+            })
+            .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
+            .WithOpenApi();
+        
+        app.MapPost("/auth/activate-account/{token}", async (
+                [FromRoute] string token,
+                IStringLocalizer localizer,
+                IMediator mediator,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await mediator.SendAsync(new ActivateAccountCommand(token), cancellationToken);
+            
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.BadRequest(result);
+                }
+
+                return Results.Ok(result);
+            })
+            .WithOpenApi();
     }
 }
 

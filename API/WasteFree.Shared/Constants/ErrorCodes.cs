@@ -6,6 +6,8 @@ public static class ApiErrorCodes
     public const string EmailTaken = "EMAIL_TAKEN";
     public const string LoginFailed = "LOGIN_FAILED";
     public const string GenericError = "STH_WENT_WRONG";
+    public const string InvalidRegistrationToken = "INVALID_REGISTRATION_TOKEN";
+    public const string InvalidUser = "INVALID_USER";
 }
 
 public static class ValidationErrorCodes

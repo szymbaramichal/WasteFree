@@ -1,5 +1,8 @@
 ﻿using System.Net;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Helpers;
 using WasteFree.Business.Jobs;
@@ -15,7 +18,9 @@ namespace WasteFree.Business.Features.Auth;
 
 public record RegisterUserCommand(string Email, string Username, string Password, string Role) : IRequest<UserDto>;
 
-public class RegisterUserCommandHandler(ApplicationDataContext context, IJobSchedulerFacade jobScheduler) 
+public class RegisterUserCommandHandler(ApplicationDataContext context, 
+    IJobSchedulerFacade jobScheduler,
+    IConfiguration configuration) 
     : IRequestHandler<RegisterUserCommand, UserDto>
 {
     public async Task<Result<UserDto>> HandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
@@ -51,12 +56,21 @@ public class RegisterUserCommandHandler(ApplicationDataContext context, IJobSche
         if (notificationTemplate is null)
             return Result<UserDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
 
+        await context.SaveChangesAsync(cancellationToken);
+        
+        var baseUrl = configuration["BaseApiUrl"] ?? throw new NotImplementedException();
+        var aesToken = configuration["AesEncryptionKey"] ?? throw new NotImplementedException();
+        
         notificationTemplate.Body = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
         {
-            {"Username", newUser.Username}
+            {"Username", newUser.Username},
+            {
+                "Link", 
+                $"{baseUrl}/activate-account/{AesEncryptor.Encrypt(
+                Convert.ToBase64String(Encoding.UTF8.GetBytes(newUser.Id.ToString())),
+                aesToken)}"
+            }
         });
-        
-        await context.SaveChangesAsync(cancellationToken);
         
         await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob), 
             new SendEmailDto

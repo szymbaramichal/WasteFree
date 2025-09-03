@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="USERNAME_TAKEN" xml:space="preserve"><value>Nazwa użytkownika jest już zajęta</value></data>
+  <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Token aktywacyjny wygasł</value></data>
+  <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Niepoprawny użytkownik</value></data>
   <data name="STH_WENT_WRONG" xml:space="preserve"><value>Ups, coś poszło nie tak. Spróbuj jeszcze raz!</value></data>
   <data name="INVALID_ROLE" xml:space="preserve"><value>Niepoprawna rola użytkownika</value></data>
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Adres e-mail jest już zajęty</value></data>

@@ -21,7 +21,8 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                           <h2 style='color:#2e7d32;'>Welcome {{Username}} to WasteFree!</h2>
                           <p>
                             Thank you for registering. We are excited to have you join our community.<br><br>
-                            <b>Get started by exploring our features and reducing waste today!</b>
+                            <b>Get started by exploring our features and reducing waste today!</b> <br><br>
+                            Activation link: <a href=""{{Link}}"" style='color:#2e7d32;text-decoration:underline;' target=""_blank"">Activate your account</a>
                           </p>
                           <hr style='margin:24px 0;'>
                           <p style='font-size:12px;color:#888;'>
