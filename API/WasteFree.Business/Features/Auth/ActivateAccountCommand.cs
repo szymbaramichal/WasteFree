@@ -23,11 +23,10 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
                 configuration["Security:AesEncryptionKey"] ?? throw new NotImplementedException());
             if (string.IsNullOrEmpty(decryptedToken))
                 return Result<ActivateAccountDto>.Failure(ApiErrorCodes.InvalidRegistrationToken, HttpStatusCode.BadRequest);
+
+            var userId = Guid.Parse(decryptedToken);
         
-            var tokenBytes = Convert.FromBase64String(decryptedToken);
-            var userId = System.Text.Encoding.UTF8.GetString(tokenBytes);
-            
-            var user = await context.Users.FirstOrDefaultAsync(x => x.Id.ToString() == userId, cancellationToken);
+            var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
             
             if(user is null)
                 return Result<ActivateAccountDto>.Failure(ApiErrorCodes.InvalidRegistrationToken, HttpStatusCode.BadRequest);
