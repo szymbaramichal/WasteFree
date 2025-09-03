@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { AuthService } from './auth.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-auth',
@@ -25,7 +26,7 @@ export class AuthComponent {
   error: string | null = null;
   showActivationSection = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private translation: TranslationService) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -149,16 +150,29 @@ export class AuthComponent {
 
 
   private formatErrorResponse(err: any): string {
-    if (!err) return 'Nieznany błąd';
+    // Prefer server-provided localized message
+    if (!err) return this.translation.translate('auth.errors.unknown');
     const payload = err.error || {};
+
+    if (payload.localizedMessage && typeof payload.localizedMessage === 'string') return payload.localizedMessage;
+
+    // If server returns an errorCode, try to map it to translations
+    if (payload.errorCode && typeof payload.errorCode === 'string') {
+      if (payload.errorCode === 'ERR_TOO_SHORT') return this.translation.translate('auth.errors.password.tooShort');
+      const key = `auth.errors.${payload.errorCode}`;
+      const translated = this.translation.translate(key);
+      if (translated !== key) return translated;
+    }
+
     if (payload.Password && Array.isArray(payload.Password)) {
       if (payload.Password.includes('ERR_TOO_SHORT')) {
-        return 'Hasło jest za krótkie (minimum 8 znaków).';
+        return this.translation.translate('auth.errors.password.tooShort');
       }
     }
+
     if (payload.errorMessage) return payload.errorMessage;
     if (payload.message) return payload.message;
     if (typeof err.error === 'string') return err.error;
-    return 'Nieznany błąd';
+    return this.translation.translate('auth.errors.unknown');
   }
 }
