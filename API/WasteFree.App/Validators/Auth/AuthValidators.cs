@@ -31,6 +31,11 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
             .Must(role => role.Equals(nameof(UserRole.User), StringComparison.InvariantCultureIgnoreCase) || 
                           role.Equals(nameof(UserRole.GarbageAdmin), StringComparison.InvariantCultureIgnoreCase))
             .WithMessage(localizer[ValidationErrorCodes.InvalidRole]);
+        
+        RuleFor(x => x.LanguagePreference)
+            .Must(lang => lang.Equals(nameof(LanguagePreference.English), StringComparison.InvariantCultureIgnoreCase) || 
+                          lang.Equals(nameof(LanguagePreference.Polish), StringComparison.InvariantCultureIgnoreCase))
+            .WithMessage(localizer[ValidationErrorCodes.InvalidRole]);
     }
 }
 

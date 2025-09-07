@@ -8,7 +8,7 @@ public sealed class Result<T>
     public T? ResultModel { get; set; }
     public string ErrorMessage { get; set; } = string.Empty;
     public string ErrorCode { get; } = string.Empty;
-    public HttpStatusCode ResponseCode { get; } = HttpStatusCode.OK;
+    private HttpStatusCode ResponseCode { get; } = HttpStatusCode.OK;
 
     [JsonIgnore]
     public bool IsValid => string.IsNullOrEmpty(ErrorMessage) && ResponseCode is HttpStatusCode.OK;
@@ -17,12 +17,12 @@ public sealed class Result<T>
 
     public static Result<T> Failure(string errorCode, HttpStatusCode responseCode = HttpStatusCode.InternalServerError) => new(errorCode, responseCode);
 
-    public Result(T resultModel)
+    private Result(T resultModel)
     {
         ResultModel = resultModel;
     }
 
-    public Result(string errorCode, HttpStatusCode responseCode)
+    private Result(string errorCode, HttpStatusCode responseCode)
     {
         ErrorCode = errorCode;
         ResponseCode = responseCode;

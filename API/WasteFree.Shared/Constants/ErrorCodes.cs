@@ -6,6 +6,8 @@ public static class ApiErrorCodes
     public const string EmailTaken = "EMAIL_TAKEN";
     public const string LoginFailed = "LOGIN_FAILED";
     public const string GenericError = "STH_WENT_WRONG";
+    public const string InvalidRegistrationToken = "INVALID_REGISTRATION_TOKEN";
+    public const string InvalidUser = "INVALID_USER";
 }
 
 public static class ValidationErrorCodes
@@ -19,4 +21,5 @@ public static class ValidationErrorCodes
     public const string GroupNameRequired = "ERR_GROUP_NAME_REQUIRED";
     public const string GroupDescriptionRequired = "ERR_GROUP_DESCRIPTION_REQUIRED";
     public const string InvalidRole = "INVALID_ROLE";
+    public const string InvalidLang = "INVALID_LANG";
 }
