@@ -1,12 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CurrentUserService } from '../services/current-user.service';
 import { CommonModule } from '@angular/common';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 
 @Component({
   selector: 'app-portal',
   standalone: true,
   imports: [
-    CommonModule
+  CommonModule,
+  LanguageSwitcherComponent
   ],
   templateUrl: './portal.component.html',
   styleUrls: ['./portal.component.css']

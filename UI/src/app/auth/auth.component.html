@@ -11,6 +11,8 @@
       <label for="password">{{ 'auth.password' | translate }}</label>
       <input id="password" formControlName="password" type="password" />
 
+      
+
       <button type="submit" [disabled]="loginForm.invalid || isLoading">
         <span *ngIf="!isLoading">{{ 'auth.login.btn' | translate }}</span>
         <span *ngIf="isLoading" class="d-flex align-items-center" style="gap:8px;">
@@ -43,6 +45,17 @@
           <span class="role-title">{{ 'auth.role.garbageAdmin' | translate }}</span>
           <span class="role-desc">{{ 'auth.role.garbageAdmin.desc' | translate }}</span>
         </label>
+      </div>
+
+      <label for="reg-language">{{ 'auth.languagePreference' | translate }}</label>
+      <div class="language-select">
+  <select id="reg-language" formControlName="languagePreference" [attr.aria-label]="'auth.languagePreference' | translate">
+          <option value="English">{{ 'language.english' | translate }} 🇬🇧</option>
+          <option value="Polish">{{ 'language.polish' | translate }} 🇵🇱</option>
+        </select>
+        <div class="language-flag">
+          <img [src]="(registerForm.get('languagePreference')?.value === 'Polish') ? 'assets/images/flag-pl.svg' : 'assets/images/flag-en.svg'" alt="flag" />
+        </div>
       </div>
 
       <button type="submit" [disabled]="registerForm.invalid || isRegisterLoading">

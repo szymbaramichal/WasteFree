@@ -1,5 +1,7 @@
 <div class="portal-container">
-	<h2>Portal</h2>
+	<div class="portal-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+		<h2>Portal</h2>
+	</div>
 	<p>Welcome to your portal. Use the navigation to access features.</p>
-	<p *ngIf="currentUser.snapshot">Logged in as: <strong>{{ currentUser.snapshot?.nickname }}</strong> ({{ currentUser.snapshot?.role }})</p>
+	<p *ngIf="currentUser.snapshot">Logged in as: <strong>{{ currentUser.snapshot.nickname }}</strong> ({{ currentUser.snapshot.role }})</p>
 </div>

@@ -37,3 +37,31 @@ body.auth-bg, body.portal-bg {
 		min-width: 0;
 	}
 }
+
+/* Global language switcher: fixed top-right */
+.global-lang-switcher {
+	position: fixed;
+	top: 12px;
+	right: 12px;
+	z-index: 3000;
+}
+
+/* Ensure internal placement doesn't break layout */
+.global-lang-switcher app-language-switcher { display: inline-block; }
+
+/* Responsive adjustments to avoid overlapping navbar items */
+@media (max-width: 992px) {
+	.global-lang-switcher { top: 10px; right: 8px; }
+	.global-lang-switcher .btn { padding: 4px 8px; font-size: 0.9rem; }
+}
+
+/* On small screens, show only flag (reduce footprint) */
+@media (max-width: 520px) {
+	.global-lang-switcher .btn img + span { display: none; } /* hide 'EN'/'PL' label */
+	.global-lang-switcher .btn { padding: 4px; min-width: 36px; }
+}
+
+/* When zoomed large the navbar may wrap; allow switcher to shift down to avoid overlapping */
+@media (min-width: 1200px) and (max-width: 1600px) {
+	.global-lang-switcher { top: 18px; }
+}

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from './pipes/translate.pipe';
 import { TranslationService } from './services/translation.service';
@@ -16,8 +16,16 @@ import { TopbarComponent } from './topbar/topbar.component';
 export class AppComponent {
   title = 'WasteFree';
   dropdownOpen = false;
+  showGlobalLang = true;
 
-  constructor(public t: TranslationService) {}
+  constructor(public t: TranslationService, private router: Router) {
+    // hide global language switcher on portal route to avoid duplicate controls
+    const check = () => {
+      this.showGlobalLang = this.router.url !== '/portal';
+    };
+    check();
+    this.router.events.subscribe(e => { if (e instanceof NavigationEnd) check(); });
+  }
 
   toggleDropdown() {
     this.dropdownOpen = !this.dropdownOpen;

@@ -6,12 +6,14 @@ import { CurrentUserService } from '../services/current-user.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { Router, RouterModule } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
+import { Subscription } from 'rxjs';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule, LanguageSwitcherComponent],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
@@ -26,6 +28,7 @@ export class AuthComponent {
   showRegisterLoadingText = false;
   loginForm: FormGroup;
   registerForm: FormGroup;
+  private langSub: Subscription | null = null;
   error: string | null = null;
   showActivationSection = false;
 
@@ -36,11 +39,23 @@ export class AuthComponent {
       password: ['', Validators.required]
     });
 
+
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      role: ['User', Validators.required] 
+  role: ['User', Validators.required],
+  languagePreference: ['English', Validators.required]
+    });
+
+    // Initialize languagePreference from TranslationService currentLang
+    const initialLang = this.mapLangForControl(this.translation.currentLang);
+    this.registerForm.get('languagePreference')?.setValue(initialLang);
+
+    // Subscribe to global language changes and update the register form control
+    this.langSub = this.translation.onLangChange.subscribe((l) => {
+      const mapped = this.mapLangForControl(l);
+      this.registerForm.get('languagePreference')?.setValue(mapped);
     });
   }
 
@@ -52,6 +67,7 @@ export class AuthComponent {
     document.body.classList.remove(this.bodyClass);
   if (this.loadingTimer) clearTimeout(this.loadingTimer);
   if (this.registerLoadingTimer) clearTimeout(this.registerLoadingTimer);
+  if (this.langSub) { this.langSub.unsubscribe(); this.langSub = null; }
   }
 
   toggleMode(event: Event) {
@@ -120,7 +136,7 @@ export class AuthComponent {
     if (!this.registerForm.valid) return;
     this.error = null;
     this.showActivationSection = false;
-  const { username, email, password, role } = this.registerForm.value;
+  const { username, email, password, role, languagePreference } = this.registerForm.value;
     this.isRegisterLoading = true;
     const start = Date.now();
     if (this.registerLoadingTimer) {
@@ -128,7 +144,7 @@ export class AuthComponent {
       this.registerLoadingTimer = null;
     }
 
-    this.authService.register({ username, email, password, role }).subscribe({
+  this.authService.register({ username, email, password, role, languagePreference }).subscribe({
       next: (res) => {
         console.log('Zarejestrowano!', res);
         this.error = null;
@@ -230,5 +246,13 @@ export class AuthComponent {
     if (rc === '2' || rc.toLowerCase() === 'garbageadmin') return 'GarbageAdmin';
     if (rc === '1' || rc.toLowerCase() === 'user') return 'User';
     return rc;
+  }
+
+  // map translation service language code to the form values used in the registration select
+  private mapLangForControl(lang: string | undefined): 'English' | 'Polish' {
+    if (!lang) return 'Polish';
+    const code = String(lang).toLowerCase();
+    if (code.startsWith('pl')) return 'Polish';
+    return 'English';
   }
 }
