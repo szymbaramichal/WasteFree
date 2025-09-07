@@ -80,6 +80,33 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish
+            },
+            // Garbage administrators
+            new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "garbageadmin1",
+                Email = "garbageadmin1@example.com",
+                Description = "Seeded garbage admin 1",
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                Role = UserRole.GarbageAdmin,
+                LanguagePreference = LanguagePreference.Polish
+            },
+            new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "garbageadmin2",
+                Email = "garbageadmin2@example.com",
+                Description = "Seeded garbage admin 2",
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                Role = UserRole.GarbageAdmin,
+                LanguagePreference = LanguagePreference.Polish
             }
         };
 

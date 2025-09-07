@@ -10,6 +10,8 @@ WasteFree Cloud is a cloud-based web application for waste management. It helps 
 | test3    | Kwakwa5!  |
 | test4    | Kwakwa5!  |
 | test5    | Kwakwa5!  |
+| garbageadmin1 | Kwakwa5! |
+| garbageadmin2 | Kwakwa5! |
 
 ## Local Development with Docker Compose
 
