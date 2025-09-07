@@ -80,11 +80,18 @@ export class AuthComponent {
         const token = res?.resultModel?.token;
         if (token) {
           localStorage.setItem('authToken', token);
+          const payload = this.parseJwt(token);
+          const nicknameFromToken = payload?.unique_name;
+          const roleClaim = payload?.role ?? res?.resultModel?.role;
+          const mappedRole = this.mapRoleClaim(roleClaim);
+          const nickname = nicknameFromToken || res?.resultModel?.nickname || this.loginForm.get('username')?.value;
+          this.currentUser.setUser({ nickname, role: mappedRole });
+        } else {
+          // no token: fallback to response or form
+          const nickname = res?.resultModel?.nickname || this.loginForm.get('username')?.value;
+          const role = this.mapRoleClaim(res?.resultModel?.role) || 'User';
+          this.currentUser.setUser({ nickname, role });
         }
-  // set current user from response if available, fallback to form username
-  const nickname = res?.resultModel?.nickname || this.loginForm.get('username')?.value;
-  const role = res?.resultModel?.role || 'User';
-  this.currentUser.setUser({ nickname, role });
         const elapsed = Date.now() - start;
         const wait = Math.max(0, 1000 - elapsed);
         this.loadingTimer = setTimeout(() => {
@@ -129,9 +136,20 @@ export class AuthComponent {
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
   // after successful register set current user
-  const nickname = res?.resultModel?.nickname || username;
-  const resolvedRole = res?.resultModel?.role || role || 'User';
-  this.currentUser.setUser({ nickname, role: resolvedRole });
+        // try to extract identity from token if present
+        const token = res?.resultModel?.token;
+        if (token) {
+          localStorage.setItem('authToken', token);
+          const payload = this.parseJwt(token);
+          const nicknameFromToken = payload?.unique_name;
+          const roleClaim = payload?.role ?? res?.resultModel?.role ?? role;
+          const mappedRole = this.mapRoleClaim(roleClaim);
+          const nickname = nicknameFromToken || username;
+          this.currentUser.setUser({ nickname, role: mappedRole });
+        } else {
+          const resolvedRole = this.mapRoleClaim(res?.resultModel?.role) || role || 'User';
+          this.currentUser.setUser({ nickname: username, role: resolvedRole });
+        }
         const elapsed = Date.now() - start;
         const wait = Math.max(0, 1000 - elapsed);
         this.registerLoadingTimer = setTimeout(() => {
@@ -190,5 +208,27 @@ export class AuthComponent {
     if (payload.message) return payload.message;
     if (typeof err.error === 'string') return err.error;
     return this.translation.translate('auth.errors.unknown');
+  }
+
+  // helper: parse JWT payload safely
+  private parseJwt(token: string): any | null {
+    try {
+      const parts = token.split('.');
+      if (parts.length < 2) return null;
+      const payload = parts[1];
+      const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decodeURIComponent(escape(decoded)));
+    } catch {
+      return null;
+    }
+  }
+
+  // map numeric/string role claim to readable role
+  private mapRoleClaim(roleClaim: any): 'User' | 'GarbageAdmin' | string {
+    if (roleClaim === undefined || roleClaim === null) return 'User';
+    const rc = String(roleClaim).trim();
+    if (rc === '2' || rc.toLowerCase() === 'garbageadmin') return 'GarbageAdmin';
+    if (rc === '1' || rc.toLowerCase() === 'user') return 'User';
+    return rc;
   }
 }
