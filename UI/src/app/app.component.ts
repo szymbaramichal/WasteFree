@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { TranslatePipe } from './pipes/translate.pipe';
 import { TranslationService } from './services/translation.service';
 import { LanguageSwitcherComponent } from './language-switcher/language-switcher.component';
+import { TopbarComponent } from './topbar/topbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, TranslatePipe, LanguageSwitcherComponent],
+  imports: [CommonModule, RouterOutlet, TranslatePipe, LanguageSwitcherComponent, TopbarComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

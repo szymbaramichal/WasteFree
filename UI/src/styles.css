@@ -14,6 +14,13 @@ body.auth-bg, body.portal-bg {
 	background-color: #f0fff5;
 }
 
+:root {
+	--primary-green: #3cb371;
+	--primary-green-dark: #2e8b57;
+}
+
+.topbar-placeholder { height: 56px; }
+
 .navbar .navbar-nav {
 	flex-wrap: nowrap;
 }

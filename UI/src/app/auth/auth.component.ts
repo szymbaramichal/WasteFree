@@ -2,13 +2,16 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './auth.service';
+import { CurrentUserService } from '../services/current-user.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
+import { Router, RouterModule } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
+
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
@@ -26,7 +29,8 @@ export class AuthComponent {
   error: string | null = null;
   showActivationSection = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private translation: TranslationService) {
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private translation: TranslationService, private currentUser: CurrentUserService, private router: Router) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -77,12 +81,18 @@ export class AuthComponent {
         if (token) {
           localStorage.setItem('authToken', token);
         }
+  // set current user from response if available, fallback to form username
+  const nickname = res?.resultModel?.nickname || this.loginForm.get('username')?.value;
+  const role = res?.resultModel?.role || 'User';
+  this.currentUser.setUser({ nickname, role });
         const elapsed = Date.now() - start;
         const wait = Math.max(0, 1000 - elapsed);
         this.loadingTimer = setTimeout(() => {
           this.isLoading = false;
           this.showLoadingText = false;
           this.loadingTimer = null;
+          // navigate to portal after successful login
+          try { this.router.navigate(['/portal']); } catch { location.href = '/portal'; }
         }, wait);
       },
       error: (err) => {
@@ -103,7 +113,7 @@ export class AuthComponent {
     if (!this.registerForm.valid) return;
     this.error = null;
     this.showActivationSection = false;
-    const { username, email, password, role } = this.registerForm.value;
+  const { username, email, password, role } = this.registerForm.value;
     this.isRegisterLoading = true;
     const start = Date.now();
     if (this.registerLoadingTimer) {
@@ -118,12 +128,18 @@ export class AuthComponent {
         // show loading text only on success
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
+  // after successful register set current user
+  const nickname = res?.resultModel?.nickname || username;
+  const resolvedRole = res?.resultModel?.role || role || 'User';
+  this.currentUser.setUser({ nickname, role: resolvedRole });
         const elapsed = Date.now() - start;
         const wait = Math.max(0, 1000 - elapsed);
         this.registerLoadingTimer = setTimeout(() => {
           this.isRegisterLoading = false;
           this.showRegisterLoadingText = false;
           this.registerLoadingTimer = null;
+          // navigate to portal after successful register
+          try { this.router.navigate(['/portal']); } catch { location.href = '/portal'; }
         }, wait);
       },
       error: (err) => {
