@@ -27,6 +27,8 @@ builder.Services.AddSingleton<IStringLocalizer>(sp =>
 
 builder.Services
     .AddValidatorsFromAssembly(Assembly.GetCallingAssembly());
+
+builder.Services.AddOutputCache();
  
 builder.Services.AddHttpContextAccessor();
 
@@ -62,10 +64,13 @@ app.UseRequestLocalization(new RequestLocalizationOptions
  
 app.MigrateDatabase<ApplicationDataContext>();
 
+app.UseOutputCache();
+
 app.UseTickerQ();
- 
+
 app.MapAuthEndpoints();
 app.MapGarbageGroupsEndpoints();
+app.MapWalletEndpoints();
  
 app.UseHttpsRedirection();
  

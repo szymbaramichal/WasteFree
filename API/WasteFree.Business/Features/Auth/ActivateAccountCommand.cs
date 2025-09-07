@@ -6,7 +6,6 @@ using WasteFree.Business.Features.Auth.Dtos;
 using WasteFree.Business.Helpers;
 using WasteFree.Infrastructure;
 using WasteFree.Shared.Constants;
-using WasteFree.Shared.Entities;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
@@ -33,7 +32,7 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
                 return Result<ActivateAccountDto>.Failure(ApiErrorCodes.InvalidRegistrationToken, HttpStatusCode.BadRequest);
 
             user.IsActive = true;
-            var wallet = new Wallet
+            var wallet = new Shared.Entities.Wallet
             {
                 UserId = user.Id,
                 Funds = 0.00

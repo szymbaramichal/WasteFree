@@ -5,6 +5,13 @@
   <data name="INVALID_USER" xml:space="preserve"><value>Niepoprawny użytkownik</value></data>
   <data name="USER_NOT_ACTIVATED" xml:space="preserve"><value>Aktywuj najpierw konto przez link wysłany na adres email aby korzystać z WasteFree Cloud!</value></data>
   <data name="STH_WENT_WRONG" xml:space="preserve"><value>Ups, coś poszło nie tak. Spróbuj jeszcze raz!</value></data>
+  <data name="INVALID_PAYMENT_CODE" xml:space="preserve"><value>Niepoprawny kod płatności</value></data>
+  <data name="INVALID_TOPUP_CODE" xml:space="preserve"><value>Niepoprawny kod doładowania.</value></data>
+  <data name="MISSING_ACCOUNT_NUMBER" xml:space="preserve"><value>Przed wypłatą musisz uzupełnić numer konta na swoim profilu.</value></data>
+  <data name="NOT_ENOUGH_FUNDS" xml:space="preserve"><value>Nie wystarczająca ilość do wypłaty</value></data>
+  <data name="AMOUNT_OUTSIDE_RANGE" xml:space="preserve"><value>Kwota płatności musi być w zakresie od 1 do 10 000PLN</value></data>
+  <data name="PAYMENT_PROPERTY_REQUIRED" xml:space="preserve"><value>Właściwość płatności jest wymagana</value></data>
+  <data name="PAYMENT_CODE_REQUIRED" xml:space="preserve"><value>Kod płatności jest wymagany</value></data>
   <data name="INVALID_ROLE" xml:space="preserve"><value>Niepoprawna rola użytkownika</value></data>
   <data name="INVALID_LANG" xml:space="preserve"><value>Niepoprawny język</value></data>
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Adres e-mail jest już zajęty</value></data>
