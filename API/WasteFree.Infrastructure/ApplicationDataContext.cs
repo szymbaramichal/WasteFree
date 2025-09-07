@@ -10,6 +10,8 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
     public DbSet<User> Users { get; set; }
     public DbSet<GarbageGroup> GarbageGroups { get; set; }
     public DbSet<UserGarbageGroup> UserGarbageGroups { get; set; }
+    public DbSet<Wallet> Wallets { get; set; }
+    public DbSet<WalletTransaction> WalletTransactions { get; set; }
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

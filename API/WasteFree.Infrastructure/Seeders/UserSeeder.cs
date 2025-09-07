@@ -88,6 +88,17 @@ public class UserSeeder(ApplicationDataContext context)
             if (!await context.Users.AnyAsync(u => u.Email == user.Email))
             {
                 await context.Users.AddAsync(user);
+                // Add wallet for the user
+                if (!await context.Wallets.AnyAsync(w => w.UserId == user.Id))
+                {
+                    var wallet = new Wallet
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = user.Id,
+                        Funds = 0
+                    };
+                    await context.Wallets.AddAsync(wallet);
+                }
             }
         }
         await context.SaveChangesAsync();

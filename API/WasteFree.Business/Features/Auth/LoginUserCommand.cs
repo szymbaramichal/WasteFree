@@ -26,6 +26,9 @@ public class LoginUserCommandHandler(ApplicationDataContext context, IConfigurat
         if(!isPasswordValid)
             return Result<UserDto>.Failure(ApiErrorCodes.LoginFailed, HttpStatusCode.BadRequest);
 
+        if(!user.IsActive)
+            return Result<UserDto>.Failure(ApiErrorCodes.UserAccountNotActivated, HttpStatusCode.BadRequest);
+        
         var token = TokenHelper.GenerateJwtToken(user.Username, user.Id.ToString(), (int)user.Role,
             configuration["Security:Jwt:Key"]);
 

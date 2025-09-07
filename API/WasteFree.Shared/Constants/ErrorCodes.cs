@@ -8,13 +8,14 @@ public static class ApiErrorCodes
     public const string GenericError = "STH_WENT_WRONG";
     public const string InvalidRegistrationToken = "INVALID_REGISTRATION_TOKEN";
     public const string InvalidUser = "INVALID_USER";
+    public const string UserAccountNotActivated = "USER_NOT_ACTIVATED";
 }
 
 public static class ValidationErrorCodes
 {
-    public const string InvalidEmail = "ERR_INVALID_EMAIL";
-    public const string TooShort = "ERR_TOO_SHORT";
-
+    public const string InvalidEmail = "ERR_EMAIL_INVALID";
+    
+    public const string PasswordTooShort = "ERR_PASSWORD_TOO_SHORT";
     public const string UsernameRequired = "ERR_USERNAME_REQUIRED";
     public const string PasswordRequired = "ERR_PASSWORD_REQUIRED";
     public const string EmailRequired = "ERR_EMAIL_REQUIRED";
