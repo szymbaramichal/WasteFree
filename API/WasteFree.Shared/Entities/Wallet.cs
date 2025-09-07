@@ -6,7 +6,7 @@ public class Wallet : DatabaseEntity
 {
     public double Funds { get; set; }
 
-    public string WithdrawalAccountNumber { get; set; } = null!;
+    public string? WithdrawalAccountNumber { get; set; }
                        
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;

@@ -27,7 +27,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
-                LanguagePreference = LanguagePreference.Polish
+                LanguagePreference = LanguagePreference.Polish,
+                IsActive = true
             },
             new User
             {
@@ -40,7 +41,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
-                LanguagePreference = LanguagePreference.Polish
+                LanguagePreference = LanguagePreference.Polish,
+                IsActive = true
             },
             new User
             {
@@ -53,7 +55,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
-                LanguagePreference = LanguagePreference.Polish
+                LanguagePreference = LanguagePreference.Polish,
+                IsActive = true
             },
             new User
             {
@@ -66,7 +69,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
-                LanguagePreference = LanguagePreference.Polish
+                LanguagePreference = LanguagePreference.Polish,
+                IsActive = true
             },
             new User
             {
@@ -79,7 +83,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedDateUtc = DateTime.UtcNow,
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
-                LanguagePreference = LanguagePreference.Polish
+                LanguagePreference = LanguagePreference.Polish,
+                IsActive = true
             }
         };
 

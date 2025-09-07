@@ -71,6 +71,7 @@ app.UseTickerQ();
 app.MapAuthEndpoints();
 app.MapGarbageGroupsEndpoints();
 app.MapWalletEndpoints();
+app.MapAccountEndpoints();
  
 app.UseHttpsRedirection();
  

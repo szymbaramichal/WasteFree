@@ -11,7 +11,7 @@ public class User : DatabaseEntity
 
     [MaxLength(100)]
     public required string Email { get; set; }
-
+    
     [MaxLength(500)]
     public string? Description { get; set; }
 

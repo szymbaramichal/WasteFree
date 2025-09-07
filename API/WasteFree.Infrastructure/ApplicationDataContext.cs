@@ -21,6 +21,13 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
         modelBuilder.ApplyConfiguration(new TimeTickerConfigurations());
         modelBuilder.ApplyConfiguration(new CronTickerConfigurations());
         modelBuilder.ApplyConfiguration(new CronTickerOccurrenceConfigurations());
+        
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Wallet)
+            .WithOne(w => w.User)
+            .HasForeignKey<Wallet>(w => w.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     public override int SaveChanges()

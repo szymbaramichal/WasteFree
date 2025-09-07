@@ -11,6 +11,7 @@ public class MakePaymentRequestValidator : AbstractValidator<WalletTransactionRe
     {
         RuleFor(x => x.Amount)
             .GreaterThan(1)
+            .WithMessage(localizer[ValidationErrorCodes.AmountOutsideRange])
             .LessThan(10_000)
             .WithMessage(localizer[ValidationErrorCodes.AmountOutsideRange]);
 
