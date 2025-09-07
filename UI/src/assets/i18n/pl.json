@@ -43,4 +43,7 @@
   "auth.account.created.title": "Konto utworzone!",
   "auth.account.created.desc": "Na podany adres e-mail zostanie wysłany link aktywacyjny. Proszę sprawdź skrzynkę pocztową i kliknij w link, aby aktywować konto.",
   "auth.backToLogin": "Wróć do logowania"
+  ,
+  "auth.errors.password.tooShort": "Hasło jest za krótkie (minimum 8 znaków).",
+  "auth.errors.unknown": "Wystąpił nieznany błąd"
 }

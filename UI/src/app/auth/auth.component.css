@@ -146,10 +146,10 @@
 }
 
 .auth-container h2 {
-  color: var(--primary-green-dark);
+  color: #000;
   margin-bottom: 28px;
   font-weight: 700;
-  color: var(--primary-green-dark);
+  /* kept bold but now black for better contrast */
   font-size: 1.08rem;
   margin-bottom: 4px;
   width: 100%;
@@ -163,7 +163,7 @@ form {
 }
 
 label {
-  color: var(--primary-green-dark);
+  color: #000;
   font-weight: 600;
   margin-bottom: 3px;
   margin-top: 2px;
@@ -271,5 +271,10 @@ a:hover {
   h2 {
     font-size: 1.15rem;
   }
+}
+
+/* make the small toggle link black for better contrast */
+.auth-content p > a {
+  color: #000;
 }
 

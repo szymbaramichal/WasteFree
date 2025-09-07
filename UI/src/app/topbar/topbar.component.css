@@ -1,0 +1,36 @@
+.topbar {
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 1500;
+}
+.topbar-inner {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 18px;
+  color: #fff;
+}
+.brand {
+  font-weight:700;
+}
+.spacer { flex: 1 1 auto; }
+.lang-slot { margin-right: 12px; }
+.user-info { display:flex; align-items:center; gap:12px; }
+.btn-logout {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  padding:6px 10px;
+  color: #fff;
+  border-radius:6px;
+  cursor:pointer;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.18); }
+
+/* role colors */
+.role-user { background: linear-gradient(90deg,var(--primary-green),var(--primary-green-dark)); }
+.role-garbadmin { background: linear-gradient(90deg,#5aa9a5,#3ea8a8); }
+
+.logged { font-size:0.95rem; }
+.link { color: #fff; text-decoration: underline; }

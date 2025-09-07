@@ -1,15 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthComponent } from '../auth/auth.component';
+import { CurrentUserService } from '../services/current-user.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-portal',
   standalone: true,
-  imports: [AuthComponent],
+  imports: [
+    CommonModule
+  ],
   templateUrl: './portal.component.html',
-  styleUrl: './portal.component.css'
+  styleUrls: ['./portal.component.css']
 })
 export class PortalComponent {
   private bodyClass = 'portal-bg';
+
+  constructor(public currentUser: CurrentUserService) {}
 
   ngOnInit(): void {
     document.body.classList.add(this.bodyClass);

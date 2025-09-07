@@ -1,0 +1,14 @@
+<nav *ngIf="visible" class="topbar" [ngClass]="(user$ | async)?.role === 'GarbageAdmin' ? 'role-garbadmin' : 'role-user'">
+  <div class="topbar-inner">
+    <div class="brand">WasteFree Portal</div>
+  <div class="spacer"></div>
+  <div class="lang-slot"><app-language-switcher></app-language-switcher></div>
+  <div class="user-info" *ngIf="(user$ | async) as u">
+      <span class="logged">You are logged as: <strong>{{ u.nickname }}</strong> ({{ u.role }})</span>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+    <div class="user-info" *ngIf="!(user$ | async)">
+      <a class="link" routerLink="/portal">Go to portal</a>
+    </div>
+  </div>
+</nav>
