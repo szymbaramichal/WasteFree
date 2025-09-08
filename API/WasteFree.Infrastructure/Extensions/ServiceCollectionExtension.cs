@@ -48,7 +48,7 @@ public static class ServiceCollectionExtension
         //     throw new InvalidOperationException("Missing required SMTP configuration.");
         // }
 
-        services.AddSingleton<IEmailService>(_ =>
+        services.AddScoped<IEmailService>(_ =>
             new EmailService(
                 smtpServer: smtpServer,
                 smtpPort: int.Parse(smtpPortStr),
