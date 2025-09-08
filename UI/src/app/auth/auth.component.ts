@@ -48,11 +48,11 @@ export class AuthComponent {
   languagePreference: ['English', Validators.required]
     });
 
-    // Initialize languagePreference from TranslationService currentLang
+
     const initialLang = this.mapLangForControl(this.translation.currentLang);
     this.registerForm.get('languagePreference')?.setValue(initialLang);
 
-    // Subscribe to global language changes and update the register form control
+
     this.langSub = this.translation.onLangChange.subscribe((l) => {
       const mapped = this.mapLangForControl(l);
       this.registerForm.get('languagePreference')?.setValue(mapped);
@@ -90,9 +90,9 @@ export class AuthComponent {
       next: (res) => {
         console.log('Zalogowano!', res);
         this.error = null;
-        // Only show the localized loading text when login succeeded
+
         this.showLoadingText = true;
-        // saving token to localStorage
+
         const token = res?.resultModel?.token;
         if (token) {
           localStorage.setItem('authToken', token);
@@ -103,7 +103,7 @@ export class AuthComponent {
           const nickname = nicknameFromToken || res?.resultModel?.nickname || this.loginForm.get('username')?.value;
           this.currentUser.setUser({ nickname, role: mappedRole });
         } else {
-          // no token: fallback to response or form
+
           const nickname = res?.resultModel?.nickname || this.loginForm.get('username')?.value;
           const role = this.mapRoleClaim(res?.resultModel?.role) || 'User';
           this.currentUser.setUser({ nickname, role });
@@ -114,14 +114,14 @@ export class AuthComponent {
           this.isLoading = false;
           this.showLoadingText = false;
           this.loadingTimer = null;
-          // navigate to portal after successful login
+
           try { this.router.navigate(['/portal']); } catch { location.href = '/portal'; }
         }, wait);
       },
       error: (err) => {
         console.error('Błąd logowania', err);
         this.error = this.formatErrorResponse(err);
-        // On error hide loading immediately (no spinner, no text)
+
         this.showLoadingText = false;
         if (this.loadingTimer) {
           clearTimeout(this.loadingTimer);
@@ -148,39 +148,24 @@ export class AuthComponent {
       next: (res) => {
         console.log('Zarejestrowano!', res);
         this.error = null;
-        // show loading text only on success
+
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
-  // after successful register set current user
-        // try to extract identity from token if present
-        const token = res?.resultModel?.token;
-        if (token) {
-          localStorage.setItem('authToken', token);
-          const payload = this.parseJwt(token);
-          const nicknameFromToken = payload?.unique_name;
-          const roleClaim = payload?.role ?? res?.resultModel?.role ?? role;
-          const mappedRole = this.mapRoleClaim(roleClaim);
-          const nickname = nicknameFromToken || username;
-          this.currentUser.setUser({ nickname, role: mappedRole });
-        } else {
-          const resolvedRole = this.mapRoleClaim(res?.resultModel?.role) || role || 'User';
-          this.currentUser.setUser({ nickname: username, role: resolvedRole });
-        }
+
+  this.showActivationSection = true;
         const elapsed = Date.now() - start;
         const wait = Math.max(0, 1000 - elapsed);
         this.registerLoadingTimer = setTimeout(() => {
           this.isRegisterLoading = false;
           this.showRegisterLoadingText = false;
           this.registerLoadingTimer = null;
-          // navigate to portal after successful register
-          try { this.router.navigate(['/portal']); } catch { location.href = '/portal'; }
+
         }, wait);
       },
       error: (err) => {
         console.error('Błąd rejestracji', err);
         this.error = this.formatErrorResponse(err);
         this.showActivationSection = false;
-        // hide loading immediately on error
         this.showRegisterLoadingText = false;
         if (this.registerLoadingTimer) {
           clearTimeout(this.registerLoadingTimer);
@@ -200,13 +185,13 @@ export class AuthComponent {
 
 
   private formatErrorResponse(err: any): string {
-    // Prefer server-provided localized message
+
     if (!err) return this.translation.translate('auth.errors.unknown');
     const payload = err.error || {};
 
     if (payload.localizedMessage && typeof payload.localizedMessage === 'string') return payload.localizedMessage;
 
-    // If server returns an errorCode, try to map it to translations
+
     if (payload.errorCode && typeof payload.errorCode === 'string') {
       if (payload.errorCode === 'ERR_TOO_SHORT') return this.translation.translate('auth.errors.password.tooShort');
       const key = `auth.errors.${payload.errorCode}`;
@@ -226,7 +211,7 @@ export class AuthComponent {
     return this.translation.translate('auth.errors.unknown');
   }
 
-  // helper: parse JWT payload safely
+
   private parseJwt(token: string): any | null {
     try {
       const parts = token.split('.');
@@ -239,7 +224,7 @@ export class AuthComponent {
     }
   }
 
-  // map numeric/string role claim to readable role
+
   private mapRoleClaim(roleClaim: any): 'User' | 'GarbageAdmin' | string {
     if (roleClaim === undefined || roleClaim === null) return 'User';
     const rc = String(roleClaim).trim();
@@ -247,8 +232,6 @@ export class AuthComponent {
     if (rc === '1' || rc.toLowerCase() === 'user') return 'User';
     return rc;
   }
-
-  // map translation service language code to the form values used in the registration select
   private mapLangForControl(lang: string | undefined): 'English' | 'Polish' {
     if (!lang) return 'Polish';
     const code = String(lang).toLowerCase();

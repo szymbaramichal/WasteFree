@@ -44,9 +44,17 @@
   "auth.toggle.noAccount": "Nie masz konta? Zarejestruj się",
   "auth.toggle.haveAccount": "Masz już konto? Zaloguj się",
   "auth.account.created.title": "Konto utworzone!",
-  "auth.account.created.desc": "Na podany adres e-mail zostanie wysłany link aktywacyjny. Proszę sprawdź skrzynkę pocztową i kliknij w link, aby aktywować konto.",
+  "auth.account.created.desc": "Na podany adres e-mail zostanie wysłany link aktywacyjny. Proszę sprawdź skrzynkę pocztową i <strong>kliknij w link</strong>, aby aktywować konto.",
   "auth.backToLogin": "Wróć do logowania"
   ,
+  "auth.account.activating": "Aktywuję konto...",
+  "auth.account.activated.title": "Konto aktywowane",
+  "auth.account.activated.errorTitle": "Aktywacja nie powiodła się",
+  "auth.account.activated.wait": "Przetwarzam aktywację. Proszę czekać...",
+  "auth.account.activated.success": "Twoje konto zostało aktywowane. Możesz się teraz zalogować.",
+  "auth.account.activated.error": "Nie udało się aktywować konta. Sprawdź link aktywacyjny lub skontaktuj się z pomocą.",
+  "auth.account.activated.badLink": "Link aktywacyjny jest nieprawidłowy lub wygasł. Poproś o wysłanie nowego maila aktywacyjnego.",
+  "auth.goToActivation": "Przejdź do aktywacji",
   "auth.errors.password.tooShort": "Hasło jest za krótkie (minimum 8 znaków).",
   "auth.errors.unknown": "Wystąpił nieznany błąd"
 }

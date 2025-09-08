@@ -47,6 +47,14 @@
   "auth.account.created.desc": "An activation link will be sent to the provided email address. Please check your inbox and click the link to activate the account.",
   "auth.backToLogin": "Back to login"
   ,
+  "auth.account.activating": "Activating account...",
+  "auth.account.activated.title": "Account activated",
+  "auth.account.activated.errorTitle": "Activation failed",
+  "auth.account.activated.wait": "Processing your activation. Please wait...",
+  "auth.account.activated.success": "Your account has been activated. You can now log in.",
+  "auth.account.activated.error": "We couldn't activate your account. Please check the activation link or contact support.",
+  "auth.account.activated.badLink": "The activation link is invalid or expired. Please request a new activation email.",
+  "auth.goToActivation": "Go to activation",
   "auth.errors.password.tooShort": "Password is too short (minimum 8 characters).",
   "auth.errors.unknown": "Unknown error occurred"
 }

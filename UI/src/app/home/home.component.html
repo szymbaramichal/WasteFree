@@ -10,7 +10,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto" style="display:flex;align-items:center;gap:10px;">
         <li class="nav-item"><a class="nav-link btn btn-success" href="#contact">{{ 'nav.contact' | translate }}</a></li>
-        <li class="nav-item"><a routerLink="/auth" class="nav-link btn btn-success">{{ 'nav.goApp' | translate }}</a></li>
+  <li class="nav-item"><button class="nav-link btn btn-success" (click)="goToApp()">{{ 'nav.goApp' | translate }}</button></li>
   <!-- global language switcher will appear in the fixed top-right corner -->
       </ul>
     </div>
@@ -21,7 +21,7 @@
   <div class="container">
     <h1 class="hero-title">{{ 'home.title' | translate }}</h1>
     <p class="hero-desc">{{ 'home.desc' | translate }}</p>
-    <a routerLink="portal" class="btn btn-success btn-cta px-5 py-3 fw-bold">{{ 'home.cta' | translate }}</a>
+  <button (click)="goToApp()" class="btn btn-success btn-cta px-5 py-3 fw-bold">{{ 'home.cta' | translate }}</button>
   </div>
 </section>
 
