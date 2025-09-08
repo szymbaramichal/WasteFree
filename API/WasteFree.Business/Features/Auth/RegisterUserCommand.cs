@@ -52,6 +52,7 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
         context.Users.Add(newUser);
         
         var notificationTemplate = await context.NotificationTemplates
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Type == NotificationType.RegisterationConfirmation 
                                       && x.Channel == NotificationChannel.Email
                                       && x.LanguagePreference == newUser.LanguagePreference, cancellationToken);
@@ -64,7 +65,7 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
         var baseUrl = configuration["BaseUiUrl"] ?? throw new NotImplementedException();
         var aesToken = configuration["Security:AesEncryptionKey"] ?? throw new NotImplementedException();
         
-        notificationTemplate.Body = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
+        var personalizedBody = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
         {
             {"Username", newUser.Username},
             {
@@ -74,12 +75,13 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             }
         });
         
+        
         await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob), 
             new SendEmailDto
             {
                 Email = newUser.Email,
                 Subject = notificationTemplate.Subject,
-                Body = notificationTemplate.Body
+                Body = personalizedBody
             },
             "Send registration confirmation email", 
             cancellationToken);
