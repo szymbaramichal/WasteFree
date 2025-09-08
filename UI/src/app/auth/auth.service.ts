@@ -17,5 +17,10 @@ export class AuthService {
   login(data: { username: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, data);
   }
+
+  activate(token: string): Observable<any> {
+    // API expects token as query parameter
+    return this.http.post(`${this.apiUrl}/activate-account?token=${encodeURIComponent(token)}`, {});
+  }
 }
 
