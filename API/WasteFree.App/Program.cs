@@ -61,7 +61,6 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     }
 });
 
- 
 app.MigrateDatabase<ApplicationDataContext>();
 
 app.UseOutputCache();
