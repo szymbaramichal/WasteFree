@@ -46,8 +46,27 @@ export class ActivationComponent implements OnInit {
 
   ngOnInit(): void {
     // accept token either as query param ?token=... or path param /activate-account/:token
-  let token: string | null = this.route.snapshot.queryParamMap.get('token');
-  if (!token) token = this.route.snapshot.paramMap.get('token');
+    let token: string | null = this.route.snapshot.queryParamMap.get('token');
+    if (!token) token = this.route.snapshot.paramMap.get('token');
+
+    // If token is still missing, try to extract it from the raw URL (handles tokens containing slashes)
+    if (!token) {
+      try {
+        const href = window.location.href || '';
+        const marker = '/activate-account/';
+        const parts = href.split(marker);
+        if (parts.length > 1) {
+          // take everything after the first marker, strip query/hash
+          let raw = parts.slice(1).join(marker);
+          raw = raw.split('?')[0].split('#')[0];
+          // decode in case token was percent-encoded
+          token = decodeURIComponent(raw);
+        }
+      } catch {
+        token = null;
+      }
+    }
+
     if (!token) {
       this.status = 'error';
       this.message = 'Missing token';
