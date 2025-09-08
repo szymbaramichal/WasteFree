@@ -8,13 +8,17 @@ public static class ApiErrorCodes
     public const string GenericError = "STH_WENT_WRONG";
     public const string InvalidRegistrationToken = "INVALID_REGISTRATION_TOKEN";
     public const string InvalidUser = "INVALID_USER";
+    public const string UserAccountNotActivated = "USER_NOT_ACTIVATED";
+    public const string InvalidTopupCode = "INVALID_TOPUP_CODE";
+    public const string MissingAccountNumber = "MISSING_ACCOUNT_NUMBER";
+    public const string NotEnoughFunds = "NOT_ENOUGH_FUNDS";
 }
 
 public static class ValidationErrorCodes
 {
-    public const string InvalidEmail = "ERR_INVALID_EMAIL";
-    public const string TooShort = "ERR_TOO_SHORT";
-
+    public const string InvalidEmail = "ERR_EMAIL_INVALID";
+    
+    public const string PasswordTooShort = "ERR_PASSWORD_TOO_SHORT";
     public const string UsernameRequired = "ERR_USERNAME_REQUIRED";
     public const string PasswordRequired = "ERR_PASSWORD_REQUIRED";
     public const string EmailRequired = "ERR_EMAIL_REQUIRED";
@@ -22,4 +26,10 @@ public static class ValidationErrorCodes
     public const string GroupDescriptionRequired = "ERR_GROUP_DESCRIPTION_REQUIRED";
     public const string InvalidRole = "INVALID_ROLE";
     public const string InvalidLang = "INVALID_LANG";
+    
+    public const string AmountOutsideRange = "AMOUNT_OUTSIDE_RANGE";
+    public const string PaymentPropertyRequired = "PAYMENT_PROPERTY_REQUIRED";
+    public const string PaymentCodeRequired = "PAYMENT_CODE_REQUIRED";
+    
+    public const string InvalidPaymentCode = "INVALID_PAYMENT_CODE";
 }

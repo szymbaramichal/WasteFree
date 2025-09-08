@@ -11,7 +11,7 @@ public class User : DatabaseEntity
 
     [MaxLength(100)]
     public required string Email { get; set; }
-
+    
     [MaxLength(500)]
     public string? Description { get; set; }
 
@@ -20,9 +20,13 @@ public class User : DatabaseEntity
     public required byte[] PasswordSalt { get; set; }
     
     public bool IsActive { get; set; } = false;
+    
     public required LanguagePreference LanguagePreference { get; set; }
-
+    
     public required UserRole Role { get; set; }
     
     public ICollection<UserGarbageGroup> UserGarbageGroups { get; set; } = new List<UserGarbageGroup>();
+
+    public Guid WalletId { get; set; }
+    public Wallet Wallet { get; set; } = null!;
 }
