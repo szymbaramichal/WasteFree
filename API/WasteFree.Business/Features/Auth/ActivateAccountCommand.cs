@@ -28,14 +28,17 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
         
             var user = await context.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
             
-            if(user is null)
-                return Result<ActivateAccountDto>.Failure(ApiErrorCodes.InvalidRegistrationToken, HttpStatusCode.BadRequest);
-
-            if(user.IsActive)
+            if(user is null || user.IsActive)
                 return Result<ActivateAccountDto>.Failure(ApiErrorCodes.InvalidRegistrationToken, HttpStatusCode.BadRequest);
 
             user.IsActive = true;
+            var wallet = new Shared.Entities.Wallet
+            {
+                UserId = user.Id,
+                Funds = 0.00
+            };
             
+            await context.Wallets.AddAsync(wallet, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             
             return Result<ActivateAccountDto>.Success(new ActivateAccountDto

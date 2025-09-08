@@ -14,13 +14,13 @@ public record RegisterGarbageGroupCommand(string GroupName, string GroupDescript
 public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
     ICurrentUserService currentUserService) : IRequestHandler<RegisterGarbageGroupCommand, GarbageGroupDto>
 {
-    public async Task<Result<GarbageGroupDto>> HandleAsync(RegisterGarbageGroupCommand command, CancellationToken cancellationToken)
+    public async Task<Result<GarbageGroupDto>> HandleAsync(RegisterGarbageGroupCommand request, CancellationToken cancellationToken)
     {
         var garbageGroup = new GarbageGroup
         {
             Id = Guid.CreateVersion7(),
-            Name = command.GroupName,
-            Description = command.GroupDescription
+            Name = request.GroupName,
+            Description = request.GroupDescription
         };
 
         context.Add(garbageGroup);

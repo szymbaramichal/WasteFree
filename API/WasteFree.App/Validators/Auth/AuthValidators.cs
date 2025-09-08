@@ -24,7 +24,7 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
             .NotEmpty()
             .WithMessage(localizer[ValidationErrorCodes.PasswordRequired])
             .MinimumLength(8)
-            .WithMessage(localizer[ValidationErrorCodes.TooShort]);
+            .WithMessage(localizer[ValidationErrorCodes.PasswordTooShort]);
         
         
         RuleFor(x => x.Role)
@@ -35,7 +35,7 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
         RuleFor(x => x.LanguagePreference)
             .Must(lang => lang.Equals(nameof(LanguagePreference.English), StringComparison.InvariantCultureIgnoreCase) || 
                           lang.Equals(nameof(LanguagePreference.Polish), StringComparison.InvariantCultureIgnoreCase))
-            .WithMessage(localizer[ValidationErrorCodes.InvalidRole]);
+            .WithMessage(localizer[ValidationErrorCodes.InvalidLang]);
     }
 }
 
