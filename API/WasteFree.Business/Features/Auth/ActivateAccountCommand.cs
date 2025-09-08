@@ -17,6 +17,9 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
 {
     public async Task<Result<ActivateAccountDto>> HandleAsync(ActivateAccountCommand request, CancellationToken cancellationToken)
     {
+        // Simulate processing
+        await Task.Delay(1_000, cancellationToken);
+        
         try
         {
             var decryptedToken = AesEncryptor.Decrypt(request.AesToken, 
