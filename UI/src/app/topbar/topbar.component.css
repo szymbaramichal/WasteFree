@@ -30,7 +30,22 @@
 
 /* role colors */
 .role-user { background: linear-gradient(90deg,var(--primary-green),var(--primary-green-dark)); }
-.role-garbadmin { background: linear-gradient(90deg,#5aa9a5,#3ea8a8); }
+.role-garbadmin { background: linear-gradient(90deg,var(--primary-green-dark),#3ea8a8); }
 
 .logged { font-size:0.95rem; }
-.link { color: #fff; text-decoration: underline; }
+.link { color: #fff; text-decoration: none; }
+
+.wallet-slot { display:flex; align-items:center; margin-right:8px; }
+.wallet-pill { display:inline-flex; align-items:center; gap:8px; padding:6px 10px; background: var(--topbar-contrast); border-radius:20px; color: #fff; text-decoration:none; font-weight:600; }
+.wallet-pill svg { opacity:0.95; }
+.wallet-pill:hover { background: rgba(255,255,255,0.12); }
+
+.wallet-icon { display:block; width:18px; height:18px; object-fit:contain; filter:invert(1) brightness(1.2); }
+.wallet-value { display:flex; flex-direction:column; line-height:1; text-align:left; }
+.wallet-value .amount { font-size:0.95rem; font-weight:700; }
+.wallet-value .currency { font-size:0.65rem; opacity:0.9; margin-top:1px; }
+
+@media (max-width: 520px) {
+  .wallet-value .currency { display:none; }
+  .wallet-value .amount { font-size:0.9rem; }
+}
