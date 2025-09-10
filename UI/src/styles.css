@@ -1,4 +1,6 @@
 
+@import "bootstrap/dist/css/bootstrap.min.css";
+
 body {
 	background: initial;
 }
@@ -15,8 +17,9 @@ body.auth-bg, body.portal-bg {
 }
 
 :root {
-	--primary-green: #3cb371;
-	--primary-green-dark: #2e8b57;
+	--primary-green: #2bb673;
+	--primary-green-dark: #1f8b56;
+	--topbar-contrast: rgba(255,255,255,0.08);
 }
 
 .topbar-placeholder { height: 56px; }
@@ -64,4 +67,27 @@ body.auth-bg, body.portal-bg {
 /* When zoomed large the navbar may wrap; allow switcher to shift down to avoid overlapping */
 @media (min-width: 1200px) and (max-width: 1600px) {
 	.global-lang-switcher { top: 18px; }
+}
+
+/* Background for portal wallet page */
+.portal-wallet-bg {
+	/* subtle patterned gradient with very low-opacity SVG texture */
+	background-image:
+		url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><rect fill='%23ffffff' width='40' height='40'/><g fill='%231f8b56' fill-opacity='0.02'><circle cx='10' cy='10' r='2'/><circle cx='30' cy='30' r='2'/></g></svg>"),
+		radial-gradient(circle at 12% 18%, rgba(43,108,79,0.06), transparent 18%),
+		radial-gradient(circle at 88% 82%, rgba(43,108,79,0.04), transparent 16%),
+		linear-gradient(180deg, #fbfff9, #f7fff8);
+	background-attachment: fixed, fixed, fixed, fixed;
+	background-size: 240px 240px, 60% 60%, 60% 60%, auto;
+	min-height: 100vh;
+	animation: wallet-bg-move 18s linear infinite;
+}
+
+@keyframes wallet-bg-move {
+	from { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%; }
+	to   { background-position: 100% 100%, 10% 10%, 10% 10%, 0% 0%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.portal-wallet-bg { animation: none; }
 }

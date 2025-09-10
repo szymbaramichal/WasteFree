@@ -27,7 +27,9 @@ export function matchActivateAccount(segments: UrlSegment[]): UrlMatchResult | n
 
 export const routes: Routes = [
         { path: '', component: HomeComponent },
-        { path: 'portal', component: PortalComponent, data: { showTopbar: true }, canActivate: [authGuard] },
+    { path: 'portal', component: PortalComponent, data: { showTopbar: true }, canActivate: [authGuard] },
+    // Wallet module inside portal
+    { path: 'portal/wallet', loadComponent: () => import('./wallet/wallet.component').then(m => m.WalletComponent), data: { showTopbar: true }, canActivate: [authGuard] },
         { path: 'auth', component: AuthComponent},
         // Use matcher so tokens containing slashes/+/= are accepted in the path
         { matcher: matchActivateAccount, component: ActivationComponent }

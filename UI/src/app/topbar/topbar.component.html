@@ -1,8 +1,18 @@
 <nav *ngIf="visible" class="topbar" [ngClass]="(user$ | async)?.role === 'GarbageAdmin' ? 'role-garbadmin' : 'role-user'">
   <div class="topbar-inner">
-    <div class="brand">WasteFree Portal</div>
+  <a class="brand link" routerLink="/portal">WasteFree Portal</a>
   <div class="spacer"></div>
   <div class="lang-slot"><app-language-switcher></app-language-switcher></div>
+  <div class="wallet-slot" *ngIf="(walletBalance$ | async) !== null">
+    <a class="wallet-pill link" routerLink="/portal/wallet" title="Open wallet">
+  <!-- wallet icon -->
+      <img src="/assets/images/wallet.svg" alt="wallet" width="18" height="18" class="wallet-icon" aria-hidden="true" />
+      <div class="wallet-value ms-2">
+        <div class="amount">{{ (walletBalance$ | async) | number:'1.2-2' }}</div>
+        <div class="currency">PLN</div>
+      </div>
+    </a>
+  </div>
   <div class="user-info" *ngIf="(user$ | async) as u">
       <span class="logged">You are logged as: <strong>{{ u.nickname }}</strong> ({{ u.role }})</span>
       <button class="btn-logout" (click)="logout()">Logout</button>
