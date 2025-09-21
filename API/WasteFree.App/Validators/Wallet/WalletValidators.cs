@@ -21,9 +21,5 @@ public class MakePaymentRequestValidator : AbstractValidator<WalletTransactionRe
             .Must(code => WalletMethods.AvailableMethods
                 .Any(m => string.Equals(m.Code, code, StringComparison.InvariantCultureIgnoreCase)))
             .WithMessage(localizer[ValidationErrorCodes.InvalidPaymentCode]);
-        
-        RuleFor(x => x.PaymentProperty)
-            .NotEmpty()
-            .WithMessage(localizer[ValidationErrorCodes.PaymentPropertyRequired]);
     }
 }
