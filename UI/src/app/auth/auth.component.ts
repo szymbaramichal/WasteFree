@@ -1,19 +1,18 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AuthService } from './auth.service';
 import { CurrentUserService } from '../services/current-user.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { Router, RouterModule } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
 import { Subscription } from 'rxjs';
-import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
+import { AuthService } from '../services/auth.service';
 
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule, LanguageSwitcherComponent],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })
@@ -44,8 +43,8 @@ export class AuthComponent {
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-  role: ['User', Validators.required],
-  languagePreference: ['English', Validators.required]
+      role: ['User', Validators.required],
+      languagePreference: ['English', Validators.required]
     });
 
 
@@ -65,9 +64,9 @@ export class AuthComponent {
 
   ngOnDestroy(): void {
     document.body.classList.remove(this.bodyClass);
-  if (this.loadingTimer) clearTimeout(this.loadingTimer);
-  if (this.registerLoadingTimer) clearTimeout(this.registerLoadingTimer);
-  if (this.langSub) { this.langSub.unsubscribe(); this.langSub = null; }
+    if (this.loadingTimer) clearTimeout(this.loadingTimer);
+    if (this.registerLoadingTimer) clearTimeout(this.registerLoadingTimer);
+    if (this.langSub) { this.langSub.unsubscribe(); this.langSub = null; }
   }
 
   toggleMode(event: Event) {
@@ -88,7 +87,6 @@ export class AuthComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
-        console.log('Zalogowano!', res);
         this.error = null;
 
         this.showLoadingText = true;
@@ -119,7 +117,6 @@ export class AuthComponent {
         }, wait);
       },
       error: (err) => {
-        console.error('Błąd logowania', err);
         this.error = this.formatErrorResponse(err);
 
         this.showLoadingText = false;
@@ -136,7 +133,7 @@ export class AuthComponent {
     if (!this.registerForm.valid) return;
     this.error = null;
     this.showActivationSection = false;
-  const { username, email, password, role, languagePreference } = this.registerForm.value;
+    const { username, email, password, role, languagePreference } = this.registerForm.value;
     this.isRegisterLoading = true;
     const start = Date.now();
     if (this.registerLoadingTimer) {
@@ -144,15 +141,14 @@ export class AuthComponent {
       this.registerLoadingTimer = null;
     }
 
-  this.authService.register({ username, email, password, role, languagePreference }).subscribe({
+    this.authService.register({ username, email, password, role, languagePreference }).subscribe({
       next: (res) => {
-        console.log('Zarejestrowano!', res);
         this.error = null;
 
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
 
-  this.showActivationSection = true;
+        this.showActivationSection = true;
         const elapsed = Date.now() - start;
         const wait = Math.max(0, 1000 - elapsed);
         this.registerLoadingTimer = setTimeout(() => {
@@ -163,7 +159,6 @@ export class AuthComponent {
         }, wait);
       },
       error: (err) => {
-        console.error('Błąd rejestracji', err);
         this.error = this.formatErrorResponse(err);
         this.showActivationSection = false;
         this.showRegisterLoadingText = false;
@@ -224,7 +219,6 @@ export class AuthComponent {
     }
   }
 
-
   private mapRoleClaim(roleClaim: any): 'User' | 'GarbageAdmin' | string {
     if (roleClaim === undefined || roleClaim === null) return 'User';
     const rc = String(roleClaim).trim();
@@ -232,6 +226,7 @@ export class AuthComponent {
     if (rc === '1' || rc.toLowerCase() === 'user') return 'User';
     return rc;
   }
+
   private mapLangForControl(lang: string | undefined): 'English' | 'Polish' {
     if (!lang) return 'Polish';
     const code = String(lang).toLowerCase();

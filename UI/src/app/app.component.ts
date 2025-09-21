@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from './pipes/translate.pipe';
 import { TranslationService } from './services/translation.service';
 import { LanguageSwitcherComponent } from './language-switcher/language-switcher.component';
 import { TopbarComponent } from './topbar/topbar.component';
+import { LoaderOverlayComponent } from './loader-overlay/loader-overlay.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, TranslatePipe, LanguageSwitcherComponent, TopbarComponent],
+  imports: [CommonModule, RouterOutlet, LanguageSwitcherComponent, TopbarComponent, LoaderOverlayComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

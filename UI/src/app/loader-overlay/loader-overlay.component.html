@@ -1,0 +1,6 @@
+<div class="loader-overlay" *ngIf="loader.isLoading$ | async">
+  <div class="loader-content" role="status" aria-live="polite">
+    <div class="spinner"></div>
+    <div class="loader-text">{{ 'loading' | translate }}</div>
+  </div>
+</div>
