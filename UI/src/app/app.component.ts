@@ -19,9 +19,11 @@ export class AppComponent {
   showGlobalLang = true;
 
   constructor(public t: TranslationService, private router: Router) {
-    // hide global language switcher on portal route to avoid duplicate controls
+    // hide global language switcher on portal routes (including wallet) to avoid duplicate controls
     const check = () => {
-      this.showGlobalLang = this.router.url !== '/portal';
+      const url = this.router.url || '';
+      // hide when on /portal or any child like /portal/wallet
+      this.showGlobalLang = !url.startsWith('/portal');
     };
     check();
     this.router.events.subscribe(e => { if (e instanceof NavigationEnd) check(); });
