@@ -24,10 +24,11 @@ public class WalletTransactionHandler(ApplicationDataContext applicationDataCont
         
         PaymentTransactionDto paymentTransactionDto = new PaymentTransactionDto();
         var wallet = applicationDataContext.Wallets.First(x => x.UserId == request.UserId);
+        TransactionType transactionType = TransactionType.Deposit;
         
         switch (paymentMethod.Type)
         {
-            case TransactionType.Deposit:
+            case nameof(TransactionType.Deposit):
                 if (!request.PaymentProperties.StartsWith("777"))
                     return Result<PaymentTransactionDto>.Failure(ApiErrorCodes.InvalidTopupCode, HttpStatusCode.BadRequest);
                 
@@ -36,7 +37,9 @@ public class WalletTransactionHandler(ApplicationDataContext applicationDataCont
                 {
                     Amount = request.Amount,
                     WalletId = wallet.Id,
-                    TransactionType = paymentMethod.Type
+                    TransactionType = Enum.TryParse<TransactionType>(paymentMethod.Type, true, out transactionType) 
+                        ? transactionType 
+                        : throw new InvalidOperationException("Invalid transaction type"),                
                 });
         
                 await applicationDataContext.SaveChangesAsync(cancellationToken);
@@ -44,7 +47,7 @@ public class WalletTransactionHandler(ApplicationDataContext applicationDataCont
                 paymentTransactionDto.PaymentStatus = PaymentStatus.Completed;
                 return Result<PaymentTransactionDto>.Success(paymentTransactionDto);
             
-            case TransactionType.Withdrawal:
+            case nameof(TransactionType.Withdrawal):
                 if(string.IsNullOrEmpty(wallet.WithdrawalAccountNumber))
                     return Result<PaymentTransactionDto>.Failure(ApiErrorCodes.MissingAccountNumber, HttpStatusCode.BadRequest);
                 
@@ -56,7 +59,9 @@ public class WalletTransactionHandler(ApplicationDataContext applicationDataCont
                 {
                     Amount = request.Amount,
                     WalletId = wallet.Id,
-                    TransactionType = paymentMethod.Type
+                    TransactionType = Enum.TryParse<TransactionType>(paymentMethod.Type, true, out transactionType) 
+                        ? transactionType 
+                        : throw new InvalidOperationException("Invalid transaction type"),    
                 });
         
                 await applicationDataContext.SaveChangesAsync(cancellationToken);
