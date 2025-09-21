@@ -17,14 +17,39 @@ public static class AccountEndpoints
                 IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
-        {
-            var result = await mediator.SendAsync(new UpdateUserProfileCommand(currentUserService.UserId, 
-                    request.Description, request.BankAccountNumber), 
-                cancellationToken);
+            {
+                var result = await mediator.SendAsync(new UpdateUserProfileCommand(currentUserService.UserId, 
+                        request.Description, request.BankAccountNumber), 
+                    cancellationToken);
+                
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.BadRequest(result);
+                }
             
-            return Results.Ok(result);
-        })
-        .WithOpenApi();
+                return Results.Ok(result);
+            })
+            .WithOpenApi();
+        
+        app.MapGet("/user/profile", [Authorize] async (
+                ICurrentUserService currentUserService,
+                IStringLocalizer localizer,
+                IMediator mediator,
+                CancellationToken cancellationToken) =>
+            {
+                var result = await mediator.SendAsync(new GetUserProfileQuery(currentUserService.UserId), 
+                    cancellationToken);
+            
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.BadRequest(result);
+                }
+                
+                return Results.Ok(result);
+            })
+            .WithOpenApi();
     }
 }
 
