@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { WalletService } from '../services/wallet.service';
 import { RouterModule } from '@angular/router';
+import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-wallet',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslatePipe],
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css']
 })
@@ -18,7 +20,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   loading = false;
   message: string | null = null;
 
-  constructor(private fb: FormBuilder, private wallet: WalletService) {
+  constructor(private fb: FormBuilder, private wallet: WalletService, private t: TranslationService) {
     this.balance = wallet.getBalance();
     this.wallet.balance$.subscribe(b => this.balance = b);
   }
@@ -37,7 +39,13 @@ export class WalletComponent implements OnInit, OnDestroy {
     const amount = Number(this.topUpForm.value.amount);
     const res = await this.wallet.topUp(amount);
     this.loading = false;
-    this.message = res.success ? 'Top up successful' : (res.message || 'Failed');
+    if (res.success) {
+      this.message = this.t.translate('wallet.message.topupSuccess');
+    } else {
+      const msg = (res.message || '').toLowerCase();
+      if (msg.includes('amount') && msg.includes('positive')) this.message = this.t.translate('wallet.errors.amountPositive');
+      else this.message = this.t.translate('wallet.errors.unknown');
+    }
   }
 
   async withdraw() {
@@ -47,6 +55,14 @@ export class WalletComponent implements OnInit, OnDestroy {
     const iban = String(this.withdrawForm.value.iban || '');
     const res = await this.wallet.withdraw(amount, iban);
     this.loading = false;
-    this.message = res.success ? 'Withdraw successful' : (res.message || 'Failed');
+    if (res.success) {
+      this.message = this.t.translate('wallet.message.withdrawSuccess');
+    } else {
+      const msg = (res.message || '').toLowerCase();
+      if (msg.includes('amount') && msg.includes('positive')) this.message = this.t.translate('wallet.errors.amountPositive');
+      else if (msg.includes('insufficient')) this.message = this.t.translate('wallet.errors.insufficientFunds');
+      else if (msg.includes('iban')) this.message = this.t.translate('wallet.errors.invalidIban');
+      else this.message = this.t.translate('wallet.errors.unknown');
+    }
   }
 }
