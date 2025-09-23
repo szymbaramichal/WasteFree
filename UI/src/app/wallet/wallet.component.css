@@ -4,20 +4,65 @@
 	padding: 20px;
 	border-radius: 10px;
 }
-.wallet-container .card { border: 1px solid rgba(0,0,0,0.04); background: #ffffff; }
+.wallet-container .card { border: 1px solid rgba(0,0,0,0.04); background: #ffffff; border-radius: 16px; overflow: hidden; transition: box-shadow .2s ease, transform .2s ease; }
 .wallet-container .card .card-body { padding: 1.25rem; }
+.wallet-container .card:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.08); transform: translateY(-1px); }
 .wallet-container .card-title { margin-bottom: .25rem; }
 .wallet-container .form-label { font-weight: 600; }
 .wallet-container .spinner-border { vertical-align: middle; }
 .wallet-container .alert { border-radius: 6px; }
 .wallet-container .row.g-3 { align-items: stretch; }
 .wallet-container .card { height: 100%; }
+/* Removed equal-height forcing for a simpler layout */
 .wallet-container .card .card-body { display:flex; flex-direction:column; justify-content:space-between; }
 .wallet-container .card .card-body form { margin-top:8px; }
 .wallet-container .card .card-body .d-flex { margin-top:8px; }
 
+/* Softer inputs */
+.wallet-container .form-control { border-radius: 12px; border-color: rgba(0,0,0,0.1); }
+.wallet-container .form-control:focus { box-shadow: 0 0 0 .15rem rgba(43,182,115,.15); border-color: rgba(43,182,115,.45); }
+
+/* Pill buttons */
+.wallet-container .btn { border-radius: 999px; }
+.wallet-container .btn-primary { background: var(--primary-green); border-color: var(--primary-green); }
+.wallet-container .btn-primary:hover { background: var(--primary-green-dark); border-color: var(--primary-green-dark); }
+.wallet-container .btn-danger { background: #cf2f2f; border-color: #cf2f2f; }
+.wallet-container .btn-danger:hover { background: #b62828; border-color: #b62828; }
+.wallet-container .btn-outline-secondary { border-radius: 999px; }
+
+/* High-contrast back button */
+.btn-wallet-back {
+	background: var(--primary-green);
+	color: #fff;
+	border: none;
+}
+.btn-wallet-back:hover { background: var(--primary-green-dark); color: #fff; }
+.btn-wallet-back svg { color: #fff; }
+
 /* Accent for headings */
 .wallet-container h3, .wallet-container .card-title { color: var(--primary-green-dark); }
+.wallet-title {
+	padding: 6px 10px;
+	background: rgba(43, 182, 115, 0.10);
+	border: 1px solid rgba(43, 182, 115, 0.25);
+	border-radius: 8px;
+	line-height: 1.1;
+}
+.wallet-container .card-title { font-weight: 700; }
+.wallet-container .card-title svg { color: var(--primary-green-dark); opacity: 0.9; }
 
 /* Slightly lift the top summary */
 .wallet-container > .row > .col-12 > .d-flex { background: transparent; }
+
+/* Compact header (flat) */
+.wallet-header { padding: 0; }
+.wallet-header-icon { width: 16px; height: 16px; opacity: .9; }
+.wallet-header-title { font-size: .95rem; font-weight: 600; line-height: 1; }
+.balance-pill {
+	background: rgba(43, 182, 115, 0.06);
+	border: 1px solid rgba(43, 182, 115, 0.18);
+	color: var(--primary-green-dark);
+	border-radius: 999px;
+	padding: .1rem .4rem;
+}
+.xsmall { font-size: .8rem; line-height: 1; }

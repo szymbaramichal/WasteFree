@@ -49,3 +49,19 @@
   .wallet-value .currency { display:none; }
   .wallet-value .amount { font-size:0.9rem; }
 }
+
+/* Make the language switcher button white on the portal topbar */
+.topbar .lang-slot .btn { 
+  color: #fff; 
+  background: transparent; 
+  border-color: rgba(255,255,255,0.6);
+}
+.topbar .lang-slot .btn:hover { 
+  color: #fff; 
+  background: rgba(255,255,255,0.12); 
+  border-color: rgba(255,255,255,0.85);
+}
+.topbar .lang-slot .btn:focus { 
+  color: #fff; 
+  box-shadow: 0 0 0 .15rem rgba(255,255,255,0.25);
+}

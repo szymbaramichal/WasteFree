@@ -1,1 +1,22 @@
-.lang-switcher { position: relative; display:inline-block; } .dropdown-menu{ background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 2px 12px rgba(0,0,0,0.06); border-radius:6px; padding:6px 0;} .dropdown-item{ display:block; padding:8px 12px; cursor:pointer; color:#212529; text-decoration:none;} .dropdown-item:hover{ background:#f6f6f6;}
+.lang-switcher { position: relative; display:inline-block; }
+.dropdown-menu{ background:#fff; border:1px solid rgba(0,0,0,0.08); box-shadow:0 2px 12px rgba(0,0,0,0.06); border-radius:6px; padding:6px 0;}
+.dropdown-item{ display:block; padding:8px 12px; cursor:pointer; color:#212529; text-decoration:none;}
+.dropdown-item:hover{ background:#f6f6f6;}
+
+/* When rendered inside the portal topbar, make the button white */
+:host-context(.topbar) .btn {
+	background: rgba(255,255,255,0.2) !important; /* between white and green */
+	color: #fff !important;
+	border-color: rgba(255,255,255,0.55) !important;
+	border-radius: 999px;
+}
+:host-context(.topbar) .btn:hover {
+	background: rgba(255,255,255,0.3) !important;
+	color: #fff !important;
+	border-color: rgba(255,255,255,0.75) !important;
+}
+:host-context(.topbar) .btn:focus {
+	background: rgba(255,255,255,0.24) !important;
+	color: #fff !important;
+	box-shadow: 0 0 0 .15rem rgba(255,255,255,0.28) !important;
+}

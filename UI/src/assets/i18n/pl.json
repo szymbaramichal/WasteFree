@@ -78,4 +78,6 @@
   "wallet.errors.insufficientFunds": "Niewystarczające środki",
   "wallet.errors.invalidIban": "Nieprawidłowy IBAN",
   "wallet.errors.unknown": "Operacja nie powiodła się"
+  ,
+  "wallet.back": "Powrót do portalu"
 }
