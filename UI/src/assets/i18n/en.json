@@ -62,12 +62,12 @@
   "wallet.title": "Wallet",
   "wallet.balance.label": "Current balance",
   "wallet.topup.title": "Top up",
-  "wallet.topup.desc": "Add funds to your wallet using a mocked Blik flow.",
+  "wallet.topup.desc": "Add funds to your wallet using Blik.",
   "wallet.topup.amount": "Amount (PLN)",
   "wallet.topup.submit": "Start top up",
   "wallet.topup.reset": "Reset",
   "wallet.withdraw.title": "Withdraw",
-  "wallet.withdraw.desc": "Mock withdraw — we validate your IBAN and available balance.",
+  "wallet.withdraw.desc": "Withdraw your funds - we validate your IBAN and available balance.",
   "wallet.withdraw.amount": "Amount (PLN)",
   "wallet.withdraw.iban": "IBAN",
   "wallet.withdraw.submit": "Withdraw",
@@ -78,4 +78,6 @@
   "wallet.errors.insufficientFunds": "Insufficient funds",
   "wallet.errors.invalidIban": "Invalid IBAN",
   "wallet.errors.unknown": "Operation failed"
+  ,
+  "wallet.back": "Back to portal"
 }
