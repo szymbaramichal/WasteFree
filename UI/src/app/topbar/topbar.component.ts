@@ -6,6 +6,7 @@ import { Router, RouterModule, NavigationEnd, ActivatedRoute } from '@angular/ro
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { WalletService } from '../services/wallet.service';
 import { filter } from 'rxjs/operators';
+import { UserRole } from '../_models/user';
 
 @Component({
   selector: 'app-topbar',
@@ -15,12 +16,12 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./topbar.component.css']
 })
 export class TopbarComponent {
-  user$ = this.currentUser.user$;
+  userRole = UserRole;
+  user = this.currentUser.user()!;
   visible = false;
   walletBalance$ = this.wallet.balance$;
 
   constructor(private currentUser: CurrentUserService, private router: Router, private activated: ActivatedRoute, private wallet: WalletService) {
-    // initialize and react to navigation changes
     const check = () => {
       let route: ActivatedRoute | null = this.activated.root;
       let show = false;
@@ -33,9 +34,7 @@ export class TopbarComponent {
       this.visible = show;
     };
 
-    // check on construction
     check();
-    // update on navigation end
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => check());
   }
 

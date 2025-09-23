@@ -6,7 +6,8 @@ public record UserDto(
     Guid Id,
     string Email,
     string Username,
-    string? Token
+    string? Token,
+    string UserRole
 );
 
 public static class UserDtoExtensions
@@ -17,7 +18,8 @@ public static class UserDtoExtensions
             user.Id,
             user.Email,
             user.Username,
-            token
+            token,
+            user.Role.ToString()
         );
     }
 }

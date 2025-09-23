@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Result } from '../_models/result';
+import { User } from '../_models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -11,16 +13,15 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  register(data: { username: string; email: string; password: string; role: string; languagePreference: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, data);
+  register(data: any): Observable<Result<User>> {
+    return this.http.post<Result<User>>(`${this.apiUrl}/register`, data);
   }
 
-  login(data: { username: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, data);
+  login(data: any): Observable<Result<User>> {
+    return this.http.post<Result<User>>(`${this.apiUrl}/login`, data);
   }
 
   activate(token: string): Observable<any> {
-    // API expects token as query parameter
     return this.http.post(`${this.apiUrl}/activate-account?token=${encodeURIComponent(token)}`, {});
   }
 }
