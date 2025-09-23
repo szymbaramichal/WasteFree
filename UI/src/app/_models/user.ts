@@ -3,7 +3,7 @@ export interface User {
     email: string;
     username: string;
     token?: string;
-    role: string;
+    userRole: string;
 };
 
 export interface CurrentUser {

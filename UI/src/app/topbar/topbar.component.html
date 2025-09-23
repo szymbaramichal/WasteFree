@@ -1,4 +1,4 @@
-<nav *ngIf="visible" class="topbar" [ngClass]="user.role == userRole.GarbageAdmin ? 'role-garbadmin' : 'role-user'">
+<nav *ngIf="visible" class="topbar" [ngClass]="currentUser.user()?.role == userRole.GarbageAdmin ? 'role-garbadmin' : 'role-user'">
   <div class="topbar-inner">
     <a class="brand link" routerLink="/portal">WasteFree Portal</a>
     <div class="spacer"></div>
@@ -13,11 +13,11 @@
         </div>
       </a>
     </div>
-    <div class="user-info" *ngIf="user as u">
+    <div class="user-info" *ngIf="currentUser.user() as u">
       <span class="logged">Hey <strong>{{ u.username }}</strong>! ({{ u.role }})</span>
       <button class="btn-logout" (click)="logout()">Logout</button>
     </div>
-    <div class="user-info" *ngIf="!user">
+    <div class="user-info" *ngIf="!currentUser.user()">
       <a class="link" routerLink="/portal">Go to portal</a>
     </div>
   </div>

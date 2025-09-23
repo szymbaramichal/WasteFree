@@ -175,7 +175,7 @@ export class AuthComponent {
       this.currentUser.setUser({
         id: res.id,
         username: res.username,
-        role: this.praseRole(res.role)
+        role: this.praseRole(res.userRole)
       });
       return;
     }
@@ -194,5 +194,5 @@ export class AuthComponent {
   }
 
   return UserRole.User;
-}
+  }
 }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CurrentUserService } from '../services/current-user.service';
 import { AsyncPipe } from '@angular/common';
@@ -17,11 +17,11 @@ import { UserRole } from '../_models/user';
 })
 export class TopbarComponent {
   userRole = UserRole;
-  user = this.currentUser.user()!;
+  currentUser = inject(CurrentUserService);
   visible = false;
   walletBalance$ = this.wallet.balance$;
 
-  constructor(private currentUser: CurrentUserService, private router: Router, private activated: ActivatedRoute, private wallet: WalletService) {
+  constructor(private router: Router, private activated: ActivatedRoute, private wallet: WalletService) {
     const check = () => {
       let route: ActivatedRoute | null = this.activated.root;
       let show = false;
