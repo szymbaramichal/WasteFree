@@ -13,7 +13,7 @@ import { TranslationService } from '../services/translation.service';
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css']
 })
-export class WalletComponent implements OnInit, OnDestroy {
+export class WalletComponent {
   balance = 0;
   topUpForm = this.fb.group({ amount: [10, [Validators.required, Validators.min(1)]] });
   withdrawForm = this.fb.group({ amount: [10, [Validators.required, Validators.min(1)]], iban: ['', [Validators.required]] });
@@ -24,10 +24,6 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.balance = wallet.getBalance();
     this.wallet.balance$.subscribe(b => this.balance = b);
   }
-
-  ngOnInit(): void {}
-
-  ngOnDestroy(): void {}
 
   async topUp() {
     if (this.topUpForm.invalid) return;

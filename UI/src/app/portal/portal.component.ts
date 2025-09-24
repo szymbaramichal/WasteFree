@@ -1,7 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { CurrentUserService } from '../services/current-user.service';
 import { CommonModule } from '@angular/common';
-import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../pipes/translate.pipe';
 
@@ -10,7 +9,6 @@ import { TranslatePipe } from '../pipes/translate.pipe';
   standalone: true,
   imports: [
   CommonModule,
-  LanguageSwitcherComponent,
   RouterModule,
   TranslatePipe
   ],
