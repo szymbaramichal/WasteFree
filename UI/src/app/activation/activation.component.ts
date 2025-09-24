@@ -17,7 +17,7 @@ import { AuthService } from '../services/auth.service';
       <h2 *ngIf="status === 'error'">{{ 'auth.account.activated.errorTitle' | translate }}</h2>
 
       <p *ngIf="status === 'pending'">{{ 'auth.account.activated.wait' | translate }}</p>
-      <p *ngIf="status === 'success'">{{ message || ('auth.account.activated.success' | translate) }}</p>
+      <p *ngIf="status === 'success'">{{ 'auth.account.activated.success' | translate }}</p>
       <p *ngIf="status === 'error'">{{ message || ('auth.account.activated.error' | translate) }}</p>
 
       <div class="actions">
@@ -45,21 +45,31 @@ export class ActivationComponent implements OnInit {
   constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router, private t: TranslationService) {}
 
   ngOnInit(): void {
-    // accept token either as query param ?token=... or path param /activate-account/:token
-    let token: string | null = this.route.snapshot.queryParamMap.get('token');
-    if (!token) token = this.route.snapshot.paramMap.get('token');
+    let token: string | null = null;
 
-    // If token is still missing, try to extract it from the raw URL (handles tokens containing slashes)
+    token = this.route.snapshot.paramMap.get('token');
+
+    if (!token) {
+      try {
+        const urlSegments = this.route.snapshot.url || [];
+        if (urlSegments.length) {
+          token = urlSegments.map(s => s.path).join('/');
+        }
+      } catch {
+        token = null;
+      }
+    }
+
+    if (!token) token = this.route.snapshot.queryParamMap.get('token');
+
     if (!token) {
       try {
         const href = window.location.href || '';
         const marker = '/activate-account/';
         const parts = href.split(marker);
         if (parts.length > 1) {
-          // take everything after the first marker, strip query/hash
           let raw = parts.slice(1).join(marker);
           raw = raw.split('?')[0].split('#')[0];
-          // decode in case token was percent-encoded
           token = decodeURIComponent(raw);
         }
       } catch {
@@ -74,21 +84,12 @@ export class ActivationComponent implements OnInit {
     }
 
     this.auth.activate(token).subscribe({
-      next: (res:any) => {
+      next: () => {
         this.status = 'success';
-        this.message = res?.localizedMessage || res?.message || null;
       },
       error: (err:any) => {
         this.status = 'error';
-        // If backend returned 400 treat it as invalid/expired link and show friendly message
-        if (err && err.status === 400) {
-          // prefer server-provided localizedMessage or errorMessage for 400 responses
-          const payload = err?.error || {};
-          this.message = payload.localizedMessage || payload.errorMessage || payload.message || this.t.translate('auth.account.activated.badLink');
-          return;
-        }
-        // prefer localizedMessage from API
-  this.message = err?.error?.localizedMessage || err?.error?.message || err?.message || this.t.translate('auth.account.activated.error');
+        this.message = err?.error?.errorMessage;
       }
     });
   }
