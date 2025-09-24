@@ -33,6 +33,7 @@
   "auth.role": "Rola",
   "auth.role.user": "Użytkownik",
   "auth.role.garbageAdmin": "Zarządca odpadów",
+  "auth.role.admin": "Administrator",
   "auth.role.user.desc": "Możesz dołączać do grup i zgłaszać wywozy",
   "auth.role.garbageAdmin.desc": "Możesz wywozić odpady",
   "auth.login.btn": "Zaloguj",
@@ -80,4 +81,12 @@
   "wallet.errors.unknown": "Operacja nie powiodła się"
   ,
   "wallet.back": "Powrót do portalu"
+  ,
+  "menu.dashboard": "Panel",
+  "menu.wallet": "Portfel",
+  "topbar.hey": "Hej",
+  "topbar.logout": "Wyloguj",
+  "topbar.openWallet": "Otwórz portfel",
+  "topbar.goPortal": "Przejdź do portalu",
+  "topbar.portalTitle": "Portal WasteFree"
 }

@@ -1,4 +1,5 @@
 import { PortalComponent } from './portal/portal.component';
+import { PortalHomeComponent } from './portal/portal-home.component';
 import { HomeComponent } from './home/home.component';
 import { Routes, UrlSegment, UrlMatchResult } from '@angular/router';
 import { AuthComponent } from './auth/auth.component';
@@ -26,11 +27,18 @@ export function matchActivateAccount(segments: UrlSegment[]): UrlMatchResult | n
 }
 
 export const routes: Routes = [
-        { path: '', component: HomeComponent },
-    { path: 'portal', component: PortalComponent, data: { showTopbar: true }, canActivate: [authGuard] },
-    // Wallet module inside portal
-    { path: 'portal/wallet', loadComponent: () => import('./wallet/wallet.component').then(m => m.WalletComponent), data: { showTopbar: true }, canActivate: [authGuard] },
-        { path: 'auth', component: AuthComponent},
-        // Use matcher so tokens containing slashes/+/= are accepted in the path
-        { matcher: matchActivateAccount, component: ActivationComponent }
+    { path: '', component: HomeComponent },
+    {
+        path: 'portal',
+        component: PortalComponent,
+        data: { showTopbar: true },
+        canActivate: [authGuard],
+        children: [
+            { path: '', component: PortalHomeComponent },
+            { path: 'wallet', loadComponent: () => import('./wallet/wallet.component').then(m => m.WalletComponent), data: { showTopbar: true } }
+        ]
+    },
+    { path: 'auth', component: AuthComponent },
+    // Use matcher so tokens containing slashes/+/= are accepted in the path
+    { matcher: matchActivateAccount, component: ActivationComponent }
 ];

@@ -103,7 +103,7 @@ export class AuthComponent {
         });
       },
       error: (err) => {
-        this.error = err.error.errorMessage;
+        this.error = this.extractApiError(err);
         success = false;
         this.finishLoading(start, success, () => {
           this.isLoading = false;
@@ -138,7 +138,7 @@ export class AuthComponent {
         });
       },
       error: (err) => {
-        this.error = err.error.errorMessage;
+        this.error = this.extractApiError(err);
         this.showActivationSection = false;
         this.showRegisterLoadingText = false;
 
@@ -194,5 +194,29 @@ export class AuthComponent {
   }
 
   return UserRole.User;
+  }
+
+  // 400 and 422
+  private extractApiError(err: any): string {
+    const p = err?.error ?? err;
+
+    if (!p) return '';
+
+    if (typeof p === 'string') return p.trim();
+
+    if (typeof p?.errorMessage === 'string' && p.errorMessage.trim()) return p.errorMessage.trim();
+
+    const bag: any = (p && typeof p === 'object' && p.errors && typeof p.errors === 'object') ? p.errors : p;
+
+    try {
+      const values = Object.values(bag as Record<string, unknown>);
+      const messages = values
+        .flatMap((v: any) => Array.isArray(v) ? v : [v])
+        .filter((m: any) => typeof m === 'string' && m.trim())
+        .map((m: string) => m.trim());
+      return Array.from(new Set(messages)).join('\n');
+    } catch {
+      return '';
+    }
   }
 }
