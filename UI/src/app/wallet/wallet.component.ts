@@ -25,14 +25,9 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.wallet.balance$.subscribe(b => this.balance = b);
   }
 
-  ngOnInit(): void {
-    // Ensure the wallet page uses the same background image as /portal
-    document.body.classList.add('portal-bg');
-  }
+  ngOnInit(): void {}
 
-  ngOnDestroy(): void {
-    document.body.classList.remove('portal-bg');
-  }
+  ngOnDestroy(): void {}
 
   async topUp() {
     if (this.topUpForm.invalid) return;

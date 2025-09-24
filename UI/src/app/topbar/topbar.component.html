@@ -1,10 +1,10 @@
 <nav *ngIf="visible" class="topbar" [ngClass]="currentUser.user()?.role == userRole.GarbageAdmin ? 'role-garbadmin' : 'role-user'">
   <div class="topbar-inner">
-    <a class="brand link" routerLink="/portal">WasteFree Portal</a>
+    <a class="brand link" routerLink="/portal">{{ 'topbar.portalTitle' | translate }}</a>
     <div class="spacer"></div>
     <div class="lang-slot"><app-language-switcher></app-language-switcher></div>
     <div class="wallet-slot" *ngIf="(walletBalance$ | async) !== null">
-      <a class="wallet-pill link" routerLink="/portal/wallet" title="Open wallet">
+      <a class="wallet-pill link" routerLink="/portal/wallet" [title]="('topbar.openWallet' | translate)">
         <img src="/assets/images/wallet.svg" alt="wallet" width="18" height="18" class="wallet-icon"
           aria-hidden="true" />
         <div class="wallet-value ms-2">
@@ -14,11 +14,11 @@
       </a>
     </div>
     <div class="user-info" *ngIf="currentUser.user() as u">
-      <span class="logged">Hey <strong>{{ u.username }}</strong>! ({{ u.role }})</span>
-      <button class="btn-logout" (click)="logout()">Logout</button>
+  <span class="logged">{{ 'topbar.hey' | translate }} <strong>{{ u.username }}</strong>! ({{ roleKeyMap[u.role] | translate }})</span>
+      <button class="btn-logout" (click)="logout()">{{ 'topbar.logout' | translate }}</button>
     </div>
     <div class="user-info" *ngIf="!currentUser.user()">
-      <a class="link" routerLink="/portal">Go to portal</a>
+      <a class="link" routerLink="/portal">{{ 'topbar.goPortal' | translate }}</a>
     </div>
   </div>
 </nav>

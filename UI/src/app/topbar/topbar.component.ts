@@ -4,6 +4,7 @@ import { CurrentUserService } from '../services/current-user.service';
 import { AsyncPipe } from '@angular/common';
 import { Router, RouterModule, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
+import { TranslatePipe } from '../pipes/translate.pipe';
 import { WalletService } from '../services/wallet.service';
 import { filter } from 'rxjs/operators';
 import { UserRole } from '../_models/user';
@@ -11,7 +12,7 @@ import { UserRole } from '../_models/user';
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, RouterModule, LanguageSwitcherComponent],
+  imports: [CommonModule, AsyncPipe, RouterModule, LanguageSwitcherComponent, TranslatePipe],
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.css']
 })
@@ -20,6 +21,11 @@ export class TopbarComponent {
   currentUser = inject(CurrentUserService);
   visible = false;
   walletBalance$ = this.wallet.balance$;
+  roleKeyMap: Record<UserRole, string> = {
+    [UserRole.User]: 'auth.role.user',
+    [UserRole.GarbageAdmin]: 'auth.role.garbageAdmin',
+    [UserRole.Admin]: 'auth.role.admin'
+  };
 
   constructor(private router: Router, private activated: ActivatedRoute, private wallet: WalletService) {
     const check = () => {

@@ -33,6 +33,7 @@
   "auth.role": "Role",
   "auth.role.user": "User",
   "auth.role.garbageAdmin": "Garbage manager",
+  "auth.role.admin": "Administrator",
   "auth.role.user.desc": "Join groups and report pickups",
   "auth.role.garbageAdmin.desc": "You can collect waste",
   "auth.login.btn": "Login",
@@ -80,4 +81,12 @@
   "wallet.errors.unknown": "Operation failed"
   ,
   "wallet.back": "Back to portal"
+  ,
+  "menu.dashboard": "Dashboard",
+  "menu.wallet": "Wallet",
+  "topbar.hey": "Hey",
+  "topbar.logout": "Logout",
+  "topbar.openWallet": "Open wallet",
+  "topbar.goPortal": "Go to portal",
+  "topbar.portalTitle": "WasteFree Portal"
 }

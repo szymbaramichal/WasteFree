@@ -1,6 +1,24 @@
-<div class="portal-container">
-	<div class="portal-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-		<h2>Portal</h2>
-	</div>
-	<p>Welcome to your portal. Use the navigation to access features.</p>
+<div class="d-flex portal-layout" [class.sidebar-collapsed]="sidebarCollapsed">
+	<aside class="portal-sidebar bg-light border-end">
+		<button type="button" class="sidebar-handle" (click)="toggleSidebar()" aria-label="Toggle menu">
+			<span *ngIf="sidebarCollapsed">»</span>
+			<span *ngIf="!sidebarCollapsed">«</span>
+		</button>
+			<ul class="nav nav-pills flex-column p-2">
+			<li class="nav-item">
+					<a class="nav-link" routerLink="/portal" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active" (click)="onNavClick($event)">{{ 'menu.dashboard' | translate }}</a>
+			</li>
+			<li class="nav-item">
+					<a class="nav-link" routerLink="/portal/wallet" routerLinkActive="active" (click)="onNavClick($event)">{{ 'menu.wallet' | translate }}</a>
+			</li>
+		</ul>
+	</aside>
+
+		<div class="portal-overlay" *ngIf="!sidebarCollapsed" (click)="closeSidebar()"></div>
+
+	<section class="portal-content flex-grow-1">
+		<div class="p-3">
+			<router-outlet></router-outlet>
+		</div>
+	</section>
 </div>
