@@ -26,6 +26,7 @@ public class User : DatabaseEntity
     public required UserRole Role { get; set; }
     
     public ICollection<UserGarbageGroup> UserGarbageGroups { get; set; } = new List<UserGarbageGroup>();
+    public ICollection<InboxNotification> InboxNotifications { get; set; } = new List<InboxNotification>();
 
     public Guid WalletId { get; set; }
     public Wallet Wallet { get; set; } = null!;

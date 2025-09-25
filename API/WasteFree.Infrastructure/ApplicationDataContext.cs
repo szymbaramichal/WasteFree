@@ -13,6 +13,7 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
     public DbSet<Wallet> Wallets { get; set; }
     public DbSet<WalletTransaction> WalletTransactions { get; set; }
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
+    public DbSet<InboxNotification> InboxNotifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +27,13 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
             .HasOne(u => u.Wallet)
             .WithOne(w => w.User)
             .HasForeignKey<Wallet>(w => w.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.InboxNotifications)
+            .WithOne(w => w.User)
+            .HasForeignKey(x => x.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
     }
