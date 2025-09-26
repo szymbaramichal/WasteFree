@@ -1,12 +1,30 @@
 import { PortalComponent } from './portal/portal.component';
-import { PortalHomeComponent } from './portal/portal-home.component';
 import { HomeComponent } from './home/home.component';
 import { Routes } from '@angular/router';
 import { AuthComponent } from './auth/auth.component';
 import { authGuard } from './guards/auth.guard';
 import { ActivationComponent } from './activation/activation.component';
+import { UrlSegment, UrlMatchResult } from '@angular/router';
 import { WalletComponent } from './wallet/wallet.component';
 import { InboxComponent } from './inbox/inbox.component';
+import { PortalHomeComponent } from './portal/portal-home.component';
+
+function activateAccountMatcher(segments: UrlSegment[]): UrlMatchResult | null {
+    if (!segments || segments.length === 0) return null;
+    if (segments[0].path !== 'activate-account') return null;
+
+    const tokenSegments = segments.slice(1);
+    if (tokenSegments.length === 0) return null;
+
+    const token = tokenSegments.map(s => s.path).join('/');
+
+    return {
+        consumed: segments,
+        posParams: {
+            token: new UrlSegment(token, {})
+        }
+    };
+}
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -22,5 +40,5 @@ export const routes: Routes = [
         ]
     },
     { path: 'auth', component: AuthComponent },
-    { path: 'activate-account/:token', component: ActivationComponent }
+    { matcher: activateAccountMatcher, component: ActivationComponent }
 ];
