@@ -1,0 +1,36 @@
+/* Inbox styles */
+.inbox-white-wrapper { background:#fff; border-radius:16px; padding:24px 24px 32px; box-shadow:0 2px 4px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04); }
+@media (prefers-color-scheme: white) { .inbox-white-wrapper { background:#162130; box-shadow:0 2px 6px rgba(0,0,0,0.6); } }
+.inbox-icon-wrap { width:40px; height:40px; background:#fff; border:1px solid #e3e7ed; border-radius:50%; }
+.inbox-icon-wrap img { width:20px; height:20px; display:block; color:#1b2e44; }
+
+.btn-filter { border:1px solid #dee2e6; background:#fff; padding:4px 12px; border-radius:20px; font-size:0.8rem; line-height:1; font-weight:500; }
+.btn-filter.active { background:#0d6efd; color:#fff; border-color:#0d6efd; }
+.btn-filter:hover { background:#f1f5f9; }
+.btn-filter.active:hover { background:#0b5ed7; }
+
+ul.list-group { border-radius:12px; overflow:hidden; }
+.notification-item { transition: background-color .2s ease, box-shadow .2s ease; cursor: default; }
+.notification-item.unread { background: #f8faff; position:relative; }
+.notification-item.unread:before { content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:#0d6efd; }
+.notification-item + .notification-item { border-top:1px solid #e6eaf0; }
+
+.notification-item .icon-wrapper { width:40px; height:40px; display:flex; align-items:center; justify-content:center; color:#fff; }
+.notification-item .icon-wrapper.bg-info { background:#0dcaf0 !important; }
+.notification-item .icon-wrapper.bg-warning { background:#ffc107 !important; }
+.notification-item .icon-wrapper.bg-success { background:#198754 !important; }
+.notification-item .icon-wrapper.bg-secondary { background:#6c757d !important; }
+
+.notification-item .title { font-size:0.95rem; }
+.notification-item .body-text { font-size:0.8rem; white-space:pre-line; }
+.notification-item .time { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.5px; }
+.status-badge { font-size:0.55rem; letter-spacing:0.5px; }
+
+@media (prefers-color-scheme: dark) {
+	.notification-item.unread { background:#112134; }
+	.btn-filter { background:#1d2836; border-color:#2b3847; color:#dbe2ea; }
+	.btn-filter:hover { background:#233246; }
+	.btn-filter.active { background:#0d6efd; border-color:#0d6efd; color:#fff; }
+	.notification-item { border-color:#2b3847 !important; }
+	.notification-item.unread:before { background:#409bff; }
+}

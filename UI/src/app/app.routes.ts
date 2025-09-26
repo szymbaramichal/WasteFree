@@ -7,7 +7,7 @@ import { ActivationComponent } from './activation/activation.component';
 import { UrlSegment, UrlMatchResult } from '@angular/router';
 import { WalletComponent } from './wallet/wallet.component';
 import { InboxComponent } from './inbox/inbox.component';
-import { PortalHomeComponent } from './portal/portal-home.component';
+import { PortalHomeComponent } from './portal-home/portal-home.component';
 
 function activateAccountMatcher(segments: UrlSegment[]): UrlMatchResult | null {
     if (!segments || segments.length === 0) return null;
