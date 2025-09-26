@@ -8,6 +8,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 import { WalletService } from '../services/wallet.service';
 import { filter } from 'rxjs/operators';
 import { UserRole } from '../_models/user';
+import { InboxService } from '../services/inbox.service';
 
 @Component({
   selector: 'app-topbar',
@@ -19,8 +20,10 @@ import { UserRole } from '../_models/user';
 export class TopbarComponent {
   userRole = UserRole;
   currentUser = inject(CurrentUserService);
+  inbox = inject(InboxService);
   visible = false;
   walletBalance$ = this.wallet.balance$;
+  animateInbox = false;
   roleKeyMap: Record<UserRole, string> = {
     [UserRole.User]: 'auth.role.user',
     [UserRole.GarbageAdmin]: 'auth.role.garbageAdmin',
@@ -48,5 +51,11 @@ export class TopbarComponent {
     localStorage.removeItem('authToken');
     this.currentUser.setUser(null);
     this.router.navigate(['/']);
+  }
+
+  openInbox() {
+    this.animateInbox = false;
+    this.inbox.refresh();
+    this.router.navigate(['/portal/inbox']);
   }
 }

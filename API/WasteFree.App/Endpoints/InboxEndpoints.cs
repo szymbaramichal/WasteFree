@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.Inbox;
 using WasteFree.Shared.Interfaces;
@@ -21,6 +22,24 @@ public static class InboxEndpoints
             return Results.Ok(result);
         })
         .WithOpenApi();
+        
+        app.MapPost("/inbox/messages/{id}/read", [Authorize] async (
+            [FromRoute] Guid id,
+            ICurrentUserService currentUserService,
+            IStringLocalizer localizer,
+            IMediator mediator,
+            CancellationToken cancellationToken) =>
+        {
+            var result = await mediator.SendAsync(new ReadInboxMessageCommand(currentUserService.UserId, id), cancellationToken);
+            
+            if(!result.IsValid)
+            {
+                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                return Results.BadRequest(result);
+            }
+            
+            return Results.NoContent();
+        });
         
         app.MapGet("/inbox/messages", [Authorize] async (
                 [FromQuery] int pageNumber,

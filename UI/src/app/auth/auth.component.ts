@@ -8,6 +8,7 @@ import { TranslationService } from '../services/translation.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { User, UserRole } from '../_models/user';
+import { InboxService } from '../services/inbox.service';
 
 @Component({
   selector: 'app-auth',
@@ -40,7 +41,8 @@ export class AuthComponent {
     private authService: AuthService,
     private translation: TranslationService,
     private currentUser: CurrentUserService,
-    private router: Router
+    private router: Router, 
+    private inbox: InboxService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -94,6 +96,8 @@ export class AuthComponent {
         this.showLoadingText = true;
 
         this.applyAuthResult(res.resultModel);
+
+        this.inbox.refresh();
 
         success = true;
         this.finishLoading(start, success, () => {

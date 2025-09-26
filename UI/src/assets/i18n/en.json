@@ -88,5 +88,6 @@
   "topbar.logout": "Logout",
   "topbar.openWallet": "Open wallet",
   "topbar.goPortal": "Go to portal",
-  "topbar.portalTitle": "WasteFree Portal"
+  "topbar.portalTitle": "WasteFree Portal",
+  "topbar.openInbox" : "Open inbox"
 }
