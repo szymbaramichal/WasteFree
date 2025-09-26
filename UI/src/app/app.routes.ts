@@ -6,6 +6,7 @@ import { AuthComponent } from './auth/auth.component';
 import { authGuard } from './guards/auth.guard';
 import { ActivationComponent } from './activation/activation.component';
 import { WalletComponent } from './wallet/wallet.component';
+import { InboxComponent } from './inbox/inbox.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -16,7 +17,8 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             { path: '', component: PortalHomeComponent },
-            { path: 'wallet', component: WalletComponent }
+            { path: 'wallet', component: WalletComponent },
+            { path: 'inbox', component: InboxComponent }
         ]
     },
     { path: 'auth', component: AuthComponent },

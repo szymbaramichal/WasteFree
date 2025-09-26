@@ -88,5 +88,6 @@
   "topbar.logout": "Wyloguj",
   "topbar.openWallet": "Otwórz portfel",
   "topbar.goPortal": "Przejdź do portalu",
-  "topbar.portalTitle": "Portal WasteFree"
+  "topbar.portalTitle": "Portal WasteFree",
+  "topbar.openInbox" : "Otwórz powiadomienia"
 }

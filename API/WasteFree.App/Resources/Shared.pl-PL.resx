@@ -3,6 +3,7 @@
   <data name="USERNAME_TAKEN" xml:space="preserve"><value>Nazwa użytkownika jest już zajęta</value></data>
   <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Token aktywacyjny wygasł</value></data>
   <data name="INVALID_USER" xml:space="preserve"><value>Niepoprawny użytkownik</value></data>
+  <data name="NOT_FOUND" xml:space="preserve"><value>Nie znaleziono zasobu.</value></data>
   <data name="USER_NOT_ACTIVATED" xml:space="preserve"><value>Aktywuj najpierw konto przez link wysłany na adres email aby korzystać z WasteFree Cloud!</value></data>
   <data name="STH_WENT_WRONG" xml:space="preserve"><value>Ups, coś poszło nie tak. Spróbuj jeszcze raz!</value></data>
   <data name="INVALID_PAYMENT_CODE" xml:space="preserve"><value>Niepoprawny kod płatności</value></data>

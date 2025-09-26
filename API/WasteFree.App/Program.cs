@@ -71,7 +71,8 @@ app.MapAuthEndpoints();
 app.MapGarbageGroupsEndpoints();
 app.MapWalletEndpoints();
 app.MapAccountEndpoints();
- 
+app.MapInboxEndpoints();
+
 app.UseHttpsRedirection();
  
 app.UseCors(allowLocalFrontendOrigins);

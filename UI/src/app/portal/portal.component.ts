@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CurrentUserService } from '../services/current-user.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -15,7 +15,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
   templateUrl: './portal.component.html',
   styleUrls: ['./portal.component.css']
 })
-export class PortalComponent {
+export class PortalComponent implements OnInit, OnDestroy {
   private bodyClass = 'portal-bg';
   sidebarCollapsed = false;
 
