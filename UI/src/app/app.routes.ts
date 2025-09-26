@@ -1,5 +1,4 @@
 import { PortalComponent } from './portal/portal.component';
-import { PortalHomeComponent } from './portal/portal-home.component';
 import { HomeComponent } from './home/home.component';
 import { Routes } from '@angular/router';
 import { AuthComponent } from './auth/auth.component';
@@ -7,6 +6,7 @@ import { authGuard } from './guards/auth.guard';
 import { ActivationComponent } from './activation/activation.component';
 import { WalletComponent } from './wallet/wallet.component';
 import { InboxComponent } from './inbox/inbox.component';
+import { PortalHomeComponent } from './portal-home/portal-home.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },

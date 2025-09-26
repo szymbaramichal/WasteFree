@@ -34,11 +34,11 @@ public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
             Role = GarbageGroupRole.Owner
         });
 
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
         var userGarbageGroup = await context.UserGarbageGroups
             .Include(x => x.User)
-            .FirstAsync(x => x.Id == userGarbageGroupId);
+            .FirstAsync(x => x.Id == userGarbageGroupId, cancellationToken);
 
         return Result<GarbageGroupDto>.Success(garbageGroup.MapToGarbageGroupDto([userGarbageGroup]));
     }

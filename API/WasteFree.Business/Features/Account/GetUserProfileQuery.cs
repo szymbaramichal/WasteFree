@@ -24,13 +24,6 @@ public class GetUserProfileQueryHandler(ApplicationDataContext context) : IReque
 
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result<ProfileDto>.Success(new ProfileDto()
-        {
-            UserId = request.UserId,
-            BankAccountNumber =  user.Wallet.WithdrawalAccountNumber ?? string.Empty,
-            Description = user.Description ?? string.Empty,
-            Email = user.Email,
-            Username = user.Username
-        });
+        return Result<ProfileDto>.Success(user.MapToProfileDto());
     }
 }

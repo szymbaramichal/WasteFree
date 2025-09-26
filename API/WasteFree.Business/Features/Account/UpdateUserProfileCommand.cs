@@ -27,13 +27,6 @@ public class UpdateUserProfileCommandHandler(ApplicationDataContext context) : I
 
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result<ProfileDto>.Success(new ProfileDto()
-        {
-            UserId = request.UserId,
-            BankAccountNumber =  request.BankAccountNumber,
-            Description = user.Description,
-            Email = user.Email,
-            Username = user.Username
-        });
+        return Result<ProfileDto>.Success(user.MapToProfileDto());
     }
 }
