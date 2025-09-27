@@ -12,4 +12,5 @@ public class UserGarbageGroup : DatabaseEntity
     public GarbageGroup GarbageGroup { get; set; } = null!;
 
     public GarbageGroupRole Role { get; set; }
+    public bool IsPending { get; set; }
 }

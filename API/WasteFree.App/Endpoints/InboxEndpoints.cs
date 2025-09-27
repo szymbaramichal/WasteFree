@@ -23,14 +23,16 @@ public static class InboxEndpoints
         })
         .WithOpenApi();
         
-        app.MapPost("/inbox/messages/{id}/read", [Authorize] async (
+        app.MapPost("/inbox/messages/{id}/action/{makeAction}", [Authorize] async (
             [FromRoute] Guid id,
+            [FromRoute] bool makeAction,
             ICurrentUserService currentUserService,
             IStringLocalizer localizer,
             IMediator mediator,
             CancellationToken cancellationToken) =>
         {
-            var result = await mediator.SendAsync(new ReadInboxMessageCommand(currentUserService.UserId, id), cancellationToken);
+            var result = await mediator.SendAsync(new MakeInboxMessageActionCommand(currentUserService.UserId, id, makeAction), 
+                cancellationToken);
             
             if(!result.IsValid)
             {

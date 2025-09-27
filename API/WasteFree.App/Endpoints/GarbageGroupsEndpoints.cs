@@ -72,12 +72,21 @@ public static class GarbageGroupsEndpoints
             .AddEndpointFilter(new ValidationFilter<RegisterGarbageGroupRequest>())
             .WithOpenApi();
 
-        app.MapPost("/garbage-groups/invite", async (
+        app.MapPost("/garbage-groups/invite", [Authorize] async (
             [FromBody] InviteUserToGarbageGroupRequest request,
             IMediator mediator,
             CancellationToken cancellationToken) =>
         {
-            return Results.Ok();
+            var command = new InviteToGarbageGroupCommand(request.GroupId, request.UserName);
+
+            var result = await mediator.SendAsync(command, cancellationToken);
+
+            if(!result.IsValid)
+            {
+                return Results.BadRequest(result);
+            }
+
+            return Results.Ok(result);
         })
         .RequireAuthorization()
         .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
@@ -86,4 +95,4 @@ public static class GarbageGroupsEndpoints
 }
 
 public record RegisterGarbageGroupRequest(string GroupName, string GroupDescription);
-public record InviteUserToGarbageGroupRequest(string userName, Guid groupId);
+public record InviteUserToGarbageGroupRequest(string UserName, Guid GroupId);
