@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.Inbox.Dtos;
 using WasteFree.Infrastructure;
@@ -26,7 +25,6 @@ public class GetInboxMessagesQueryHandler(ApplicationDataContext context)
             {
                 Id = x.Id,
                 Title = x.Title,
-                IsRead = x.IsRead,
                 CreatedDateUtc = x.CreatedDateUtc,
                 Body = x.Message
             })
