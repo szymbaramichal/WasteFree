@@ -66,7 +66,8 @@ export class WalletComponent {
           this.message = this.t.translate('wallet.message.topupSuccess');
           this.topUpForm.reset({ amount: 10, blikCode: '' });
         } else if (error) {
-          this.error = this.mapError(error);
+          // backend message or fallback
+          this.error = error || this.t.translate('wallet.errors.api');
         }
       },
       error: (err) => {
@@ -91,7 +92,7 @@ export class WalletComponent {
           this.message = this.t.translate('wallet.message.withdrawSuccess');
           this.withdrawForm.reset({ amount: 10, iban: '' });
         } else if (error) {
-          this.error = this.mapError(error);
+          this.error = error || this.t.translate('wallet.errors.api');
         }
       },
       error: (err) => {
@@ -100,14 +101,6 @@ export class WalletComponent {
         this.error = this.extractApiError(err) || this.t.translate('wallet.errors.api');
       }
     });
-  }
-
-  private mapError(raw: string): string {
-    const lower = raw.toLowerCase();
-    if (lower.includes('insufficient')) return this.t.translate('wallet.errors.insufficientFunds');
-    if (lower.includes('iban')) return this.t.translate('wallet.errors.invalidIban');
-    if (lower.includes('amount') && lower.includes('positive')) return this.t.translate('wallet.errors.amountPositive');
-    return this.t.translate('wallet.errors.api');
   }
 
   private resetMessages() {
