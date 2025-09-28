@@ -17,36 +17,17 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 })
 export class PortalComponent implements OnInit, OnDestroy {
   private bodyClass = 'portal-bg';
-  sidebarCollapsed = false;
 
   constructor(public currentUser: CurrentUserService) {}
 
   ngOnInit(): void {
     document.body.classList.add(this.bodyClass);
-    try { this.sidebarCollapsed = localStorage.getItem('portal.sidebar.collapsed') === '1'; } catch {}
   }
 
   ngOnDestroy(): void {
     document.body.classList.remove(this.bodyClass);
   }
 
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-    try { localStorage.setItem('portal.sidebar.collapsed', this.sidebarCollapsed ? '1' : '0'); } catch {}
-  }
-
-  closeSidebar(): void {
-    if (!this.sidebarCollapsed) {
-      this.sidebarCollapsed = true;
-      try { localStorage.setItem('portal.sidebar.collapsed', '1'); } catch {}
-    }
-  }
-
-  onNavClick(_: MouseEvent): void {
-    // Auto-close on small screens 
-    if (window.innerWidth < 992) {
-      this.closeSidebar();
-    }
-  }
+  // Sidebar is static; no toggle or script logic needed
 
 }

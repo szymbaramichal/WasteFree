@@ -1,11 +1,8 @@
 .portal-layout { min-height: 100vh; position: relative; }
 .portal-sidebar {
 	width: 240px;
-	transition: margin-left .28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .28s ease;
 	box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
-.portal-layout.sidebar-collapsed .portal-sidebar { margin-left: -240px; } 
-.portal-content { transition: margin-left .28s cubic-bezier(0.4, 0, 0.2, 1); }
 .portal-sidebar.bg-light {
 	background:
 		radial-gradient(circle at 18% 0%, rgba(43, 182, 115, 0.10), transparent 40%),
@@ -21,6 +18,8 @@
 	border-radius: 8px;
 	margin: 2px 6px;
 	transition: background-color .18s ease, color .18s ease;
+	display: flex;
+	align-items: center;
 }
 .portal-sidebar .nav-link:hover {
 	background-color: rgba(43, 182, 115, 0.14);
@@ -36,51 +35,14 @@
 
 
 .portal-sidebar { position: relative; }
-.sidebar-handle {
-	position: absolute;
-	top: 50%;
-	right: -12px;
-	transform: translateY(-50%);
-	width: 24px;
-	height: 48px;
-	border-radius: 0 10px 10px 0;
-	border: 1px solid rgba(31,139,86,.25);
-	background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(246,255,251,.56));
-	-webkit-backdrop-filter: saturate(160%) blur(8px);
-	backdrop-filter: saturate(160%) blur(8px);
-	box-shadow: 0 3px 14px rgba(0,0,0,.14);
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	z-index: 1030;
-	color: var(--primary-green-dark, #1f8b56);
-	transition: background .2s ease, box-shadow .2s ease, color .2s ease;
-}
-.sidebar-handle:hover {
-	background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(246,255,251,.68));
-	box-shadow: 0 6px 18px rgba(0,0,0,.20);
-	color: var(--primary-green, #2bb673);
-}
-.sidebar-handle:focus-visible {
-	outline: 2px solid var(--primary-green, #2bb673);
-	outline-offset: 2px;
-}
 
-@media (max-width: 991.98px) {
-	.portal-layout.sidebar-collapsed .portal-sidebar { margin-left: -216px; } /* leave 24px for handle on mobile */
+/* Icon + text alignment */
+.portal-sidebar .nav-icon {
+	width: 20px;
+	height: 20px;
+	margin-right: 10px;
+	color: currentColor;
 }
-
-.portal-overlay {
-	position: fixed;
-	inset: 0;
-	background: rgba(0,0,0,.26);
-	z-index: 1020;
-	opacity: 1;
-	transition: opacity .2s ease;
-}
-
-
-@media (min-width: 992px) {
-	.portal-overlay { display: none; }
+.portal-sidebar .nav-text {
+	line-height: 1.2;
 }
