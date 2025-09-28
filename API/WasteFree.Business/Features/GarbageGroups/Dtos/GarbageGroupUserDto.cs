@@ -8,6 +8,7 @@ public class GarbageGroupUserDto
     public Guid Id { get; set; }
     public required string Username { get; set; }
     public GarbageGroupRole GarbageGroupRole { get; set; }
+    public bool IsPending { get; set; }
 }
 
 public static class GarbageGroupUserDtoExtensions
@@ -22,7 +23,8 @@ public static class GarbageGroupUserDtoExtensions
             {
                 Id = user.Id,
                 Username = user.User.Username,
-                GarbageGroupRole = user.Role
+                GarbageGroupRole = user.Role,
+                IsPending = user.IsPending
             });
         }
 

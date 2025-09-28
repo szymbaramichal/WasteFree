@@ -36,10 +36,14 @@ public class MakeInboxMessageActionCommandHandler(ApplicationDataContext context
     private async Task AssignUserAndDeleteNotification(MakeInboxMessageActionCommand request,
         CancellationToken cancellationToken, InboxNotification inboxNotification)
     {
-        await context.UserGarbageGroups
-            .Where(x => x.UserId == request.UserId && x.GarbageGroupId == inboxNotification.RelatedEntityId)
-            .ExecuteUpdateAsync(x => x.SetProperty(u => u.IsPending, false), 
-                cancellationToken);
+        if (request.MakeAction)
+        {
+            await context.UserGarbageGroups
+                .Where(x => x.UserId == request.UserId && x.GarbageGroupId == inboxNotification.RelatedEntityId)
+                .ExecuteUpdateAsync(x => x.SetProperty(u => u.IsPending, false), 
+                    cancellationToken);
+        }
+
         context.InboxNotifications.Remove(inboxNotification);
         await context.SaveChangesAsync(cancellationToken);
     }
