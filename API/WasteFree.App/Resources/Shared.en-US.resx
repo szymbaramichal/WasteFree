@@ -4,6 +4,9 @@
   <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Registration token has expired</value></data>
   <data name="INVALID_USER" xml:space="preserve"><value>Invalid user</value></data>
   <data name="NOT_FOUND" xml:space="preserve"><value>Resource not found.</value></data>
+  <data name="INVITED_USER_NOT_FOUND" xml:space="preserve"><value>Invited user not found.</value></data>
+  <data name="ALREADY_IN_GROUP" xml:space="preserve"><value>Invited user is already group member.</value></data>
+  <data name="INVALID_NOTIFICATION_TYPE" xml:space="preserve"><value>Invalid notification type.</value></data>
   <data name="USER_NOT_ACTIVATED" xml:space="preserve"><value>Activate account via email link to make use of WasteFree Cloud!</value></data>
   <data name="INVALID_PAYMENT_CODE" xml:space="preserve"><value>Invalid payment code</value></data>
   <data name="AMOUNT_OUTSIDE_RANGE" xml:space="preserve"><value>Amount must be between 1 and 10 000PLN.</value></data>

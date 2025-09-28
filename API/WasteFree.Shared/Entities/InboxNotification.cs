@@ -10,7 +10,6 @@ public class InboxNotification : DatabaseEntity
 
     public required string Title { get; set; }
     public required string Message { get; set; }
-    public bool IsRead { get; set; } = false;
 
     public Guid? RelatedEntityId { get; set; } 
     public required InboxActionType ActionType { get; set; } = Enums.InboxActionType.None;
