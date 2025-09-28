@@ -16,9 +16,7 @@ import { TranslationService } from '../services/translation.service';
 })
 export class WalletComponent {
   balance = 0;
-  methodsLoaded = false;
   paymentStatus: PaymentStatus | null = null;
-  PaymentStatus = PaymentStatus; // expose enum for template
 
   topUpForm = this.fb.group({
     amount: [10, [Validators.required, Validators.min(1)]],
@@ -39,11 +37,9 @@ export class WalletComponent {
   async ngOnInit() {
     await this.wallet.ensureInit();
     this.balance = this.wallet.currentBalance;
-    this.methodsLoaded = true;
   }
 
   statusLabel(): string | null {
-    if (this.paymentStatus === null) return null;
     switch (this.paymentStatus) {
       case PaymentStatus.Pending: return this.t.translate('wallet.payment.status.pending');
       case PaymentStatus.Success: return this.t.translate('wallet.payment.status.success');
@@ -52,45 +48,23 @@ export class WalletComponent {
     }
   }
 
-  topUp() {
-    if (this.topUpForm.invalid) return;
-    this.resetMessages();
-    this.loading = true;
-    const amount = Number(this.topUpForm.value.amount);
-    const blik = String(this.topUpForm.value.blikCode);
-    this.wallet.createTransaction({ code: 'BLIK', amount, paymentProperty: blik }).subscribe({
-      next: ({ status, error }) => {
-        this.paymentStatus = status;
-        this.loading = false;
-        if (status === PaymentStatus.Success) {
-          this.message = this.t.translate('wallet.message.topupSuccess');
-          this.topUpForm.reset({ amount: 10, blikCode: '' });
-        } else if (error) {
-          // backend message or fallback
-          this.error = error || this.t.translate('wallet.errors.api');
-        }
-      },
-      error: (err) => {
-        this.loading = false;
-        this.paymentStatus = PaymentStatus.Failed;
-        this.error = this.extractApiError(err) || this.t.translate('wallet.errors.api');
-      }
-    });
-  }
+  topUp() { this.handleTransaction('BLIK', this.topUpForm, { amount: 10, blikCode: '' }, 'wallet.message.topupSuccess'); }
 
-  withdraw() {
-    if (this.withdrawForm.invalid) return;
+  withdraw() { this.handleTransaction('IBAN', this.withdrawForm, { amount: 10, iban: '' }, 'wallet.message.withdrawSuccess'); }
+
+  private handleTransaction(code: 'BLIK' | 'IBAN', form: any, resetValue: any, successKey: string) {
+    if (form.invalid) return;
     this.resetMessages();
     this.loading = true;
-    const amount = Number(this.withdrawForm.value.amount);
-    const iban = String(this.withdrawForm.value.iban);
-    this.wallet.createTransaction({ code: 'IBAN', amount, paymentProperty: iban }).subscribe({
+    const amount = Number(form.value.amount);
+    const paymentProperty = code === 'BLIK' ? String(form.value.blikCode) : String(form.value.iban);
+    this.wallet.createTransaction({ code, amount, paymentProperty }).subscribe({
       next: ({ status, error }) => {
         this.paymentStatus = status;
         this.loading = false;
         if (status === PaymentStatus.Success) {
-          this.message = this.t.translate('wallet.message.withdrawSuccess');
-          this.withdrawForm.reset({ amount: 10, iban: '' });
+          this.message = this.t.translate(successKey);
+          form.reset(resetValue);
         } else if (error) {
           this.error = error || this.t.translate('wallet.errors.api');
         }
@@ -109,20 +83,20 @@ export class WalletComponent {
     this.paymentStatus = null;
   }
 
-  // Zbliżone do wzorca w auth.component.ts
   private extractApiError(err: any): string {
     const p = err?.error ?? err;
     if (!p) return '';
     if (typeof p === 'string') return p.trim();
     if (typeof p?.errorMessage === 'string' && p.errorMessage.trim()) return p.errorMessage.trim();
-    const bag: any = (p && typeof p === 'object' && p.errors && typeof p.errors === 'object') ? p.errors : p;
+    const bag: any = (p && p.errors && typeof p.errors === 'object') ? p.errors : null;
+    if (!bag) return '';
     try {
-      const values = Object.values(bag as Record<string, unknown>);
-      const messages = values
+      return Object.values(bag)
         .flatMap((v: any) => Array.isArray(v) ? v : [v])
         .filter((m: any) => typeof m === 'string' && m.trim())
-        .map((m: string) => m.trim());
-      return Array.from(new Set(messages)).join('\n');
+        .map((m: string) => m.trim())
+        .filter((v, i, a) => a.indexOf(v) === i)
+        .join('\n');
     } catch { return ''; }
   }
 }
