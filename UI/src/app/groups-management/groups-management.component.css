@@ -1,0 +1,56 @@
+/* Fancy groups management styling */
+
+.groups-mgmt .fancy-card { border-radius: 1rem; }
+.groups-mgmt .card-header { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+
+.bg-gradient-green { background: linear-gradient(135deg,#2bb673,#1f8b56); }
+.bg-gradient-teal { background: linear-gradient(135deg,#20c997,#198754); }
+
+.groups-mgmt .header-accent { position:absolute; inset:0; pointer-events:none; }
+.groups-mgmt .header-accent::after { content:""; position:absolute; top:-40%; right:-20%; width:220px; height:220px; background:radial-gradient(circle at center,rgba(255,255,255,0.35),transparent 70%); filter:blur(4px); }
+
+.groups-mgmt .groups-scroll { max-height: 460px; overflow-y: auto; scrollbar-width: thin; }
+.groups-mgmt .groups-scroll::-webkit-scrollbar { width: 8px; }
+.groups-mgmt .groups-scroll::-webkit-scrollbar-track { background: transparent; }
+.groups-mgmt .groups-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+.groups-mgmt .groups-scroll::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+
+.groups-mgmt .group-item { position:relative; border:0; border-bottom:1px solid rgba(0,0,0,0.06); background:transparent; transition: background .2s, transform .15s; }
+.groups-mgmt .group-item:last-child { border-bottom:0; }
+.groups-mgmt .group-item:hover { background:#f7fdf9; }
+.groups-mgmt .group-item:active { transform: scale(.985); }
+
+.groups-mgmt .avatar { width:46px; height:46px; border-radius:50%; background:var(--avatar-color, #2bb673); display:flex; align-items:center; justify-content:center; font-weight:600; color:#fff; font-size:1.05rem; letter-spacing:.5px; position:relative; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.12); }
+.groups-mgmt .avatar::after { content:attr(data-initial); }
+.groups-mgmt .avatar.owner { outline:3px solid #2bb67333; }
+
+.groups-mgmt .group-name { font-size: .95rem; letter-spacing:.2px; }
+
+.groups-mgmt .empty-state { animation: fadeIn .4s ease; }
+
+@keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform: translateY(0);} }
+
+/* Form enhancements */
+.groups-mgmt .form-control, .groups-mgmt .input-group-text { border-radius: .75rem; }
+.groups-mgmt textarea.form-control { resize: vertical; }
+.groups-mgmt .form-control:focus { box-shadow: 0 0 0 .25rem rgba(32,201,151,.25); }
+
+.groups-mgmt .btn-success { background: linear-gradient(135deg,#2bb673,#1f8b56); border:0; }
+.groups-mgmt .btn-success:hover { filter:brightness(1.05); }
+.groups-mgmt .btn-success:active { filter:brightness(.95); }
+
+/* Utility */
+@media (max-width: 1199.98px) { .groups-mgmt .groups-scroll { max-height: 380px; } }
+@media (max-width: 991.98px) { .groups-mgmt .fancy-card { min-height:auto; } }
+
+/* New icon input (replaces Bootstrap input-group to remove grey box) */
+.groups-mgmt .form-icon-group { position: relative; display:flex; align-items: center; }
+.groups-mgmt .form-icon-group > i { position:absolute; left: .9rem; top:50%; transform:translateY(-50%); color: var(--bs-gray-600); font-size:1.05rem; pointer-events:none; }
+.groups-mgmt .form-icon-group .form-control { padding-left: 2.35rem; border-radius:.75rem; }
+.groups-mgmt .form-icon-group .form-control.is-invalid { padding-right:2.75rem; }
+
+/* Button alignment tweaks */
+.groups-mgmt .form-actions .btn { display:inline-flex; align-items:center; gap:.4rem; }
+.groups-mgmt .form-actions .btn .spinner-border { width:1rem; height:1rem; }
+.groups-mgmt .form-actions { row-gap:.75rem; }
+

@@ -11,7 +11,7 @@ public static class AccountEndpoints
 {
     public static void MapAccountEndpoints(this WebApplication app)
     {
-        app.MapPut("/user/profile", [Authorize] async (
+        app.MapPut("/user/profile", async (
                 [FromBody] UpdateProfileRequest request,
                 ICurrentUserService currentUserService,
                 IStringLocalizer localizer,
@@ -25,14 +25,15 @@ public static class AccountEndpoints
                 if(!result.IsValid)
                 {
                     result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                    return Results.BadRequest(result);
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
                 }
             
                 return Results.Ok(result);
             })
+            .RequireAuthorization()
             .WithOpenApi();
         
-        app.MapGet("/user/profile", [Authorize] async (
+        app.MapGet("/user/profile", async (
                 ICurrentUserService currentUserService,
                 IStringLocalizer localizer,
                 IMediator mediator,
@@ -44,11 +45,12 @@ public static class AccountEndpoints
                 if(!result.IsValid)
                 {
                     result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                    return Results.BadRequest(result);
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
                 }
                 
                 return Results.Ok(result);
             })
+            .RequireAuthorization()
             .WithOpenApi();
     }
 }
