@@ -1,12 +1,91 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { GarbageGroupInfo, RegisterGarbageGroupRequest } from '../_models/garbageGroups';
+import { GarbageGroupService } from '../services/garbage-group.service';
+import { HttpClientModule } from '@angular/common/http';
+import { finalize } from 'rxjs';
+import { TranslatePipe } from '../pipes/translate.pipe';
 
 @Component({
   selector: 'app-groups-management',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, TranslatePipe],
   templateUrl: './groups-management.component.html',
-  styleUrl: './groups-management.component.css'
+  styleUrls: ['./groups-management.component.css']
 })
-export class GroupsManagementComponent {
+export class GroupsManagementComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private groupService = inject(GarbageGroupService);
 
+  groups: GarbageGroupInfo[] = [];
+  loading = false;
+  submitting = false;
+  loadError: string | null = null;
+  submitError: string | null = null;
+  successMessage: string | null = null;
+
+  form: FormGroup = this.fb.group({
+    groupName: ['', [Validators.required, Validators.maxLength(100)]],
+    groupDescription: ['', [Validators.required, Validators.maxLength(500)]]
+  });
+
+  ngOnInit(): void {
+    this.fetchGroups();
+  }
+
+  fetchGroups(): void {
+    this.loading = true;
+    this.loadError = null;
+    this.groupService.list()
+      .pipe(finalize(() => this.loading = false))
+      .subscribe({
+        next: res => {
+          this.groups = res.resultModel || [];
+        },
+        error: err => {
+          this.loadError = err?.error?.errorMessage;
+        }
+      });
+  }
+
+  submit(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    this.submitting = true;
+    this.submitError = null;
+    this.successMessage = null;
+    const payload: RegisterGarbageGroupRequest = this.form.value;
+    this.groupService.register(payload)
+      .pipe(finalize(() => this.submitting = false))
+      .subscribe({
+        next: res => {
+          if (res.errorCode) {
+            this.submitError = res.errorMessage;
+            return;
+          }
+            //this.successMessage = this.translate.instant('groups.form.success');
+            this.form.reset();
+            this.fetchGroups();
+        },
+        error: err => {
+          this.submitError = err?.error?.errorMessage;
+        }
+      });
+  }
+
+  // helpers for template
+  hasError(control: string, error: string): boolean {
+    const c = this.form.get(control);
+    return !!c && c.touched && c.hasError(error);
+  }
+
+  avatarColor(name: string): string {
+    if(!name) return '#6c757d';
+    const hash = Array.from(name).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    const colors = ['#2bb673', '#1f8b56', '#198754', '#0d6efd', '#20c997', '#6f42c1', '#fd7e14'];
+    return colors[hash % colors.length];
+  }
 }

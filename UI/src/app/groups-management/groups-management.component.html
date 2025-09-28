@@ -1,1 +1,115 @@
-<p>groups-management works!</p>
+<div class="container py-4 groups-mgmt">
+  <div class="row gy-4">
+    <!-- Left column: groups list -->
+    <div class="col-12 col-xl-7">
+      <div class="card fancy-card h-100 border-0 shadow-lg">
+        <div class="card-header bg-gradient-green text-white py-3 position-relative overflow-hidden">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+              <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
+                <span class="icon-circle"><i class="bi bi-people"></i></span>
+                {{ 'groups.title' | translate }}
+              </h5>
+              <small class="opacity-75">{{ 'groups.subtitle' | translate }}</small>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <div class="text-end me-2 small">
+                <div class="fw-semibold">{{ 'groups.total' | translate }}</div>
+                <div class="fs-5 lh-1">{{ groups.length }}</div>
+              </div>
+              <button class="btn btn-sm btn-outline-light px-3" (click)="fetchGroups()" [disabled]="loading">
+                <span *ngIf="!loading" class="d-inline-flex align-items-center gap-1"><i class="bi bi-arrow-clockwise"></i> {{ 'groups.refresh' | translate }}</span>
+                <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+              </button>
+            </div>
+          </div>
+          <div class="header-accent"></div>
+        </div>
+        <div class="card-body p-0 d-flex flex-column">
+          <div *ngIf="loadError" class="alert alert-danger m-3">{{ loadError }}</div>
+          <div *ngIf="!loadError" class="flex-grow-1 position-relative">
+            <div class="groups-scroll list-group list-group-flush">
+              <div *ngIf="loading" class="p-4 text-center text-muted">
+                <div class="spinner-border"></div>
+                <div class="small mt-2">{{ 'groups.loading' | translate }}</div>
+              </div>
+              <a *ngFor="let g of groups; let i = index" class="list-group-item list-group-item-action group-item py-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="avatar flex-shrink-0" [ngClass]="{'owner': g.isUserOwner}" [attr.data-initial]="g.name | slice:0:1"></div>
+                  <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                      <div>
+                        <div class="fw-semibold group-name mb-1" [title]="g.name">{{ g.name }}</div>
+                        <div class="d-flex gap-2 small text-muted">
+                          <span class="badge rounded-pill" [ngClass]="g.isUserOwner ? 'bg-success-subtle text-success-emphasis border border-success-subtle' : 'bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle'">
+                            {{ g.isUserOwner ? ('groups.role.owner' | translate) : ('groups.role.member' | translate) }}
+                          </span>
+                          <span class="d-flex align-items-center gap-1" *ngIf="g.isUserOwner"><i class="bi bi-star-fill text-warning small"></i><span class="text-warning-emphasis">{{ 'groups.role.lead' | translate }}</span></span>
+                        </div>
+                      </div>
+                      <div class="text-end small text-muted opacity-75">#{{ i + 1 }}</div>
+                    </div>
+                  </div>
+                  <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                </div>
+              </a>
+              <div *ngIf="!loading && groups.length === 0" class="p-5 text-center text-muted empty-state">
+                <i class="bi bi-folder2-open display-6 d-block mb-3 opacity-50"></i>
+                <div class="fw-semibold mb-1">{{ 'groups.empty.title' | translate }}</div>
+                <div class="small mb-3">{{ 'groups.empty.desc' | translate }}</div>
+                <button class="btn btn-outline-success btn-sm" (click)="groupNameInput.focus()">{{ 'groups.empty.cta' | translate }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column: create form -->
+    <div class="col-12 col-xl-5">
+      <div class="card fancy-card border-0 shadow-lg h-100">
+        <div class="card-header bg-gradient-teal text-white py-3 position-relative overflow-hidden">
+          <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
+            <i class="bi bi-plus-circle"></i>
+            {{ 'groups.form.title' | translate }}
+          </h5>
+          <small class="opacity-75">{{ 'groups.form.subtitle' | translate }}</small>
+          <div class="header-accent"></div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="needs-validation">
+            <div class="mb-4">
+              <label for="groupName" class="form-label fw-semibold">{{ 'groups.form.name' | translate }}</label>
+              <div class="form-group">
+                <i class="bi bi-collection"></i>
+                <input #groupNameInput id="groupName" type="text" class="form-control" [placeholder]="'groups.form.placeholder.name' | translate" formControlName="groupName" [class.is-invalid]="hasError('groupName','required') || hasError('groupName','maxlength')">
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="hasError('groupName','required')">{{ 'groups.form.errors.name.required' | translate }}</div>
+              <div class="invalid-feedback d-block" *ngIf="hasError('groupName','maxlength')">{{ 'groups.form.errors.name.max' | translate }}</div>
+            </div>
+            <div class="mb-4">
+              <label for="groupDescription" class="form-label fw-semibold">{{ 'groups.form.description' | translate }}</label>
+              <textarea id="groupDescription" rows="4" class="form-control" [placeholder]="'groups.form.placeholder.description' | translate" formControlName="groupDescription" [class.is-invalid]="hasError('groupDescription','required') || hasError('groupDescription','maxlength')"></textarea>
+              <div class="invalid-feedback" *ngIf="hasError('groupDescription','required')">{{ 'groups.form.errors.desc.required' | translate }}</div>
+              <div class="invalid-feedback" *ngIf="hasError('groupDescription','maxlength')">{{ 'groups.form.errors.desc.max' | translate }}</div>
+              <div class="form-text text-end small opacity-75 mt-1">{{ form.get('groupDescription')?.value?.length || 0 }}/500</div>
+            </div>
+            <div class="form-actions d-flex align-items-center gap-3 flex-wrap">
+              <button type="submit" class="btn btn-success px-4" [disabled]="submitting || form.invalid">
+                <span *ngIf="!submitting" class="d-inline-flex align-items-center gap-2"><i class="bi bi-check2-circle"></i> {{ 'groups.form.create' | translate }}</span>
+                <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+              </button>
+              <button type="button" class="btn btn-outline-secondary" (click)="form.reset()" [disabled]="submitting">{{ 'groups.form.reset' | translate }}</button>
+            </div>
+            <div class="mt-4" *ngIf="submitError">
+              <div class="alert alert-danger mb-0 d-flex align-items-center gap-2 py-2"><i class="bi bi-exclamation-triangle-fill"></i> <span>{{ submitError }}</span></div>
+            </div>
+            <div class="mt-4" *ngIf="successMessage">
+              <div class="alert alert-success mb-0 d-flex align-items-center gap-2 py-2"><i class="bi bi-check-circle-fill"></i> <span>{{ successMessage }}</span></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
