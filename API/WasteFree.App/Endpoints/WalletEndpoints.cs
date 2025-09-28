@@ -12,19 +12,20 @@ public static class WalletEndpoints
 {
     public static void MapWalletEndpoints(this WebApplication app)
     {
-        app.MapGet("/wallet/methods", [Authorize] async (
+        app.MapGet("/wallet/methods", async (
                 IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
-        {
-            var result = await mediator.SendAsync(new GetWalletMethodsQuery(), cancellationToken);
-            
-            return Results.Ok(result);
-        })
-        .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("wallet_methods"))
-        .WithOpenApi();
+            {
+                var result = await mediator.SendAsync(new GetWalletMethodsQuery(), cancellationToken);
+                
+                return Results.Ok(result);
+            })
+            .RequireAuthorization()
+            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("wallet_methods"))
+            .WithOpenApi();
 
-        app.MapPost("/wallet/transaction", [Authorize] async (
+        app.MapPost("/wallet/transaction", async (
                 [FromBody] WalletTransactionRequest paymentRequest,
                 ICurrentUserService currentUserService,
                 IStringLocalizer localizer,
@@ -46,10 +47,11 @@ public static class WalletEndpoints
 
                 return Results.Ok(result);
             })
+            .RequireAuthorization()
             .AddEndpointFilter(new ValidationFilter<WalletTransactionRequest>())
             .WithOpenApi();
         
-        app.MapPost("/wallet/balance", [Authorize] async (
+        app.MapPost("/wallet/balance", async (
                 IStringLocalizer localizer,
                 ICurrentUserService currentUserService,
                 IMediator mediator,
@@ -67,6 +69,7 @@ public static class WalletEndpoints
 
                 return Results.Ok(result);
             })
+            .RequireAuthorization()
             .WithOpenApi();
     }
 }

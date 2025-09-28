@@ -8,7 +8,9 @@ public sealed class Result<T>
     public T? ResultModel { get; set; }
     public string ErrorMessage { get; set; } = string.Empty;
     public string ErrorCode { get; } = string.Empty;
-    private HttpStatusCode ResponseCode { get; } = HttpStatusCode.OK;
+    
+    [JsonIgnore]
+    public HttpStatusCode ResponseCode { get; } = HttpStatusCode.OK;
     public Pager Pager { get; set; }
 
     [JsonIgnore]
