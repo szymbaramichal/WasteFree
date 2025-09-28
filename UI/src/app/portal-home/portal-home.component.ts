@@ -18,7 +18,6 @@ export class PortalHomeComponent {
   private wallet = inject(WalletService);
   currentUser = inject(CurrentUserService).user;
 
-  // Mock stats (replace with API calls later)
   stats = signal([
     { key: 'savings', labelKey: 'portal.home.stats.savings', value: 1280, unit: 'PLN', icon: 'wallet' },
     { key: 'wasteReduced', labelKey: 'portal.home.stats.wasteReduced', value: 342, unit: 'kg', icon: 'leaf' },
@@ -26,11 +25,14 @@ export class PortalHomeComponent {
     { key: 'community', labelKey: 'portal.home.stats.community', value: 3, unit: '', icon: 'users' }
   ]);
 
-  balance = this.wallet.getBalance();
+  balance = 0;
   recent = computed(() => this.inbox.notifications().slice(0, 5));
 
-  ngOnInit() {
+  async ngOnInit() {
     if (!this.inbox.notifications().length) this.inbox.fetchNotifications();
+    this.wallet.balance$.subscribe(b => this.balance = b);
+    await this.wallet.ensureInit();
+    this.balance = this.wallet.currentBalance;
   }
 
   iconPath(name: string) {

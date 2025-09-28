@@ -4,6 +4,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { TranslationService } from './services/translation.service';
 import { localeInterceptor } from './interceptors/locale.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
 
 export function initTranslationsFactory(translationService: TranslationService) {
   return () => translationService.loadLangPromise();
@@ -12,7 +13,7 @@ export function initTranslationsFactory(translationService: TranslationService) 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-  provideHttpClient(withInterceptors([localeInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, localeInterceptor])),
     {
       provide: APP_INITIALIZER,
       useFactory: initTranslationsFactory,

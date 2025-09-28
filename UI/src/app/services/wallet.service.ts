@@ -1,89 +1,103 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, timer } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+import { Result } from '../_models/result';
+
+export interface WalletBalanceDto { amount: number; }
+export interface WalletMethodDto { code: string; name: string; type: number; }
+export interface WalletTransactionRequest { code: string; amount: number; paymentProperty: string; }
+export interface WalletTransactionResponse { paymentStatus: number; }
+
+// Map numeric paymentStatus -> semantic value (assumption based on typical flows):
+// 0 = Pending, 1 = Failed, 2 = Success (given example shows 2 on success)
+export enum PaymentStatus { Pending = 0, Failed = 1, Success = 2 }
 
 @Injectable({ providedIn: 'root' })
 export class WalletService {
-  private storageKey = 'wf_wallet_balance';
-  private _balance$ = new BehaviorSubject<number>(this.load());
+  private api = `${environment.apiUrl}/wallet`;
+
+  private _balance$ = new BehaviorSubject<number>(0);
   balance$ = this._balance$.asObservable();
 
-  constructor() {}
+  private _methods$ = new BehaviorSubject<WalletMethodDto[] | null>(null);
+  methods$ = this._methods$.asObservable();
 
-  private load(): number {
+  constructor(private http: HttpClient) {}
+
+  // ----------- Public API -----------
+  async ensureInit(): Promise<void> {
+    // Lazy load methods & balance only once
+    if (this._methods$.getValue() === null) {
+      await Promise.allSettled([this.refreshMethods(), this.refreshBalance()]);
+    }
+  }
+
+  async refreshBalance(): Promise<void> {
     try {
-      const raw = localStorage.getItem(this.storageKey);
-      if (!raw) return 0;
-      const n = Number(raw);
-      return isNaN(n) ? 0 : n;
-    } catch {
-      return 0;
-    }
-  }
-
-  private save(v: number) {
-    this._balance$.next(v);
-    localStorage.setItem(this.storageKey, String(v));
-  }
-
-  getBalance(): number {
-    return this._balance$.getValue();
-  }
-
-  // Mock top up via Blik: simply increases balance after a small delay
-  async topUp(amount: number): Promise<{ success: boolean; message?: string }> {
-    if (amount <= 0) return { success: false, message: 'Amount must be positive' };
-    // simulate network / Blik flow delay
-    await new Promise(r => setTimeout(r, 600));
-    const newb = this.getBalance() + amount;
-    this.save(Math.round(newb * 100) / 100);
-    return { success: true };
-  }
-
-  // Withdraw after validating IBAN; amount must be <= balance
-  async withdraw(amount: number, iban: string): Promise<{ success: boolean; message?: string }> {
-    if (amount <= 0) return { success: false, message: 'Amount must be positive' };
-    if (amount > this.getBalance()) return { success: false, message: 'Insufficient funds' };
-    if (!this.validateIban(iban)) return { success: false, message: 'Invalid IBAN' };
-    // simulate bank processing
-    await new Promise(r => setTimeout(r, 600));
-    const newb = this.getBalance() - amount;
-    this.save(Math.round(newb * 100) / 100);
-    return { success: true };
-  }
-
-  // Basic IBAN validation: remove spaces, check length & basic checksum using mod-97
-  validateIban(iban: string): boolean {
-    if (!iban) return false;
-    // remove spaces and common separators and uppercase
-    const normalized = iban.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    // IBAN length is country dependent but overall between 15 and 34
-    if (normalized.length < 15 || normalized.length > 34) return false;
-
-    // Move first four chars to the end
-    const rearr = normalized.slice(4) + normalized.slice(0, 4);
-
-    // Convert letters to numbers: A=10, B=11, ... Z=35
-    let numeric = '';
-    for (let i = 0; i < rearr.length; i++) {
-      const ch = rearr.charAt(i);
-      if (/[A-Z]/.test(ch)) {
-        numeric += (ch.charCodeAt(0) - 55).toString();
-      } else if (/[0-9]/.test(ch)) {
-        numeric += ch;
-      } else {
-        return false; // unexpected char
+      const res = await firstValueFrom(this.http.get<Result<WalletBalanceDto>>(`${this.api}/balance`));
+      if (res?.resultModel && typeof res.resultModel.amount === 'number') {
+        this._balance$.next(res.resultModel.amount);
       }
+    } catch {
+      // silent; keep previous value
     }
-
-    // Perform mod-97 using chunking to avoid big integers
-    let remainder = 0;
-    const chunkSize = 9; // safe chunk size for Number
-    for (let offset = 0; offset < numeric.length; offset += chunkSize) {
-      const chunk = numeric.substring(offset, offset + chunkSize);
-      const num = Number(String(remainder) + chunk);
-      remainder = num % 97;
-    }
-
-    return remainder === 1;
   }
+
+  async refreshMethods(): Promise<void> {
+    try {
+      const res = await firstValueFrom(this.http.get<Result<WalletMethodDto[]>>(`${this.api}/methods`));
+      if (Array.isArray(res?.resultModel)) this._methods$.next(res.resultModel);
+      else this._methods$.next([]);
+    } catch {
+      this._methods$.next([]);
+    }
+  }
+
+  get currentBalance(): number { return this._balance$.getValue(); }
+  get currentMethods(): WalletMethodDto[] { return this._methods$.getValue() || []; }
+
+  // Creates a transaction (top up or withdraw) depending on code and amount sign
+  async createTransaction(req: WalletTransactionRequest): Promise<{ status: PaymentStatus; error?: string }> {
+    const before = this.currentBalance;
+    try {
+      const res = await firstValueFrom(this.http.post<Result<WalletTransactionResponse>>(`${this.api}/transaction`, req));
+      const status = res?.resultModel?.paymentStatus ?? PaymentStatus.Pending;
+
+      if (status === PaymentStatus.Success) {
+        // Poll backend a few times (e.g. eventual consistency) up to 2s total
+        await this.pollBalanceWithFallback(req, before);
+      }
+      if (res?.errorMessage) return { status, error: res.errorMessage };
+      return { status };
+    } catch (e: any) {
+      const errMsg = (e?.error?.errorMessage || e?.message || '').toString();
+      return { status: PaymentStatus.Failed, error: errMsg || 'API_ERROR' };
+    }
+  }
+
+  private async pollBalanceWithFallback(req: WalletTransactionRequest, before: number) {
+    const expected = this.expectedBalance(afterSign(req, before));
+    for (let attempt = 0; attempt < 4; attempt++) {
+      await this.refreshBalance();
+      if (almostEqual(this.currentBalance, expected)) return; // updated as expected
+      await wait(500);
+    }
+    // Fallback: if backend still returns old balance, apply optimistic local adjustment
+    if (this.currentBalance === before) {
+      this._balance$.next(this.expectedBalance(afterSign(req, before)));
+    }
+  }
+
+  private expectedBalance(val: number) { return Math.round(val * 100) / 100; }
 }
+
+function afterSign(req: WalletTransactionRequest, before: number): number {
+  // Założenie: BLIK = top-up (add), IBAN = withdraw (subtract)
+  if (req.code === 'BLIK') return before + req.amount;
+  if (req.code === 'IBAN') return before - req.amount;
+  return before;
+}
+
+function almostEqual(a: number, b: number, eps = 0.005) { return Math.abs(a - b) < eps; }
+function wait(ms: number) { return new Promise(r => setTimeout(r, ms)); }

@@ -30,12 +30,17 @@
                   <label class="form-label">{{ 'wallet.topup.amount' | translate }}</label>
                   <input class="form-control" type="number" formControlName="amount" min="1" />
                 </div>
+                <div class="mb-2">
+                  <label class="form-label">{{ 'wallet.topup.blik' | translate }}</label>
+                  <input class="form-control" type="text" maxlength="6" formControlName="blikCode" [placeholder]="'wallet.topup.blik.placeholder' | translate" />
+                  <div class="form-text" *ngIf="topUpForm.get('blikCode')?.invalid && topUpForm.get('blikCode')?.touched">{{ 'wallet.topup.blik.invalid' | translate }}</div>
+                </div>
                 <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-primary" [disabled]="loading">
+                  <button type="submit" class="btn btn-primary" [disabled]="loading || topUpForm.invalid">
                     <span *ngIf="!loading">{{ 'wallet.topup.submit' | translate }}</span>
                     <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   </button>
-                  <button type="button" class="btn btn-outline-secondary" (click)="topUpForm.reset({ amount: 10 })">{{ 'wallet.topup.reset' | translate }}</button>
+                  <button type="button" class="btn btn-outline-secondary" (click)="topUpForm.reset({ amount: 10, blikCode: '' })">{{ 'wallet.topup.reset' | translate }}</button>
                 </div>
               </form>
             </div>
@@ -64,7 +69,7 @@
                   <input class="form-control" type="text" formControlName="iban" placeholder="PL11 2222 3333 4444 5555 6666" />
                 </div>
                 <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-danger" [disabled]="loading">
+                  <button type="submit" class="btn btn-danger" [disabled]="loading || withdrawForm.invalid">
                     <span *ngIf="!loading">{{ 'wallet.withdraw.submit' | translate }}</span>
                     <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   </button>
@@ -76,8 +81,19 @@
         </div>
       </div>
 
-      <div *ngIf="message" class="mt-3">
-        <div class="alert alert-info mb-0">{{ message }}</div>
+      <div *ngIf="paymentStatus !== null" class="mt-3">
+        <div class="alert" [ngClass]="{
+          'alert-info': paymentStatus === PaymentStatus.Pending,
+          'alert-success': paymentStatus === PaymentStatus.Success,
+          'alert-danger': paymentStatus === PaymentStatus.Failed
+        }">{{ statusLabel() }}</div>
+      </div>
+
+      <div *ngIf="message" class="mt-2">
+        <div class="alert alert-success mb-0">{{ message }}</div>
+      </div>
+      <div *ngIf="error" class="mt-2">
+        <div class="alert alert-danger mb-0">{{ error }}</div>
       </div>
 
       <div class="mt-4 d-flex justify-content-start">

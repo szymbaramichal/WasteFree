@@ -78,9 +78,15 @@
   "wallet.errors.amountPositive": "Amount must be positive",
   "wallet.errors.insufficientFunds": "Insufficient funds",
   "wallet.errors.invalidIban": "Invalid IBAN",
-  "wallet.errors.unknown": "Operation failed"
-  ,
-  "wallet.back": "Back to portal"
+  "wallet.errors.unknown": "Operation failed",
+  "wallet.back": "Back to portal",
+  "wallet.topup.blik": "BLIK code",
+  "wallet.topup.blik.placeholder": "6-digit code",
+  "wallet.topup.blik.invalid": "Enter 6 digits",
+  "wallet.payment.status.pending": "Processing payment...",
+  "wallet.payment.status.success": "Payment successful",
+  "wallet.payment.status.failed": "Payment failed",
+  "wallet.errors.api": "Request failed"
   ,
   "menu.dashboard": "Dashboard",
   "menu.wallet": "Wallet",

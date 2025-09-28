@@ -78,9 +78,15 @@
   "wallet.errors.amountPositive": "Kwota musi być dodatnia",
   "wallet.errors.insufficientFunds": "Niewystarczające środki",
   "wallet.errors.invalidIban": "Nieprawidłowy IBAN",
-  "wallet.errors.unknown": "Operacja nie powiodła się"
-  ,
-  "wallet.back": "Powrót do portalu"
+  "wallet.errors.unknown": "Operacja nie powiodła się",
+  "wallet.back": "Powrót do portalu",
+  "wallet.topup.blik": "Kod BLIK",
+  "wallet.topup.blik.placeholder": "6 cyfr",
+  "wallet.topup.blik.invalid": "Wpisz 6 cyfr",
+  "wallet.payment.status.pending": "Przetwarzanie płatności...",
+  "wallet.payment.status.success": "Płatność zakończona sukcesem",
+  "wallet.payment.status.failed": "Płatność nieudana",
+  "wallet.errors.api": "Żądanie nie powiodło się"
   ,
   "menu.dashboard": "Panel",
   "menu.wallet": "Portfel",
