@@ -8,6 +8,7 @@ using TickerQ.DependencyInjection;
 using WasteFree.App.Endpoints;
 using WasteFree.App.Extensions;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Hubs;
 
 const string allowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
  
@@ -29,6 +30,7 @@ builder.Services
     .AddValidatorsFromAssembly(Assembly.GetCallingAssembly());
 
 builder.Services.AddOutputCache();
+builder.Services.AddSignalR();
  
 builder.Services.AddHttpContextAccessor();
 
@@ -66,6 +68,8 @@ app.MigrateDatabase<ApplicationDataContext>();
 app.UseOutputCache();
 
 app.UseTickerQ();
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapAuthEndpoints();
 app.MapGarbageGroupsEndpoints();

@@ -3,4 +3,5 @@
 public enum NotificationChannel
 {
     Email = 0,
+    Inbox
 }
