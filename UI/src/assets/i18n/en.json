@@ -78,12 +78,12 @@
   "wallet.errors.amountPositive": "Amount must be positive",
   "wallet.errors.insufficientFunds": "Insufficient funds",
   "wallet.errors.invalidIban": "Invalid IBAN",
-  "wallet.errors.unknown": "Operation failed"
-  ,
-  "wallet.back": "Back to portal"
-  ,
+  "wallet.errors.unknown": "Operation failed",
+  "wallet.back": "Back to portal",
   "menu.dashboard": "Dashboard",
   "menu.wallet": "Wallet",
+  "menu.groups": "Garbage groups",
+  "menu.groups.joinCreate" : "Create or join to group",
   "topbar.hey": "Hey",
   "topbar.logout": "Logout",
   "topbar.openWallet": "Open wallet",

@@ -1,7 +1,18 @@
-.portal-layout { min-height: 100vh; position: relative; }
+.portal-layout { 
+	min-height: 100vh; 
+	position: relative; 
+	/* d-flex is applied in template, but keep fall-back */
+	display: flex; 
+}
+
+/* Fixed (stable) sidebar width */
 .portal-sidebar {
-	width: 240px;
+	flex: 0 0 240px; /* don't grow or shrink */
+	width: 240px; /* explicit for safety */
+	max-width: 240px;
 	box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+	/* Prevent content-induced expansion */
+	overflow: hidden;
 }
 .portal-sidebar.bg-light {
 	background:
@@ -35,6 +46,33 @@
 
 
 .portal-sidebar { position: relative; }
+
+/* Main content area scrolls independently to avoid body scrollbar width shifts */
+.portal-content { 
+	flex: 1 1 auto; 
+	min-width: 0; /* allow flexbox to shrink without overflow */
+	overflow-y: auto; 
+	-webkit-overflow-scrolling: touch; 
+}
+
+/* Keep internal nav tidy */
+.portal-sidebar .nav { 
+	overflow-y: auto; 
+	max-height: 100vh; 
+	padding-bottom: 1rem; 
+}
+
+/* Responsive: collapse to top bar on smaller screens */
+@media (max-width: 991.98px) { /* Bootstrap lg breakpoint */
+	.portal-layout { flex-direction: column; }
+	.portal-sidebar { 
+		flex: 0 0 auto; 
+		width: 100%; 
+		max-width: none; 
+		overflow: visible; 
+	}
+	.portal-sidebar .nav { max-height: none; }
+}
 
 /* Icon + text alignment */
 .portal-sidebar .nav-icon {
