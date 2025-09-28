@@ -90,6 +90,8 @@
   ,
   "menu.dashboard": "Panel",
   "menu.wallet": "Portfel",
+  "menu.groups": "Grupy wywozowe",
+  "menu.groups.joinCreate" : "Stwórz lub dołącz do grupy",
   "topbar.hey": "Hej",
   "topbar.logout": "Wyloguj",
   "topbar.openWallet": "Otwórz portfel",
