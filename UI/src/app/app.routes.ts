@@ -8,6 +8,8 @@ import { UrlSegment, UrlMatchResult } from '@angular/router';
 import { WalletComponent } from './wallet/wallet.component';
 import { InboxComponent } from './inbox/inbox.component';
 import { PortalHomeComponent } from './portal-home/portal-home.component';
+import { GroupsComponent } from './groups/groups.component';
+import { GroupsManagementComponent } from './groups-management/groups-management.component';
 
 function activateAccountMatcher(segments: UrlSegment[]): UrlMatchResult | null {
     if (!segments || segments.length === 0) return null;
@@ -36,7 +38,10 @@ export const routes: Routes = [
         children: [
             { path: '', component: PortalHomeComponent },
             { path: 'wallet', component: WalletComponent },
-            { path: 'inbox', component: InboxComponent }
+            { path: 'inbox', component: InboxComponent },
+            { path: 'groups', component: GroupsComponent },
+            { path: 'groups/manage', component: GroupsManagementComponent },
+
         ]
     },
     { path: 'auth', component: AuthComponent },

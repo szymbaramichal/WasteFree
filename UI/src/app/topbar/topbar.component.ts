@@ -24,6 +24,7 @@ export class TopbarComponent {
   visible = false;
   walletBalance$ = this.wallet.balance$;
   animateInbox = false;
+  navOpen = false; // mobile navbar state
   roleKeyMap: Record<UserRole, string> = {
     [UserRole.User]: 'auth.role.user',
     [UserRole.GarbageAdmin]: 'auth.role.garbageAdmin',

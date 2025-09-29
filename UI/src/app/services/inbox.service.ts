@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class InboxService {
     private storageKey = 'wf_inbox_counter';
-    private apiUrl = `${environment.apiUrl}/auth`;
+    private apiUrl = `${environment.apiUrl}`;
 
     private _counter = signal<number>(this.loadFromStorage());
     counter = this._counter.asReadonly();

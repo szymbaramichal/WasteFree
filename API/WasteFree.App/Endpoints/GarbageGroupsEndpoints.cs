@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Org.BouncyCastle.Bcpg;
 using WasteFree.App.Filters;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups;
@@ -12,30 +13,29 @@ public static class GarbageGroupsEndpoints
 {
     public static void MapGarbageGroupsEndpoints(this WebApplication app)
     {
-        app.MapGet("/garbage-groups/register", [Authorize] async (
+        app.MapPost("/garbage-groups/register", async (
                 [FromBody] RegisterGarbageGroupRequest request,
                 IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
-        {
-            var command = new RegisterGarbageGroupCommand(request.GroupName, request.GroupDescription);
-
-            var result = await mediator.SendAsync(command, cancellationToken);
-
-            if(!result.IsValid)
             {
-                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                return Results.BadRequest(result);
-            }
+                var command = new RegisterGarbageGroupCommand(request.GroupName, request.GroupDescription);
 
-            return Results.Ok(result);
-        })
-        .RequireAuthorization()
-        .AddEndpointFilter(new ValidationFilter<RegisterGarbageGroupRequest>())
-        .WithOpenApi();
+                var result = await mediator.SendAsync(command, cancellationToken);
+
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
+                }
+
+                return Results.Ok(result);
+            })
+            .RequireAuthorization()
+            .AddEndpointFilter(new ValidationFilter<RegisterGarbageGroupRequest>())
+            .WithOpenApi();
         
-        app.MapGet("/garbage-groups/list", [Authorize] async (
-                IStringLocalizer localizer,
+        app.MapGet("/garbage-groups/list", async (
                 ICurrentUserService currentUserService,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
@@ -49,7 +49,7 @@ public static class GarbageGroupsEndpoints
             .RequireAuthorization()
             .WithOpenApi();
         
-        app.MapGet("/garbage-groups/{groupId}", [Authorize] async (
+        app.MapGet("/garbage-groups/{groupId}", async (
                 [FromRoute] Guid groupId,
                 IStringLocalizer localizer,
                 ICurrentUserService currentUserService,
@@ -63,34 +63,57 @@ public static class GarbageGroupsEndpoints
                 if(!result.IsValid)
                 {
                     result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
+                }
+
+                return Results.Ok(result);
+            })
+            .RequireAuthorization()
+            .WithOpenApi();
+        
+        app.MapDelete("/garbage-groups/{groupId:guid}/{userId:guid}", async (
+                [FromRoute] Guid userId,
+                [FromRoute] Guid groupId,
+                ICurrentUserService currentUserService,
+                IStringLocalizer localizer,
+                IMediator mediator,
+                CancellationToken cancellationToken) =>
+            {
+                var command = new DeleteUserFromGroupCommand(groupId, currentUserService.UserId, userId);
+
+                var result = await mediator.SendAsync(command, cancellationToken);
+
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
+                }
+
+                return Results.Ok(result);
+            })
+            .RequireAuthorization()
+            .WithOpenApi();
+
+        app.MapPost("/garbage-groups/invite", async (
+            [FromBody] InviteUserToGarbageGroupRequest request,
+            IStringLocalizer localizer,
+            IMediator mediator,
+            CancellationToken cancellationToken) =>
+            {
+                var command = new InviteToGarbageGroupCommand(request.GroupId, request.UserName);
+
+                var result = await mediator.SendAsync(command, cancellationToken);
+
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
                     return Results.BadRequest(result);
                 }
 
                 return Results.Ok(result);
             })
             .RequireAuthorization()
-            .AddEndpointFilter(new ValidationFilter<RegisterGarbageGroupRequest>())
             .WithOpenApi();
-
-        app.MapPost("/garbage-groups/invite", [Authorize] async (
-            [FromBody] InviteUserToGarbageGroupRequest request,
-            IMediator mediator,
-            CancellationToken cancellationToken) =>
-        {
-            var command = new InviteToGarbageGroupCommand(request.GroupId, request.UserName);
-
-            var result = await mediator.SendAsync(command, cancellationToken);
-
-            if(!result.IsValid)
-            {
-                return Results.BadRequest(result);
-            }
-
-            return Results.Ok(result);
-        })
-        .RequireAuthorization()
-        .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
-        .WithOpenApi();
     }
 }
 

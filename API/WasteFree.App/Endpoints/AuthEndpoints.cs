@@ -15,22 +15,22 @@ public static class AuthEndpoints
                 IStringLocalizer localizer,
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
-        {
-            var command = new RegisterUserCommand(request.Email, request.Username, request.Password, 
-                request.Role, request.LanguagePreference);
-            
-            var result = await mediator.SendAsync(command, cancellationToken);
-            
-            if(!result.IsValid)
             {
-                result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                return Results.BadRequest(result);
-            }
-            
-            return Results.Ok(result);
-        })
-        .AddEndpointFilter(new ValidationFilter<RegisterUserRequest>())
-        .WithOpenApi();
+                var command = new RegisterUserCommand(request.Email, request.Username, request.Password, 
+                    request.Role, request.LanguagePreference);
+                
+                var result = await mediator.SendAsync(command, cancellationToken);
+                
+                if(!result.IsValid)
+                {
+                    result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
+                }
+                
+                return Results.Ok(result);
+            })
+            .AddEndpointFilter(new ValidationFilter<RegisterUserRequest>())
+            .WithOpenApi();
 
         app.MapPost("/auth/login", async (
                 [FromBody] LoginUserRequest userRequest,
@@ -45,7 +45,7 @@ public static class AuthEndpoints
                 if(!result.IsValid)
                 {
                     result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                    return Results.BadRequest(result);
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
                 }
 
                 return Results.Ok(result);
@@ -64,7 +64,7 @@ public static class AuthEndpoints
                 if(!result.IsValid)
                 {
                     result.ErrorMessage = localizer[$"{result.ErrorCode}"];
-                    return Results.BadRequest(result);
+                    return Results.Json(result, statusCode: (int)result.ResponseCode);
                 }
 
                 return Results.Ok(result);
