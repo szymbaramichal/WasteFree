@@ -65,7 +65,7 @@
   "wallet.topup.title": "Top up",
   "wallet.topup.desc": "Add funds to your wallet using Blik.",
   "wallet.topup.amount": "Amount (PLN)",
-  "wallet.topup.submit": "Start top up",
+  "wallet.topup.submit": "Top up",
   "wallet.topup.reset": "Reset",
   "wallet.withdraw.title": "Withdraw",
   "wallet.withdraw.desc": "Withdraw your funds - we validate your IBAN and available balance.",

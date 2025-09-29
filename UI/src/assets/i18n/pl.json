@@ -65,7 +65,7 @@
   "wallet.topup.title": "Doładuj",
   "wallet.topup.desc": "Dodaj środki do portfela.",
   "wallet.topup.amount": "Kwota (PLN)",
-  "wallet.topup.submit": "Rozpocznij doładowanie",
+  "wallet.topup.submit": "Doładuj",
   "wallet.topup.reset": "Wyczyść",
   "wallet.withdraw.title": "Wypłata",
   "wallet.withdraw.desc": "Wypłata - sprawdzamy IBAN i dostępne środki.",

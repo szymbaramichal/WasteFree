@@ -1,0 +1,42 @@
+.groups-list .header-accent { position:absolute; inset:0; pointer-events:none; }
+.groups-list .header-accent::after { content:""; position:absolute; top:-40%; right:-20%; width:220px; height:220px; background:radial-gradient(circle at center,rgba(255,255,255,0.35),transparent 70%); filter:blur(4px); }
+
+/* Reusable gradients (kept local to this component) */
+.bg-gradient-green { background: linear-gradient(135deg,#2bb673,#1f8b56); }
+.bg-gradient-teal { background: linear-gradient(135deg,#20c997,#198754); }
+
+
+.groups-list .groups-scroll { max-height: 460px; overflow-y: auto; scrollbar-width: thin; }
+.groups-list .groups-scroll::-webkit-scrollbar { width: 8px; }
+.groups-list .groups-scroll::-webkit-scrollbar-track { background: transparent; }
+.groups-list .groups-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+.groups-list .groups-scroll::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.25); }
+
+.groups-list .group-item { position:relative; border:0; border-bottom:1px solid rgba(0,0,0,0.06); background:transparent; transition: background .2s, transform .15s; }
+.groups-list .group-item:last-child { border-bottom:0; }
+.groups-list .group-item:hover { background:#f7fdf9; }
+.groups-list .group-item:active { transform: scale(.985); }
+
+/* Remove default list-group padding so items align with header */
+.groups-list .list-group-item { padding-left: 0.75rem; padding-right: 0.75rem; }
+
+/* Ensure avatar and content align center vertically */
+.groups-list .group-item .d-flex.align-items-center { align-items: center !important; }
+
+/* Slightly reduce avatar-right gap for tighter layout */
+.groups-list .avatar { margin-right: .65rem; }
+
+/* Button tweaks: keep spinner centered */
+.groups-list .card-header .btn .spinner-border { vertical-align: middle; }
+
+.groups-list .avatar { width:46px; height:46px; border-radius:50%; background:var(--avatar-color, #2bb673); display:flex; align-items:center; justify-content:center; font-weight:600; color:#fff; font-size:1.05rem; letter-spacing:.5px; position:relative; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.12); }
+.groups-list .avatar::after { content:attr(data-initial); }
+.groups-list .avatar.owner { outline:3px solid #2bb67333; }
+
+.groups-list .group-name { font-size: .95rem; letter-spacing:.2px; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.groups-list .empty-state { animation: fadeIn .4s ease; }
+
+@keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform: translateY(0);} }
+
+@media (max-width: 1199.98px) { .groups-list .groups-scroll { max-height: 380px; } }
