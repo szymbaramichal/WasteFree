@@ -41,7 +41,6 @@
                       <span class="badge rounded-pill" [ngClass]="g.isUserOwner ? 'bg-success-subtle text-success-emphasis border border-success-subtle' : 'bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle'">
                         {{ g.isUserOwner ? ('groups.role.owner' | translate) : ('groups.role.member' | translate) }}
                       </span>
-                      <span class="d-flex align-items-center gap-1" *ngIf="g.isUserOwner"><i class="bi bi-star-fill text-warning small"></i><span class="text-warning-emphasis">{{ 'groups.role.lead' | translate }}</span></span>
                     </div>
                   </div>
                   <div class="text-end small text-muted opacity-75">#{{ i + 1 }}</div>
