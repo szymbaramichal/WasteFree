@@ -161,7 +161,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     const amount = Number(this.withdrawForm.value.amount);
     const iban = this.profileSvc.profile()?.bankAccountNumber || '';
     if (!iban) {
-      this.loading = false;
+      this.withdrawLoading = false;
       this.error = this.t.translate('wallet.withdraw.noIban');
       return;
     }
