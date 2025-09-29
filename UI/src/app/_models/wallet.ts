@@ -3,5 +3,6 @@ export interface WalletMethodDto { code: string; name: string; type: number; }
 export interface WalletTransactionRequest { code: string; amount: number; paymentProperty: string; }
 export interface WalletTransactionResponse { paymentStatus: number; }
 
-// 0 = Pending, 1 = Failed, 2 = Success (based on current backend response examples)
-export enum PaymentStatus { Pending = 0, Failed = 1, Success = 2 }
+// Must mirror backend (WasteFree.Shared.Enums.PaymentStatus)
+// 0 = Invalid, 1 = Pending, 2 = Completed
+export enum PaymentStatus { Invalid = 0, Pending = 1, Completed = 2 }

@@ -90,6 +90,9 @@
   "wallet.payment.status.failed": "Płatność nieudana",
   "wallet.errors.api": "Żądanie nie powiodło się"
   ,
+  "wallet.alert.successTitle": "Sukces",
+  "wallet.alert.errorTitle": "Błąd",
+  "wallet.alert.infoTitle": "Informacja",
   "menu.dashboard": "Panel",
   "menu.wallet": "Portfel",
   "menu.groups": "Grupy wywozowe",
