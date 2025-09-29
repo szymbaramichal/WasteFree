@@ -66,3 +66,59 @@
 	padding: .1rem .4rem;
 }
 .xsmall { font-size: .8rem; line-height: 1; }
+
+/* In-card loader overlay for top-up & withdraw */
+.topup-card, .withdraw-card { position: relative; }
+.topup-card .card-loader, .withdraw-card .card-loader {
+	position: absolute;
+	inset: 0;
+	background: rgba(255,255,255,0.75);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	backdrop-filter: blur(1px);
+}
+.topup-card .card-loader .inner-spinner, .withdraw-card .card-loader .inner-spinner {
+	width: 2.5rem;
+	height: 2.5rem;
+	border-width: .35rem;
+	color: var(--primary-green);
+}
+
+/* Enhanced alert styles */
+.wallet-alert {
+	position: relative;
+	display: flex;
+	gap: 12px;
+	padding: 14px 16px 14px 14px;
+	border-radius: 18px;
+	background: linear-gradient(135deg, #ffffff, #f8fdf9);
+	box-shadow: 0 4px 16px -4px rgba(0,0,0,0.08), 0 2px 6px -2px rgba(0,0,0,0.06);
+	border: 1px solid rgba(0,0,0,0.05);
+	animation: wa-fade-in .35s ease;
+	overflow: hidden;
+}
+.wallet-alert.is-success { border-color: rgba(25,135,84,.25); }
+.wallet-alert.is-info { border-color: rgba(13,110,253,.25); }
+.wallet-alert.is-danger { border-color: rgba(220,53,69,.3); }
+
+.wallet-alert .wa-left { display:flex; align-items:flex-start; }
+.wallet-alert .wa-icon { color: var(--primary-green-dark); display:flex; }
+.wallet-alert.is-info .wa-icon { color:#0d6efd; }
+.wallet-alert.is-danger .wa-icon { color:#dc3545; }
+.wallet-alert.is-success .wa-icon { color: var(--primary-green); }
+
+.wallet-alert .wa-body { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.wallet-alert .wa-title { font-weight:600; font-size:.85rem; letter-spacing:.5px; text-transform:uppercase; opacity:.85; }
+.wallet-alert .wa-text { font-size:.90rem; line-height:1.25; white-space:pre-line; }
+
+.wallet-alert .wa-close { position:absolute; top:6px; right:8px; background:transparent; border:none; font-size:18px; line-height:1; cursor:pointer; color:rgba(0,0,0,.35); transition:color .2s; }
+.wallet-alert .wa-close:hover { color:rgba(0,0,0,.55); }
+
+/* Progress bar for auto-dismiss */
+.wallet-alert .wa-progress { position:relative; height:4px; background:rgba(0,0,0,0.06); margin-top:8px; border-radius:4px; overflow:hidden; }
+.wallet-alert .wa-progress .wa-bar { position:absolute; inset:0; background:linear-gradient(90deg, var(--primary-green-dark), var(--primary-green)); animation: wa-progress-linear 5.5s linear forwards; }
+
+@keyframes wa-fade-in { from { opacity:0; transform:translateY(-4px);} to { opacity:1; transform:translateY(0);} }
+@keyframes wa-progress-linear { from { transform:translateX(-100%);} to { transform:translateX(0);} }

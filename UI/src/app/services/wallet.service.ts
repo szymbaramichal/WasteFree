@@ -53,10 +53,15 @@ export class WalletService {
   createTransaction(req: WalletTransactionRequest) {
     return this.http.post<Result<WalletTransactionResponse>>(`${this.api}/transaction`, req).pipe(
       switchMap(res => {
-        const status = res?.resultModel?.paymentStatus ?? PaymentStatus.Pending;
-        const base = { status, error: res?.errorMessage || undefined } as { status: PaymentStatus; error?: string };
+        const raw = res?.resultModel?.paymentStatus as any;
+        const numeric = typeof raw === 'string' ? Number(raw) : raw;
+        const status: PaymentStatus = (numeric === PaymentStatus.Invalid || numeric === PaymentStatus.Pending || numeric === PaymentStatus.Completed)
+          ? numeric
+          : PaymentStatus.Pending;
+        const base = { status, error: res?.errorMessage?.trim() ? res.errorMessage : undefined } as { status: PaymentStatus; error?: string };
+        console.debug('[Wallet][Service] createTransaction raw response', { res, raw, numeric, mappedStatus: status, base });
         // Jeżeli sukces – pojedyncze odświeżenie salda (bez kalkulacji lokalnej)
-        if (status === PaymentStatus.Success) {
+        if (status === PaymentStatus.Completed) {
           this.refreshBalance();
         }
         return of(base);

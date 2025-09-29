@@ -14,8 +14,11 @@
 
       <div class="row g-3">
         <div class="col-12 col-lg-6">
-          <div class="card shadow-sm">
+          <div class="card shadow-sm position-relative topup-card">
             <div class="card-body">
+              <div class="card-loader" *ngIf="topUpLoading">
+                <div class="inner-spinner spinner-border" role="status" aria-hidden="true"></div>
+              </div>
               <h5 class="card-title d-flex align-items-center gap-2">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
@@ -25,7 +28,7 @@
                 <span>{{ 'wallet.topup.title' | translate }}</span>
               </h5>
               <p class="card-text text-muted">{{ 'wallet.topup.desc' | translate }}</p>
-              <form [formGroup]="topUpForm" (ngSubmit)="topUp()" class="mt-3">
+              <form [formGroup]="topUpForm" (ngSubmit)="topUp()" class="mt-3" [class.opacity-50]="topUpLoading">
                 <div class="mb-2">
                   <label class="form-label">{{ 'wallet.topup.amount' | translate }}</label>
                   <input class="form-control" type="number" formControlName="amount" min="1" />
@@ -36,9 +39,9 @@
                   <div class="form-text" *ngIf="topUpForm.get('blikCode')?.invalid && topUpForm.get('blikCode')?.touched">{{ 'wallet.topup.blik.invalid' | translate }}</div>
                 </div>
                 <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-primary" [disabled]="loading || topUpForm.invalid">
-                    <span *ngIf="!loading">{{ 'wallet.topup.submit' | translate }}</span>
-                    <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <button type="submit" class="btn btn-primary" [disabled]="topUpLoading || topUpForm.invalid">
+                    <span *ngIf="!topUpLoading">{{ 'wallet.topup.submit' | translate }}</span>
+                    <span *ngIf="topUpLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   </button>
                   <button type="button" class="btn btn-outline-secondary" (click)="topUpForm.reset({ amount: 10, blikCode: '' })">{{ 'wallet.topup.reset' | translate }}</button>
                 </div>
@@ -48,8 +51,11 @@
         </div>
 
         <div class="col-12 col-lg-6">
-          <div class="card shadow-sm">
+          <div class="card shadow-sm position-relative withdraw-card">
             <div class="card-body">
+              <div class="card-loader" *ngIf="withdrawLoading">
+                <div class="inner-spinner spinner-border" role="status" aria-hidden="true"></div>
+              </div>
               <h5 class="card-title d-flex align-items-center gap-2">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" />
@@ -59,7 +65,7 @@
                 <span>{{ 'wallet.withdraw.title' | translate }}</span>
               </h5>
               <p class="card-text text-muted">{{ 'wallet.withdraw.desc' | translate }}</p>
-              <form [formGroup]="withdrawForm" (ngSubmit)="withdraw()" class="mt-3">
+              <form [formGroup]="withdrawForm" (ngSubmit)="withdraw()" class="mt-3" [class.opacity-50]="withdrawLoading">
                 <div class="mb-2">
                   <label class="form-label">{{ 'wallet.withdraw.amount' | translate }}</label>
                   <input class="form-control" type="number" formControlName="amount" min="1" />
@@ -69,9 +75,9 @@
                   <input class="form-control" type="text" formControlName="iban" placeholder="PL11 2222 3333 4444 5555 6666" />
                 </div>
                 <div class="d-flex gap-2">
-                  <button type="submit" class="btn btn-danger" [disabled]="loading || withdrawForm.invalid">
-                    <span *ngIf="!loading">{{ 'wallet.withdraw.submit' | translate }}</span>
-                    <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  <button type="submit" class="btn btn-danger" [disabled]="withdrawLoading || withdrawForm.invalid">
+                    <span *ngIf="!withdrawLoading">{{ 'wallet.withdraw.submit' | translate }}</span>
+                    <span *ngIf="withdrawLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   </button>
                   <button type="button" class="btn btn-outline-secondary" (click)="withdrawForm.reset({ amount: 10, iban: '' })">{{ 'wallet.withdraw.reset' | translate }}</button>
                 </div>
@@ -81,19 +87,30 @@
         </div>
       </div>
 
-      <div *ngIf="paymentStatus !== null" class="mt-3">
-        <div class="alert" [ngClass]="{
-          'alert-info': paymentStatus === PaymentStatus.Pending,
-          'alert-success': paymentStatus === PaymentStatus.Success,
-          'alert-danger': paymentStatus === PaymentStatus.Failed
-        }">{{ statusLabel() }}</div>
-      </div>
-
-      <div *ngIf="message" class="mt-2">
-        <div class="alert alert-success mb-0">{{ message }}</div>
-      </div>
-      <div *ngIf="error" class="mt-2">
-        <div class="alert alert-danger mb-0">{{ error }}</div>
+      <div *ngIf="alertText && alertVisible" class="mt-3">
+        <div class="wallet-alert" [ngClass]="{
+          'is-info': alertType === 'info',
+          'is-success': alertType === 'success',
+          'is-danger': alertType === 'danger'
+        }">
+          <div class="wa-left">
+            <div class="wa-icon" aria-hidden="true">
+              <ng-container [ngSwitch]="alertType">
+                <svg *ngSwitchCase="'success'" viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><path d="M8.5 12.5l2.5 2.5 4.5-5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg *ngSwitchCase="'danger'" viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><path d="M12 7v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16.5" r="1" fill="currentColor"/></svg>
+                <svg *ngSwitchDefault viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.15"/><path d="M12 8v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+              </ng-container>
+            </div>
+          </div>
+          <div class="wa-body">
+            <div class="wa-title" *ngIf="alertTitle">{{ alertTitle }}</div>
+            <div class="wa-text">{{ alertText }}</div>
+            <div class="wa-progress" *ngIf="alertType === 'success'">
+              <div class="wa-bar"></div>
+            </div>
+          </div>
+          <button type="button" class="wa-close" (click)="dismissAlert()" aria-label="Close">×</button>
+        </div>
       </div>
 
       <div class="mt-4 d-flex justify-content-start">
