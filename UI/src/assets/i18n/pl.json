@@ -71,6 +71,7 @@
   "wallet.withdraw.desc": "Wypłata - sprawdzamy IBAN i dostępne środki.",
   "wallet.withdraw.amount": "Kwota (PLN)",
   "wallet.withdraw.iban": "IBAN",
+  "wallet.withdraw.ibanReadOnly": "Aby zmienić numer IBAN, przejdź do zakładki Profil.",
   "wallet.withdraw.submit": "Wypłać",
   "wallet.withdraw.reset": "Wyczyść",
   "wallet.message.topupSuccess": "Doładowanie zakończone sukcesem",
@@ -79,6 +80,7 @@
   "wallet.errors.insufficientFunds": "Niewystarczające środki",
   "wallet.errors.invalidIban": "Nieprawidłowy IBAN",
   "wallet.errors.unknown": "Operacja nie powiodła się",
+  "wallet.withdraw.noIban": "Brak numeru rachunku w profilu. Uzupełnij go w zakładce Profil.",
   "wallet.back": "Powrót do portalu",
   "wallet.topup.blik": "Kod BLIK",
   "wallet.topup.blik.placeholder": "6 cyfr",
@@ -92,6 +94,7 @@
   "menu.wallet": "Portfel",
   "menu.groups": "Grupy wywozowe",
   "menu.groups.joinCreate" : "Stwórz lub dołącz do grupy",
+  "menu.profile": "Mój profil",
   "topbar.hey": "Hej",
   "topbar.logout": "Wyloguj",
   "topbar.openWallet": "Otwórz portfel",
@@ -157,4 +160,24 @@
   "groups.form.errors.desc.max": "Maksymalnie 500 znaków.",
   "groups.form.errors.createFailed": "Nie udało się utworzyć grupy",
   "groups.form.errors.loadFailed": "Nie udało się załadować grup"
+  ,
+  "profile.title": "Twój profil",
+  "profile.details": "Szczegóły",
+  "profile.username": "Nazwa użytkownika",
+  "profile.email": "Email",
+  "profile.description": "Opis",
+  "profile.bankAccountNumber": "Numer rachunku",
+  "profile.noData": "Brak danych do wyświetlenia",
+  "profile.loadError": "Nie udało się załadować profilu",
+  "profile.settings": "Ustawienia",
+  "profile.comingSoon": "Więcej ustawień już wkrótce."
+  ,
+  "common.edit": "Edytuj",
+  "common.save": "Zapisz",
+  "common.cancel": "Anuluj",
+  "profile.saved": "Zapisano opis",
+  "profile.saveError": "Nie udało się zapisać opisu"
+  ,
+  "profile.bankSaved": "Zapisano numer rachunku",
+  "profile.bankSaveError": "Nie udało się zapisać numeru rachunku"
 }

@@ -66,14 +66,19 @@
                 </div>
                 <div class="mb-2">
                   <label class="form-label">{{ 'wallet.withdraw.iban' | translate }}</label>
-                  <input class="form-control" type="text" formControlName="iban" placeholder="PL11 2222 3333 4444 5555 6666" />
+                  <div class="form-control-plaintext">
+                    <code>{{ (profileSvc.profile()?.bankAccountNumber || '—') }}</code>
+                  </div>
+                  <small class="text-muted">
+                    {{ 'wallet.withdraw.ibanReadOnly' | translate }}
+                  </small>
                 </div>
                 <div class="d-flex gap-2">
                   <button type="submit" class="btn btn-danger" [disabled]="loading || withdrawForm.invalid">
                     <span *ngIf="!loading">{{ 'wallet.withdraw.submit' | translate }}</span>
                     <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                   </button>
-                  <button type="button" class="btn btn-outline-secondary" (click)="withdrawForm.reset({ amount: 10, iban: '' })">{{ 'wallet.withdraw.reset' | translate }}</button>
+                  <button type="button" class="btn btn-outline-secondary" (click)="withdrawForm.reset({ amount: 10 })">{{ 'wallet.withdraw.reset' | translate }}</button>
                 </div>
               </form>
             </div>

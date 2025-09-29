@@ -10,6 +10,7 @@ import { InboxComponent } from './inbox/inbox.component';
 import { PortalHomeComponent } from './portal-home/portal-home.component';
 import { GroupsComponent } from './groups/groups.component';
 import { GroupsManagementComponent } from './groups-management/groups-management.component';
+import { ProfileComponent } from './profile/profile.component';
 
 function activateAccountMatcher(segments: UrlSegment[]): UrlMatchResult | null {
     if (!segments || segments.length === 0) return null;
@@ -41,6 +42,7 @@ export const routes: Routes = [
             { path: 'inbox', component: InboxComponent },
             { path: 'groups', component: GroupsComponent },
             { path: 'groups/manage', component: GroupsManagementComponent },
+            { path: 'profile', component: ProfileComponent },
 
         ]
     },
