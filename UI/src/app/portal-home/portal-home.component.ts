@@ -66,4 +66,15 @@ export class PortalHomeComponent {
     const days = Math.floor(hrs / 24);
     return days + 'd';
   }
+
+  formatMessage(m: any): string {
+    if (!m && m !== 0) return '';
+    if (typeof m === 'string') return m;
+    if (typeof m === 'object') {
+      if (m.message && typeof m.message === 'string') return m.message;
+      if (m.text && typeof m.text === 'string') return m.text;
+      try { return JSON.stringify(m); } catch { return String(m); }
+    }
+    return String(m);
+  }
 }

@@ -48,6 +48,18 @@ export class TopbarComponent {
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => check());
   }
 
+  // Safely return inbox counter as a number (guard against unexpected types)
+  get inboxCount(): number {
+    try {
+      const c: any = this.inbox.counter();
+      if (typeof c === 'number') return c;
+      const n = Number(c);
+      return isNaN(n) ? 0 : n;
+    } catch {
+      return 0;
+    }
+  }
+
   logout() {
     localStorage.removeItem('authToken');
     this.currentUser.setUser(null);

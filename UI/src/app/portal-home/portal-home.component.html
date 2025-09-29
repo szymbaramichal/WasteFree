@@ -12,7 +12,7 @@
 												<span>{{ 'portal.home.actions.wallet' | translate }}</span>
 							</a>
 											<a routerLink="/portal/inbox" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1">
-												<span>{{ 'portal.home.actions.notifications' | translate }} ({{ inbox.counter() }})</span>
+												<span>{{ 'portal.home.actions.notifications' | translate }} <span *ngIf="inbox.counter()">({{ inbox.counter() }})</span></span>
 							</a>
 						</div>
 					</div>
@@ -67,7 +67,7 @@
 									<strong class="small">{{ n.title }}</strong>
 									<span class="text-muted time small">{{ relativeDate(n.createdAt) }}</span>
 								</div>
-								<div class="small text-muted" [innerHTML]="n.message"></div>
+								<div class="small text-muted" [innerHTML]="formatMessage(n.message)"></div>
 							</div>
 						</li>
 					</ul>

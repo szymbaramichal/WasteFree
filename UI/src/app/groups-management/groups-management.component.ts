@@ -14,7 +14,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
   templateUrl: './groups-management.component.html',
   styleUrls: ['./groups-management.component.css']
 })
-export class GroupsManagementComponent implements OnInit {
+export class GroupsManagementComponent {
   private fb = inject(FormBuilder);
   private groupService = inject(GarbageGroupService);
 
@@ -29,25 +29,6 @@ export class GroupsManagementComponent implements OnInit {
     groupName: ['', [Validators.required, Validators.maxLength(100)]],
     groupDescription: ['', [Validators.required, Validators.maxLength(500)]]
   });
-
-  ngOnInit(): void {
-    this.fetchGroups();
-  }
-
-  fetchGroups(): void {
-    this.loading = true;
-    this.loadError = null;
-    this.groupService.list()
-      .pipe(finalize(() => this.loading = false))
-      .subscribe({
-        next: res => {
-          this.groups = res.resultModel || [];
-        },
-        error: err => {
-          this.loadError = err?.error?.errorMessage;
-        }
-      });
-  }
 
   submit(): void {
     if (this.form.invalid) {
@@ -66,9 +47,7 @@ export class GroupsManagementComponent implements OnInit {
             this.submitError = res.errorMessage;
             return;
           }
-            //this.successMessage = this.translate.instant('groups.form.success');
             this.form.reset();
-            this.fetchGroups();
         },
         error: err => {
           this.submitError = err?.error?.errorMessage;
@@ -76,7 +55,6 @@ export class GroupsManagementComponent implements OnInit {
       });
   }
 
-  // helpers for template
   hasError(control: string, error: string): boolean {
     const c = this.form.get(control);
     return !!c && c.touched && c.hasError(error);
