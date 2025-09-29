@@ -67,4 +67,19 @@ export class InboxComponent {
     const days = Math.floor(hrs / 24);
     return days + 'd';
   }
+
+  // Safely convert message payload to HTML string for rendering.
+  // If message is an object, try common fields or fallback to JSON.
+  getMessage(n: NotificationItem): string {
+    const m: any = n.message as any;
+    if (!m && m !== 0) return '';
+    if (typeof m === 'string') return m;
+    if (typeof m === 'object') {
+      if (m.message && typeof m.message === 'string') return m.message;
+      if (m.text && typeof m.text === 'string') return m.text;
+      // fallback: stringify but compact
+      try { return JSON.stringify(m); } catch { return String(m); }
+    }
+    return String(m);
+  }
 }

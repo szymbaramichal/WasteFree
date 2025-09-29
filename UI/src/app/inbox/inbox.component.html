@@ -66,7 +66,7 @@
 								<span class="badge bg-light text-dark status-badge" *ngIf="!n.read">{{ 'inbox.status.unread' | translate }}</span>
 								<span class="time text-muted small">{{ relativeDate(n.createdAt) }}</span>
 							</div>
-							<p class="mb-2 body-text" [innerHTML]="n.message"></p>
+							<p class="mb-2 body-text" [innerHTML]="getMessage(n)"></p>
 							<div class="d-flex gap-2">
 								<button class="btn btn-sm btn-outline-secondary" (click)="markRead(n)" *ngIf="!n.read">{{ 'inbox.markRead' | translate }}</button>
 							</div>
