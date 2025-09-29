@@ -27,10 +27,11 @@ export class WalletService {
   }
 
   async refreshBalance(): Promise<void> {
-    this.http.get<Result<WalletBalanceDto>>(`${this.api}/balance`).subscribe({
+    this.http.post<Result<WalletBalanceDto>>(`${this.api}/balance`, {}).subscribe({
       next: (res) => {
-        if (res?.resultModel && typeof res.resultModel.amount === 'number') {
-          this._balance$.next(res.resultModel.amount);
+        const value = res?.resultModel?.amount;
+        if (typeof value === 'number' && !Number.isNaN(value)) {
+          this._balance$.next(value);
         }
       }
     });

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { WalletService } from '../services/wallet.service';
@@ -6,6 +6,7 @@ import { PaymentStatus } from '../_models/wallet';
 import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { TranslationService } from '../services/translation.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-wallet',
@@ -14,7 +15,8 @@ import { TranslationService } from '../services/translation.service';
   templateUrl: './wallet.component.html',
   styleUrls: ['./wallet.component.css']
 })
-export class WalletComponent {
+
+export class WalletComponent implements OnInit, OnDestroy {
   balance = 0;
   methodsLoaded = false;
   paymentStatus: PaymentStatus | null = null;
@@ -32,14 +34,20 @@ export class WalletComponent {
   message: string | null = null;
   error: string | null = null;
 
+  private balanceSub?: Subscription;
+
   constructor(private fb: FormBuilder, private wallet: WalletService, private t: TranslationService) {
-    this.wallet.balance$.subscribe(b => this.balance = b);
+    this.balanceSub = this.wallet.balance$.subscribe(b => this.balance = b);
   }
 
-  async ngOnInit() {
-    await this.wallet.ensureInit();
-    this.balance = this.wallet.currentBalance;
-    this.methodsLoaded = true;
+  ngOnInit() {
+    this.wallet.ensureInit().then(() => {
+      this.methodsLoaded = true;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.balanceSub?.unsubscribe();
   }
 
   statusLabel(): string | null {
@@ -66,8 +74,7 @@ export class WalletComponent {
           this.message = this.t.translate('wallet.message.topupSuccess');
           this.topUpForm.reset({ amount: 10, blikCode: '' });
         } else if (error) {
-          // backend message or fallback
-          this.error = error || this.t.translate('wallet.errors.api');
+          this.error = error; // fallback niepotrzebny bo error zwrócony z API
         }
       },
       error: (err) => {
@@ -92,7 +99,7 @@ export class WalletComponent {
           this.message = this.t.translate('wallet.message.withdrawSuccess');
           this.withdrawForm.reset({ amount: 10, iban: '' });
         } else if (error) {
-          this.error = error || this.t.translate('wallet.errors.api');
+          this.error = error;
         }
       },
       error: (err) => {
