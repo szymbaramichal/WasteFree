@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { WalletService } from '../services/wallet.service';
@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { TranslationService } from '../services/translation.service';
 import { Subscription } from 'rxjs';
+import { ProfileService } from '../services/profile.service';
 
 @Component({
   selector: 'app-wallet',
@@ -28,7 +29,6 @@ export class WalletComponent implements OnInit, OnDestroy {
   });
   withdrawForm = this.fb.group({
     amount: [10, [Validators.required, Validators.min(1)]],
-    iban: ['', [Validators.required]]
   });
   // Separate loading states so that top-up tile can show full-tile loader
   topUpLoading = false;
@@ -40,6 +40,8 @@ export class WalletComponent implements OnInit, OnDestroy {
 
   private balanceSub?: Subscription;
 
+  profileSvc = inject(ProfileService);
+
   constructor(private fb: FormBuilder, private wallet: WalletService, private t: TranslationService) {
     this.balanceSub = this.wallet.balance$.subscribe(b => this.balance = b);
   }
@@ -48,6 +50,8 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.wallet.ensureInit().then(() => {
       this.methodsLoaded = true;
     });
+    // ensure profile loaded to get saved bank account number
+    this.profileSvc.refresh();
   }
 
   ngOnDestroy(): void {
@@ -155,14 +159,19 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.resetMessages();
     this.withdrawLoading = true;
     const amount = Number(this.withdrawForm.value.amount);
-    const iban = String(this.withdrawForm.value.iban);
+    const iban = this.profileSvc.profile()?.bankAccountNumber || '';
+    if (!iban) {
+      this.loading = false;
+      this.error = this.t.translate('wallet.withdraw.noIban');
+      return;
+    }
     this.wallet.createTransaction({ code: 'IBAN', amount, paymentProperty: iban }).subscribe({
       next: ({ status, error }) => {
         this.paymentStatus = status;
         this.withdrawLoading = false;
         if (status === PaymentStatus.Completed) {
           this.message = this.t.translate('wallet.message.withdrawSuccess');
-          this.withdrawForm.reset({ amount: 10, iban: '' });
+          this.withdrawForm.reset({ amount: 10 });
           this.alertVisible = true;
           this.scheduleAutoDismiss();
         } else if (error) {

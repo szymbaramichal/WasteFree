@@ -1,0 +1,90 @@
+<div class="container-fluid">
+  <h1 class="h3 mb-3">{{ 'profile.title' | translate }}</h1>
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <ng-container *ngIf="!profileSvc.loading(); else loadingTpl">
+        <ng-container *ngIf="profileSvc.profile() as p; else errorTpl">
+          <div class="row g-3 align-items-center">
+            <div class="col-auto">
+              <div class="avatar" aria-hidden="true">{{ (p.username || '?').slice(0,1).toUpperCase() }}</div>
+            </div>
+            <div class="col">
+              <div class="fw-semibold">{{ p.username }}</div>
+              <div class="text-muted small">ID: {{ p.userId }}</div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+      <ng-template #loadingTpl>
+        <div class="text-muted">{{ 'loading' | translate }}</div>
+      </ng-template>
+      <ng-template #errorTpl>
+        <div class="text-danger">{{ 'profile.loadError' | translate }}</div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-transparent fw-semibold d-flex align-items-center justify-content-between">
+      <span>{{ 'profile.details' | translate }}</span>
+      <button class="btn btn-sm btn-outline-secondary" (click)="profileSvc.refresh()" [disabled]="profileSvc.loading()">{{ 'inbox.refresh' | translate }}</button>
+    </div>
+    <div class="card-body">
+      <dl class="row mb-0" *ngIf="profileSvc.profile() as p">
+        <dt class="col-sm-3">{{ 'profile.username' | translate }}</dt>
+        <dd class="col-sm-9">{{ p.username }}</dd>
+
+        <dt class="col-sm-3">{{ 'profile.email' | translate }}</dt>
+        <dd class="col-sm-9">{{ p.email }}</dd>
+
+        <dt class="col-sm-3">{{ 'profile.description' | translate }}</dt>
+        <dd class="col-sm-9">
+          <div *ngIf="!editMode; else editTpl">
+            <div class="mb-2">{{ p.description || '—' }}</div>
+            <button class="btn btn-sm btn-outline-primary" (click)="startEdit(p.description)">{{ 'common.edit' | translate }}</button>
+          </div>
+          <ng-template #editTpl>
+            <div class="mb-2">
+              <textarea class="form-control" rows="3" [(ngModel)]="draftDescription" [disabled]="saving"></textarea>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-primary d-inline-flex align-items-center" (click)="save()" [disabled]="saving" [attr.aria-busy]="saving">
+                <span *ngIf="saving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{ 'common.save' | translate }}</span>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" (click)="cancel()" [disabled]="saving">{{ 'common.cancel' | translate }}</button>
+            </div>
+            <div class="text-success mt-2" *ngIf="saveOk">{{ 'profile.saved' | translate }}</div>
+            <div class="text-danger mt-2" *ngIf="saveError">{{ 'profile.saveError' | translate }}</div>
+          </ng-template>
+        </dd>
+
+        <dt class="col-sm-3">{{ 'profile.bankAccountNumber' | translate }}</dt>
+        <dd class="col-sm-9">
+          <div *ngIf="!editBank; else editBankTpl">
+            <code>{{ p.bankAccountNumber || '—' }}</code>
+            <div class="mt-2">
+              <button class="btn btn-sm btn-outline-primary" (click)="startEditBank(p.bankAccountNumber)">{{ 'common.edit' | translate }}</button>
+            </div>
+          </div>
+          <ng-template #editBankTpl>
+            <div class="mb-2">
+              <input type="text" class="form-control" [(ngModel)]="draftBank" [disabled]="savingBank" placeholder="PL11 2222 3333 4444 5555 6666" />
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-primary d-inline-flex align-items-center" (click)="saveBank()" [disabled]="savingBank" [attr.aria-busy]="savingBank">
+                <span *ngIf="savingBank" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{ 'common.save' | translate }}</span>
+              </button>
+              <button class="btn btn-sm btn-outline-secondary" (click)="cancelBank()" [disabled]="savingBank">{{ 'common.cancel' | translate }}</button>
+            </div>
+            <div class="text-success mt-2" *ngIf="saveBankOk">{{ 'profile.bankSaved' | translate }}</div>
+            <div class="text-danger mt-2" *ngIf="saveBankError">{{ 'profile.bankSaveError' | translate }}</div>
+          </ng-template>
+        </dd>
+      </dl>
+      <div *ngIf="!profileSvc.profile() && !profileSvc.loading()" class="text-muted">{{ 'profile.noData' | translate }}</div>
+    </div>
+  </div>
+</div>

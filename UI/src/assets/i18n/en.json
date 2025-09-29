@@ -71,6 +71,7 @@
   "wallet.withdraw.desc": "Withdraw your funds - we validate your IBAN and available balance.",
   "wallet.withdraw.amount": "Amount (PLN)",
   "wallet.withdraw.iban": "IBAN",
+  "wallet.withdraw.ibanReadOnly": "To change IBAN, go to the Profile tab.",
   "wallet.withdraw.submit": "Withdraw",
   "wallet.withdraw.reset": "Reset",
   "wallet.message.topupSuccess": "Top up successful",
@@ -79,6 +80,7 @@
   "wallet.errors.insufficientFunds": "Insufficient funds",
   "wallet.errors.invalidIban": "Invalid IBAN",
   "wallet.errors.unknown": "Operation failed",
+  "wallet.withdraw.noIban": "No bank account in profile. Please fill it in the Profile tab.",
   "wallet.back": "Back to portal",
   "wallet.topup.blik": "BLIK code",
   "wallet.topup.blik.placeholder": "6-digit code",
@@ -94,6 +96,7 @@
   "menu.wallet": "Wallet",
   "menu.groups": "Garbage groups",
   "menu.groups.joinCreate" : "Create or join to group",
+  "menu.profile": "My profile",
   "topbar.hey": "Hey",
   "topbar.logout": "Logout",
   "topbar.openWallet": "Open wallet",
@@ -159,4 +162,24 @@
   "groups.form.errors.desc.max": "Max 500 characters.",
   "groups.form.errors.createFailed": "Failed to create group",
   "groups.form.errors.loadFailed": "Failed to load groups"
+  ,
+  "profile.title": "Your profile",
+  "profile.details": "Details",
+  "profile.username": "Username",
+  "profile.email": "Email",
+  "profile.description": "Description",
+  "profile.bankAccountNumber": "Bank account number",
+  "profile.noData": "No data to display",
+  "profile.loadError": "Failed to load profile",
+  "profile.settings": "Settings",
+  "profile.comingSoon": "More settings coming soon."
+  ,
+  "common.edit": "Edit",
+  "common.save": "Save",
+  "common.cancel": "Cancel",
+  "profile.saved": "Description saved",
+  "profile.saveError": "Failed to save description"
+  ,
+  "profile.bankSaved": "Bank account saved",
+  "profile.bankSaveError": "Failed to save bank account"
 }

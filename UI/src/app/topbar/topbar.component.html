@@ -26,7 +26,10 @@
           <app-language-switcher></app-language-switcher>
         </div>
         <div class="user-info order-lg-3" *ngIf="currentUser.user() as u">
-          <span class="logged d-none d-lg-inline">{{ 'topbar.hey' | translate }} <strong>{{ u.username }}</strong>! ({{ roleKeyMap[u.role] | translate }})</span>
+          <span class="logged d-none d-lg-inline">{{ 'topbar.hey' | translate }} 
+            <a class="text-white text-decoration-underline" routerLink="/portal/profile"><strong>{{ u.username }}</strong></a>!
+            ({{ roleKeyMap[u.role] | translate }})
+          </span>
           <button class="btn btn-outline-light btn-sm" (click)="logout()">{{ 'topbar.logout' | translate }}</button>
         </div>
         <div class="user-info order-lg-3" *ngIf="!currentUser.user()">

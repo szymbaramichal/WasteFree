@@ -45,7 +45,8 @@
 }
 
 
-.portal-sidebar { position: relative; }
+.portal-sidebar { position: relative; display:flex; flex-direction: column; }
+.portal-sidebar .nav { display:flex; flex-direction: column; flex:1 1 auto; }
 
 /* Main content area scrolls independently to avoid body scrollbar width shifts */
 .portal-content { 
@@ -79,7 +80,12 @@
 	width: 20px;
 	height: 20px;
 	margin-right: 10px;
-	color: currentColor;
+	display: inline-block;
+	object-fit: contain;
+}
+/* Only invert bitmap/svg image tags; inline SVG inherits currentColor */
+.portal-sidebar .nav-link.active img.nav-icon {
+	filter: brightness(0) invert(1);
 }
 .portal-sidebar .nav-text {
 	line-height: 1.2;
