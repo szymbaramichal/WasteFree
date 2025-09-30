@@ -10,7 +10,7 @@
         <div class="inbox-slot order-lg-2" *ngIf="currentUser.user()">
           <button class="inbox-pill link" (click)="openInbox()" [title]="('topbar.openInbox' | translate)" [ngClass]="{'jiggle': animateInbox}">
             <img src="/assets/images/bell.svg" alt="inbox" width="18" height="18" class="inbox-icon" aria-hidden="true" />
-            <span class="inbox-count" *ngIf="inboxCount">{{ inboxCount }}</span>
+            <span class="inbox-count" *ngIf="inbox.counter()">{{ inbox.counter() }}</span>
           </button>
         </div>
         <div class="wallet-slot order-lg-2" *ngIf="(walletBalance$ | async) !== null">
