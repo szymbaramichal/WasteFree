@@ -19,12 +19,12 @@ export class ProfileComponent implements OnInit {
   saveOk = false;
   saveError = false;
 
-  // bank account editing
   editBank = false;
   draftBank = '';
   savingBank = false;
   saveBankOk = false;
   saveBankError = false;
+  ibanInvalid = false;
 
   ngOnInit(): void {
     this.profileSvc.refresh();
@@ -54,7 +54,6 @@ export class ProfileComponent implements OnInit {
         this.saving = false;
         this.saveOk = true;
         this.editMode = false;
-        // odśwież profil po zapisie
         this.profileSvc.refresh();
       },
       error: () => {
@@ -80,6 +79,11 @@ export class ProfileComponent implements OnInit {
 
   saveBank() {
     const value = (this.draftBank ?? '').replace(/\s+/g, '').toUpperCase();
+    // Basic IBAN validation: length and checksum
+    this.ibanInvalid = !this.validateIban(value);
+    if (this.ibanInvalid) {
+      return;
+    }
     this.savingBank = true;
     this.saveBankOk = false;
     this.saveBankError = false;
@@ -96,6 +100,18 @@ export class ProfileComponent implements OnInit {
         this.saveBankError = true;
       }
     });
+  }
+
+  private validateIban(iban: string): boolean {
+    const raw = (iban ?? '').toUpperCase();
+    const basicOk = /^[A-Z0-9]{15,34}$/.test(raw);
+    const rearranged = raw.slice(4) + raw.slice(0, 4);
+    const expanded = rearranged.replace(/[A-Z]/g, c => (c.charCodeAt(0) - 55).toString());
+    let remainder = 0;
+    for (let i = 0; i < expanded.length; i++) {
+      remainder = (remainder * 10 + (expanded.charCodeAt(i) - 48)) % 97;
+    }
+    return basicOk && remainder === 1;
   }
 }
 

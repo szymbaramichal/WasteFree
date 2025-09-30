@@ -11,6 +11,9 @@
 .wallet-container .form-label { font-weight: 600; }
 .wallet-container .spinner-border { vertical-align: middle; }
 .wallet-container .alert { border-radius: 6px; }
+
+.wallet-container .iban-pill { display:inline-block; padding:.25rem .5rem; border-radius:999px; background:rgba(0,0,0,0.04); }
+.wallet-container .iban-pill code { color:#475569; background:transparent; padding:0; font-weight:400; }
 .wallet-container .row.g-3 { align-items: stretch; }
 .wallet-container .card { height: 100%; }
 /* Removed equal-height forcing for a simpler layout */
