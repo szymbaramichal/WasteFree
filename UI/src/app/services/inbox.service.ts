@@ -2,14 +2,16 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Result } from '../_models/result';
+import { Counter } from '../_models/inbox';
 
 @Injectable({ providedIn: 'root' })
 export class InboxService {
     private storageKey = 'wf_inbox_counter';
     private apiUrl = `${environment.apiUrl}`;
 
-    private _counter = signal<number>(this.loadFromStorage());
-    counter = this._counter.asReadonly();
+    counter = signal<number>(this.loadFromStorage());
+
 
     // notifications list
     private _notifications = signal<NotificationItem[]>([]);
@@ -20,24 +22,23 @@ export class InboxService {
     error = this._error.asReadonly();
 
     constructor(private http: HttpClient) {
-        this.refresh();
     }
 
     setCounter(counter: number) {
-        this._counter.set(counter);
+        this.counter.set(counter);
         localStorage.setItem(this.storageKey, counter.toString());
     }
 
     private loadFromStorage(): number {
         const raw = localStorage.getItem(this.storageKey);
+        console.log(raw + " from storage")
         if(!raw) return 0;
+        console.log("returning from raw: " + Number(raw));
         return Number(raw);
     }
 
-    refresh() {
-        this.http.get<number>(this.apiUrl + '/inbox/counter').pipe(
-            catchError(() => of(0))
-        ).subscribe(count => this._counter.set(count));
+    refreshCounter() {
+        this.http.get<Result<Counter>>(this.apiUrl + '/inbox/counter').subscribe(count => this.counter.set(count.resultModel.unreadMessages));
     }
 
     fetchNotifications() {
