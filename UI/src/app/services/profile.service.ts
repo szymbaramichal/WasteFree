@@ -45,9 +45,21 @@ export class ProfileService {
   updateDescription(description: string) { return this.updateProfile({ description }); }
 
   updateProfile(payload: { description?: string; bankAccountNumber?: string }) {
+
+    const current = this._profile();
     const body: any = {};
-    if (payload.description !== undefined) body.description = payload.description;
-    if (payload.bankAccountNumber !== undefined) body.bankAccountNumber = payload.bankAccountNumber;
+    if (payload.description !== undefined) {
+      body.description = payload.description;
+    } else if (current) {
+      body.description = current.description;
+    }
+
+    if (payload.bankAccountNumber !== undefined) {
+      body.bankAccountNumber = payload.bankAccountNumber;
+    } else if (current) {
+      body.bankAccountNumber = current.bankAccountNumber;
+    }
+
     return this.http.put<any>(this.api, body);
   }
 

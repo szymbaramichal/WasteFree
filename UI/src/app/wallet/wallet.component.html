@@ -73,7 +73,7 @@
                 <div class="mb-2">
                   <label class="form-label">{{ 'wallet.withdraw.iban' | translate }}</label>
                   <div class="form-control-plaintext">
-                    <code>{{ (profileSvc.profile()?.bankAccountNumber || '—') }}</code>
+                    <span class="iban-pill"><code>{{ profileSvc.profile()?.bankAccountNumber || '—' }}</code></span>
                   </div>
                   <small class="text-muted">
                     {{ 'wallet.withdraw.ibanReadOnly' | translate }}
