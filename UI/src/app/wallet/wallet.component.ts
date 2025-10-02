@@ -8,6 +8,8 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 import { TranslationService } from '../services/translation.service';
 import { Subscription } from 'rxjs';
 import { ProfileService } from '../services/profile.service';
+import { ToastrService } from 'ngx-toastr';
+import { extractApiErrorPayload } from '../helpers/api-error.helper';
 
 @Component({
   selector: 'app-wallet',
@@ -22,6 +24,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   methodsLoaded = false;
   paymentStatus: PaymentStatus | null = null;
   PaymentStatus = PaymentStatus;
+  toastr = inject(ToastrService);
 
   topUpForm = this.fb.group({
     amount: [10, [Validators.required, Validators.min(1)]],
@@ -127,6 +130,7 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   topUp() {
+    this.toastr.success('test');
     if (this.topUpForm.invalid) return;
     this.resetMessages();
     this.topUpLoading = true;
@@ -194,18 +198,6 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   private extractApiError(err: any): string {
-    const p = err?.error ?? err;
-    if (!p) return '';
-    if (typeof p === 'string') return p.trim();
-    if (typeof p?.errorMessage === 'string' && p.errorMessage.trim()) return p.errorMessage.trim();
-    const bag: any = (p && typeof p === 'object' && p.errors && typeof p.errors === 'object') ? p.errors : p;
-    try {
-      const values = Object.values(bag as Record<string, unknown>);
-      const messages = values
-        .flatMap((v: any) => Array.isArray(v) ? v : [v])
-        .filter((m: any) => typeof m === 'string' && m.trim())
-        .map((m: string) => m.trim());
-      return Array.from(new Set(messages)).join('\n');
-    } catch { return ''; }
+    return extractApiErrorPayload(err?.error ?? err);
   }
 }

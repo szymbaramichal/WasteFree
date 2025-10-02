@@ -1,4 +1,6 @@
 {
+  "error.401": "Logged out. Log in again",
+  "error.generic": "Oops. Something went wrong",
   "brand": "WasteFree",
   "nav.contact": "Kontakt",
   "nav.goApp": "Przejdź do aplikacji",

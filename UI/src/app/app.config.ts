@@ -5,6 +5,9 @@ import { routes } from './app.routes';
 import { TranslationService } from './services/translation.service';
 import { localeInterceptor } from './interceptors/locale.interceptor';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { provideToastr } from 'ngx-toastr';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { errorInterceptor } from './interceptors/error.interceptor';
 
 export function initTranslationsFactory(translationService: TranslationService) {
   return () => translationService.loadLangPromise();
@@ -13,13 +16,17 @@ export function initTranslationsFactory(translationService: TranslationService) 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor, localeInterceptor])),
+    provideHttpClient(withInterceptors([errorInterceptor, authInterceptor, localeInterceptor])),
     {
       provide: APP_INITIALIZER,
       useFactory: initTranslationsFactory,
       deps: [TranslationService],
       multi: true
-    }
+    },
+    provideAnimations(),
+    provideToastr({
+      positionClass: 'toast-bottom-right'
+    })
   ]
 };
 

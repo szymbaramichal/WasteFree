@@ -33,8 +33,6 @@ export class AuthComponent {
 
   private langSub: Subscription | null = null;
 
-  error: string | null = null;
-
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -76,13 +74,11 @@ export class AuthComponent {
   toggleMode(event: Event) {
     event.preventDefault();
     this.isLoginMode = !this.isLoginMode;
-    this.error = null;
   }
 
   onLogin() {
     if (!this.loginForm.valid) return;
 
-    this.error = null;
     this.isLoading = true;
 
     const start = Date.now();
@@ -90,7 +86,6 @@ export class AuthComponent {
 
     this.authService.login(this.loginForm.value).subscribe({
       next: (res) => {
-        this.error = null;
         this.showLoadingText = true;
 
         this.applyAuthResult(res.resultModel);
@@ -101,14 +96,6 @@ export class AuthComponent {
           this.showLoadingText = false;
           try { this.router.navigate(['/portal']); } catch { location.href = '/portal'; }
         });
-      },
-      error: (err) => {
-        this.error = this.extractApiError(err);
-        success = false;
-        this.finishLoading(start, success, () => {
-          this.isLoading = false;
-          this.showLoadingText = false;
-        });
       }
     });
   }
@@ -116,7 +103,6 @@ export class AuthComponent {
   onRegister() {
     if (!this.registerForm.valid) return;
 
-    this.error = null;
     this.showActivationSection = false;
 
     const { username, email, password, role, languagePreference } = this.registerForm.value;
@@ -127,22 +113,10 @@ export class AuthComponent {
 
     this.authService.register({ username, email, password, role, languagePreference }).subscribe({
       next: () => {
-        this.error = null;
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
 
         success = true;
-        this.finishLoading(start, success, () => {
-          this.isRegisterLoading = false;
-          this.showRegisterLoadingText = false;
-        });
-      },
-      error: (err) => {
-        this.error = this.extractApiError(err);
-        this.showActivationSection = false;
-        this.showRegisterLoadingText = false;
-
-        success = false;
         this.finishLoading(start, success, () => {
           this.isRegisterLoading = false;
           this.showRegisterLoadingText = false;
@@ -155,12 +129,9 @@ export class AuthComponent {
     this.showActivationSection = false;
     this.isLoginMode = true;
     this.loginForm.reset();
-    this.error = null;
   }
 
-  // Helpers
 
-  // Ensures minimum spinner time on success; immediate stop on error
   private finishLoading(start: number, isSuccess: boolean, done: () => void, minMs = 1000) {
     const elapsed = Date.now() - start;
     const wait = isSuccess ? Math.max(0, minMs - elapsed) : 0;
@@ -194,29 +165,5 @@ export class AuthComponent {
   }
 
   return UserRole.User;
-  }
-
-  // 400 and 422
-  private extractApiError(err: any): string {
-    const p = err?.error ?? err;
-
-    if (!p) return '';
-
-    if (typeof p === 'string') return p.trim();
-
-    if (typeof p?.errorMessage === 'string' && p.errorMessage.trim()) return p.errorMessage.trim();
-
-    const bag: any = (p && typeof p === 'object' && p.errors && typeof p.errors === 'object') ? p.errors : p;
-
-    try {
-      const values = Object.values(bag as Record<string, unknown>);
-      const messages = values
-        .flatMap((v: any) => Array.isArray(v) ? v : [v])
-        .filter((m: any) => typeof m === 'string' && m.trim())
-        .map((m: string) => m.trim());
-      return Array.from(new Set(messages)).join('\n');
-    } catch {
-      return '';
-    }
   }
 }
