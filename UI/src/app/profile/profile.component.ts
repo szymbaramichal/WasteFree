@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { ProfileService } from '../services/profile.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-profile',
@@ -13,17 +15,16 @@ import { ProfileService } from '../services/profile.service';
 })
 export class ProfileComponent implements OnInit {
   profileSvc = inject(ProfileService);
+  toastr = inject(ToastrService);
+  translationService = inject(TranslationService);
+  
   editMode = false;
   draftDescription = '';
   saving = false;
-  saveOk = false;
-  saveError = false;
 
   editBank = false;
   draftBank = '';
   savingBank = false;
-  saveBankOk = false;
-  saveBankError = false;
   ibanInvalid = false;
 
   ngOnInit(): void {
@@ -31,8 +32,6 @@ export class ProfileComponent implements OnInit {
   }
 
   startEdit(current: string | undefined | null) {
-    this.saveOk = false;
-    this.saveError = false;
     this.draftDescription = current || '';
     this.editMode = true;
   }
@@ -40,32 +39,25 @@ export class ProfileComponent implements OnInit {
   cancel() {
     this.editMode = false;
     this.saving = false;
-    this.saveOk = false;
-    this.saveError = false;
   }
 
   save() {
     const value = this.draftDescription ?? '';
     this.saving = true;
-    this.saveOk = false;
-    this.saveError = false;
     this.profileSvc.updateDescription(value).subscribe({
       next: () => {
         this.saving = false;
-        this.saveOk = true;
         this.editMode = false;
         this.profileSvc.refresh();
+        this.toastr.success(this.translationService.translate('success.update'));
       },
       error: () => {
         this.saving = false;
-        this.saveError = true;
       }
     });
   }
 
   startEditBank(current: string | undefined | null) {
-    this.saveBankOk = false;
-    this.saveBankError = false;
     this.draftBank = current || '';
     this.editBank = true;
   }
@@ -73,31 +65,24 @@ export class ProfileComponent implements OnInit {
   cancelBank() {
     this.editBank = false;
     this.savingBank = false;
-    this.saveBankOk = false;
-    this.saveBankError = false;
   }
 
   saveBank() {
     const value = (this.draftBank ?? '').replace(/\s+/g, '').toUpperCase();
-    // Basic IBAN validation: length and checksum
     this.ibanInvalid = !this.validateIban(value);
     if (this.ibanInvalid) {
       return;
     }
     this.savingBank = true;
-    this.saveBankOk = false;
-    this.saveBankError = false;
     this.profileSvc.updateProfile({ bankAccountNumber: value }).subscribe({
       next: () => {
         this.savingBank = false;
-        this.saveBankOk = true;
         this.editBank = false;
         this.draftBank = value;
         this.profileSvc.refresh();
       },
       error: () => {
         this.savingBank = false;
-        this.saveBankError = true;
       }
     });
   }

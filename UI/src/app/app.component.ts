@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslationService } from './services/translation.service';
 import { LanguageSwitcherComponent } from './language-switcher/language-switcher.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { LoaderOverlayComponent } from './loader-overlay/loader-overlay.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class AppComponent {
   title = 'WasteFree';
   dropdownOpen = false;
   showGlobalLang = true;
+  toastr = inject(ToastrService);
 
   constructor(public t: TranslationService, private router: Router) {
     // hide global language switcher on portal routes (including wallet) to avoid duplicate controls

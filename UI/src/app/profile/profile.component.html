@@ -63,8 +63,6 @@
               </button>
               <button class="btn btn-sm btn-outline-secondary btn-ghost" (click)="cancel()" [disabled]="saving">{{ 'common.cancel' | translate }}</button>
             </div>
-            <div class="text-success mt-2" *ngIf="saveOk">{{ 'profile.saved' | translate }}</div>
-            <div class="text-danger mt-2" *ngIf="saveError">{{ 'profile.saveError' | translate }}</div>
           </ng-template>
         </dd>
 
@@ -90,8 +88,6 @@
               </button>
               <button class="btn btn-sm btn-outline-secondary btn-ghost" (click)="cancelBank()" [disabled]="savingBank">{{ 'common.cancel' | translate }}</button>
             </div>
-            <div class="text-success mt-2" *ngIf="saveBankOk">{{ 'profile.bankSaved' | translate }}</div>
-            <div class="text-danger mt-2" *ngIf="saveBankError">{{ 'profile.bankSaveError' | translate }}</div>
           </ng-template>
         </dd>
       </dl>

@@ -1,4 +1,7 @@
 {
+  "error.401": "Wylogowano. Zaloguj się ponownie",
+  "error.generic": "Ups. Coś poszło nie tak.",
+  "success.update": "Sukces!",
   "brand": "WasteFree",
   "nav.contact": "Kontakt",
   "nav.goApp": "Przejdź do aplikacji",

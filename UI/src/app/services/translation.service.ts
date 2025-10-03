@@ -29,25 +29,8 @@ export class TranslationService {
     return this.lang;
   }
 
-  setLanguage(lang: string) {
-    if (!lang) return;
-  const short = this.normalizeLang(lang);
-  if (this.lang === short) return;
-  this.lang = short;
-  localStorage.setItem('lang', short);
-  this.loadLang(short);
-  this.lang$.next(short);
-  }
-
   private loadLang(lang: string) {
-    const short = this.normalizeLang(lang);
-    if (this.cache[short]) return;
-    this.http.get(`/assets/i18n/${short}.json`).subscribe((res) => {
-      this.cache[short] = res || {};
-      this.lang$.next(this.lang); // notify subscribers when loaded
-    }, () => {
-      this.cache[short] = {}; // fallback to empty
-    });
+    this.loadLangInternal(lang, false);
   }
 
   // Promise-based loader usable by APP_INITIALIZER to block bootstrap until translations are ready
@@ -84,5 +67,46 @@ export class TranslationService {
       else return key; // fallback to key if not found
     }
     return typeof cur === 'string' ? cur : key;
+  }
+
+  /**
+   * Internal loader allowing forced reload when a previous attempt failed (e.g. cached as empty).
+   */
+  private loadLangInternal(lang: string, force: boolean) {
+    const short = this.normalizeLang(lang);
+    const existing = this.cache[short];
+    // Only skip if we already have a non-empty dictionary and not forcing
+    if (!force && existing && Object.keys(existing).length > 0) return;
+
+    this.http.get(`/assets/i18n/${short}.json`).subscribe(
+      (res) => {
+        this.cache[short] = (res as any) || {};
+        this.lang$.next(this.lang); // notify subscribers when loaded
+      },
+      () => {
+        // On error do NOT persist an empty object permanently; allow future retries
+        delete this.cache[short];
+      }
+    );
+  }
+
+  /**
+   * Enhanced setLanguage: if selecting same language but cache is empty, retry loading.
+   */
+  setLanguage(lang: string) {
+    if (!lang) return;
+    const short = this.normalizeLang(lang);
+    // If selecting the same language, but we have no loaded keys, force reload
+    if (this.lang === short) {
+      const existing = this.cache[short];
+      if (!existing || Object.keys(existing).length === 0) {
+        this.loadLangInternal(short, true);
+      }
+      return;
+    }
+    this.lang = short;
+    localStorage.setItem('lang', short);
+    this.loadLangInternal(short, false);
+    this.lang$.next(short);
   }
 }

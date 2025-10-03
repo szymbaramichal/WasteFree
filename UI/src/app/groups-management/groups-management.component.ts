@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { GarbageGroupInfo, RegisterGarbageGroupRequest } from '../_models/garbageGroups';
@@ -6,6 +6,8 @@ import { GarbageGroupService } from '../services/garbage-group.service';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { TranslatePipe } from '../pipes/translate.pipe';
+import { ToastrService } from 'ngx-toastr';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-groups-management',
@@ -17,13 +19,13 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 export class GroupsManagementComponent {
   private fb = inject(FormBuilder);
   private groupService = inject(GarbageGroupService);
+  private toastr = inject(ToastrService);
+  private translationService = inject(TranslationService);
 
   groups: GarbageGroupInfo[] = [];
   loading = false;
   submitting = false;
   loadError: string | null = null;
-  submitError: string | null = null;
-  successMessage: string | null = null;
 
   form: FormGroup = this.fb.group({
     groupName: ['', [Validators.required, Validators.maxLength(100)]],
@@ -36,21 +38,13 @@ export class GroupsManagementComponent {
       return;
     }
     this.submitting = true;
-    this.submitError = null;
-    this.successMessage = null;
     const payload: RegisterGarbageGroupRequest = this.form.value;
     this.groupService.register(payload)
       .pipe(finalize(() => this.submitting = false))
       .subscribe({
-        next: res => {
-          if (res.errorCode) {
-            this.submitError = res.errorMessage;
-            return;
-          }
-            this.form.reset();
-        },
-        error: err => {
-          this.submitError = err?.error?.errorMessage;
+        next: () => {
+          this.toastr.success(this.translationService.translate('success.update'));
+          this.form.reset();
         }
       });
   }
