@@ -115,8 +115,14 @@ export class AuthComponent {
       next: () => {
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
-
         success = true;
+        
+        this.finishLoading(start, success, () => {
+          this.isRegisterLoading = false;
+          this.showRegisterLoadingText = false;
+        });
+      },
+      error: () => {
         this.finishLoading(start, success, () => {
           this.isRegisterLoading = false;
           this.showRegisterLoadingText = false;

@@ -12,13 +12,13 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError(err => {
       if(err) {
+        const error = err?.error ?? err;
         switch (err.status) {
           case 400:
-            const p = err?.error;
 
-            if (typeof p?.errorMessage === 'string' && p.errorMessage.trim())
+            if (typeof error?.errorMessage === 'string' && error.errorMessage.trim())
             {
-                toastr.error(p.errorMessage.trim());
+                toastr.error(error.errorMessage.trim());
                 break;
             }
             toastr.error(translationService.translate('error.generic'));
@@ -27,7 +27,10 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             toastr.error(translationService.translate('error.401'));
             break;
           case 422:
-            //TODO
+            const errors = extractApiErrorPayload(error);
+            errors.forEach(errorContent => {
+              toastr.error(errorContent);
+            });
             break;
           default:
             toastr.error(translationService.translate('error.generic'));

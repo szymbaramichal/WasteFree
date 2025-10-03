@@ -11,8 +11,6 @@
       <label for="password">{{ 'auth.password' | translate }}</label>
       <input id="password" formControlName="password" type="password" />
 
-      
-
       <button type="submit" [disabled]="loginForm.invalid || isLoading">
         <span *ngIf="!isLoading">{{ 'auth.login.btn' | translate }}</span>
         <span *ngIf="isLoading" class="d-flex align-items-center" style="gap:8px;">

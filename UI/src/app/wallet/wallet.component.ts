@@ -9,7 +9,6 @@ import { TranslationService } from '../services/translation.service';
 import { Subscription } from 'rxjs';
 import { ProfileService } from '../services/profile.service';
 import { ToastrService } from 'ngx-toastr';
-import { extractApiErrorPayload } from '../helpers/api-error.helper';
 
 @Component({
   selector: 'app-wallet',
@@ -38,8 +37,6 @@ export class WalletComponent implements OnInit, OnDestroy {
   withdrawLoading = false;
   // Backward compatibility: some template / code might still reference `loading`
   get loading(): boolean { return this.topUpLoading || this.withdrawLoading; }
-  message: string | null = null;
-  error: string | null = null;
 
   private balanceSub?: Subscription;
 
@@ -61,73 +58,6 @@ export class WalletComponent implements OnInit, OnDestroy {
     this.balanceSub?.unsubscribe();
   }
 
-  statusLabel(): string | null {
-    if (this.paymentStatus === null) return null;
-    switch (this.paymentStatus) {
-      case PaymentStatus.Pending: return this.t.translate('wallet.payment.status.pending');
-      case PaymentStatus.Completed: return this.t.translate('wallet.payment.status.success');
-      case PaymentStatus.Invalid: return this.t.translate('wallet.payment.status.failed');
-      default: return null;
-    }
-  }
-
-  // Unified alert text preference order:
-  // 1. Explicit error
-  // 2. Success message (message)
-  // 3. Status label (pending etc.)
-  get alertText(): string | null {
-    if (this.error) return this.error;
-    if (this.message) return this.message;
-    return this.statusLabel();
-  }
-
-  get alertType(): 'info' | 'success' | 'danger' | null {
-    if (!this.alertText) return null;
-    if (this.error) return 'danger';
-    if (this.paymentStatus === PaymentStatus.Completed) return 'success';
-    if (this.paymentStatus === PaymentStatus.Pending) return 'info';
-    if (this.paymentStatus === PaymentStatus.Invalid) return 'danger';
-    return 'info';
-  }
-
-  // Extended presentation helpers
-  get alertTitle(): string | null {
-    if (!this.alertType) return null;
-    const map: Record<string, { key: string; fallback: string }> = {
-      success: { key: 'wallet.alert.successTitle', fallback: 'Sukces' },
-      danger: { key: 'wallet.alert.errorTitle', fallback: 'Błąd' },
-      info: { key: 'wallet.alert.infoTitle', fallback: 'Informacja' }
-    };
-    const def = map[this.alertType];
-    if (!def) return null;
-    const translated = this.t.translate(def.key);
-    // If translation service returns the key itself or empty string, use fallback.
-    if (!translated || translated === def.key) return def.fallback;
-    return translated;
-  }
-
-  alertVisible = true;
-  private autoDismissTimer: any = null;
-  private autoDismissMs = 5500; // configurable
-
-  dismissAlert() {
-    this.alertVisible = false;
-    if (this.autoDismissTimer) {
-      clearTimeout(this.autoDismissTimer);
-      this.autoDismissTimer = null;
-    }
-  }
-
-  private scheduleAutoDismiss() {
-    if (this.autoDismissTimer) {
-      clearTimeout(this.autoDismissTimer);
-    }
-    if (this.alertType === 'success') {
-      this.autoDismissTimer = setTimeout(() => {
-        this.alertVisible = false;
-      }, this.autoDismissMs);
-    }
-  }
 
   topUp() {
     this.toastr.success('test');
@@ -141,19 +71,12 @@ export class WalletComponent implements OnInit, OnDestroy {
         this.paymentStatus = status;
         this.topUpLoading = false;
         if (status === PaymentStatus.Completed) {
-          this.message = this.t.translate('wallet.message.topupSuccess');
           this.topUpForm.reset({ amount: 10, blikCode: '' });
-          this.alertVisible = true;
-          this.scheduleAutoDismiss();
-        } else if (error) {
-          this.error = error; 
-          this.alertVisible = true;
         }
       },
       error: (err) => {
         this.topUpLoading = false;
         this.paymentStatus = PaymentStatus.Invalid;
-        this.error = this.extractApiError(err) || this.t.translate('wallet.errors.api');
       }
     });
   }
@@ -166,7 +89,6 @@ export class WalletComponent implements OnInit, OnDestroy {
     const iban = this.profileSvc.profile()?.bankAccountNumber || '';
     if (!iban) {
       this.withdrawLoading = false;
-      this.error = this.t.translate('wallet.withdraw.noIban');
       return;
     }
     this.wallet.createTransaction({ code: 'IBAN', amount, paymentProperty: iban }).subscribe({
@@ -174,30 +96,17 @@ export class WalletComponent implements OnInit, OnDestroy {
         this.paymentStatus = status;
         this.withdrawLoading = false;
         if (status === PaymentStatus.Completed) {
-          this.message = this.t.translate('wallet.message.withdrawSuccess');
           this.withdrawForm.reset({ amount: 10 });
-          this.alertVisible = true;
-          this.scheduleAutoDismiss();
-        } else if (error) {
-          this.error = error;
-          this.alertVisible = true;
         }
       },
       error: (err) => {
         this.withdrawLoading = false;
         this.paymentStatus = PaymentStatus.Invalid;
-        this.error = this.extractApiError(err) || this.t.translate('wallet.errors.api');
       }
     });
   }
 
   private resetMessages() {
-    this.message = null;
-    this.error = null;
     this.paymentStatus = null;
-  }
-
-  private extractApiError(err: any): string {
-    return extractApiErrorPayload(err?.error ?? err);
   }
 }
