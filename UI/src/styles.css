@@ -4,6 +4,15 @@ body {
 	background: initial;
 }
 
+.toast-success {
+  font-weight: bold !important;
+  border-radius: 15px !important;
+}
+
+.toast-error {
+  font-weight: bold !important;
+  border-radius: 15px !important;
+}
 
 body.auth-bg, body.portal-bg {
 	background-image: url('/assets/images/auth_background.jpg');
