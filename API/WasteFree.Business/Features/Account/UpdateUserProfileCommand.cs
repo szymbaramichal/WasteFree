@@ -8,7 +8,7 @@ using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Account;
 
-public record UpdateUserProfileCommand(Guid UserId, string Description, string BankAccountNumber) :
+public record UpdateUserProfileCommand(Guid UserId, string Description, string BankAccountNumber, string City) :
     IRequest<ProfileDto>;
 
 public class UpdateUserProfileCommandHandler(ApplicationDataContext context) : IRequestHandler<UpdateUserProfileCommand, ProfileDto>
@@ -22,8 +22,9 @@ public class UpdateUserProfileCommandHandler(ApplicationDataContext context) : I
         if (user is null)
             return Result<ProfileDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
 
-        user.Description = request.Description;
+    user.Description = request.Description;
         user.Wallet.WithdrawalAccountNumber = request.BankAccountNumber;
+    user.City = request.City;
 
         await context.SaveChangesAsync(cancellationToken);
         

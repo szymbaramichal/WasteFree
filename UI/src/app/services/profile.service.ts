@@ -8,6 +8,7 @@ export interface ProfileDto {
   email: string;
   description: string;
   bankAccountNumber: string;
+  city: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -44,7 +45,7 @@ export class ProfileService {
 
   updateDescription(description: string) { return this.updateProfile({ description }); }
 
-  updateProfile(payload: { description?: string; bankAccountNumber?: string }) {
+  updateProfile(payload: { description?: string; bankAccountNumber?: string; city?: string }) {
 
     const current = this._profile();
     const body: any = {};
@@ -60,6 +61,12 @@ export class ProfileService {
       body.bankAccountNumber = current.bankAccountNumber;
     }
 
+    if (payload.city !== undefined) {
+      body.city = payload.city;
+    } else if (current) {
+      body.city = current.city;
+    }
+
     return this.http.put<any>(this.api, body);
   }
 
@@ -72,7 +79,8 @@ export class ProfileService {
       username: String(raw.username ?? raw.Username ?? ''),
       email: String(raw.email ?? raw.Email ?? ''),
       description: String(raw.description ?? raw.Description ?? ''),
-      bankAccountNumber: String(raw.bankAccountNumber ?? raw.BankAccountNumber ?? '')
+      bankAccountNumber: String(raw.bankAccountNumber ?? raw.BankAccountNumber ?? ''),
+      city: String(raw.city ?? raw.City ?? '')
     };
   }
 }
