@@ -1,4 +1,4 @@
-import { Component, computed, signal, inject } from '@angular/core';
+import { Component, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InboxService, NotificationItem } from '../services/inbox.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
@@ -13,48 +13,32 @@ import { RouterModule } from '@angular/router';
 })
 export class InboxComponent {
   private inbox = inject(InboxService);
-  // filter signals
-  filter = signal<'all' | 'unread' | 'info' | 'warning' | 'success'>('all');
   now = new Date();
 
   notifications = this.inbox.notifications;
   loading = this.inbox.loading;
   error = this.inbox.error;
+  pager = this.inbox.pager;
 
-  filtered = computed(() => {
-    const f = this.filter();
-    const list = this.notifications();
-    if (f === 'all') return list;
-    if (f === 'unread') return list.filter(n => !n.read);
-    return list.filter(n => n.type === f);
-  });
+  // Generic pagination state
+  pageNumber = signal(1);
+  pageSize = signal(10);
+
+  totalPages = computed(() => this.pager()?.totalPages ?? 1);
+  totalCount = computed(() => this.pager()?.totalCount ?? 0);
 
   constructor() {
-    if (!this.notifications().length) {
-      this.inbox.fetchNotifications();
-    }
+    this.refresh();
   }
 
-  setFilter(f: 'all' | 'unread' | 'info' | 'warning' | 'success') {
-    this.filter.set(f);
-  }
+  refresh() { this.inbox.fetchNotifications(this.pageNumber(), this.pageSize()); }
 
-  refresh() { this.inbox.fetchNotifications(); }
-  markAllRead() { this.inbox.markAllRead(); }
-  markRead(n: NotificationItem) { if (!n.read) this.inbox.markAsRead(n.id); }
-
-  anyUnread() { return this.notifications().some(n => !n.read); }
-  unreadCount() { return this.notifications().filter(n => !n.read).length; }
+  nextPage() { if (this.pageNumber() < (this.totalPages() || 1)) { this.pageNumber.update(p => p + 1); this.refresh(); } }
+  prevPage() { if (this.pageNumber() > 1) { this.pageNumber.update(p => p - 1); this.refresh(); } }
+  setPageSize(size: number) { this.pageSize.set(size); this.pageNumber.set(1); this.refresh(); }
 
   trackById(_i: number, n: NotificationItem) { return n.id; }
-  cssForType(t: string) {
-    switch (t) {
-      case 'warning': return 'warning';
-      case 'success': return 'success';
-      case 'info': return 'info';
-      default: return 'secondary';
-    }
-  }
+
   relativeDate(date?: string) {
     if (!date) return '';
     const d = new Date(date).getTime();
@@ -68,10 +52,8 @@ export class InboxComponent {
     return days + 'd';
   }
 
-  // Safely convert message payload to HTML string for rendering.
-  // If message is an object, try common fields or fallback to JSON.
   getMessage(n: NotificationItem): string {
-    const m: any = n.message as any;
+    const m: any = n.body as any;
     if (!m && m !== 0) return '';
     if (typeof m === 'string') return m;
     if (typeof m === 'object') {

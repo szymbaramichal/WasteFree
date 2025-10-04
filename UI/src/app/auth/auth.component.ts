@@ -96,6 +96,12 @@ export class AuthComponent {
           this.showLoadingText = false;
           try { this.router.navigate(['/portal']); } catch { location.href = '/portal'; }
         });
+      },
+      error: () => {
+        this.finishLoading(start, success, () => {
+          this.isLoading = false;
+          this.showLoadingText = false;
+        });
       }
     });
   }

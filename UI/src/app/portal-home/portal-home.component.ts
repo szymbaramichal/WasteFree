@@ -30,7 +30,7 @@ export class PortalHomeComponent {
 
   async ngOnInit() {
     this.inbox.refreshCounter();
-    this.inbox.fetchNotifications();
+    this.inbox.fetchNotifications(1, 5);
     this.wallet.balance$.subscribe(b => this.balance = b);
     await this.wallet.ensureInit();
     this.balance = this.wallet.currentBalance;

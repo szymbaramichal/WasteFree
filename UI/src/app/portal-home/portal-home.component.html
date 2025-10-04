@@ -50,29 +50,23 @@
 					<div class="d-flex align-items-center justify-content-between mb-2">
 						<h5 class="m-0 d-flex align-items-center gap-2">
 							<span class="notif-dot"></span>
-											{{ 'portal.home.section.recentNotifications' | translate }}
+							{{ 'portal.home.section.recentNotifications' | translate }}
 						</h5>
-										<a routerLink="/portal/inbox" class="small text-decoration-none">{{ 'portal.home.actions.notifications' | translate }} &rarr;</a>
+						<a routerLink="/portal/inbox" class="small text-decoration-none">{{ 'portal.home.actions.notifications' | translate }} &rarr;</a>
 					</div>
 					<ul class="list-unstyled mb-0 flex-grow-1" *ngIf="recent().length; else noNotif">
-						<li *ngFor="let n of recent(); trackBy: inboxTrack" class="d-flex align-items-start gap-3 py-2 notif-item" [class.unread]="!n.read">
-							<div class="notif-icon rounded-circle text-white d-flex align-items-center justify-content-center" [ngClass]="'bg-' + notifTypeColor(n.type)">
-								<svg *ngIf="n.type==='warning'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-								<svg *ngIf="n.type==='success'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-								<svg *ngIf="n.type==='info'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
-								<svg *ngIf="n.type!=='info' && n.type!=='warning' && n.type!=='success'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-							</div>
+						<li *ngFor="let n of recent(); trackBy: inboxTrack" class="d-flex align-items-start gap-3 py-2 notif-item">
 							<div class="flex-grow-1">
 								<div class="d-flex justify-content-between align-items-start gap-2 mb-1 flex-wrap">
 									<strong class="small">{{ n.title }}</strong>
-									<span class="text-muted time small">{{ relativeDate(n.createdAt) }}</span>
+									<span class="text-muted time small">{{ relativeDate(n.createdDateUtc) }}</span>
 								</div>
-								<div class="small text-muted" [innerHTML]="formatMessage(n.message)"></div>
+								<div class="small text-muted" [innerHTML]="formatMessage(n.body)"></div>
 							</div>
 						</li>
 					</ul>
 					<ng-template #noNotif>
-									<div class="text-center text-muted small py-4">{{ 'portal.home.empty.notifications' | translate }}</div>
+						<div class="text-center text-muted small py-4">{{ 'portal.home.empty.notifications' | translate }}</div>
 					</ng-template>
 				</div>
 			</div>
