@@ -1,79 +1,54 @@
 <div class="inbox container py-4">
 	<div class="row justify-content-center">
-		<div class="col-12 col-lg-10 inbox-white-wrapper">
-			<!-- Header -->
-			<div class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
-				<div class="d-flex align-items-center gap-2">
-					<div class="inbox-icon-wrap d-inline-flex align-items-center justify-content-center">
-						<img src="/assets/images/bell.svg" alt="" width="20" height="20" />
-					</div>
-					<h4 class="m-0">{{ 'inbox.title' | translate }}</h4>
-					<span class="badge bg-primary" *ngIf="notifications().length">{{ notifications().length }}</span>
+		<div class="col-12 col-lg-10">
+			<div class="inbox-card p-3 p-md-4 rounded-4">
+			<!-- Simple header -->
+			<div class="inbox-header d-flex align-items-center gap-2 mb-3">
+				<div class="inbox-icon-wrap d-inline-flex align-items-center justify-content-center">
+					<img src="/assets/images/bell.svg" alt="" width="20" height="20" />
 				</div>
-				<div class="d-flex align-items-center gap-2 flex-wrap">
-					<button class="btn btn-sm btn-outline-secondary" (click)="refresh()" [disabled]="loading()">
-						<span *ngIf="!loading()">{{ 'inbox.refresh' | translate }}</span>
-						<span *ngIf="loading()" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-					</button>
-					  <button class="btn btn-sm btn-outline-primary" (click)="markAllRead()" [disabled]="!anyUnread()">{{ 'inbox.markAllRead' | translate }}</button>
-					<a routerLink="/portal" class="btn btn-sm btn-outline-dark">&larr;</a>
-				</div>
+				<h4 class="m-0">{{ 'inbox.title' | translate }}</h4>
+				<span class="badge bg-primary" *ngIf="notifications().length">{{ notifications().length }}</span>
 			</div>
 
-			<!-- Filters -->
-			<div class="filters d-flex flex-wrap gap-2 mb-3">
-				<button type="button" class="btn btn-filter" [ngClass]="{active: filter()==='all'}" (click)="setFilter('all')">{{ 'inbox.filters.all' | translate }}</button>
-						<button type="button" class="btn btn-filter" [ngClass]="{active: filter()==='unread'}" (click)="setFilter('unread')">
-							{{ 'inbox.filters.unread' | translate }}
-							<span class="badge bg-danger ms-1" *ngIf="anyUnread()">{{ unreadCount() }}</span>
-						</button>
-				<button type="button" class="btn btn-filter" [ngClass]="{active: filter()==='info'}" (click)="setFilter('info')">{{ 'inbox.filters.info' | translate }}</button>
-				<button type="button" class="btn btn-filter" [ngClass]="{active: filter()==='warning'}" (click)="setFilter('warning')">{{ 'inbox.filters.warning' | translate }}</button>
-				<button type="button" class="btn btn-filter" [ngClass]="{active: filter()==='success'}" (click)="setFilter('success')">{{ 'inbox.filters.success' | translate }}</button>
+			<!-- Empty state -->
+			<div class="text-muted" *ngIf="!notifications().length">
+				{{ 'inbox.empty' | translate }}
 			</div>
 
-			<!-- States -->
-			<div *ngIf="error()" class="alert alert-danger mb-3">
-				{{ 'inbox.error' | translate }}
-				<button class="btn btn-sm btn-light ms-2" (click)="refresh()">{{ 'inbox.refresh' | translate }}</button>
-			</div>
-			<div *ngIf="loading()" class="alert alert-info d-flex align-items-center gap-2 mb-3">
-				<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-				<span>{{ 'inbox.loading' | translate }}</span>
-			</div>
-
-			<!-- Empty -->
-			<div *ngIf="!loading() && !filtered().length && !error()" class="text-center py-5 text-muted">
-				<p class="mb-1" *ngIf="notifications().length===0">{{ 'inbox.empty' | translate }}</p>
-				<p class="mb-1" *ngIf="notifications().length>0">{{ 'inbox.emptyFiltered' | translate }}</p>
-				<button class="btn btn-outline-secondary btn-sm mt-2" (click)="refresh()">{{ 'inbox.refresh' | translate }}</button>
-			</div>
-
-			<!-- List -->
-			<ul class="list-group shadow-sm" *ngIf="filtered().length">
-				<li class="list-group-item notification-item" *ngFor="let n of filtered(); trackBy: trackById" [ngClass]="{'unread': !n.read}">
+			<!-- Notifications list -->
+			<ul class="list-group inbox-list" *ngIf="notifications().length">
+				<li class="list-group-item" *ngFor="let n of notifications(); trackBy: trackById">
 					<div class="d-flex align-items-start gap-3">
-						<div class="icon-wrapper rounded-circle flex-shrink-0" [ngClass]="'bg-' + cssForType(n.type)">
-							<span class="visually-hidden">{{ n.type }}</span>
-							<svg *ngIf="n.type==='info'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="8"/></svg>
-							<svg *ngIf="n.type==='warning'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-							<svg *ngIf="n.type==='success'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-							<svg *ngIf="n.type!=='info' && n.type!=='warning' && n.type!=='success'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>
-						</div>
 						<div class="flex-grow-1">
 							<div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
-								<strong class="title m-0">{{ n.title }}</strong>
-								<span class="badge bg-light text-dark status-badge" *ngIf="!n.read">{{ 'inbox.status.unread' | translate }}</span>
-								<span class="time text-muted small">{{ relativeDate(n.createdAt) }}</span>
+								<strong class="m-0">{{ n.title }}</strong>
+								<span class="text-muted small">{{ relativeDate(n.createdDateUtc) }}</span>
 							</div>
-							<p class="mb-2 body-text" [innerHTML]="getMessage(n)"></p>
-							<div class="d-flex gap-2">
-								<button class="btn btn-sm btn-outline-secondary" (click)="markRead(n)" *ngIf="!n.read">{{ 'inbox.markRead' | translate }}</button>
-							</div>
+							<p class="mb-0" [innerHTML]="getMessage(n)"></p>
 						</div>
 					</div>
 				</li>
 			</ul>
+
+			<!-- Pagination controls -->
+			<div class="inbox-pagination d-flex align-items-center justify-content-between mt-3" *ngIf="(totalPages() ?? 1) > 1">
+				<div class="d-flex align-items-center gap-2">
+					<button class="btn btn-sm btn-outline-secondary" (click)="prevPage()" [disabled]="pageNumber()<=1">Prev</button>
+					<span class="small">Page {{ pageNumber() }} / {{ totalPages() }}</span>
+					<button class="btn btn-sm btn-outline-secondary" (click)="nextPage()" [disabled]="pageNumber()>=totalPages()">Next</button>
+				</div>
+				<div class="d-flex align-items-center gap-2">
+					<label class="small text-muted">Page size</label>
+					<select class="form-select form-select-sm" style="width:auto" [value]="pageSize()" (change)="setPageSize(+$any($event.target).value)">
+						<option value="5">5</option>
+						<option value="10">10</option>
+						<option value="20">20</option>
+						<option value="50">50</option>
+					</select>
+				</div>
+			</div>
+			</div>
 		</div>
 	</div>
 </div>

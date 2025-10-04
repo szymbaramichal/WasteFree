@@ -1,8 +1,10 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
 
-body {
-	background: initial;
-}
+/* Root/layout normalization to prevent continuous scroll */
+html, body { height: 100%; margin: 0; }
+body { background: initial; overflow-x: hidden; }
+/* Use a CSS var for the topbar height */
+:root { --topbar-height: 56px; }
 
 .toast-success {
   font-weight: bold !important;
@@ -29,6 +31,9 @@ body.auth-bg, body.portal-bg {
 	--primary-green-dark: #1f8b56;
 	--topbar-contrast: rgba(255,255,255,0.08);
 }
+
+/* Ensure toast container sits above fixed elements like sidebar */
+.toast-container, .ngx-toastr { z-index: 4000 !important; }
 
 .topbar-placeholder { height: 56px; }
 

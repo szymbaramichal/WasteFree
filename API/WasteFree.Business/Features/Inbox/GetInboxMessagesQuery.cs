@@ -28,6 +28,7 @@ public class GetInboxMessagesQueryHandler(ApplicationDataContext context)
                 CreatedDateUtc = x.CreatedDateUtc,
                 Body = x.Message
             })
+            .OrderByDescending(x => x.CreatedDateUtc)
             .ToListAsync(cancellationToken);
 
         var pager = new Pager(request.Pager.PageNumber, request.Pager.PageSize, totalCount);

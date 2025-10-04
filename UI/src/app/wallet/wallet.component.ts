@@ -8,6 +8,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 import { TranslationService } from '../services/translation.service';
 import { Subscription } from 'rxjs';
 import { ProfileService } from '../services/profile.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-wallet',
@@ -22,6 +23,8 @@ export class WalletComponent implements OnInit, OnDestroy {
   methodsLoaded = false;
   paymentStatus: PaymentStatus | null = null;
   PaymentStatus = PaymentStatus;
+  toastr = inject(ToastrService);
+  translationService = inject(TranslationService);
 
   topUpForm = this.fb.group({
     amount: [10, [Validators.required, Validators.min(1)]],
@@ -67,6 +70,7 @@ export class WalletComponent implements OnInit, OnDestroy {
       next: ({ status, error }) => {
         this.paymentStatus = status;
         this.topUpLoading = false;
+        this.toastr.success(this.translationService.translate('wallet.message.topupSuccess'));
         if (status === PaymentStatus.Completed) {
           this.topUpForm.reset({ amount: 10, blikCode: '' });
         }
@@ -92,6 +96,7 @@ export class WalletComponent implements OnInit, OnDestroy {
       next: ({ status, error }) => {
         this.paymentStatus = status;
         this.withdrawLoading = false;
+        this.toastr.success(this.translationService.translate('wallet.message.withdrawSuccess'));
         if (status === PaymentStatus.Completed) {
           this.withdrawForm.reset({ amount: 10 });
         }
