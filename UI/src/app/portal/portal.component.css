@@ -1,18 +1,29 @@
+/* Main portal flex wrapper (content sits to the right of fixed sidebar) */
 .portal-layout { 
-	min-height: 100vh; 
+	height: calc(100dvh - var(--topbar-height, 56px) - 1px);
+	min-height: calc(100dvh - var(--topbar-height, 56px) - 1px);
 	position: relative; 
-	/* d-flex is applied in template, but keep fall-back */
 	display: flex; 
+	flex-direction: row; 
+	width: calc(100% - 240px); /* avoid pushing content out of viewport */
+	margin-left: 240px; /* reserve space for fixed sidebar */
 }
 
 /* Fixed (stable) sidebar width */
+/* Fixed sidebar: independent of main scroll */
 .portal-sidebar {
-	flex: 0 0 240px; /* don't grow or shrink */
-	width: 240px; /* explicit for safety */
+	position: fixed;
+	top: var(--topbar-height, 56px);
+	left: 0;
+	bottom: 0;
+	width: 240px;
+	flex: 0 0 240px;
 	max-width: 240px;
 	box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-	/* Prevent content-induced expansion */
 	overflow: hidden;
+	display:flex;
+	flex-direction: column;
+	padding-top: 8px; /* breathing room under topbar */
 }
 .portal-sidebar.bg-light {
 	background:
@@ -45,34 +56,36 @@
 }
 
 
-.portal-sidebar { position: relative; display:flex; flex-direction: column; }
-.portal-sidebar .nav { display:flex; flex-direction: column; flex:1 1 auto; }
+/* Sidebar nav uses flex so the last item (profile) can sit at bottom via mt-auto */
+.portal-sidebar .nav { display:flex; flex-direction: column; flex:1 1 auto; overflow: hidden; }
 
-/* Main content area scrolls independently to avoid body scrollbar width shifts */
+/* Main content area scrolls; sized to viewport minus topbar */
 .portal-content { 
 	flex: 1 1 auto; 
 	min-width: 0; /* allow flexbox to shrink without overflow */
+	min-height: calc(100dvh - var(--topbar-height, 56px) - 1px);
+	height: calc(100dvh - var(--topbar-height, 56px) - 1px);
+	width: 100%;
 	overflow-y: auto; 
 	-webkit-overflow-scrolling: touch; 
+	scrollbar-gutter: stable both-edges; /* prevent layout shift when scrollbar appears */
 }
 
 /* Keep internal nav tidy */
-.portal-sidebar .nav { 
-	overflow-y: auto; 
-	max-height: 100vh; 
-	padding-bottom: 1rem; 
-}
+.portal-sidebar .nav { padding-bottom: 0; }
 
 /* Responsive: collapse to top bar on smaller screens */
 @media (max-width: 991.98px) { /* Bootstrap lg breakpoint */
-	.portal-layout { flex-direction: column; }
+	.portal-layout { flex-direction: column; margin-left: 0; width: 100%; min-height: auto; }
 	.portal-sidebar { 
+		position: static; 
 		flex: 0 0 auto; 
 		width: 100%; 
 		max-width: none; 
+		bottom: auto; 
+		height: auto; 
 		overflow: visible; 
 	}
-	.portal-sidebar .nav { max-height: none; }
 }
 
 /* Icon + text alignment */
