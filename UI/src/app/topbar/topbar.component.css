@@ -17,6 +17,19 @@
 .spacer { flex: 1 1 auto; }
 .lang-slot { margin-right: 12px; }
 .user-info { display:flex; align-items:center; gap:12px; }
+.user-pill { display:inline-flex; align-items:center; gap:10px; padding:6px 8px; background: var(--topbar-contrast); border-radius: 999px; color:#fff; }
+.user-pill .user-avatar { filter: invert(1) brightness(1.2); display:block; width:18px; height:18px; object-fit:contain; }
+.user-pill .user-text { display:flex; flex-direction:column; line-height:1; text-align:left; }
+.user-pill .name { font-size:0.9rem; font-weight:700; }
+.user-pill .role { font-size:0.65rem; opacity:0.9; }
+.user-pill .logout-btn { padding:2px 8px; border-color: rgba(255,255,255,0.6); }
+.user-pill .logout-btn:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.85); }
+
+@media (max-width: 575.98px) {
+  .user-pill { padding:4px 6px; gap:6px; }
+  .user-pill .name { font-size:0.85rem; }
+  .user-pill .role { display:none; }
+}
 /* legacy custom logout button (replaced with .btn classes but keep fallback) */
 .btn-logout {
   background: rgba(255,255,255,0.12);
