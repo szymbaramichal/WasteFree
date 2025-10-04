@@ -39,11 +39,11 @@ builder.Services.RegisterRateLimiting();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
-{
+    //if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
+//{
     app.MapOpenApi();
     app.MapScalarApiReference();
-}
+//}
 
 var supportedCultures = new[]
 {
