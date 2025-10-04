@@ -30,7 +30,8 @@
             <div class="spinner-border"></div>
             <div class="small mt-2">{{ 'groups.loading' | translate }}</div>
           </div>
-          <a *ngFor="let g of groups; let i = index" class="list-group-item list-group-item-action group-item py-3">
+         <a *ngFor="let g of groups; let i = index" class="list-group-item list-group-item-action group-item py-3"
+          [routerLink]="['/portal/groups', g.id]" [state]="{ group: g }">
             <div class="d-flex align-items-center gap-3">
               <div class="avatar flex-shrink-0" [ngClass]="{'owner': g.isUserOwner}" [attr.data-initial]="g.name | slice:0:1" [style.background]="avatarColor(g.name)"></div>
               <div class="flex-grow-1">

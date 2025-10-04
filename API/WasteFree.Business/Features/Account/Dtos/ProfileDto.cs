@@ -9,6 +9,7 @@ public class ProfileDto
     public string Email { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string BankAccountNumber { get; set; } = null!;
+    public string City { get; set; } = string.Empty;
 }
 
 public static class ProfileDtoExtensions
@@ -21,7 +22,8 @@ public static class ProfileDtoExtensions
             BankAccountNumber = user.Wallet?.WithdrawalAccountNumber ?? string.Empty,
             Description = user.Description ?? string.Empty,
             Email = user.Email,
-            Username = user.Username
+            Username = user.Username,
+            City = user.City ?? string.Empty
         };
     }
 }

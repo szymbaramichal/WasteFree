@@ -167,12 +167,29 @@
   "groups.form.errors.createFailed": "Nie udało się utworzyć grupy",
   "groups.form.errors.loadFailed": "Nie udało się załadować grup"
   ,
+  "groups.details.title": "Szczegóły grupy",
+  "groups.details.description": "Opis grupy",
+  "groups.details.members": "Członkowie",
+  "groups.details.pending": "Oczekujący",
+  "groups.details.loadError": "Nie udało się załadować szczegółów grupy",
+  "groups.details.invalidId": "Nieprawidłowy identyfikator grupy",
+  "common.back": "Wróć",
+  "groups.details.invite.title": "Zaproś użytkownika",
+  "groups.details.invite.placeholder": "Nazwa użytkownika",
+  "groups.details.invite.submit": "Zaproś",
+  "groups.details.invite.success": "Zaproszenie wysłane",
+  "groups.details.invite.error": "Nie udało się wysłać zaproszenia",
+  "groups.details.remove": "Usuń",
+  "groups.details.remove.success": "Użytkownik usunięty z grupy",
+  "groups.details.remove.error": "Nie udało się usunąć użytkownika",
   "profile.title": "Twój profil",
   "profile.details": "Szczegóły",
   "profile.username": "Nazwa użytkownika",
   "profile.email": "Email",
   "profile.description": "Opis",
   "profile.bankAccountNumber": "Numer rachunku",
+  "profile.city": "Miasto",
+  "profile.city.placeholder": "Wybierz miasto",
   "profile.noData": "Brak danych do wyświetlenia",
   "profile.loadError": "Nie udało się załadować profilu",
   "profile.settings": "Ustawienia",
@@ -185,5 +202,7 @@
   "profile.saveError": "Nie udało się zapisać opisu"
   ,
   "profile.bankSaved": "Zapisano numer rachunku",
-  "profile.bankSaveError": "Nie udało się zapisać numeru rachunku"
+  "profile.bankSaveError": "Nie udało się zapisać numeru rachunku",
+  "profile.citySaved": "Zapisano miasto",
+  "profile.citySaveError": "Nie udało się zapisać miasta"
 }

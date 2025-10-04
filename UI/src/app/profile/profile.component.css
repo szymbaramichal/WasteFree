@@ -54,8 +54,38 @@
 .btn-primary { background: var(--primary-green); border-color: var(--primary-green); }
 .btn-primary:hover { background: var(--primary-green-dark); border-color: var(--primary-green-dark); }
 
+/* Ensure refresh button text is white on gradient header */
+.profile-card-header .btn-ghost { color:#fff; border-color: rgba(255,255,255,0.6); }
+.profile-card-header .btn-ghost:hover { background: rgba(255,255,255,0.08); color:#fff; }
+.profile-card-header .btn-ghost:disabled,
+.profile-card-header .btn-ghost[disabled] { color: rgba(255,255,255,0.85); opacity: 0.9; }
+
 .form-control { border-radius: 12px; border-color: rgba(0,0,0,0.1); }
 .form-control:focus { box-shadow: 0 0 0 .15rem rgba(43,182,115,.15); border-color: rgba(43,182,115,.45); }
+
+/* City select styling */
+.form-select.city-select { border-radius: 12px; border-color: rgba(0,0,0,0.1); padding-left: 2rem; }
+.form-select.city-select:focus { box-shadow: 0 0 0 .15rem rgba(43,182,115,.15); border-color: rgba(43,182,115,.45); }
+.city-select-wrapper .city-icon {
+  position: absolute;
+  left: .65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary-green-dark, #1f8b56);
+  opacity: .8;
+}
+.city-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .25rem .6rem;
+  border-radius: 999px;
+  background: rgba(31,139,86,0.08);
+  color: #1f8b56;
+  border: 1px solid rgba(31,139,86,0.2);
+  font-size: .85rem;
+}
+.city-pill .bi { color: currentColor; opacity: .85; }
 
 .iban-pill {
   display: inline-block;

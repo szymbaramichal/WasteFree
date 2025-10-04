@@ -25,6 +25,9 @@ public class User : DatabaseEntity
     
     public required UserRole Role { get; set; }
     
+    [MaxLength(100)]
+    public string? City { get; set; }
+    
     public ICollection<UserGarbageGroup> UserGarbageGroups { get; set; } = new List<UserGarbageGroup>();
     public ICollection<InboxNotification> InboxNotifications { get; set; } = new List<InboxNotification>();
 

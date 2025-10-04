@@ -18,8 +18,8 @@ public static class AccountEndpoints
                 IMediator mediator,
                 CancellationToken cancellationToken) =>
             {
-                var result = await mediator.SendAsync(new UpdateUserProfileCommand(currentUserService.UserId, 
-                        request.Description, request.BankAccountNumber), 
+        var result = await mediator.SendAsync(new UpdateUserProfileCommand(currentUserService.UserId, 
+            request.Description, request.BankAccountNumber, request.City), 
                     cancellationToken);
                 
                 if(!result.IsValid)
@@ -55,4 +55,4 @@ public static class AccountEndpoints
     }
 }
 
-public record UpdateProfileRequest(string Description, string BankAccountNumber);
+public record UpdateProfileRequest(string Description, string BankAccountNumber, string City);
