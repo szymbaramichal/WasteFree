@@ -21,7 +21,8 @@ public class DeleteUserFromGroupCommandHandler(ApplicationDataContext context) :
         if (userGroupInfo is null)
             return Result<bool>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
 
-        int rows = await context.UserGarbageGroups.Where(x => x.UserId == request.UserToRemoveId)
+        int rows = await context.UserGarbageGroups
+            .Where(x => x.UserId == request.UserToRemoveId && x.GarbageGroupId == request.GroupId)
             .ExecuteDeleteAsync(cancellationToken);
 
         if(rows > 0)

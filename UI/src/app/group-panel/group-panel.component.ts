@@ -99,14 +99,16 @@ export class GroupPanelComponent implements OnInit {
     ev.preventDefault();
     if (!userName || !this.group) return;
     this.actLoading = true;
+    this.warn = null;
     this.groupService.inviteUser(this.group.id, userName).subscribe({
       next: () => {
         this.toastr.success(this.t.translate('groups.details.invite.success'));
         this.refreshDetails();
       },
-      error: () => {
-        this.toastr.error(this.t.translate('groups.details.invite.error'));
+      error: (err) => {
+        this.warn = this.t.translate('groups.details.invite.error');
         this.actLoading = false;
+        try { console.error('Invite user failed', { id: this.group?.id, userName, err }); } catch {}
       }
     });
   }
@@ -114,14 +116,16 @@ export class GroupPanelComponent implements OnInit {
   remove(userId: string) {
     if (!this.group) return;
     this.actLoading = true;
+    this.warn = null;
     this.groupService.removeUser(this.group.id, userId).subscribe({
       next: () => {
         this.toastr.success(this.t.translate('groups.details.remove.success'));
         this.refreshDetails();
       },
-      error: () => {
-        this.toastr.error(this.t.translate('groups.details.remove.error'));
+      error: (err) => {
+        this.warn = this.t.translate('groups.details.remove.error');
         this.actLoading = false;
+        try { console.error('Remove user failed', { id: this.group?.id, userId, err }); } catch {}
       }
     });
   }

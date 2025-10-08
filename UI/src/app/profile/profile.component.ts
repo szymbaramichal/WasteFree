@@ -110,7 +110,6 @@ export class ProfileComponent implements OnInit {
       },
       error: () => {
         this.citySaving = false;
-        this.toastr.error(this.translationService.translate('profile.citySaveError'));
       }
     });
   }

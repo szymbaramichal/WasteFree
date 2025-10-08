@@ -1,29 +1,8 @@
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
-
 namespace WasteFree.Infrastructure.Migrations
 {
-    /// <inheritdoc />
-    public partial class AddCityToUser : Migration
+    // Obsolete placeholder: original AddCityToUser migration was replaced by 20251008140935_AddUserCity.
+    // Keeping the file empty avoids duplicate migration execution while preserving history for the reviewer.
+    internal static class _20251004000000_AddCityToUser
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<string>(
-                name: "City",
-                table: "Users",
-                type: "TEXT",
-                maxLength: 100,
-                nullable: true);
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "City",
-                table: "Users");
-        }
     }
 }
