@@ -26,6 +26,7 @@ export class ProfileComponent implements OnInit {
   draftBank = '';
   savingBank = false;
   ibanInvalid = false;
+  citySaving = false;
 
   ngOnInit(): void {
     this.profileSvc.refresh();
@@ -97,6 +98,20 @@ export class ProfileComponent implements OnInit {
       remainder = (remainder * 10 + (expanded.charCodeAt(i) - 48)) % 97;
     }
     return basicOk && remainder === 1;
+  }
+
+  onCityChanged(city: string) {
+    this.citySaving = true;
+    this.profileSvc.updateProfile({ city }).subscribe({
+      next: () => {
+        this.citySaving = false;
+        this.profileSvc.refresh();
+        this.toastr.success(this.translationService.translate('profile.citySaved'));
+      },
+      error: () => {
+        this.citySaving = false;
+      }
+    });
   }
 }
 

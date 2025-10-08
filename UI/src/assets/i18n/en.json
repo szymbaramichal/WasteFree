@@ -172,6 +172,8 @@
   "profile.email": "Email",
   "profile.description": "Description",
   "profile.bankAccountNumber": "Bank account number",
+  "profile.city": "City",
+  "profile.city.placeholder": "Select a city",
   "profile.noData": "No data to display",
   "profile.loadError": "Failed to load profile",
   "profile.settings": "Settings",
@@ -184,5 +186,7 @@
   "profile.saveError": "Failed to save description"
   ,
   "profile.bankSaved": "Bank account saved",
-  "profile.bankSaveError": "Failed to save bank account"
+  "profile.bankSaveError": "Failed to save bank account",
+  "profile.citySaved": "City saved",
+  "profile.citySaveError": "Failed to save city"
 }

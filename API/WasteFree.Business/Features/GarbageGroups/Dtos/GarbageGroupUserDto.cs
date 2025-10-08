@@ -21,8 +21,8 @@ public static class GarbageGroupUserDtoExtensions
         {
             usersList.Add(new GarbageGroupUserDto
             {
-                Id = user.Id,
-                Username = user.User.Username,
+                Id = user.UserId,
+                Username = user.User?.Username ?? string.Empty,
                 GarbageGroupRole = user.Role,
                 IsPending = user.IsPending
             });

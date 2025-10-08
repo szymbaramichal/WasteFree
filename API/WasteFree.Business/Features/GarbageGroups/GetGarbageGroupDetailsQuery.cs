@@ -15,16 +15,20 @@ public class GetGarbageGroupDetailsQueryHandler(ApplicationDataContext context)
     public async Task<Result<GarbageGroupDto>> HandleAsync(GetGarbageGroupDetailsQuery request, 
         CancellationToken cancellationToken)
     {
-        var userGroup = await context.UserGarbageGroups
-            .Include(x => x.GarbageGroup)
-            .ThenInclude(x => x.UserGarbageGroups)
-            .Where(x => x.UserId == request.UserId && x.GarbageGroupId == request.GarbageGroupId)
-            .FirstOrDefaultAsync(cancellationToken);
-        
-        if(userGroup is null)
+        // Get group with members first
+        var group = await context.GarbageGroups
+            .Include(g => g.UserGarbageGroups)
+            .ThenInclude(ug => ug.User)
+            .FirstOrDefaultAsync(g => g.Id == request.GarbageGroupId, cancellationToken);
+
+        if (group is null)
             return Result<GarbageGroupDto>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
-        
-        return Result<GarbageGroupDto>.Success(userGroup.GarbageGroup.MapToGarbageGroupDto(
-            userGroup.GarbageGroup.UserGarbageGroups));
+
+        // Check membership/permission
+        var isMember = group.UserGarbageGroups.Any(ug => ug.UserId == request.UserId);
+        if (!isMember)
+            return Result<GarbageGroupDto>.Failure("FORBIDDEN", HttpStatusCode.Forbidden);
+
+        return Result<GarbageGroupDto>.Success(group.MapToGarbageGroupDto(group.UserGarbageGroups));
     }
 }

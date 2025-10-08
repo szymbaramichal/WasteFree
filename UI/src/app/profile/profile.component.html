@@ -48,8 +48,8 @@
 
         <dt class="col-sm-3">{{ 'profile.description' | translate }}</dt>
         <dd class="col-sm-9">
-          <div *ngIf="!editMode; else editTpl">
-            <div class="mb-2">{{ p.description || '—' }}</div>
+          <div *ngIf="!editMode; else editTpl" class="d-flex align-items-center gap-2 flex-wrap">
+            <div class="me-2">{{ p.description || '—' }}</div>
             <button class="btn btn-sm btn-outline-primary btn-ghost-primary" (click)="startEdit(p.description)">{{ 'common.edit' | translate }}</button>
           </div>
           <ng-template #editTpl>
@@ -66,13 +66,42 @@
           </ng-template>
         </dd>
 
+        <dt class="col-sm-3">{{ 'profile.city' | translate }}</dt>
+        <dd class="col-sm-9">
+          <div class="row g-2 align-items-center" *ngIf="profileSvc.profile() as p">
+            <div class="col-md-7">
+              <div class="city-select-wrapper position-relative">
+                <svg class="city-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
+                </svg>
+                <select class="form-select city-select" [ngModel]="p.city" (ngModelChange)="onCityChanged($event)" [disabled]="citySaving">
+                  <option [ngValue]="''">{{ 'profile.city.placeholder' | translate }}</option>
+                  <option value="Warszawa">Warszawa</option>
+                  <option value="Kraków">Kraków</option>
+                  <option value="Łódź">Łódź</option>
+                  <option value="Wrocław">Wrocław</option>
+                  <option value="Poznań">Poznań</option>
+                  <option value="Gdańsk">Gdańsk</option>
+                  <option value="Szczecin">Szczecin</option>
+                  <option value="Bydgoszcz">Bydgoszcz</option>
+                  <option value="Lublin">Lublin</option>
+                  <option value="Białystok">Białystok</option>
+                  <option value="Nowy Sącz">Nowy Sącz</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-5 d-flex align-items-center gap-2">
+              <span class="city-pill" *ngIf="p.city && p.city.length > 0"><i class="bi bi-geo-alt-fill"></i>{{ p.city }}</span>
+              <span class="spinner-border spinner-border-sm" *ngIf="citySaving" aria-hidden="true"></span>
+            </div>
+          </div>
+        </dd>
+
         <dt class="col-sm-3">{{ 'profile.bankAccountNumber' | translate }}</dt>
         <dd class="col-sm-9">
-          <div *ngIf="!editBank; else editBankTpl">
-            <span class="iban-pill"><code>{{ p.bankAccountNumber || '—' }}</code></span>
-            <div class="mt-2">
-              <button class="btn btn-sm btn-outline-primary btn-ghost-primary" (click)="startEditBank(p.bankAccountNumber)">{{ 'common.edit' | translate }}</button>
-            </div>
+          <div *ngIf="!editBank; else editBankTpl" class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="iban-pill mb-0"><code>{{ p.bankAccountNumber || '—' }}</code></span>
+            <button class="btn btn-sm btn-outline-primary btn-ghost-primary" (click)="startEditBank(p.bankAccountNumber)">{{ 'common.edit' | translate }}</button>
           </div>
           <ng-template #editBankTpl>
             <div class="mb-2">
