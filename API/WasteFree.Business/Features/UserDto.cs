@@ -1,4 +1,5 @@
 ﻿using WasteFree.Shared.Entities;
+using WasteFree.Shared.Enums;
 
 namespace WasteFree.Business.Features;
 
@@ -15,7 +16,7 @@ public record UserDto(
     string Email,
     string Username,
     string? Token,
-    string UserRole
+    UserRole UserRole
 );
 
 public static class UserDtoExtensions
@@ -27,7 +28,7 @@ public static class UserDtoExtensions
             user.Email,
             user.Username,
             token,
-            user.Role.ToString()
+            user.Role
         );
     }
 }
