@@ -37,6 +37,9 @@ public class InviteToGarbageGroupCommandHandler(ApplicationDataContext context,
         
         if (userToAdd is null)
             return Result<bool>.Failure("INVITED_USER_NOT_FOUND", HttpStatusCode.NotFound);
+
+        if (userToAdd.Role != UserRole.User)
+            return Result<bool>.Failure("INVITED_USER_NOT_FOUND", HttpStatusCode.NotFound);
         
         var alreadyInGroup = await context.UserGarbageGroups
             .AnyAsync(x => x.UserId == userToAdd.Id && x.GarbageGroupId == request.GroupId, cancellationToken);

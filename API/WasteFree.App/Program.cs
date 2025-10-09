@@ -9,12 +9,53 @@ using WasteFree.App.Endpoints;
 using WasteFree.App.Extensions;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Hubs;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 const string allowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
  
 var builder = WebApplication.CreateBuilder(args);
  
 builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(opt =>
+{
+    var jwtScheme = new OpenApiSecurityScheme
+    {
+        Name = "JWT Authentication",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        BearerFormat = "JWT",
+        Description = "Paste your JWT Bearer token here",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    opt.AddSecurityDefinition(jwtScheme.Reference.Id, jwtScheme);
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { jwtScheme, Array.Empty<string>() }
+    });
+    
+    foreach (var xmlFile in Directory.EnumerateFiles(AppContext.BaseDirectory, "*.xml"))
+    {
+        try
+        {
+            opt.IncludeXmlComments(xmlFile);
+        }
+        catch
+        {
+            // ignored
+        }
+    }
+});
+
+
 builder.Services.RegisterLayers(builder.Configuration);
 builder.Services.RegisterAuthentication(builder.Configuration);
 builder.Services.RegisterServices();
@@ -41,8 +82,19 @@ var app = builder.Build();
 
     //if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
 //{
+    app.UseSwagger();
+    
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference("docs", x =>
+    {
+        x.Title = $"{builder.Configuration.GetValue<string>("applicationName")} Reference";
+        x.Authentication = new ScalarAuthenticationOptions
+        {
+            PreferredSecuritySchemes = new[] { "Bearer" }
+        };
+        x.OpenApiRoutePattern = "/swagger/v1/swagger.json";
+        x.WithTheme(ScalarTheme.Kepler);
+    });
 //}
 
 var supportedCultures = new[]
