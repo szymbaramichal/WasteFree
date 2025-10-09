@@ -14,7 +14,6 @@ public static class AuthorizationExtensions
             string garbageAdminRole = ((int)UserRole.GarbageAdmin).ToString();
             string adminRole = ((int)UserRole.Admin).ToString();
 
-                        
             options.AddPolicy(PolicyNames.UserPolicy, policy =>
             {
                 var roles = new List<string> { userRole, adminRole };
@@ -30,6 +29,12 @@ public static class AuthorizationExtensions
             options.AddPolicy(PolicyNames.AdminPolicy, policy =>
             {
                 var roles = new List<string> { adminRole };
+                policy.RequireRole(roles);
+            });
+
+            options.AddPolicy(PolicyNames.GenericPolicy, policy =>
+            {
+                var roles = new List<string> { userRole, garbageAdminRole, adminRole };
                 policy.RequireRole(roles);
             });
         });

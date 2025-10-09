@@ -14,7 +14,7 @@ public static class AccountEndpoints
     public static void MapAccountEndpoints(this WebApplication app)
     {
         app.MapPut("/user/profile", UpdateUserProfileAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
             .Produces<Result<ProfileDto>>()
             .Produces<Result<EmptyResult>>(400)
@@ -22,7 +22,7 @@ public static class AccountEndpoints
             .WithDescription("Updates the authenticated user's profile fields: Description, BankAccountNumber and City.");
         
         app.MapGet("/user/profile", GetUserProfileAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
             .Produces<Result<ProfileDto>>()
             .Produces<Result<EmptyResult>>(400)
