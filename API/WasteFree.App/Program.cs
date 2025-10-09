@@ -94,6 +94,10 @@ var app = builder.Build();
         };
         x.OpenApiRoutePattern = "/swagger/v1/swagger.json";
         x.WithTheme(ScalarTheme.Kepler);
+        x.Servers = new List<ScalarServer>
+        {
+            new ScalarServer(builder.Configuration["BaseApiUrl"], "DEV server"),
+        };
     });
 //}
 
