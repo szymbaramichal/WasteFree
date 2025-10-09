@@ -1,5 +1,6 @@
 {
   "error.401": "Wylogowano. Zaloguj się ponownie",
+  "error.403": "Nie jesteś uprawniony do wykonania tej akcji.",
   "error.generic": "Ups. Coś poszło nie tak.",
   "success.update": "Sukces!",
   "brand": "WasteFree",

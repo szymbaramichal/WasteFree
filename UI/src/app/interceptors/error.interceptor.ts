@@ -15,7 +15,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         const error = err?.error ?? err;
         switch (err.status) {
           case 400:
-
             if (typeof error?.errorMessage === 'string' && error.errorMessage.trim())
             {
                 toastr.error(error.errorMessage.trim());
@@ -25,6 +24,22 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             break;
           case 401:
             toastr.error(translationService.translate('error.401'));
+            break;
+          case 403:
+            if (typeof error?.errorMessage === 'string' && error.errorMessage.trim())
+            {
+                toastr.error(error.errorMessage.trim());
+                break;
+            }
+            toastr.error(translationService.translate('error.403'));
+            break;
+          case 404:
+            if (typeof error?.errorMessage === 'string' && error.errorMessage.trim())
+            {
+                toastr.error(error.errorMessage.trim());
+                break;
+            }
+            toastr.error(translationService.translate('error.generic'));
             break;
           case 422:
             const errors = extractApiErrorPayload(error);
