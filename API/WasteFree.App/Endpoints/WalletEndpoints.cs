@@ -15,7 +15,7 @@ public static class WalletEndpoints
     public static void MapWalletEndpoints(this WebApplication app)
     {
         app.MapGet("/wallet/methods", GetWalletMethodsAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("wallet_methods"))
             .WithOpenApi()
             .Produces<Result<IReadOnlyCollection<WalletMethod>>>()
@@ -23,7 +23,7 @@ public static class WalletEndpoints
             .WithDescription("Get all wallet available methods.");
 
         app.MapPost("/wallet/transaction", WalletTransactionAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .AddEndpointFilter(new ValidationFilter<WalletTransactionRequest>())
             .WithOpenApi()
             .Produces<Result<PaymentTransactionDto>>()
@@ -32,7 +32,7 @@ public static class WalletEndpoints
             .WithDescription("Make transaction, deposit or withdrawal.");
         
         app.MapPost("/wallet/balance", GetWalletBalanceAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
             .Produces<Result<BalanceDto>>()
             .Produces<Result<EmptyResult>>(400)

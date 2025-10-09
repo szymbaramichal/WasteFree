@@ -14,14 +14,14 @@ public static class InboxEndpoints
     public static void MapInboxEndpoints(this WebApplication app)
     {
         app.MapGet("/inbox/counter", GetInboxCounterAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
             .Produces<Result<InboxCounterDto>>()
             .WithTags("Inbox")
             .WithDescription("Get inbox messages counter.");
         
         app.MapPost("/inbox/messages/{id}/action/{makeAction}", MakeInboxMessageActionAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
             .Produces<Result<bool>>()
             .Produces<Result<EmptyResult>>(404)
@@ -30,7 +30,7 @@ public static class InboxEndpoints
             .WithDescription("Make action by accepting or declining action. Action can be various like joining group, submitting expense etc.");
         
         app.MapDelete("/inbox/{messageId:guid}", DeleteInboxMessageAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
             .Produces<Result<bool>>()
             .Produces<Result<EmptyResult>>(404)
@@ -38,7 +38,7 @@ public static class InboxEndpoints
             .WithDescription("Remove message from inbox");
         
         app.MapGet("/inbox/messages", GetInboxMessagesAsync)
-            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
             .Produces<PaginatedResult<ICollection<InboxMessageDto>>>()
             .WithTags("Inbox")
