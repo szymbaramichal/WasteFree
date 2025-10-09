@@ -3,7 +3,7 @@ export interface User {
     email: string;
     username: string;
     token?: string;
-    userRole: string;
+    userRole: UserRole;
 };
 
 export interface CurrentUser {
@@ -13,7 +13,7 @@ export interface CurrentUser {
 }
 
 export enum UserRole {
-  User = 'User',
-  GarbageAdmin = 'GarbageAdmin',
-  Admin = 'Admin',
+  User = 1,
+  GarbageAdmin = 2,
+  Admin = 3,
 }

@@ -21,7 +21,7 @@ public static class ServiceCollectionExtension
 
     public static IServiceCollection RegisterAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAuthorization();
+        services.AddHierarchicalRolePolicies();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
             {

@@ -1,10 +1,10 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using WasteFree.App.Filters;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups;
 using WasteFree.Business.Features.GarbageGroups.Dtos;
+using WasteFree.Shared.Constants;
 using WasteFree.Shared.Interfaces;
 using WasteFree.Shared.Models;
 
@@ -15,7 +15,7 @@ public static class GarbageGroupsEndpoints
     public static void MapGarbageGroupsEndpoints(this WebApplication app)
     {
         app.MapPost("/garbage-groups/register", RegisterGarbageGroupAsync)
-            .RequireAuthorization()
+            .RequireAuthorization(PolicyNames.UserPolicy)
             .AddEndpointFilter(new ValidationFilter<RegisterGarbageGroupRequest>())
             .WithOpenApi()
             .Produces<Result<GarbageGroupDto>>()
@@ -24,14 +24,14 @@ public static class GarbageGroupsEndpoints
             .WithDescription("Register garbage group.");
 
         app.MapGet("/garbage-groups/list", GetGarbageGroupsListAsync)
-            .RequireAuthorization()
+            .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<Result<ICollection<GarbageGroupInfoDto>>>()
             .WithTags("GarbageGroups")
             .WithDescription("Get list of garbage groups with quick info.");
 
         app.MapGet("/garbage-groups/{groupId}", GetGarbageGroupDetailsAsync)
-            .RequireAuthorization()
+            .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<Result<GarbageGroupDto>>()
             .Produces<Result<EmptyResult>>(403)
@@ -40,7 +40,7 @@ public static class GarbageGroupsEndpoints
             .WithDescription("Get details of garbage group.");
 
         app.MapDelete("/garbage-groups/{groupId:guid}/{userId:guid}", DeleteUserFromGarbageGroupAsync)
-            .RequireAuthorization()
+            .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<Result<bool>>()
             .Produces<Result<EmptyResult>>(404)
@@ -48,7 +48,7 @@ public static class GarbageGroupsEndpoints
             .WithDescription("Remove user from garbage group.");
 
         app.MapPost("/garbage-groups/invite", InviteUserToGarbageGroupAsync)
-            .RequireAuthorization()
+            .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<Result<bool>>()
             .Produces<Result<EmptyResult>>(404)

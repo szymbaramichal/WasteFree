@@ -158,7 +158,7 @@ export class AuthComponent {
       this.currentUser.setUser({
         id: res.id,
         username: res.username,
-        role: this.praseRole(res.userRole)
+        role: res.userRole
       });
       return;
     }
@@ -171,11 +171,4 @@ export class AuthComponent {
     return 'English';
   }
 
-  private praseRole(val: string): UserRole {
-  if (Object.values(UserRole).includes(val as UserRole)) {
-    return val as UserRole;
-  }
-
-  return UserRole.User;
-  }
 }

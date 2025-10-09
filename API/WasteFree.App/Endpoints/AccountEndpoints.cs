@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.Account;
 using WasteFree.Business.Features.Account.Dtos;
+using WasteFree.Shared.Constants;
 using WasteFree.Shared.Interfaces;
 using WasteFree.Shared.Models;
 
@@ -13,7 +14,7 @@ public static class AccountEndpoints
     public static void MapAccountEndpoints(this WebApplication app)
     {
         app.MapPut("/user/profile", UpdateUserProfileAsync)
-            .RequireAuthorization()
+            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
             .WithOpenApi()
             .Produces<Result<ProfileDto>>()
             .Produces<Result<EmptyResult>>(400)
@@ -21,7 +22,7 @@ public static class AccountEndpoints
             .WithDescription("Updates the authenticated user's profile fields: Description, BankAccountNumber and City.");
         
         app.MapGet("/user/profile", GetUserProfileAsync)
-            .RequireAuthorization()
+            .RequireAuthorization(PolicyNames.UserPolicy, PolicyNames.GarbageAdminPolicy)
             .WithOpenApi()
             .Produces<Result<ProfileDto>>()
             .Produces<Result<EmptyResult>>(400)
