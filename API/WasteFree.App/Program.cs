@@ -53,6 +53,9 @@ builder.Services.AddSwaggerGen(opt =>
             // ignored
         }
     }
+
+    // Add schema filter that injects enum member descriptions (from XML comments) into schema.Description and x-enumDescriptions
+    opt.SchemaFilter<WasteFree.App.Swagger.EnumDescriptionsSchemaFilter>();
 });
 
 
