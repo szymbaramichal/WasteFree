@@ -1,9 +1,7 @@
 <app-topbar></app-topbar>
 
-<!-- Global language switcher: fixed in the top-right corner on every page except /portal -->
 <div *ngIf="showGlobalLang" class="global-lang-switcher"><app-language-switcher></app-language-switcher></div>
 
 <router-outlet></router-outlet>
 
-<!-- Global full-page loader overlay -->
 <app-loader-overlay></app-loader-overlay>
