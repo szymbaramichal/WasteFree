@@ -17,7 +17,7 @@ public class GetWalletBalanceQueryHandler(ApplicationDataContext context)
     {
         var userGroups = await context.UserGarbageGroups
             .Include(x => x.GarbageGroup)
-            .Where(x => x.UserId == request.UserId)
+            .Where(x => x.UserId == request.UserId && !x.IsPending)
             .Select(x => new GarbageGroupInfoDto
             { 
                 Id = x.GarbageGroupId,

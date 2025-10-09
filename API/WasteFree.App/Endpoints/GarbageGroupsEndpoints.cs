@@ -30,6 +30,21 @@ public static class GarbageGroupsEndpoints
             .WithTags("GarbageGroups")
             .WithDescription("Get list of garbage groups with quick info.");
 
+        app.MapGet("/garbage-groups/pending-invitations", GetPendingGroupInvitations)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<ICollection<GarbageGroupInvitationDto>>>()
+            .WithTags("GarbageGroups")
+            .WithDescription("Get list of pending invitations.");
+        
+        app.MapPost("/garbage-groups/{groupId:guid}/makeAction/{makeAction}", MakeActionWithInvitation)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<ICollection<GarbageGroupInvitationDto>>>()
+            .Produces<Result<EmptyResult>>(404)
+            .WithTags("GarbageGroups")
+            .WithDescription("Accept/decline group invitation.");
+        
         app.MapGet("/garbage-groups/{groupId}", GetGarbageGroupDetailsAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
@@ -88,6 +103,38 @@ public static class GarbageGroupsEndpoints
         CancellationToken cancellationToken)
     {
         var command = new GetGarbageGroupsListQuery(currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return Results.Ok(result);
+    }
+    
+    /// <summary>
+    /// Retrieves the list of pending group invitations.
+    /// </summary>
+    private static async Task<IResult> GetPendingGroupInvitations(
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new GetPendingGroupInvitationsQuery(currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return Results.Ok(result);
+    }
+    
+    /// <summary>
+    /// Accept/decline group invitation.
+    /// </summary>
+    private static async Task<IResult> MakeActionWithInvitation(
+        [FromRoute] Guid groupId,
+        [FromRoute] bool makeAction,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new MakeActionWithInvitationCommand(currentUserService.UserId, groupId, makeAction);
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
