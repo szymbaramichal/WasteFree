@@ -1,11 +1,7 @@
-﻿using System.Net;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups.Dtos;
-using WasteFree.Business.Features.Wallet;
-using WasteFree.Business.Features.Wallet.Dtos;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
 using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
 

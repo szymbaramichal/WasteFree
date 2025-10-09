@@ -22,6 +22,9 @@ public class GetWalletBalanceQueryHandler(ApplicationDataContext context)
         if(wallet is null)
             return Result<BalanceDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
 
-        return Result<BalanceDto>.Success(new BalanceDto(wallet.Funds));
+        return Result<BalanceDto>.Success(new BalanceDto
+        {
+            Amount = wallet.Funds
+        });
     }
 }

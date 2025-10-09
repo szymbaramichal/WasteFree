@@ -2,13 +2,39 @@
 
 namespace WasteFree.Business.Features.Account.Dtos;
 
+/// <summary>
+/// DTO representing a user's profile information returned by account endpoints.
+/// </summary>
 public class ProfileDto
 {
+    /// <summary>
+    /// Unique identifier of the user.
+    /// </summary>
     public Guid UserId { get; set; }
+
+    /// <summary>
+    /// User's chosen username.
+    /// </summary>
     public string Username { get; set; } = null!;
+
+    /// <summary>
+    /// User's email address.
+    /// </summary>
     public string Email { get; set; } = null!;
+
+    /// <summary>
+    /// Free-form user description or bio.
+    /// </summary>
     public string Description { get; set; } = null!;
+
+    /// <summary>
+    /// Bank account number used for withdrawals (if provided).
+    /// </summary>
     public string BankAccountNumber { get; set; } = null!;
+
+    /// <summary>
+    /// City where the user is located.
+    /// </summary>
     public string City { get; set; } = string.Empty;
 }
 
