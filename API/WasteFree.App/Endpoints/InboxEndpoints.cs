@@ -24,6 +24,8 @@ public static class InboxEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<bool>>()
+            .Produces<Result<EmptyResult>>(404)
+            .Produces<Result<EmptyResult>>(400)
             .WithTags("Inbox")
             .WithDescription("Make action by accepting or declining action. Action can be various like joining group, submitting expense etc.");
         
@@ -31,13 +33,14 @@ public static class InboxEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<bool>>()
+            .Produces<Result<EmptyResult>>(404)
             .WithTags("Inbox")
-            .WithDescription("Delete message from inbox");
+            .WithDescription("Remove message from inbox");
         
         app.MapGet("/inbox/messages", GetInboxMessagesAsync)
             .RequireAuthorization()
             .WithOpenApi()
-            .Produces<Result<ICollection<InboxMessageDto>>>()
+            .Produces<PaginatedResult<ICollection<InboxMessageDto>>>()
             .WithTags("Inbox")
             .WithDescription("Get all messages from inbox. Endpoint supports pagination");
     }

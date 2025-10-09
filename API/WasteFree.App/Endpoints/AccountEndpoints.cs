@@ -16,6 +16,7 @@ public static class AccountEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<ProfileDto>>()
+            .Produces<Result<EmptyResult>>(400)
             .WithTags("Account")
             .WithDescription("Updates the authenticated user's profile fields: Description, BankAccountNumber and City.");
         
@@ -23,6 +24,7 @@ public static class AccountEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<ProfileDto>>()
+            .Produces<Result<EmptyResult>>(400)
             .WithTags("Account")
             .WithDescription("Get authenticated user's profile.");
 

@@ -17,6 +17,8 @@ public static class AuthEndpoints
             .AddEndpointFilter(new ValidationFilter<RegisterUserRequest>())
             .WithOpenApi()
             .Produces<Result<UserDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .Produces<Dictionary<string, string[]>>(422)
             .WithTags("Auth")
             .WithDescription("Register user and send confirmation mail.");
 
@@ -24,12 +26,15 @@ public static class AuthEndpoints
             .AddEndpointFilter(new ValidationFilter<LoginUserRequest>())
             .WithOpenApi()
             .Produces<Result<UserDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .Produces<Dictionary<string, string[]>>(422)
             .WithTags("Auth")
             .WithDescription("Login user and receive JWT token to authenticate.");
         
         app.MapPost("/auth/activate-account", ActivateAccountAsync)
             .WithOpenApi()
             .Produces<Result<ActivateAccountDto>>()
+            .Produces<Result<EmptyResult>>(400)
             .WithTags("Auth")
             .WithDescription("Activate account after clicking link sent on email.");
     }
@@ -58,7 +63,7 @@ public static class AuthEndpoints
     }
 
     /// <summary>
-    /// Authenticates an existing user and returns an access token on success.
+    /// Login and get access token on success.
     /// </summary>
     private static async Task<IResult> LoginUserAsync(
         [FromBody] LoginUserRequest userRequest,
