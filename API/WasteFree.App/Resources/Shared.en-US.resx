@@ -2,6 +2,7 @@
 <root>
   <data name="USERNAME_TAKEN" xml:space="preserve"><value>Username is already taken</value></data>
   <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Registration token has expired</value></data>
+  <data name="FORBIDDEN" xml:space="preserve"><value>You are not privileged make this action.</value></data>
   <data name="INVALID_USER" xml:space="preserve"><value>Invalid user</value></data>
   <data name="NOT_FOUND" xml:space="preserve"><value>Resource not found.</value></data>
   <data name="INVITED_USER_NOT_FOUND" xml:space="preserve"><value>Invited user not found.</value></data>

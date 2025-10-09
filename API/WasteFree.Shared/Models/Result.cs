@@ -7,7 +7,7 @@ namespace WasteFree.Shared.Models;
 /// Wrapper used by API responses to return either a successful result or an error.
 /// The generic <typeparamref name="T"/> contains the payload when the request succeeds.
 /// </summary>
-public sealed class Result<T>
+public class Result<T>
 {    
     /// <summary>
     /// The payload returned when the operation succeeded. Null when the result represents a failure.
@@ -28,10 +28,9 @@ public sealed class Result<T>
     [JsonIgnore]
     public HttpStatusCode ResponseCode { get; } = HttpStatusCode.OK;
 
-
-    public Pager? Pager { get; set; }
-
-
+    /// <summary>
+    /// Indicates whether the result represents a successful response.
+    /// </summary>
     [JsonIgnore]
     public bool IsValid => string.IsNullOrEmpty(ErrorMessage) && ResponseCode is HttpStatusCode.OK;
 
@@ -41,18 +40,17 @@ public sealed class Result<T>
     /// <param name="value">The result payload.</param>
     public static Result<T> Success(T value) => new(value);
 
-
-    public static Result<T> PaginatedSuccess(T value, Pager pager) => new(value) { Pager = pager };
-
-
+    /// <summary>
+    /// Create a failed result with the provided error code and HTTP status code.
+    /// </summary>
     public static Result<T> Failure(string errorCode, HttpStatusCode responseCode = HttpStatusCode.InternalServerError) => new(errorCode, responseCode);
 
-    private Result(T resultModel)
+    protected Result(T resultModel)
     {
         ResultModel = resultModel;
     }
 
-    private Result(string errorCode, HttpStatusCode responseCode)
+    protected Result(string errorCode, HttpStatusCode responseCode)
     {
         ErrorCode = errorCode;
         ResponseCode = responseCode;

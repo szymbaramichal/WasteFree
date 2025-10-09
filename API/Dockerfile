@@ -10,7 +10,6 @@ COPY ["WasteFree.Business/WasteFree.Business.csproj", "WasteFree.Business/"]
 COPY ["WasteFree.Shared/WasteFree.Shared.csproj", "WasteFree.Shared/"]
 COPY ["WasteFree.Infrastructure/WasteFree.Infrastructure.csproj", "WasteFree.Infrastructure/"]
 
-# Restore jako oddzielna warstwa
 RUN dotnet restore "WasteFree.App/WasteFree.App.csproj"
 
 COPY . .

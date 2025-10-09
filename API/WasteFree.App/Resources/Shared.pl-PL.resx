@@ -2,7 +2,8 @@
 <root>
   <data name="USERNAME_TAKEN" xml:space="preserve"><value>Nazwa użytkownika jest już zajęta</value></data>
   <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Token aktywacyjny wygasł</value></data>
-  <data name="INVALID_USER" xml:space="preserve"><value>Niepoprawny użytkownik</value></data>
+  <data name="INVALID_USER" xml:space="preserve"><value>Niepoprawny użytkownik</value></data>  
+  <data name="FORBIDDEN" xml:space="preserve"><value>Nie jesteś uprawniony do wykonania tej akcji.</value></data>
   <data name="NOT_FOUND" xml:space="preserve"><value>Nie znaleziono zasobu.</value></data>
   <data name="INVITED_USER_NOT_FOUND" xml:space="preserve"><value>Nie znaleziono zaproszonego użytkownika.</value></data>
   <data name="ALREADY_IN_GROUP" xml:space="preserve"><value>Użytkownik jest już członkiem grupy.</value></data>

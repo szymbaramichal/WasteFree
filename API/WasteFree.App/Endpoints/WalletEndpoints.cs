@@ -27,6 +27,7 @@ public static class WalletEndpoints
             .AddEndpointFilter(new ValidationFilter<WalletTransactionRequest>())
             .WithOpenApi()
             .Produces<Result<PaymentTransactionDto>>()
+            .Produces<Result<EmptyResult>>(400)
             .WithTags("Wallet")
             .WithDescription("Make transaction, deposit or withdrawal.");
         
@@ -34,6 +35,7 @@ public static class WalletEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<BalanceDto>>()
+            .Produces<Result<EmptyResult>>(400)
             .WithTags("Wallet")
             .WithDescription("Get user current balance.");
     }

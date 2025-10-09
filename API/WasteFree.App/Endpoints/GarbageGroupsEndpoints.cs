@@ -19,6 +19,7 @@ public static class GarbageGroupsEndpoints
             .AddEndpointFilter(new ValidationFilter<RegisterGarbageGroupRequest>())
             .WithOpenApi()
             .Produces<Result<GarbageGroupDto>>()
+            .Produces<Dictionary<string, string[]>>(422)
             .WithTags("GarbageGroups")
             .WithDescription("Register garbage group.");
 
@@ -33,6 +34,8 @@ public static class GarbageGroupsEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<GarbageGroupDto>>()
+            .Produces<Result<EmptyResult>>(403)
+            .Produces<Result<EmptyResult>>(404)
             .WithTags("GarbageGroups")
             .WithDescription("Get details of garbage group.");
 
@@ -40,6 +43,7 @@ public static class GarbageGroupsEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<bool>>()
+            .Produces<Result<EmptyResult>>(404)
             .WithTags("GarbageGroups")
             .WithDescription("Remove user from garbage group.");
 
@@ -47,6 +51,8 @@ public static class GarbageGroupsEndpoints
             .RequireAuthorization()
             .WithOpenApi()
             .Produces<Result<bool>>()
+            .Produces<Result<EmptyResult>>(404)
+            .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageGroups")
             .WithDescription("Invite existing user to garbage group.");
     }

@@ -32,6 +32,7 @@ public class GetInboxMessagesQueryHandler(ApplicationDataContext context)
             .ToListAsync(cancellationToken);
 
         var pager = new Pager(request.Pager.PageNumber, request.Pager.PageSize, totalCount);
-        return Result<ICollection<InboxMessageDto>>.PaginatedSuccess(items, pager);
+
+        return PaginatedResult<ICollection<InboxMessageDto>>.PaginatedSuccess(items, pager);
     }
 }
