@@ -83,11 +83,7 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
                         <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <h2 style='color:#2e7d32;'>Hey {{RecipientUsername}}!</h2>
                           <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{SenderUsername}} invited you to join the group <strong>{{GroupName}}</strong>.</p>
-                          <hr style='margin:12px 0;'>
-                          <p style='font-size:12px;color:#666;margin:0;'>If you see this message on the portal, accept or decline with below buttons.</p>
-                          <p style='font-size:12px;color:#666;margin:0;'>If you see this message on the email inbox, log in to our app and accept or decline invitation.</p>
                         </div>
                       </body>
                     </html>",
@@ -111,11 +107,7 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
                         <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <h2 style='color:#2e7d32;'>Hej {{RecipientUsername}}!</h2>
                           <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{SenderUsername}} zaprosił Cię do grupy <strong>{{GroupName}}</strong>.</p>
-                          <hr style='margin:12px 0;'>
-                          <p style='font-size:12px;color:#666;margin:0;'>Jeśli widzisz to powiadomienie na portalu - zaakceptuj lub odrzuć zaproszenie poniższymi przyciskami.</p>
-                          <p style='font-size:12px;color:#666;margin:0;'>Jeśli widzisz to powiadomienie na skrzynce mailowej - zaloguj się do portalu i zaakceptuj lub odrzuć zaproszenie.</p>
                         </div>
                       </body>
                     </html>",

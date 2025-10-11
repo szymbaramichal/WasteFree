@@ -1,8 +1,9 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Result, Pager } from '../_models/result';
-import { Counter } from '../_models/inbox';
+import { Counter, NotificationItem } from '../_models/inbox';
 
 @Injectable({ providedIn: 'root' })
 export class InboxService {
@@ -50,18 +51,15 @@ export class InboxService {
                     this._pager.set(list.pager ?? null);
                     this.setCounter(list.pager?.totalCount ?? 0);
                     this._loading.set(false);
-                },
-                error: err => {
-                    this._error.set(err?.message ?? 'Unable to load notifications');
-                    this._loading.set(false);
                 }
             });
     }
-}
 
-export interface NotificationItem {
-    id: string;
-    title: string;
-    body: string;
-    createdDateUtc: string;
+    makeAction(id: string, accept: boolean): Observable<Result<boolean>> {
+        return this.http.post<Result<boolean>>(`${this.apiUrl}/inbox/messages/${id}/action/${accept}`, {});
+    }
+
+    deleteMessage(id: string): Observable<Result<boolean>> {
+        return this.http.delete<Result<boolean>>(`${this.apiUrl}/inbox/${id}`);
+    }
 }

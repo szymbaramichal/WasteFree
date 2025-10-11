@@ -18,14 +18,19 @@
 
 			<!-- Notifications list -->
 			<ul class="list-group inbox-list" *ngIf="notifications().length">
-				<li class="list-group-item" *ngFor="let n of notifications(); trackBy: trackById">
+				<li class="list-group-item notification-item" *ngFor="let n of notifications(); trackBy: trackById">
+					<button type="button" class="btn btn-sm btn-link notification-close" (click)="dismiss(n)" aria-label="Zamknij">&times;</button>
 					<div class="d-flex align-items-start gap-3">
 						<div class="flex-grow-1">
 							<div class="d-flex align-items-center gap-2 mb-1 flex-wrap">
 								<strong class="m-0">{{ n.title }}</strong>
-								<span class="text-muted small">{{ relativeDate(n.createdDateUtc) }}</span>
+								<span class="text-muted small">{{ formatLocalDate(n.createdDateUtc) }}</span>
 							</div>
 							<p class="mb-0" [innerHTML]="getMessage(n)"></p>
+							<div class="notification-actions mt-3">
+								<button class="btn btn-sm btn-primary" type="button" (click)="accept(n)">Zaakceptuj</button>
+								<button class="btn btn-sm btn-outline-secondary" type="button" (click)="decline(n)">Odrzuć</button>
+							</div>
 						</div>
 					</div>
 				</li>
