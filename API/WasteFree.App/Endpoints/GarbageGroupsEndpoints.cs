@@ -81,7 +81,8 @@ public static class GarbageGroupsEndpoints
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var command = new RegisterGarbageGroupCommand(request.GroupName, request.GroupDescription);
+        var command = new RegisterGarbageGroupCommand(request.GroupName, 
+            request.GroupDescription, request.City, request.PostalCode, request.Address);
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
@@ -230,6 +231,21 @@ public record RegisterGarbageGroupRequest
     /// Description shared with members about the group's purpose.
     /// </summary>
     public string GroupDescription { get; init; } = string.Empty;
+    
+    /// <summary>
+    /// Group city, used for location-based features.
+    /// </summary>
+    public string City { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Postal code tied to the group's address for more precise localisation.
+    /// </summary>
+    public string PostalCode { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Street address of the group for contact or pickup details.
+    /// </summary>
+    public string Address { get; init; } = string.Empty;
 }
 
 /// <summary>

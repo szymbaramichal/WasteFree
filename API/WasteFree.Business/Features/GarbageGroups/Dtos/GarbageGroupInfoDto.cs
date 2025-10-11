@@ -19,4 +19,19 @@ public class GarbageGroupInfoDto
     /// Indicates whether the current user is the owner of the group.
     /// </summary>
     public bool IsUserOwner { get; set; }
+    
+    /// <summary>
+    /// City where the garbage group is located.
+    /// </summary>
+    public required string City { get; set; }
+
+    /// <summary>
+    /// Postal code associated with the garbage group's address.
+    /// </summary>
+    public required string PostalCode { get; set; }
+
+    /// <summary>
+    /// Street address of the garbage group.
+    /// </summary>
+    public required string Address { get; set; }
 }

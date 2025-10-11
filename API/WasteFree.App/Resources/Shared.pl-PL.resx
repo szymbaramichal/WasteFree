@@ -28,4 +28,7 @@
   <data name="ERR_PASSWORD_TOO_SHORT"><value>Hasło musi mieć co najmniej 8 znaków</value></data>
   <data name="ERR_GROUP_NAME_REQUIRED"><value>Nazwa grupy jest wymagana</value></data>
   <data name="ERR_GROUP_DESCRIPTION_REQUIRED"><value>Opis grupy jest wymagany</value></data>
+  <data name="ERR_GROUP_CITY_REQUIRED"><value>Miasto grupy jest wymagane</value></data>
+  <data name="ERR_GROUP_POSTAL_CODE_REQUIRED"><value>Kod pocztowy jest wymagany</value></data>
+  <data name="ERR_GROUP_ADDRESS_REQUIRED"><value>Adres grupy jest wymagany</value></data>
 </root>

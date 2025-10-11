@@ -16,5 +16,17 @@ public class RegisterGarbageGroupRequestValidator : AbstractValidator<RegisterGa
         RuleFor(x => x.GroupDescription)
             .NotEmpty()
             .WithMessage(localizer[ValidationErrorCodes.GroupDescriptionRequired]);
+
+        RuleFor(x => x.City)
+            .NotEmpty()
+            .WithMessage(localizer[ValidationErrorCodes.GroupCityRequired]);
+
+        RuleFor(x => x.PostalCode)
+            .NotEmpty()
+            .WithMessage(localizer[ValidationErrorCodes.GroupPostalCodeRequired]);
+
+        RuleFor(x => x.Address)
+            .NotEmpty()
+            .WithMessage(localizer[ValidationErrorCodes.GroupAddressRequired]);
     }
 }

@@ -9,7 +9,7 @@ using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.GarbageGroups;
 
-public record RegisterGarbageGroupCommand(string GroupName, string GroupDescription) : IRequest<GarbageGroupDto>;
+public record RegisterGarbageGroupCommand(string GroupName, string GroupDescription, string City, string PostalCode, string Address) : IRequest<GarbageGroupDto>;
 
 public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
     ICurrentUserService currentUserService) : IRequestHandler<RegisterGarbageGroupCommand, GarbageGroupDto>
@@ -20,7 +20,10 @@ public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
         {
             Id = Guid.CreateVersion7(),
             Name = request.GroupName,
-            Description = request.GroupDescription
+            Description = request.GroupDescription,
+            City = request.City,
+            PostalCode = request.PostalCode,
+            Address = request.Address
         };
 
         context.Add(garbageGroup);
