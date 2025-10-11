@@ -27,6 +27,16 @@ public class GarbageGroupDto
     /// </summary>
     public required string City { get; set; }
 
+    /// <summary>
+    /// Postal code associated with the garbage group's address.
+    /// </summary>
+    public required string PostalCode { get; set; }
+
+    /// <summary>
+    /// Street address of the garbage group.
+    /// </summary>
+    public required string Address { get; set; }
+
     
     /// <summary>
     /// Collection of users that belong to this group.
@@ -47,7 +57,9 @@ public static class GarbageGroupDtoExtensions
             Name = garbageGroup.Name,
             Id = garbageGroup.Id,
             Users = garbageGroupUsers,
-            City = garbageGroup.City
+            City = garbageGroup.City,
+            PostalCode = garbageGroup.PostalCode,
+            Address = garbageGroup.Address
         };
     }
 }

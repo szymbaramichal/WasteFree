@@ -23,5 +23,15 @@ public class GarbageGroupInfoDto
     /// <summary>
     /// City where the garbage group is located.
     /// </summary>
-    public string City { get; set; }
+    public required string City { get; set; }
+
+    /// <summary>
+    /// Postal code associated with the garbage group's address.
+    /// </summary>
+    public required string PostalCode { get; set; }
+
+    /// <summary>
+    /// Street address of the garbage group.
+    /// </summary>
+    public required string Address { get; set; }
 }

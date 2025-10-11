@@ -28,4 +28,7 @@
   <data name="ERR_PASSWORD_TOO_SHORT"><value>Password must be at least 8 characters long</value></data>
   <data name="ERR_GROUP_NAME_REQUIRED"><value>Group name is required</value></data>
   <data name="ERR_GROUP_DESCRIPTION_REQUIRED"><value>Group description is required</value></data>
+  <data name="ERR_GROUP_CITY_REQUIRED"><value>Group city is required</value></data>
+  <data name="ERR_GROUP_POSTAL_CODE_REQUIRED"><value>Postal code is required</value></data>
+  <data name="ERR_GROUP_ADDRESS_REQUIRED"><value>Address is required</value></data>
 </root>

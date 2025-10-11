@@ -18,7 +18,9 @@ public class GetPendingGroupInvitationsQueryHandler(ApplicationDataContext appli
             {
                 GroupId = x.GarbageGroupId,
                 GroupName = x.GarbageGroup.Name,
-                City = x.GarbageGroup.City
+                City = x.GarbageGroup.City,
+                PostalCode = x.GarbageGroup.PostalCode,
+                Address = x.GarbageGroup.Address
             })
             .ToListAsync(cancellationToken);
         
