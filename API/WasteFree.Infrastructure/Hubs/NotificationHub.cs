@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System.Collections.Concurrent;
+using Microsoft.AspNetCore.SignalR;
 using WasteFree.Shared.Interfaces;
 
 namespace WasteFree.Infrastructure.Hubs;
 public class NotificationHub(ICurrentUserService currentUserService) : Hub
 {
-    private static readonly Dictionary<Guid, string> UserConnections = new();
+    private static readonly ConcurrentDictionary<Guid, string> UserConnections = new();
 
     public override async Task OnConnectedAsync()
     {
@@ -21,9 +22,9 @@ public class NotificationHub(ICurrentUserService currentUserService) : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var userId = currentUserService.UserId;
-        if (userId != Guid.Empty && UserConnections.ContainsKey(userId))
+        if (userId != Guid.Empty)
         {
-            UserConnections.Remove(userId);
+            UserConnections.TryRemove(userId, out _);
         }
 
         await base.OnDisconnectedAsync(exception);
