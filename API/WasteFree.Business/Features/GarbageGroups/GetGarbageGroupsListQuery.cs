@@ -22,7 +22,8 @@ public class GetWalletBalanceQueryHandler(ApplicationDataContext context)
             { 
                 Id = x.GarbageGroupId,
                 Name = x.GarbageGroup.Name,
-                IsUserOwner = x.Role == GarbageGroupRole.Owner
+                IsUserOwner = x.Role == GarbageGroupRole.Owner,
+                City = x.GarbageGroup.City
             })
             .ToListAsync(cancellationToken);
 

@@ -23,6 +23,12 @@ public class GarbageGroupDto
     public required string Description { get; set; }
 
     /// <summary>
+    /// City where the garbage group is located.
+    /// </summary>
+    public required string City { get; set; }
+
+    
+    /// <summary>
     /// Collection of users that belong to this group.
     /// </summary>
     public ICollection<GarbageGroupUserDto> Users { get; set; } = [];
@@ -40,7 +46,8 @@ public static class GarbageGroupDtoExtensions
             Description = garbageGroup.Description,
             Name = garbageGroup.Name,
             Id = garbageGroup.Id,
-            Users = garbageGroupUsers
+            Users = garbageGroupUsers,
+            City = garbageGroup.City
         };
     }
 }

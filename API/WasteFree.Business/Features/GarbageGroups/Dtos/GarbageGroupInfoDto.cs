@@ -19,4 +19,9 @@ public class GarbageGroupInfoDto
     /// Indicates whether the current user is the owner of the group.
     /// </summary>
     public bool IsUserOwner { get; set; }
+    
+    /// <summary>
+    /// City where the garbage group is located.
+    /// </summary>
+    public string City { get; set; }
 }

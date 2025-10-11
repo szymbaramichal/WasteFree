@@ -19,4 +19,9 @@ public class GarbageGroupInvitationDto
     /// Username of person who sent invitation.
     /// </summary>
     public string InvitingUsername { get; set; }
+    
+    /// <summary>
+    /// City where the group is located.
+    /// </summary>
+    public string City { get; set; }
 }
