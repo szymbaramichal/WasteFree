@@ -37,12 +37,14 @@ public class MakeInboxMessageActionCommandHandler(ApplicationDataContext context
         CancellationToken cancellationToken, InboxNotification inboxNotification)
     {
         if (request.MakeAction)
-        {
             await context.UserGarbageGroups
                 .Where(x => x.UserId == request.UserId && x.GarbageGroupId == inboxNotification.RelatedEntityId)
-                .ExecuteUpdateAsync(x => x.SetProperty(u => u.IsPending, false), 
+                .ExecuteUpdateAsync(x => x.SetProperty(u => u.IsPending, false),
                     cancellationToken);
-        }
+        else
+            await context.UserGarbageGroups
+                .Where(x => x.UserId == request.UserId && x.GarbageGroupId == inboxNotification.RelatedEntityId)
+                .ExecuteDeleteAsync(cancellationToken);
 
         context.InboxNotifications.Remove(inboxNotification);
         await context.SaveChangesAsync(cancellationToken);

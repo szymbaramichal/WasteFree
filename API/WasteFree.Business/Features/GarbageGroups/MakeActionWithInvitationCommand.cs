@@ -27,6 +27,12 @@ public class MakeActionWithInvitationCommandHandler(ApplicationDataContext appli
         else
             applicationDataContext.Remove(pendingInvitation);
 
+        await applicationDataContext.InboxNotifications
+                .Where(x => x.UserId == request.UserId 
+                    && x.RelatedEntityId == pendingInvitation.GarbageGroupId 
+                    && x.ActionType == Shared.Enums.InboxActionType.GroupInvitation)
+                .ExecuteDeleteAsync(cancellationToken);
+
         await applicationDataContext.SaveChangesAsync(cancellationToken);
 
         return Result<bool>.Success(true);
