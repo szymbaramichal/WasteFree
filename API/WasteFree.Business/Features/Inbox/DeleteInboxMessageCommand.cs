@@ -2,8 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Inbox;

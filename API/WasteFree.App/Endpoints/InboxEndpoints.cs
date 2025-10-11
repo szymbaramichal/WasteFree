@@ -28,7 +28,7 @@ public static class InboxEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("Inbox")
             .WithDescription("Make action by accepting or declining action. Action can be various like joining group, submitting expense etc.");
-        
+
         app.MapDelete("/inbox/{messageId:guid}", DeleteInboxMessageAsync)
             .RequireAuthorization(PolicyNames.GenericPolicy)
             .WithOpenApi()
@@ -36,6 +36,13 @@ public static class InboxEndpoints
             .Produces<Result<EmptyResult>>(404)
             .WithTags("Inbox")
             .WithDescription("Remove message from inbox");
+            
+        app.MapPost("/inbox/clear", ClearInboxMessageAsync)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
+            .WithOpenApi()
+            .Produces<Result<bool>>()
+            .WithTags("Inbox")
+            .WithDescription("Clear inbox");
         
         app.MapGet("/inbox/messages", GetInboxMessagesAsync)
             .RequireAuthorization(PolicyNames.GenericPolicy)
@@ -106,6 +113,21 @@ public static class InboxEndpoints
             result.ErrorMessage = localizer[$"{result.ErrorCode}"];
             return Results.Json(result, statusCode: (int)result.ResponseCode);
         }
+
+        return Results.Ok(result);
+    }
+    
+    /// <summary>
+    /// Deletes all users inbox messages.
+    /// </summary>
+    private static async Task<IResult> ClearInboxMessageAsync(
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.SendAsync(
+            new ClearInboxCommand(currentUserService.UserId),
+            cancellationToken);
 
         return Results.Ok(result);
     }
