@@ -1,8 +1,12 @@
 import { Component, signal, inject, computed } from '@angular/core';
+import { take } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { InboxService, NotificationItem } from '../services/inbox.service';
+import { InboxService } from '../services/inbox.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { RouterModule } from '@angular/router';
+import { NotificationItem } from '../_models/inbox';
+import { ToastrService } from 'ngx-toastr';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-inbox',
@@ -13,6 +17,8 @@ import { RouterModule } from '@angular/router';
 })
 export class InboxComponent {
   private inbox = inject(InboxService);
+  private toastr = inject(ToastrService);
+  private translateService = inject(TranslationService);
   now = new Date();
 
   notifications = this.inbox.notifications;
@@ -39,19 +45,6 @@ export class InboxComponent {
 
   trackById(_i: number, n: NotificationItem) { return n.id; }
 
-  relativeDate(date?: string) {
-    if (!date) return '';
-    const d = new Date(date).getTime();
-    const diffMs = Date.now() - d;
-    const mins = Math.floor(diffMs / 60000);
-    if (mins < 1) return 'now';
-    if (mins < 60) return mins + 'm';
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return hrs + 'h';
-    const days = Math.floor(hrs / 24);
-    return days + 'd';
-  }
-
   getMessage(n: NotificationItem): string {
     const m: any = n.body as any;
     if (!m && m !== 0) return '';
@@ -63,5 +56,43 @@ export class InboxComponent {
       try { return JSON.stringify(m); } catch { return String(m); }
     }
     return String(m);
+  }
+
+  formatLocalDate(date: string): string {
+    const hasZone = /[zZ]|[+\-]\d{2}:?\d{2}$/.test(date);
+    const normalized = hasZone ? date : `${date}Z`;
+    const value = new Date(normalized);
+    if (Number.isNaN(value.getTime())) return '';
+    return value.toLocaleString(undefined, {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  accept(notification: NotificationItem) {
+    this.inbox.makeAction(notification.id, true)
+      .pipe(take(1))
+      .subscribe({ next: () => {
+        this.refresh();
+        this.toastr.success(this.translateService.translate('success.update'));
+      } });
+  }
+
+  decline(notification: NotificationItem) {
+    this.inbox.makeAction(notification.id, false)
+      .pipe(take(1))
+      .subscribe({ next: () => { 
+        this.refresh()
+        this.toastr.success(this.translateService.translate('success.update'));
+      } });
+  }
+
+  dismiss(notification: NotificationItem) {
+    this.inbox.deleteMessage(notification.id)
+      .pipe(take(1))
+      .subscribe({ next: () => this.refresh() });
   }
 }

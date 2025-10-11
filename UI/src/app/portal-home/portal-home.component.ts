@@ -55,17 +55,18 @@ export class PortalHomeComponent {
       default: return 'secondary';
     }
   }
-  relativeDate(date?: string) {
-    if (!date) return '';
-    const d = new Date(date).getTime();
-    const diffMs = Date.now() - d;
-    const mins = Math.floor(diffMs / 60000);
-    if (mins < 1) return 'now';
-    if (mins < 60) return mins + 'm';
-    const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return hrs + 'h';
-    const days = Math.floor(hrs / 24);
-    return days + 'd';
+  formatLocalDate(date: string): string {
+    const hasZone = /[zZ]|[+\-]\d{2}:?\d{2}$/.test(date);
+    const normalized = hasZone ? date : `${date}Z`;
+    const value = new Date(normalized);
+    if (Number.isNaN(value.getTime())) return '';
+    return value.toLocaleString(undefined, {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
   formatMessage(m: any): string {
