@@ -14,6 +14,13 @@ Run `ng generate component component-name` to generate a new component. You can 
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
+## Real-time notifications
+
+- The front-end uses `@microsoft/signalr` to connect to the API `NotificationHub` endpoint for inbox updates.
+- The hub URL is derived from `environment.apiUrl`; by default the trailing `/api` segment is removed so the websocket connects to `/notificationHub`.
+- A valid JWT is required. After signing in, the connection is established automatically and the inbox bell counter updates in real time.
+- When a new message arrives the counter increments immediately and the bell briefly animates to draw attention.
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).

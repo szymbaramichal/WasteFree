@@ -11,6 +11,8 @@ export class InboxService {
     private apiUrl = `${environment.apiUrl}`;
 
     counter = signal<number>(this.loadFromStorage());
+    private _lastPush = signal<number>(0);
+    lastPush = this._lastPush.asReadonly();
 
     private _notifications = signal<NotificationItem[]>([]);
     notifications = this._notifications.asReadonly();
@@ -25,8 +27,14 @@ export class InboxService {
     }
 
     setCounter(counter: number) {
-        this.counter.set(counter);
-        localStorage.setItem(this.storageKey, counter.toString());
+        const normalized = Number.isFinite(counter) ? counter : 0;
+        const previous = this.counter();
+        this.counter.set(normalized);
+        localStorage.setItem(this.storageKey, normalized.toString());
+
+        if (normalized > previous) {
+            this._lastPush.set(Date.now());
+        }
     }
 
     private loadFromStorage(): number {
@@ -36,7 +44,7 @@ export class InboxService {
     }
 
     refreshCounter() {
-        this.http.get<Result<Counter>>(this.apiUrl + '/inbox/counter').subscribe(count => this.counter.set(count.resultModel.unreadMessages));
+        this.http.get<Result<Counter>>(this.apiUrl + '/inbox/counter').subscribe(count => this.setCounter(count.resultModel.unreadMessages));
     }
 
     fetchNotifications(pageNumber: number = 1, pageSize: number = 10) {

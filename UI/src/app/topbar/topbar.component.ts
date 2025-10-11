@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EffectRef, OnDestroy, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CurrentUserService } from '../services/current-user.service';
 import { AsyncPipe } from '@angular/common';
@@ -17,7 +17,7 @@ import { InboxService } from '../services/inbox.service';
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.css']
 })
-export class TopbarComponent {
+export class TopbarComponent implements OnDestroy {
   userRole = UserRole;
   currentUser = inject(CurrentUserService);
   inbox = inject(InboxService);
@@ -30,6 +30,10 @@ export class TopbarComponent {
     [UserRole.GarbageAdmin]: 'auth.role.garbageAdmin',
     [UserRole.Admin]: 'auth.role.admin'
   };
+
+  private inboxAnimationTimer: ReturnType<typeof setTimeout> | null = null;
+  private inboxPulseEffect: EffectRef;
+  private lastAnimationMark = 0;
 
   constructor(private router: Router, private activated: ActivatedRoute, private wallet: WalletService) {
     const check = () => {
@@ -46,6 +50,24 @@ export class TopbarComponent {
 
     check();
     this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => check());
+
+    this.inboxPulseEffect = effect(() => {
+      const stamp = this.inbox.lastPush();
+      if (!stamp || stamp === this.lastAnimationMark) {
+        return;
+      }
+
+      this.lastAnimationMark = stamp;
+      this.triggerInboxAnimation();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.inboxAnimationTimer) {
+      clearTimeout(this.inboxAnimationTimer);
+      this.inboxAnimationTimer = null;
+    }
+    this.inboxPulseEffect.destroy();
   }
 
   logout() {
@@ -57,5 +79,17 @@ export class TopbarComponent {
   openInbox() {
     this.animateInbox = false;
     this.router.navigate(['/portal/inbox']);
+  }
+
+  private triggerInboxAnimation() {
+    if (this.inboxAnimationTimer) {
+      clearTimeout(this.inboxAnimationTimer);
+    }
+
+    this.animateInbox = true;
+    this.inboxAnimationTimer = setTimeout(() => {
+      this.animateInbox = false;
+      this.inboxAnimationTimer = null;
+    }, 2000);
   }
 }
