@@ -39,6 +39,34 @@ public static class HostExtensions
                         logger.LogInformation("Executed UserSeeder.SeedAsync");
                     }
 
+                    var garbageGroupSeeder = services.GetService<GarbageGroupSeeder>();
+                    if (garbageGroupSeeder != null)
+                    {
+                        garbageGroupSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed GarbageGroupSeeder.SeedAsync");
+                    }
+
+                    var userGarbageGroupSeeder = services.GetService<UserGarbageGroupSeeder>();
+                    if (userGarbageGroupSeeder != null)
+                    {
+                        userGarbageGroupSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed UserGarbageGroupSeeder.SeedAsync");
+                    }
+
+                    var walletTransactionSeeder = services.GetService<WalletTransactionSeeder>();
+                    if (walletTransactionSeeder != null)
+                    {
+                        walletTransactionSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed WalletTransactionSeeder.SeedAsync");
+                    }
+
+                    var inboxNotificationSeeder = services.GetService<InboxNotificationSeeder>();
+                    if (inboxNotificationSeeder != null)
+                    {
+                        inboxNotificationSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed InboxNotificationSeeder.SeedAsync");
+                    }
+
                     var notificationTemplateSeeder = services.GetService<NotificationTemplateSeeder>();
                     if (notificationTemplateSeeder != null)
                     {

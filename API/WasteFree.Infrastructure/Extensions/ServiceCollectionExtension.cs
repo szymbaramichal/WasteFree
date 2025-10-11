@@ -61,6 +61,10 @@ public static class ServiceCollectionExtension
         
         // Seeder registrations
         services.AddScoped<UserSeeder>();
+        services.AddScoped<GarbageGroupSeeder>();
+        services.AddScoped<UserGarbageGroupSeeder>();
+        services.AddScoped<WalletTransactionSeeder>();
+        services.AddScoped<InboxNotificationSeeder>();
         services.AddScoped<NotificationTemplateSeeder>();
         
         return services;
