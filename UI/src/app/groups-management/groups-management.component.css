@@ -34,5 +34,10 @@
 /* Button alignment tweaks */
 .groups-mgmt .form-actions .btn { display:inline-flex; align-items:center; gap:.4rem; }
 .groups-mgmt .form-actions .btn .spinner-border { width:1rem; height:1rem; }
-.groups-mgmt .form-actions { row-gap:.75rem; }
+.groups-mgmt .form-actions { row-gap:.75rem; column-gap:1rem; }
+
+.groups-mgmt .invitation-table thead th { border-top: 0; color: var(--bs-gray-600); font-weight: 600; }
+.groups-mgmt .invitation-table tbody tr:hover { background-color: rgba(32,201,151,.08); }
+.groups-mgmt .invitation-actions .btn { min-width: 110px; display:inline-flex; align-items:center; justify-content:center; gap:.35rem; }
+.groups-mgmt .refresh-btn { white-space: nowrap; display:inline-flex; align-items:center; gap:.4rem; }
 

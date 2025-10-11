@@ -27,3 +27,9 @@ export interface RegisterGarbageGroupRequest {
   groupName: string;
   groupDescription: string;
 }
+
+export interface GarbageGroupInvitation {
+        groupId: string;
+        groupName: string;
+        invitingUsername: string;
+}

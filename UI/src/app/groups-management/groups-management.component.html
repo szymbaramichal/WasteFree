@@ -1,20 +1,24 @@
 <div class="container py-4 groups-mgmt">
   <div class="row gy-4">
-  <div class="col-12">
+    <div class="col-12 col-xl-6">
       <div class="card fancy-card border-0 shadow-lg h-100">
         <div class="card-header bg-gradient-teal text-white py-3 position-relative overflow-hidden">
-          <h5 class="mb-1 fw-bold d-flex align-items-center">
-            <i class="bi bi-plus-circle"></i>
-            {{ 'groups.form.title' | translate }}
-          </h5>
-          <small class="opacity-75">{{ 'groups.form.subtitle' | translate }}</small>
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
+                <i class="bi bi-plus-circle"></i>
+                {{ 'groups.form.title' | translate }}
+              </h5>
+              <small class="opacity-75">{{ 'groups.form.subtitle' | translate }}</small>
+            </div>
+          </div>
           <div class="header-accent"></div>
         </div>
         <div class="card-body">
           <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="needs-validation">
             <div class="mb-4">
               <label for="groupName" class="form-label fw-semibold">{{ 'groups.form.name' | translate }}</label>
-              <div class="form-group">
+              <div class="form-icon-group">
                 <i class="bi bi-collection"></i>
                 <input #groupNameInput id="groupName" type="text" class="form-control" [placeholder]="'groups.form.placeholder.name' | translate" formControlName="groupName" [class.is-invalid]="hasError('groupName','required') || hasError('groupName','maxlength')">
               </div>
@@ -36,6 +40,88 @@
               <button type="button" class="btn btn-outline-secondary" (click)="form.reset()" [disabled]="submitting">{{ 'groups.form.reset' | translate }}</button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-xl-6">
+      <div class="card fancy-card border-0 shadow-lg h-100">
+        <div class="card-header bg-gradient-green text-white py-3 position-relative overflow-hidden">
+          <div class="d-flex justify-content-between align-items-start gap-3">
+            <div>
+              <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
+                <i class="bi bi-people"></i>
+                {{ 'groups.invitations.title' | translate }}
+              </h5>
+              <small class="opacity-75">{{ 'groups.invitations.subtitle' | translate }}</small>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-light refresh-btn" (click)="fetchPendingInvitations()" [disabled]="invitationsLoading">
+              <span *ngIf="!invitationsLoading" class="d-inline-flex align-items-center gap-1">
+                <i class="bi bi-arrow-clockwise"></i>
+                {{ 'groups.invitations.refresh' | translate }}
+              </span>
+              <span *ngIf="invitationsLoading" class="spinner-border spinner-border-sm"></span>
+            </button>
+          </div>
+          <div class="header-accent"></div>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <div *ngIf="invitationsLoading" class="flex-grow-1 d-flex flex-column justify-content-center align-items-center gap-2 text-muted py-4">
+            <div class="spinner-border" role="status"></div>
+            <span>{{ 'groups.invitations.loading' | translate }}</span>
+          </div>
+
+          <div *ngIf="!invitationsLoading && invitationsError" class="alert alert-danger d-flex align-items-center gap-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>{{ invitationsError }}</span>
+          </div>
+
+          <ng-container *ngIf="!invitationsLoading && !invitationsError">
+            <div *ngIf="pendingInvitations.length; else noInvites" class="table-responsive">
+              <table class="table table-hover align-middle mb-0 invitation-table">
+                <thead>
+                  <tr>
+                    <th scope="col">{{ 'groups.invitations.table.group' | translate }}</th>
+                    <th scope="col" class="text-nowrap">{{ 'groups.invitations.table.invitedBy' | translate }}</th>
+                    <th scope="col" class="text-end">{{ 'groups.invitations.table.actions' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let invitation of pendingInvitations">
+                    <td>
+                      <div class="fw-semibold">{{ invitation.groupName }}</div>
+                    </td>
+                    <td>
+                      <span class="badge text-bg-light text-dark">{{ invitation.invitingUsername }}</span>
+                    </td>
+                    <td class="text-end">
+                      <div class="invitation-actions d-flex justify-content-end gap-2 flex-wrap">
+                        <button type="button" class="btn btn-outline-success btn-sm" (click)="acceptInvitation(invitation.groupId)" [disabled]="isInvitationBusy(invitation.groupId)">
+                          <span *ngIf="!isInvitationBusy(invitation.groupId)" class="d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-check2"></i>
+                            {{ 'groups.invitations.accept' | translate }}
+                          </span>
+                          <span *ngIf="isInvitationBusy(invitation.groupId)" class="spinner-border spinner-border-sm"></span>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-sm" (click)="declineInvitation(invitation.groupId)" [disabled]="isInvitationBusy(invitation.groupId)">
+                          <span *ngIf="!isInvitationBusy(invitation.groupId)" class="d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-x-circle"></i>
+                            {{ 'groups.invitations.decline' | translate }}
+                          </span>
+                          <span *ngIf="isInvitationBusy(invitation.groupId)" class="spinner-border spinner-border-sm"></span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <ng-template #noInvites>
+              <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center text-muted py-5">
+                <p class="mb-0 fw-semibold">{{ 'groups.invitations.empty' | translate }}</p>
+                <small class="opacity-75">{{ 'groups.invitations.emptyHint' | translate }}</small>
+              </div>
+            </ng-template>
+          </ng-container>
         </div>
       </div>
     </div>
