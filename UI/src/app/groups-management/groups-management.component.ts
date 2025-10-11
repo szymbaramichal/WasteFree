@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GarbageGroupInfo, RegisterGarbageGroupRequest } from '../_models/garbageGroups';
+import { GarbageGroupInfo, GarbageGroupInvitation, RegisterGarbageGroupRequest } from '../_models/garbageGroups';
 import { GarbageGroupService } from '../services/garbage-group.service';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs';
@@ -16,7 +16,7 @@ import { TranslationService } from '../services/translation.service';
   templateUrl: './groups-management.component.html',
   styleUrls: ['./groups-management.component.css']
 })
-export class GroupsManagementComponent {
+export class GroupsManagementComponent implements OnInit {
   private fb = inject(FormBuilder);
   private groupService = inject(GarbageGroupService);
   private toastr = inject(ToastrService);
@@ -26,11 +26,19 @@ export class GroupsManagementComponent {
   loading = false;
   submitting = false;
   loadError: string | null = null;
+  invitationsLoading = false;
+  invitationsError: string | null = null;
+  pendingInvitations: GarbageGroupInvitation[] = [];
+  invitationActions: Record<string, boolean> = {};
 
   form: FormGroup = this.fb.group({
     groupName: ['', [Validators.required, Validators.maxLength(100)]],
     groupDescription: ['', [Validators.required, Validators.maxLength(500)]]
   });
+
+  ngOnInit(): void {
+    this.fetchPendingInvitations();
+  }
 
   submit(): void {
     if (this.form.invalid) {
@@ -45,6 +53,7 @@ export class GroupsManagementComponent {
         next: () => {
           this.toastr.success(this.translationService.translate('success.update'));
           this.form.reset();
+          this.fetchPendingInvitations();
         }
       });
   }
@@ -54,10 +63,47 @@ export class GroupsManagementComponent {
     return !!c && c.touched && c.hasError(error);
   }
 
-  avatarColor(name: string): string {
-    if(!name) return '#6c757d';
-    const hash = Array.from(name).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-    const colors = ['#2bb673', '#1f8b56', '#198754', '#0d6efd', '#20c997', '#6f42c1', '#fd7e14'];
-    return colors[hash % colors.length];
+  fetchPendingInvitations(): void {
+    this.invitationsLoading = true;
+    this.invitationsError = null;
+    this.groupService.pendingInvitations()
+      .pipe(finalize(() => this.invitationsLoading = false))
+      .subscribe({
+        next: (res) => {
+          this.pendingInvitations = res.resultModel ?? [];
+        }
+      });
+  }
+
+  acceptInvitation(groupId: string): void {
+    this.handleInvitation(groupId, true);
+  }
+
+  declineInvitation(groupId: string): void {
+    this.handleInvitation(groupId, false);
+  }
+
+  private handleInvitation(groupId: string, accept: boolean): void {
+    if (!groupId || this.invitationActions[groupId]) {
+      return;
+    }
+    this.setInvitationAction(groupId, true);
+    this.groupService.respondToInvitation(groupId, accept)
+      .pipe(finalize(() => this.setInvitationAction(groupId, false)))
+      .subscribe({
+        next: () => {
+          this.pendingInvitations = this.pendingInvitations.filter(inv => inv.groupId !== groupId);
+          const key = accept ? 'groups.invitations.accepted' : 'groups.invitations.declined';
+          this.toastr.success(this.translationService.translate(key));
+        }
+      });
+  }
+
+  private setInvitationAction(groupId: string, loading: boolean): void {
+    this.invitationActions = { ...this.invitationActions, [groupId]: loading };
+  }
+
+  isInvitationBusy(groupId: string): boolean {
+    return !!this.invitationActions[groupId];
   }
 }

@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Result } from '../_models/result';
-import { GarbageGroup, GarbageGroupInfo, RegisterGarbageGroupRequest } from '../_models/garbageGroups';
+import { GarbageGroup, GarbageGroupInfo, RegisterGarbageGroupRequest, GarbageGroupInvitation } from '../_models/garbageGroups';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +20,10 @@ export class GarbageGroupService {
     return this.http.get<Result<GarbageGroupInfo[]>>(`${this.apiUrl}/list`);
   }
 
+  pendingInvitations(): Observable<Result<GarbageGroupInvitation[]>> {
+    return this.http.get<Result<GarbageGroupInvitation[]>>(`${this.apiUrl}/pending-invitations`);
+  }
+
   details(id: string): Observable<Result<GarbageGroup>> {
     const safeId = encodeURIComponent(id);
     return this.http.get<Result<GarbageGroup>>(`${this.apiUrl}/${safeId}`);
@@ -33,5 +37,10 @@ export class GarbageGroupService {
     const g = encodeURIComponent(groupId);
     const u = encodeURIComponent(userId);
     return this.http.delete<Result<any>>(`${this.apiUrl}/${g}/${u}`);
+  }
+
+  respondToInvitation(groupId: string, accept: boolean): Observable<Result<any>> {
+    const g = encodeURIComponent(groupId);
+    return this.http.post<Result<any>>(`${this.apiUrl}/${g}/makeAction/${accept}`, {});
   }
 }
