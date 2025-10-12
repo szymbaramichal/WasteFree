@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
 using WasteFree.Shared.Constants;
 using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
@@ -23,6 +24,7 @@ public class UpdateGarbageGroupCommandHandler(ApplicationDataContext context)
     public async Task<Result<GarbageGroupDto>> HandleAsync(UpdateGarbageGroupCommand request, CancellationToken cancellationToken)
     {
         var garbageGroup = await context.GarbageGroups
+            .FilterNonPrivate()
             .Include(g => g.UserGarbageGroups)
             .ThenInclude(ug => ug.User)
             .FirstOrDefaultAsync(g => g.Id == request.GroupId, cancellationToken);

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
 using WasteFree.Shared.Constants;
 using WasteFree.Shared.Models;
 
@@ -18,6 +19,7 @@ public class GetGarbageGroupDetailsQueryHandler(ApplicationDataContext context)
     {
         // Get group with members first
         var group = await context.GarbageGroups
+            .FilterNonPrivate()
             .Include(g => g.UserGarbageGroups)
             .ThenInclude(ug => ug.User)
             .FirstOrDefaultAsync(g => g.Id == request.GarbageGroupId, cancellationToken);

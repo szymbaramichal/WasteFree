@@ -23,7 +23,8 @@ public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
             Description = request.GroupDescription,
             City = request.City,
             PostalCode = request.PostalCode,
-            Address = request.Address
+            Address = request.Address,
+            IsPrivate = false
         };
 
         context.Add(garbageGroup);

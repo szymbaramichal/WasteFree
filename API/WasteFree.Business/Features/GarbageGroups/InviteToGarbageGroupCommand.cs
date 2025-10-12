@@ -6,6 +6,7 @@ using WasteFree.Business.Helpers;
 using WasteFree.Business.Jobs;
 using WasteFree.Business.Jobs.Dtos;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
 using WasteFree.Infrastructure.Hubs;
 using WasteFree.Shared.Constants;
 using WasteFree.Shared.Entities;
@@ -25,6 +26,7 @@ public class InviteToGarbageGroupCommandHandler(ApplicationDataContext context,
     public async Task<Result<bool>> HandleAsync(InviteToGarbageGroupCommand request, CancellationToken cancellationToken)
     {
         var userGroupInfo = await context.UserGarbageGroups
+            .FilterNonPrivate()
             .Include(x => x.GarbageGroup)
             .FirstOrDefaultAsync(x => x.UserId == currentUserService.UserId && x.GarbageGroupId == request.GroupId
                                                                             && x.Role == GarbageGroupRole.Owner, cancellationToken);

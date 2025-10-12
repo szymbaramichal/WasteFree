@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
 using WasteFree.Shared.Constants;
 using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
@@ -15,6 +16,7 @@ public class DeleteUserFromGroupCommandHandler(ApplicationDataContext context) :
     public async Task<Result<bool>> HandleAsync(DeleteUserFromGroupCommand request, CancellationToken cancellationToken)
     {
         var userGroupInfo = await context.UserGarbageGroups
+            .FilterNonPrivate()
             .Include(x => x.GarbageGroup)
             .FirstOrDefaultAsync(x => x.UserId == request.CurrentUserId && x.GarbageGroupId == request.GroupId
                                                                             && x.Role == GarbageGroupRole.Owner, cancellationToken);

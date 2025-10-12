@@ -119,21 +119,52 @@ public class UserSeeder(ApplicationDataContext context)
 
         foreach (var user in users)
         {
-            if (!await context.Users.AnyAsync(u => u.Email == user.Email))
+            var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+
+            if (existingUser is null)
             {
-                await context.Users.AddAsync(user);
-                // Add wallet for the user
-                if (!await context.Wallets.AnyAsync(w => w.UserId == user.Id))
-                {
-                    var wallet = new Wallet
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = user.Id,
-                        Funds = 0
-                    };
-                    await context.Wallets.AddAsync(wallet);
-                }
+                existingUser = user;
+                await context.Users.AddAsync(existingUser);
             }
+
+            if (!await context.Wallets.AnyAsync(w => w.UserId == existingUser.Id))
+            {
+                await context.Wallets.AddAsync(new Wallet
+                {
+                    Id = Guid.CreateVersion7(),
+                    UserId = existingUser.Id,
+                    Funds = 0
+                });
+            }
+
+            var hasPrivateGroup = await context.UserGarbageGroups
+                .AnyAsync(ugg => ugg.UserId == existingUser.Id && ugg.GarbageGroup.IsPrivate);
+
+            if (hasPrivateGroup)
+            {
+                continue;
+            }
+
+            var privateGroup = new GarbageGroup
+            {
+                Id = Guid.CreateVersion7(),
+                Name = $"{existingUser.Username} Private Group",
+                Description = $"Private garbage group for {existingUser.Username}",
+                City = existingUser.City ?? string.Empty,
+                PostalCode = string.Empty,
+                Address = string.Empty,
+                IsPrivate = true
+            };
+
+            await context.GarbageGroups.AddAsync(privateGroup);
+            await context.UserGarbageGroups.AddAsync(new UserGarbageGroup
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = existingUser.Id,
+                GarbageGroupId = privateGroup.Id,
+                Role = GarbageGroupRole.Owner,
+                IsPending = false
+            });
         }
         await context.SaveChangesAsync();
     }

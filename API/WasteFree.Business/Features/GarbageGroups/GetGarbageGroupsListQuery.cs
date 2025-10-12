@@ -2,6 +2,7 @@
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
 using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
 
@@ -16,6 +17,7 @@ public class GetWalletBalanceQueryHandler(ApplicationDataContext context)
         CancellationToken cancellationToken)
     {
         var userGroups = await context.UserGarbageGroups
+            .FilterNonPrivate()
             .Include(x => x.GarbageGroup)
             .Where(x => x.UserId == request.UserId && !x.IsPending)
             .Select(x => new GarbageGroupInfoDto
