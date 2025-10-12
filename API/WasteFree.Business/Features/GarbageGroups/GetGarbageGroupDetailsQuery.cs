@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
+using WasteFree.Shared.Constants;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.GarbageGroups;
@@ -17,17 +19,18 @@ public class GetGarbageGroupDetailsQueryHandler(ApplicationDataContext context)
     {
         // Get group with members first
         var group = await context.GarbageGroups
+            .FilterNonPrivate()
             .Include(g => g.UserGarbageGroups)
             .ThenInclude(ug => ug.User)
             .FirstOrDefaultAsync(g => g.Id == request.GarbageGroupId, cancellationToken);
 
         if (group is null)
-            return Result<GarbageGroupDto>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
+            return Result<GarbageGroupDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
 
         // Check membership/permission
         var isMember = group.UserGarbageGroups.Any(ug => ug.UserId == request.UserId);
         if (!isMember)
-            return Result<GarbageGroupDto>.Failure("FORBIDDEN", HttpStatusCode.Forbidden);
+            return Result<GarbageGroupDto>.Failure(ApiErrorCodes.Forbidden, HttpStatusCode.Forbidden);
 
         return Result<GarbageGroupDto>.Success(group.MapToGarbageGroupDto(group.UserGarbageGroups));
     }

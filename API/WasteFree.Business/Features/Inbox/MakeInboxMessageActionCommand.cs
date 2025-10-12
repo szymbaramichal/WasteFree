@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Infrastructure;
+using WasteFree.Shared.Constants;
 using WasteFree.Shared.Entities;
 using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
@@ -19,7 +20,7 @@ public class MakeInboxMessageActionCommandHandler(ApplicationDataContext context
             .FirstOrDefaultAsync(cancellationToken);
 
         if(inboxNotification is null)
-            return Result<bool>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
+            return Result<bool>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
         
         switch (inboxNotification.ActionType)
         {
@@ -27,7 +28,7 @@ public class MakeInboxMessageActionCommandHandler(ApplicationDataContext context
                 await AssignUserAndDeleteNotification(request, cancellationToken, inboxNotification);
                 break;
             default:
-                return Result<bool>.Failure("INVALID_NOTIFICATION_TYPE", HttpStatusCode.BadRequest);
+                return Result<bool>.Failure(ApiErrorCodes.InvalidNotificationType, HttpStatusCode.BadRequest);
         }
         
         return Result<bool>.Success(true);

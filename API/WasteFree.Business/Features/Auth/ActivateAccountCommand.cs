@@ -6,6 +6,8 @@ using WasteFree.Business.Features.Auth.Dtos;
 using WasteFree.Business.Helpers;
 using WasteFree.Infrastructure;
 using WasteFree.Shared.Constants;
+using WasteFree.Shared.Entities;
+using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
@@ -35,13 +37,36 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
                 return Result<ActivateAccountDto>.Failure(ApiErrorCodes.InvalidRegistrationToken, HttpStatusCode.BadRequest);
 
             user.IsActive = true;
-            var wallet = new Shared.Entities.Wallet
+
+            var wallet = new WasteFree.Shared.Entities.Wallet
             {
                 UserId = user.Id,
                 Funds = 0.00
             };
-            
+
+            var privateGroup = new GarbageGroup
+            {
+                Id = Guid.CreateVersion7(),
+                Name = $"{user.Username} Private Group",
+                Description = $"Private garbage group for {user.Username}",
+                City = user.City ?? string.Empty,
+                PostalCode = string.Empty,
+                Address = string.Empty,
+                IsPrivate = true
+            };
+
+            var privateMembership = new UserGarbageGroup
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                GarbageGroupId = privateGroup.Id,
+                Role = GarbageGroupRole.Owner,
+                IsPending = false
+            };
+
             await context.Wallets.AddAsync(wallet, cancellationToken);
+            await context.GarbageGroups.AddAsync(privateGroup, cancellationToken);
+            await context.UserGarbageGroups.AddAsync(privateMembership, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             
             return Result<ActivateAccountDto>.Success(new ActivateAccountDto
@@ -49,7 +74,7 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
                 Id = user.Id
             });
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return Result<ActivateAccountDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
         }

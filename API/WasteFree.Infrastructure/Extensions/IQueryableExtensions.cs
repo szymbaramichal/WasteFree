@@ -1,4 +1,5 @@
-﻿using WasteFree.Shared.Models;
+﻿using WasteFree.Shared.Entities;
+using WasteFree.Shared.Models;
 
 namespace WasteFree.Infrastructure.Extensions;
 
@@ -9,5 +10,15 @@ public static class IQueryableExtensions
         return query
             .Skip((pager.PageNumber - 1) * pager.PageSize)
             .Take(pager.PageSize);
+    }
+
+    public static IQueryable<GarbageGroup> FilterNonPrivate(this IQueryable<GarbageGroup> query)
+    {
+        return query.Where(group => !group.IsPrivate);
+    }
+
+    public static IQueryable<UserGarbageGroup> FilterNonPrivate(this IQueryable<UserGarbageGroup> query)
+    {
+        return query.Where(userGroup => !userGroup.GarbageGroup.IsPrivate);
     }
 }

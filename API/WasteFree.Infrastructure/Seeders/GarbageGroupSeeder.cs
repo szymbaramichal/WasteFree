@@ -16,7 +16,8 @@ public class GarbageGroupSeeder(ApplicationDataContext context)
                 Description = "Group managing recycling pickups for Kraków city center residents.",
                 City = "Kraków",
                 PostalCode = "30-001",
-                Address = "ul. Długa 2"
+                Address = "ul. Długa 2",
+                IsPrivate = false
             },
             new()
             {
@@ -25,7 +26,8 @@ public class GarbageGroupSeeder(ApplicationDataContext context)
                 Description = "Neighborhood initiative for composting and waste reduction in Mokotów.",
                 City = "Warszawa",
                 PostalCode = "02-591",
-                Address = "ul. Puławska 145"
+                Address = "ul. Puławska 145",
+                IsPrivate = false
             },
             new()
             {
@@ -34,7 +36,8 @@ public class GarbageGroupSeeder(ApplicationDataContext context)
                 Description = "Community hub coordinating shoreline cleanups and recycling efforts.",
                 City = "Gdańsk",
                 PostalCode = "80-001",
-                Address = "ul. Doki 1"
+                Address = "ul. Doki 1",
+                IsPrivate = false
             }
         };
 

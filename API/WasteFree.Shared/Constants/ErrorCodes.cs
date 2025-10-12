@@ -12,6 +12,11 @@ public static class ApiErrorCodes
     public const string InvalidTopupCode = "INVALID_TOPUP_CODE";
     public const string MissingAccountNumber = "MISSING_ACCOUNT_NUMBER";
     public const string NotEnoughFunds = "NOT_ENOUGH_FUNDS";
+    public const string NotFound = "NOT_FOUND";
+    public const string Forbidden = "FORBIDDEN";
+    public const string InvalidNotificationType = "INVALID_NOTIFICATION_TYPE";
+    public const string InvitedUserNotFound = "INVITED_USER_NOT_FOUND";
+    public const string AlreadyInGroup = "ALREADY_IN_GROUP";
 }
 
 public static class ValidationErrorCodes

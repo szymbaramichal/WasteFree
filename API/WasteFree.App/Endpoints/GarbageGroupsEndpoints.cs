@@ -45,7 +45,7 @@ public static class GarbageGroupsEndpoints
             .WithTags("GarbageGroups")
             .WithDescription("Accept/decline group invitation.");
         
-        app.MapGet("/garbage-groups/{groupId}", GetGarbageGroupDetailsAsync)
+        app.MapGet("/garbage-groups/{groupId:guid}", GetGarbageGroupDetailsAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<Result<GarbageGroupDto>>()
@@ -62,7 +62,7 @@ public static class GarbageGroupsEndpoints
             .WithTags("GarbageGroups")
             .WithDescription("Remove user from garbage group.");
 
-        app.MapPost("/garbage-groups/invite", InviteUserToGarbageGroupAsync)
+        app.MapPost("/garbage-groups/{groupId:guid}/invite", InviteUserToGarbageGroupAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<Result<bool>>()
@@ -70,6 +70,15 @@ public static class GarbageGroupsEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageGroups")
             .WithDescription("Invite existing user to garbage group.");
+
+        app.MapPut("/garbage-groups/{groupId:guid}/update", UpdateGarbageGroupData)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<GarbageGroupDto>>()
+            .Produces<Result<EmptyResult>>(404)
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageGroups")
+            .WithDescription("Update garbage group details.");
     }
 
     /// <summary>
@@ -198,12 +207,45 @@ public static class GarbageGroupsEndpoints
     /// Sends an invitation to an existing user to join the specified garbage group.
     /// </summary>
     private static async Task<IResult> InviteUserToGarbageGroupAsync(
+        [FromRoute] Guid groupId,
         [FromBody] InviteUserToGarbageGroupRequest request,
         IStringLocalizer localizer,
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var command = new InviteToGarbageGroupCommand(request.GroupId, request.UserName);
+        var command = new InviteToGarbageGroupCommand(groupId, request.UserName);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Update group data.
+    /// </summary>
+    private static async Task<IResult> UpdateGarbageGroupData(
+        [FromRoute] Guid groupId,
+        [FromBody] UpdateGarbageGroupRequest request,
+        IStringLocalizer localizer,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateGarbageGroupCommand(
+            groupId,
+            currentUserService.UserId,
+            request.GroupName,
+            request.GroupDescription,
+            request.City,
+            request.PostalCode,
+            request.Address
+        );
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
@@ -257,9 +299,36 @@ public record InviteUserToGarbageGroupRequest
     /// Username of the person receiving the invitation.
     /// </summary>
     public string UserName { get; init; } = string.Empty;
+}
+
+
+/// <summary>
+/// Request payload for updating garbage group details. You must send all data even when its not updated.
+/// </summary>
+public record UpdateGarbageGroupRequest
+{
+    /// <summary>
+    /// Garbage Group name
+    /// </summary>
+    public string GroupName { get; init; } = string.Empty;
 
     /// <summary>
-    /// Identifier of the garbage group the user is invited to join.
+    /// Garbage Group description
     /// </summary>
-    public Guid GroupId { get; init; }
+    public string GroupDescription { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Garbage group city location
+    /// </summary>
+    public string City { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Garbage group postal code location
+    /// </summary>
+    public string PostalCode { get; init; } = string.Empty;
+    
+    /// <summary>
+    /// Garbage group address location
+    /// </summary>
+    public string Address { get; init; } = string.Empty;
 }

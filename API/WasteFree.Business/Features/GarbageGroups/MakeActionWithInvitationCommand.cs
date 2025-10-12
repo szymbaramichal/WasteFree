@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
+using WasteFree.Shared.Constants;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.GarbageGroups;
@@ -12,14 +14,16 @@ public class MakeActionWithInvitationCommandHandler(ApplicationDataContext appli
 {
     public async Task<Result<bool>> HandleAsync(MakeActionWithInvitationCommand request, CancellationToken cancellationToken)
     {
-        var pendingInvitation = await applicationDataContext.UserGarbageGroups.FirstOrDefaultAsync(x =>
+        var pendingInvitation = await applicationDataContext.UserGarbageGroups
+            .FilterNonPrivate()
+            .FirstOrDefaultAsync(x =>
             x.UserId == request.UserId &&
             x.GarbageGroupId == request.GroupId &&
             x.IsPending, cancellationToken);
 
         if (pendingInvitation is null)
         {
-            return Result<bool>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
+            return Result<bool>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
         }
 
         if (request.MakeAction)

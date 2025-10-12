@@ -30,7 +30,8 @@ export class GarbageGroupService {
   }
 
   inviteUser(groupId: string, userName: string): Observable<Result<any>> {
-    return this.http.post<Result<any>>(`${this.apiUrl}/invite`, { groupId, userName });
+    const g = encodeURIComponent(groupId);
+    return this.http.post<Result<any>>(`${this.apiUrl}/${g}/invite`, { userName });
   }
 
   removeUser(groupId: string, userId: string): Observable<Result<any>> {

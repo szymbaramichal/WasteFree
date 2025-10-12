@@ -15,7 +15,6 @@ public class WalletTransactionSeeder(ApplicationDataContext context)
             new { Username = "test2", Amount = 200.0, Type = TransactionType.Deposit },
             new { Username = "test2", Amount = -20.0, Type = TransactionType.GarbageExpense },
             new { Username = "test4", Amount = -15.0, Type = TransactionType.Withdrawal },
-            new { Username = "garbageadmin1", Amount = 500.0, Type = TransactionType.Deposit }
         };
 
         var usernames = plannedTransactions.Select(t => t.Username).Distinct().ToArray();

@@ -2,6 +2,7 @@
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.GarbageGroups;
@@ -13,6 +14,7 @@ public class GetPendingGroupInvitationsQueryHandler(ApplicationDataContext appli
     public async Task<Result<ICollection<GarbageGroupInvitationDto>>> HandleAsync(GetPendingGroupInvitationsQuery request, CancellationToken cancellationToken)
     {
         var userInvitations = await applicationDataContext.UserGarbageGroups
+            .FilterNonPrivate()
             .Where(x => x.UserId == request.UserId && x.IsPending)
             .Select(x => new GarbageGroupInvitationDto
             {
@@ -27,6 +29,7 @@ public class GetPendingGroupInvitationsQueryHandler(ApplicationDataContext appli
         foreach (var invitation in userInvitations)
         {
             var invitingUser = await applicationDataContext.UserGarbageGroups
+                .FilterNonPrivate()
                 .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.GarbageGroupId == invitation.GroupId 
                                      && x.Role == Shared.Enums.GarbageGroupRole.Owner, cancellationToken);
