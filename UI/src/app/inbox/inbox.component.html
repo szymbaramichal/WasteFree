@@ -8,7 +8,12 @@
 					<img src="/assets/images/bell.svg" alt="" width="20" height="20" />
 				</div>
 				<h4 class="m-0">{{ 'inbox.title' | translate }}</h4>
-				<span class="badge bg-primary" *ngIf="notifications().length">{{ notifications().length }}</span>
+				<div class="ms-auto d-flex align-items-center gap-2" *ngIf="notifications().length">
+					<span class="badge bg-primary">{{ notifications().length }}</span>
+					<button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearAll()" [disabled]="loading()">
+						{{ 'inbox.clearAll' | translate }}
+					</button>
+				</div>
 			</div>
 
 			<!-- Empty state -->

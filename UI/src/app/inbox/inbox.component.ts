@@ -95,4 +95,14 @@ export class InboxComponent {
       .pipe(take(1))
       .subscribe({ next: () => this.refresh() });
   }
+
+  clearAll() {
+    this.inbox.clearAll()
+      .pipe(take(1))
+      .subscribe({ next: () => {
+        this.pageNumber.set(1);
+        this.refresh();
+        this.toastr.success(this.translateService.translate('success.update'));
+      } });
+  }
 }

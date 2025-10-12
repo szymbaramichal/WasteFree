@@ -1,0 +1,16 @@
+<div class="activation-shell">
+  <div class="activation-box">
+    <h2 *ngIf="status === 'pending'">{{ 'auth.account.activating' | translate }}</h2>
+    <h2 *ngIf="status === 'success'">{{ 'auth.account.activated.title' | translate }}</h2>
+    <h2 *ngIf="status === 'error'">{{ 'auth.account.activated.errorTitle' | translate }}</h2>
+
+    <p *ngIf="status === 'pending'">{{ 'auth.account.activated.wait' | translate }}</p>
+    <p *ngIf="status === 'success'">{{ 'auth.account.activated.success' | translate }}</p>
+    <p *ngIf="status === 'error'">{{ message || ('auth.account.activated.error' | translate) }}</p>
+
+    <div class="actions">
+      <button *ngIf="status === 'success'" class="grow" (click)="gotoLogin()">{{ 'auth.backToLogin' | translate }}</button>
+      <button *ngIf="status === 'error'" class="grow" (click)="gotoHome()">{{ 'nav.goApp' | translate }}</button>
+    </div>
+  </div>
+</div>
