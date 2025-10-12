@@ -30,22 +30,22 @@ public class InviteToGarbageGroupCommandHandler(ApplicationDataContext context,
                                                                             && x.Role == GarbageGroupRole.Owner, cancellationToken);
         
         if (userGroupInfo is null)
-            return Result<bool>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
+            return Result<bool>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
         
         var userToAdd = await context.Users
             .FirstOrDefaultAsync(x => x.Username.ToLower() == request.UsernameToInvite.ToLower(), cancellationToken);
         
         if (userToAdd is null)
-            return Result<bool>.Failure("INVITED_USER_NOT_FOUND", HttpStatusCode.NotFound);
+            return Result<bool>.Failure(ApiErrorCodes.InvitedUserNotFound, HttpStatusCode.NotFound);
 
         if (userToAdd.Role != UserRole.User)
-            return Result<bool>.Failure("INVITED_USER_NOT_FOUND", HttpStatusCode.NotFound);
+            return Result<bool>.Failure(ApiErrorCodes.InvitedUserNotFound, HttpStatusCode.NotFound);
         
         var alreadyInGroup = await context.UserGarbageGroups
             .AnyAsync(x => x.UserId == userToAdd.Id && x.GarbageGroupId == request.GroupId, cancellationToken);
         
         if(alreadyInGroup)
-            return Result<bool>.Failure("ALREADY_IN_GROUP", HttpStatusCode.BadRequest);
+            return Result<bool>.Failure(ApiErrorCodes.AlreadyInGroup, HttpStatusCode.BadRequest);
 
         var userGarbageGroup = new UserGarbageGroup
         {

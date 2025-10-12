@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Infrastructure;
+using WasteFree.Shared.Constants;
 using WasteFree.Shared.Enums;
 using WasteFree.Shared.Models;
 
@@ -19,7 +20,7 @@ public class DeleteUserFromGroupCommandHandler(ApplicationDataContext context) :
                                                                             && x.Role == GarbageGroupRole.Owner, cancellationToken);
         
         if (userGroupInfo is null)
-            return Result<bool>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
+            return Result<bool>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
 
         int rows = await context.UserGarbageGroups
             .Where(x => x.UserId == request.UserToRemoveId && x.GarbageGroupId == request.GroupId)
@@ -28,6 +29,6 @@ public class DeleteUserFromGroupCommandHandler(ApplicationDataContext context) :
         if(rows > 0)
             return Result<bool>.Success(true);
         
-        return Result<bool>.Failure("NOT_FOUND", HttpStatusCode.NotFound);
+    return Result<bool>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
     }
 }
