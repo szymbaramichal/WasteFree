@@ -1,0 +1,52 @@
+.activation-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+}
+
+.activation-box {
+  max-width: 520px;
+  padding: 28px;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+}
+
+.activation-box h2 {
+  margin-bottom: 14px;
+  color: #000;
+}
+
+.activation-box p {
+  color: #333;
+  margin-bottom: 18px;
+}
+
+.actions button {
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg, #3cb371, #2e8b57);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+
+.actions button.grow:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.actions button.secondary {
+  background: transparent;
+  color: var(--primary-green-dark);
+  border: 1.5px solid var(--primary-green-dark);
+}
+
+.actions button.secondary:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}

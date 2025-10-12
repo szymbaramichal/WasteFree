@@ -35,6 +35,21 @@
             <div class="text-muted">{{ group.description || '-' }}</div>
           </div>
 
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="fw-semibold">{{ 'groups.details.city' | translate }}</div>
+              <div class="text-muted">{{ group.city || '-' }}</div>
+            </div>
+            <div class="col-md-4">
+              <div class="fw-semibold">{{ 'groups.details.postalCode' | translate }}</div>
+              <div class="text-muted">{{ group.postalCode || '-' }}</div>
+            </div>
+            <div class="col-md-4">
+              <div class="fw-semibold">{{ 'groups.details.address' | translate }}</div>
+              <div class="text-muted">{{ group.address || '-' }}</div>
+            </div>
+          </div>
+
           <!-- Owner actions: invite form -->
           <div class="mb-3" *ngIf="isOwner()">
             <div class="fw-semibold mb-2">{{ 'groups.details.invite.title' | translate }}</div>

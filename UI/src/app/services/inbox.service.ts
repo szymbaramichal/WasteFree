@@ -70,4 +70,8 @@ export class InboxService {
     deleteMessage(id: string): Observable<Result<boolean>> {
         return this.http.delete<Result<boolean>>(`${this.apiUrl}/inbox/${id}`);
     }
+
+    clearAll(): Observable<Result<boolean>> {
+        return this.http.post<Result<boolean>>(`${this.apiUrl}/inbox/clear`, {});
+    }
 }
