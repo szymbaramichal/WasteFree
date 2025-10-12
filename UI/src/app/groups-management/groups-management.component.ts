@@ -33,7 +33,10 @@ export class GroupsManagementComponent implements OnInit {
 
   form: FormGroup = this.fb.group({
     groupName: ['', [Validators.required, Validators.maxLength(100)]],
-    groupDescription: ['', [Validators.required, Validators.maxLength(500)]]
+    groupDescription: ['', [Validators.required, Validators.maxLength(500)]],
+    city: ['', [Validators.required, Validators.maxLength(100)]],
+    postalCode: ['', [Validators.required, Validators.maxLength(12)]],
+    address: ['', [Validators.required, Validators.maxLength(200)]]
   });
 
   ngOnInit(): void {
@@ -46,13 +49,19 @@ export class GroupsManagementComponent implements OnInit {
       return;
     }
     this.submitting = true;
-    const payload: RegisterGarbageGroupRequest = this.form.value;
+    const payload: RegisterGarbageGroupRequest = this.form.getRawValue();
     this.groupService.register(payload)
       .pipe(finalize(() => this.submitting = false))
       .subscribe({
         next: () => {
           this.toastr.success(this.translationService.translate('success.update'));
-          this.form.reset();
+          this.form.reset({
+            groupName: '',
+            groupDescription: '',
+            city: '',
+            postalCode: '',
+            address: ''
+          });
           this.fetchPendingInvitations();
         }
       });
