@@ -7,6 +7,9 @@
   <data name="NOT_FOUND" xml:space="preserve"><value>Nie znaleziono zasobu.</value></data>
   <data name="INVITED_USER_NOT_FOUND" xml:space="preserve"><value>Nie znaleziono zaproszonego użytkownika.</value></data>
   <data name="ALREADY_IN_GROUP" xml:space="preserve"><value>Użytkownik jest już członkiem grupy.</value></data>
+  <data name="EMPTY_IMAGE" xml:space="preserve"><value>Pusty obraz.</value></data>
+  <data name="TOO_BIG_IMAGE" xml:space="preserve"><value>Za duży rozmiar zdjęcia. Maksymalny rozmiar to 5mb.</value></data>
+  <data name="UNSUPPORTED_IMAGE_TYPE" xml:space="preserve"><value>Niewspierany typ zdjęcia.</value></data>
   <data name="INVALID_NOTIFICATION_TYPE" xml:space="preserve"><value>Niepoprawy rodzaj notyfikacji.</value></data>
   <data name="USER_NOT_ACTIVATED" xml:space="preserve"><value>Aktywuj najpierw konto przez link wysłany na adres email aby korzystać z WasteFree Cloud!</value></data>
   <data name="STH_WENT_WRONG" xml:space="preserve"><value>Ups, coś poszło nie tak. Spróbuj jeszcze raz!</value></data>
