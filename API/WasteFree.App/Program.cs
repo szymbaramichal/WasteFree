@@ -142,7 +142,6 @@ app.UseHttpsRedirection();
 app.UseCors(allowLocalFrontendOrigins);
 
 app.UseAuthentication();
- 
 app.UseAuthorization();
 
 app.UseRateLimiter();

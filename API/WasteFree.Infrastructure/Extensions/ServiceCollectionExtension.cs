@@ -67,6 +67,9 @@ public static class ServiceCollectionExtension
         services.AddScoped<InboxNotificationSeeder>();
         services.AddScoped<NotificationTemplateSeeder>();
         
+        var blobConn = configuration["Integrations:BlobStorage:ConnectionString"];
+        services.AddSingleton<IBlobStorageService>(_ => new AzureBlobStorageService(blobConn));
+        
         return services;
     }
 

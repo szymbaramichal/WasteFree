@@ -20,6 +20,16 @@ public static class AccountEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("Account")
             .WithDescription("Updates the authenticated user's profile fields: Description, BankAccountNumber and City.");
+
+        app.MapPost("/user/avatar/upload", UploadUserAvatar)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
+            .Accepts<UploadAvatarRequest>("multipart/form-data")
+            .DisableAntiforgery()
+            .WithOpenApi()
+            .Produces<Result<ProfileDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("Account")
+            .WithDescription("Uploads or replaces the authenticated user's avatar image.");
         
         app.MapGet("/user/profile", GetUserProfileAsync)
             .RequireAuthorization(PolicyNames.GenericPolicy)
@@ -43,6 +53,28 @@ public static class AccountEndpoints
     {
         var result = await mediator.SendAsync(new UpdateUserProfileCommand(currentUserService.UserId,
                 request.Description, request.BankAccountNumber, request.City),
+            cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+    
+    /// <summary>
+    /// Upload user avatar image.
+    /// </summary>
+    private static async Task<IResult> UploadUserAvatar(
+        [FromForm] UploadAvatarRequest request,
+        ICurrentUserService currentUserService,
+        IStringLocalizer localizer,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.SendAsync(new UploadAvatarCommand(currentUserService.UserId, request.Avatar),
             cancellationToken);
 
         if (!result.IsValid)
@@ -95,4 +127,15 @@ public record UpdateProfileRequest
     /// City in which the user resides.
     /// </summary>
     public string City { get; init; } = string.Empty;
+}
+
+/// <summary>
+/// Multipart/form-data request for uploading an avatar image.
+/// </summary>
+public class UploadAvatarRequest
+{
+    /// <summary>
+    /// The image file to upload as the user's avatar.
+    /// </summary>
+    public IFormFile Avatar { get; set; } = default!;
 }

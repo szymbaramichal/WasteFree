@@ -6,6 +6,9 @@ public static class ApiErrorCodes
     public const string EmailTaken = "EMAIL_TAKEN";
     public const string LoginFailed = "LOGIN_FAILED";
     public const string GenericError = "STH_WENT_WRONG";
+    public const string EmptyImage = "EMPTY_IMAGE";
+    public const string TooBigImage = "TOO_BIG_IMAGE";
+    public const string UnsupportedImageType = "UNSUPPORTED_IMAGE_TYPE";
     public const string InvalidRegistrationToken = "INVALID_REGISTRATION_TOKEN";
     public const string InvalidUser = "INVALID_USER";
     public const string UserAccountNotActivated = "USER_NOT_ACTIVATED";

@@ -24,6 +24,8 @@ public class User : DatabaseEntity
     public required LanguagePreference LanguagePreference { get; set; }
     
     public required UserRole Role { get; set; }
+
+    public string? AvatarName { get; set; }
     
     [MaxLength(100)]
     public string? City { get; set; }
