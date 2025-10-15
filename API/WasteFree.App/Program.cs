@@ -135,6 +135,7 @@ app.MapGarbageGroupsEndpoints();
 app.MapWalletEndpoints();
 app.MapAccountEndpoints();
 app.MapInboxEndpoints();
+app.MapCitiesEndpoints();
 
 app.UseHttpsRedirection();
  
