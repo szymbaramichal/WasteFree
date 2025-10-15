@@ -59,6 +59,38 @@
   </div>
 </section>
 
+<section class="supported-cities" id="supported-cities">
+  <div class="container">
+    <div class="section-heading text-center mb-5">
+      <span class="heading-kicker">{{ 'home.supportedCities.kicker' | translate }}</span>
+      <h2 class="fw-bold">{{ 'home.supportedCities.title' | translate }}</h2>
+      <p class="lead">{{ 'home.supportedCities.lead' | translate }}</p>
+    </div>
+
+    <div *ngIf="isLoadingCities" class="cities-loader" aria-live="polite">
+      <div class="loader-dot" *ngFor="let dot of cityLoaderDots"></div>
+      <span class="loader-label">{{ 'loading' | translate }}</span>
+    </div>
+
+    <div *ngIf="!isLoadingCities && cities.length > 0" class="city-grid">
+      <article class="city-card" *ngFor="let city of cities; index as idx; trackBy: trackCity">
+        <div class="city-card__halo"></div>
+        <div class="city-chip">{{ 'home.supportedCities.cityPrefix' | translate }} {{ idx + 1 }}</div>
+        <h3>{{ city | translate }}</h3>
+        <p>{{ 'home.supportedCities.cityTagline' | translate }}</p>
+      </article>
+    </div>
+
+    <div *ngIf="!isLoadingCities && cities.length === 0 && !citiesError" class="cities-empty">
+      <p>{{ 'home.supportedCities.empty' | translate }}</p>
+    </div>
+
+    <div *ngIf="citiesError" class="cities-error" role="alert">
+      <p>{{ 'home.supportedCities.error' | translate }}</p>
+    </div>
+  </div>
+</section>
+
 <section class="container mt-5" id="contact">
   <div class="row justify-content-center">
     <div class="col-md-8">

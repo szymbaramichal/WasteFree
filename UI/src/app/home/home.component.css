@@ -271,6 +271,183 @@ body {
   margin-bottom: 20px;
   text-shadow: 0 2px 8px rgba(40,167,69,0.10);
 }
+.supported-cities {
+  position: relative;
+  margin-top: 120px;
+  margin-bottom: 120px;
+  padding: 80px 0;
+  background: radial-gradient(circle at top left, rgba(129,199,132,0.25), transparent 55%),
+              radial-gradient(circle at bottom right, rgba(38,166,154,0.25), transparent 55%);
+  overflow: hidden;
+  border-radius: 48px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.10);
+}
+.supported-cities::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.16), transparent 60%);
+  pointer-events: none;
+}
+.supported-cities .container {
+  position: relative;
+  z-index: 1;
+}
+.heading-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: rgba(33,150,83,0.12);
+  color: #1b5e20;
+}
+.heading-kicker::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2ecc71, #1abc9c);
+  box-shadow: 0 0 12px rgba(46,204,113,0.6);
+}
+.supported-cities .lead {
+  max-width: 640px;
+  margin: 18px auto 0;
+  color: rgba(0,0,0,0.68);
+}
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 28px;
+}
+.city-card {
+  position: relative;
+  padding: 32px 24px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(33,150,83,0.18);
+  overflow: hidden;
+  transform: translateY(20px);
+  animation: cityFloat 0.7s cubic-bezier(.12,.8,.32,1) forwards;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.city-card__halo {
+  position: absolute;
+  inset: -40% -20% auto;
+  height: 120px;
+  background: radial-gradient(circle, rgba(46,204,113,0.4), transparent 70%);
+  opacity: 0.5;
+}
+.city-card h3 {
+  font-weight: 800;
+  color: #1b5e20;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+.city-card p {
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.6);
+  position: relative;
+  z-index: 1;
+}
+.city-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(33,150,83,0.15), rgba(33,150,243,0.15));
+  color: #1b5e20;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-size: 0.75rem;
+  margin-bottom: 18px;
+  z-index: 1;
+}
+.city-chip::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #43a047, #66bb6a);
+  box-shadow: 0 0 8px rgba(67,160,71,0.4);
+}
+.cities-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(33,150,243,0.15);
+  margin-bottom: 32px;
+}
+.loader-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0288d1, #26c6da);
+  animation: loaderPulse 1.2s ease-in-out infinite;
+}
+.loader-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.loader-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.loader-dot:nth-child(4) {
+  animation-delay: 0.45s;
+}
+.loader-label {
+  font-weight: 600;
+  color: #1b5e20;
+}
+.cities-empty,
+.cities-error {
+  text-align: center;
+  padding: 32px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  font-weight: 600;
+  color: rgba(0,0,0,0.72);
+}
+.cities-error {
+  color: #c62828;
+  background: rgba(255,235,238,0.9);
+  box-shadow: 0 10px 30px rgba(198,40,40,0.18);
+}
+@keyframes loaderPulse {
+  0%, 100% { transform: scale(0.8); opacity: 0.6; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+@keyframes cityFloat {
+  to { transform: translateY(0); }
+}
+.city-grid .city-card:nth-child(2n) {
+  animation-delay: 0.1s;
+}
+.city-grid .city-card:nth-child(3n) {
+  animation-delay: 0.2s;
+}
+.city-grid .city-card:nth-child(4n) {
+  animation-delay: 0.3s;
+}
+.city-grid .city-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 38px rgba(33,150,83,0.25);
+}
 .footer {
   background: #28a745;
   color: #fff;

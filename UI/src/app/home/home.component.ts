@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { CommonModule } from '@angular/common';
 import { LoaderService } from '../services/loader.service';
+import { CityService } from '../services/city.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,14 @@ import { LoaderService } from '../services/loader.service';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  constructor(private router: Router, private loader: LoaderService) {}
+  cities: string[] = [];
+  isLoadingCities = false;
+  citiesError = false;
+  readonly cityLoaderDots = Array.from({ length: 4 }, (_, idx) => idx);
+
+  constructor(private router: Router, private loader: LoaderService, private city: CityService) {
+    this.loadSupportedCities();
+  }
 
   goToApp() {
     try {
@@ -22,5 +30,28 @@ export class HomeComponent {
       this.loader.show(500);
       location.href = '/portal';
     }
+  }
+
+  trackCity(_: number, city: string) {
+    return city;
+  }
+
+  private loadSupportedCities() {
+    this.isLoadingCities = true;
+    this.citiesError = false;
+
+    this.city.getCitiesList().subscribe({
+      next: response => {
+        const rawCities = response.resultModel ?? [];
+        this.cities = rawCities
+          .filter(city => !!city && city.trim().length > 0)
+          .map(city => city.trim());
+        this.isLoadingCities = false;
+      },
+      error: () => {
+        this.isLoadingCities = false;
+        this.citiesError = true;
+      }
+    });
   }
 }
