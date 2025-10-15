@@ -73,10 +73,12 @@ public static class GarbageGroupsEndpoints
 
         app.MapPut("/garbage-groups/{groupId:guid}/update", UpdateGarbageGroupData)
             .RequireAuthorization(PolicyNames.UserPolicy)
+            .AddEndpointFilter(new ValidationFilter<UpdateGarbageGroupRequest>())
             .WithOpenApi()
             .Produces<Result<GarbageGroupDto>>()
             .Produces<Result<EmptyResult>>(404)
             .Produces<Result<EmptyResult>>(400)
+            .Produces<Result<EmptyResult>>(422)
             .WithTags("GarbageGroups")
             .WithDescription("Update garbage group details.");
     }
