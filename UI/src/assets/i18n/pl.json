@@ -8,9 +8,19 @@
   "nav.goApp": "Przejdź do aplikacji",
   "loading": "Ładowanie...",
 
+  "Cracow": "Kraków",
+  "Warsaw": "Warszawa",
+
   "home.title": "Oszczędzaj, dbaj o środowisko, żyj WasteFree!",
   "home.desc": "Innowacyjna platforma do zarządzania odpadami i optymalizacji zużycia zasobów. Dołącz do rewolucji ekologicznej!",
   "home.cta": "Przejdź do aplikacji",
+  "home.supportedCities.kicker": "Obsługiwane miasta",
+  "home.supportedCities.title": "Tu działa już WasteFree",
+  "home.supportedCities.lead": "Współpracujemy z samorządami, które stawiają na gospodarkę obiegu zamkniętego.",
+  "home.supportedCities.cityPrefix": "Miasto",
+  "home.supportedCities.cityTagline": "Dołącz do ruchu zero waste tam, gdzie mieszkasz.",
+  "home.supportedCities.empty": "Dopiero zaczynamy – kolejne miasta dołączą wkrótce!",
+  "home.supportedCities.error": "Nie udało się pobrać listy miast. Spróbuj ponownie później.",
 
   "features.header": "Funkcjonalności",
   "features.stat.title": "Statystyki i raporty",

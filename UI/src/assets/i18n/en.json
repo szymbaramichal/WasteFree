@@ -8,9 +8,19 @@
   "nav.goApp": "Go to app",
   "loading": "Loading...",
 
+  "Cracow": "Cracow",
+  "Warsaw": "Warsaw",
+
   "home.title": "Save, protect the environment, live WasteFree!",
   "home.desc": "An innovative platform for waste management and resource optimization. Join the ecological revolution!",
   "home.cta": "Go to app",
+  "home.supportedCities.kicker": "Supported cities",
+  "home.supportedCities.title": "Where WasteFree already works",
+  "home.supportedCities.lead": "We team up with pioneering municipalities that invest in a circular future.",
+  "home.supportedCities.cityPrefix": "City",
+  "home.supportedCities.cityTagline": "Be part of the zero-waste movement right where you live.",
+  "home.supportedCities.empty": "We are just getting started – new cities are joining soon!",
+  "home.supportedCities.error": "We could not load supported cities right now. Please try again later.",
 
   "features.header": "Features",
   "features.stat.title": "Statistics & reports",
