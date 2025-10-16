@@ -74,25 +74,19 @@
                 <svg class="city-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
                 </svg>
-                <select class="form-select city-select" [ngModel]="p.city" (ngModelChange)="onCityChanged($event)" [disabled]="citySaving">
+                <select class="form-select city-select"
+                        [ngModel]="p.city"
+                        (ngModelChange)="onCityChanged($event)"
+                        [disabled]="citySaving || citiesLoading">
                   <option [ngValue]="''">{{ 'profile.city.placeholder' | translate }}</option>
-                  <option value="Warszawa">Warszawa</option>
-                  <option value="Kraków">Kraków</option>
-                  <option value="Łódź">Łódź</option>
-                  <option value="Wrocław">Wrocław</option>
-                  <option value="Poznań">Poznań</option>
-                  <option value="Gdańsk">Gdańsk</option>
-                  <option value="Szczecin">Szczecin</option>
-                  <option value="Bydgoszcz">Bydgoszcz</option>
-                  <option value="Lublin">Lublin</option>
-                  <option value="Białystok">Białystok</option>
-                  <option value="Nowy Sącz">Nowy Sącz</option>
+                  <option *ngIf="citiesLoading" disabled>{{ 'loading' | translate }}</option>
+                  <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
                 </select>
               </div>
             </div>
             <div class="col-md-5 d-flex align-items-center gap-2">
-              <span class="city-pill" *ngIf="p.city && p.city.length > 0"><i class="bi bi-geo-alt-fill"></i>{{ p.city }}</span>
-              <span class="spinner-border spinner-border-sm" *ngIf="citySaving" aria-hidden="true"></span>
+              <span class="spinner-border spinner-border-sm" *ngIf="citySaving || citiesLoading" aria-hidden="true"></span>
+              <span class="text-danger small" *ngIf="citiesLoadError">{{ 'profile.cityLoadError' | translate }}</span>
             </div>
           </div>
         </dd>

@@ -16,7 +16,7 @@
   "home.cta": "Przejdź do aplikacji",
   "home.supportedCities.kicker": "Obsługiwane miasta",
   "home.supportedCities.title": "Tu działa już WasteFree",
-  "home.supportedCities.lead": "Współpracujemy z samorządami, które stawiają na gospodarkę obiegu zamkniętego.",
+  "home.supportedCities.lead": "Współpracujemy z wieloma osobami, które chcą zadbać o czyste środowisko!",
   "home.supportedCities.cityPrefix": "Miasto",
   "home.supportedCities.cityTagline": "Dołącz do ruchu zero waste tam, gdzie mieszkasz.",
   "home.supportedCities.empty": "Dopiero zaczynamy – kolejne miasta dołączą wkrótce!",
@@ -249,5 +249,6 @@
   "profile.bankSaved": "Zapisano numer rachunku",
   "profile.bankSaveError": "Nie udało się zapisać numeru rachunku",
   "profile.citySaved": "Zapisano miasto",
-  "profile.citySaveError": "Nie udało się zapisać miasta"
+  "profile.citySaveError": "Nie udało się zapisać miasta",
+  "profile.cityLoadError": "Nie udało się pobrać listy miast"
 }
