@@ -5,6 +5,9 @@
   <data name="FORBIDDEN" xml:space="preserve"><value>You are not privileged make this action.</value></data>
   <data name="INVALID_USER" xml:space="preserve"><value>Invalid user</value></data>
   <data name="NOT_FOUND" xml:space="preserve"><value>Resource not found.</value></data>
+  <data name="EMPTY_IMAGE" xml:space="preserve"><value>Empty image.</value></data>
+  <data name="TOO_BIG_IMAGE" xml:space="preserve"><value>Too big image size. Max is 5mb.</value></data>
+  <data name="UNSUPPORTED_IMAGE_TYPE" xml:space="preserve"><value>Unsupported image type.</value></data>
   <data name="INVITED_USER_NOT_FOUND" xml:space="preserve"><value>Invited user not found.</value></data>
   <data name="ALREADY_IN_GROUP" xml:space="preserve"><value>Invited user is already group member.</value></data>
   <data name="INVALID_NOTIFICATION_TYPE" xml:space="preserve"><value>Invalid notification type.</value></data>
