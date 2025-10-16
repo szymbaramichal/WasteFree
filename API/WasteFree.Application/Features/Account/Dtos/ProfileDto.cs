@@ -1,6 +1,7 @@
-﻿using WasteFree.Shared.Entities;
+﻿using WasteFree.Domain.Entities;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Account.Dtos;
+namespace WasteFree.Application.Features.Account.Dtos;
 
 /// <summary>
 /// DTO representing a user's profile information returned by account endpoints.
@@ -38,9 +39,9 @@ public class ProfileDto
     public string BankAccountNumber { get; set; } = null!;
 
     /// <summary>
-    /// City where the user is located.
+    /// Address object.
     /// </summary>
-    public string City { get; set; } = string.Empty;
+    public required Address Address { get; set; }
 }
 
 public static class ProfileDtoExtensions
@@ -53,8 +54,8 @@ public static class ProfileDtoExtensions
             BankAccountNumber = user.Wallet?.WithdrawalAccountNumber ?? string.Empty,
             Description = user.Description ?? string.Empty,
             Email = user.Email,
-            Username = user.Username,
-            City = user.City ?? string.Empty,
+            Username = user.Username, 
+            Address = user.Address
         };
     }
     
@@ -67,7 +68,7 @@ public static class ProfileDtoExtensions
             Description = user.Description ?? string.Empty,
             Email = user.Email,
             Username = user.Username,
-            City = user.City ?? string.Empty,
+            Address = user.Address,
             AvatarUrl = avatarUrl
         };
     }

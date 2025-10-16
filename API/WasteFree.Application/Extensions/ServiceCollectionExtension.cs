@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WasteFree.Business.Abstractions.Messaging;
+using WasteFree.Application.Abstractions.Messaging;
 
-namespace WasteFree.Business.Extensions;
+namespace WasteFree.Application.Extensions;
 
 public static class ServiceCollectionExtension
 {

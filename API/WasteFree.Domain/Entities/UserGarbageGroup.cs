@@ -1,7 +1,7 @@
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Shared.Entities;
+namespace WasteFree.Domain.Entities;
 
 public class UserGarbageGroup : DatabaseEntity
 {

@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using WasteFree.App.Filters;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.GarbageGroups;
-using WasteFree.Business.Features.GarbageGroups.Dtos;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Api.Filters;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.GarbageGroups;
+using WasteFree.Application.Features.GarbageGroups.Dtos;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.App.Endpoints;
+namespace WasteFree.Api.Endpoints;
 
 public static class GarbageGroupsEndpoints
 {
@@ -93,7 +93,7 @@ public static class GarbageGroupsEndpoints
         CancellationToken cancellationToken)
     {
         var command = new RegisterGarbageGroupCommand(request.GroupName, 
-            request.GroupDescription, request.City, request.PostalCode, request.Address);
+            request.GroupDescription, request.Address);
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
@@ -244,8 +244,6 @@ public static class GarbageGroupsEndpoints
             currentUserService.UserId,
             request.GroupName,
             request.GroupDescription,
-            request.City,
-            request.PostalCode,
             request.Address
         );
 
@@ -275,21 +273,11 @@ public record RegisterGarbageGroupRequest
     /// Description shared with members about the group's purpose.
     /// </summary>
     public string GroupDescription { get; init; } = string.Empty;
-    
-    /// <summary>
-    /// Group city, used for location-based features.
-    /// </summary>
-    public string City { get; init; } = string.Empty;
 
     /// <summary>
-    /// Postal code tied to the group's address for more precise localisation.
+    /// Address object
     /// </summary>
-    public string PostalCode { get; init; } = string.Empty;
-
-    /// <summary>
-    /// Street address of the group for contact or pickup details.
-    /// </summary>
-    public string Address { get; init; } = string.Empty;
+    public required Address Address { get; set; }
 }
 
 /// <summary>
@@ -320,17 +308,7 @@ public record UpdateGarbageGroupRequest
     public string GroupDescription { get; init; } = string.Empty;
 
     /// <summary>
-    /// Garbage group city location
+    /// Address object
     /// </summary>
-    public string City { get; init; } = string.Empty;
-
-    /// <summary>
-    /// Garbage group postal code location
-    /// </summary>
-    public string PostalCode { get; init; } = string.Empty;
-    
-    /// <summary>
-    /// Garbage group address location
-    /// </summary>
-    public string Address { get; init; } = string.Empty;
+    public required Address Address { get; set; }
 }

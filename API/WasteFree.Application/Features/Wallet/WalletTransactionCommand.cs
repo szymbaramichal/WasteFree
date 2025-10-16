@@ -1,12 +1,12 @@
 ﻿using System.Net;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Wallet.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Wallet.Dtos;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Wallet;
+namespace WasteFree.Application.Features.Wallet;
 
 public record WalletTransactionCommand(Guid UserId, string PaymentCode, double Amount, string PaymentProperties) 
     : IRequest<PaymentTransactionDto>;
@@ -33,7 +33,7 @@ public class WalletTransactionHandler(ApplicationDataContext applicationDataCont
                     return Result<PaymentTransactionDto>.Failure(ApiErrorCodes.InvalidTopupCode, HttpStatusCode.BadRequest);
                 
                 wallet.Funds += request.Amount;
-                applicationDataContext.WalletTransactions.Add(new Shared.Entities.WalletTransaction
+                applicationDataContext.WalletTransactions.Add(new Domain.Entities.WalletTransaction
                 {
                     Amount = request.Amount,
                     WalletId = wallet.Id,
@@ -55,7 +55,7 @@ public class WalletTransactionHandler(ApplicationDataContext applicationDataCont
                     return Result<PaymentTransactionDto>.Failure(ApiErrorCodes.NotEnoughFunds, HttpStatusCode.BadRequest);
                     
                 wallet.Funds -= request.Amount;
-                applicationDataContext.WalletTransactions.Add(new Shared.Entities.WalletTransaction
+                applicationDataContext.WalletTransactions.Add(new Domain.Entities.WalletTransaction
                 {
                     Amount = request.Amount,
                     WalletId = wallet.Id,

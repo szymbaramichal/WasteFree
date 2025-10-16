@@ -1,14 +1,14 @@
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Models;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Shared.Entities
+namespace WasteFree.Domain.Entities
 {
     public class GarbageGroup : DatabaseEntity
     {
         public required string Name { get; set; }
         public required string Description { get; set; }
-        public required string City { get; set; }
-        public required string PostalCode { get; set; }
-        public required string Address { get; set; }
+        
+        public required Address Address { get; set; } = new();
         public bool IsPrivate { get; set; }
 
         public ICollection<UserGarbageGroup> UserGarbageGroups { get; set; } = new List<UserGarbageGroup>();

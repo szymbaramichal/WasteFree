@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Business.Features.Inbox.Dtos;
+﻿namespace WasteFree.Application.Features.Inbox.Dtos;
 
 /// <summary>
 /// DTO representing counts for the user's inbox (for example unread message count).

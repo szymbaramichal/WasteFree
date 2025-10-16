@@ -1,4 +1,6 @@
-﻿namespace WasteFree.Business.Features.GarbageGroups.Dtos;
+﻿using WasteFree.Domain.Models;
+
+namespace WasteFree.Application.Features.GarbageGroups.Dtos;
 
 /// <summary>
 /// DTO representing invitation to group.
@@ -21,17 +23,7 @@ public class GarbageGroupInvitationDto
     public string InvitingUsername { get; set; } = string.Empty;
     
     /// <summary>
-    /// City where the group is located.
+    /// Address object.
     /// </summary>
-    public string City { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Postal code tied to the group's address.
-    /// </summary>
-    public string PostalCode { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Street address of the group.
-    /// </summary>
-    public string Address { get; set; } = string.Empty;
+    public required Address Address { get; set; }
 }

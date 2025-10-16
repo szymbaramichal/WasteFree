@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Enums;
+﻿namespace WasteFree.Domain.Enums;
 
 /// <summary>
 /// Channels through which notifications can be delivered.

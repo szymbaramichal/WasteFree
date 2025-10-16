@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.GarbageGroups.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.GarbageGroups;
+namespace WasteFree.Application.Features.GarbageGroups;
 
 public record GetPendingGroupInvitationsQuery(Guid UserId) : IRequest<ICollection<GarbageGroupInvitationDto>>;
 
@@ -14,14 +14,13 @@ public class GetPendingGroupInvitationsQueryHandler(ApplicationDataContext appli
     public async Task<Result<ICollection<GarbageGroupInvitationDto>>> HandleAsync(GetPendingGroupInvitationsQuery request, CancellationToken cancellationToken)
     {
         var userInvitations = await applicationDataContext.UserGarbageGroups
+            .AsNoTracking()
             .FilterNonPrivate()
             .Where(x => x.UserId == request.UserId && x.IsPending)
             .Select(x => new GarbageGroupInvitationDto
             {
                 GroupId = x.GarbageGroupId,
                 GroupName = x.GarbageGroup.Name,
-                City = x.GarbageGroup.City,
-                PostalCode = x.GarbageGroup.PostalCode,
                 Address = x.GarbageGroup.Address
             })
             .ToListAsync(cancellationToken);
@@ -32,7 +31,7 @@ public class GetPendingGroupInvitationsQueryHandler(ApplicationDataContext appli
                 .FilterNonPrivate()
                 .Include(x => x.User)
                 .FirstOrDefaultAsync(x => x.GarbageGroupId == invitation.GroupId 
-                                     && x.Role == Shared.Enums.GarbageGroupRole.Owner, cancellationToken);
+                                     && x.Role == Domain.Enums.GarbageGroupRole.Owner, cancellationToken);
             
             if (invitingUser != null)
             {

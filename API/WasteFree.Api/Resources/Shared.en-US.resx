@@ -34,5 +34,5 @@
   <data name="ERR_GROUP_CITY_REQUIRED"><value>Group city is required</value></data>
   <data name="ERR_GROUP_POSTAL_CODE_REQUIRED"><value>Postal code is required</value></data>
   <data name="ERR_GROUP_POSTAL_CODE_INVALID"><value>Postal code must follow format 00-000.</value></data>
-  <data name="ERR_GROUP_ADDRESS_REQUIRED"><value>Address is required</value></data>
+  <data name="ERR_GROUP_STREET_REQUIRED"><value>Street is required</value></data>
 </root>

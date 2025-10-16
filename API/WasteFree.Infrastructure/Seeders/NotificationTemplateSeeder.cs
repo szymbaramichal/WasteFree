@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
 
 namespace WasteFree.Infrastructure.Seeders;
 

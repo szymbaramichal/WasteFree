@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace WasteFree.Business.Helpers;
+namespace WasteFree.Application.Helpers;
 
 public static class AesEncryptor
 {

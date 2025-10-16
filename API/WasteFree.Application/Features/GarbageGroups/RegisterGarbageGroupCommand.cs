@@ -1,15 +1,15 @@
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.GarbageGroups.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.GarbageGroups;
+namespace WasteFree.Application.Features.GarbageGroups;
 
-public record RegisterGarbageGroupCommand(string GroupName, string GroupDescription, string City, string PostalCode, string Address) : IRequest<GarbageGroupDto>;
+public record RegisterGarbageGroupCommand(string GroupName, string GroupDescription, Address Address) : IRequest<GarbageGroupDto>;
 
 public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
     ICurrentUserService currentUserService) : IRequestHandler<RegisterGarbageGroupCommand, GarbageGroupDto>
@@ -21,8 +21,6 @@ public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
             Id = Guid.CreateVersion7(),
             Name = request.GroupName,
             Description = request.GroupDescription,
-            City = request.City,
-            PostalCode = request.PostalCode,
             Address = request.Address,
             IsPrivate = false
         };

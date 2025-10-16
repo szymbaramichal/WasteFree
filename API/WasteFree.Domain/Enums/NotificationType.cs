@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Enums;
+﻿namespace WasteFree.Domain.Enums;
 
 /// <summary>
 /// High-level classification of notifications used in the system.

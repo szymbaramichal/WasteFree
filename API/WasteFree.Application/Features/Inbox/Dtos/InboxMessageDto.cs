@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WasteFree.Business.Features.Inbox.Dtos;
+namespace WasteFree.Application.Features.Inbox.Dtos;
 
 /// <summary>
 /// DTO representing a single inbox message.

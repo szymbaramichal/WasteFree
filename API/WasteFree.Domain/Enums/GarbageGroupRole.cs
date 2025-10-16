@@ -1,4 +1,4 @@
-namespace WasteFree.Shared.Enums;
+namespace WasteFree.Domain.Enums;
 
 /// <summary>
 /// Role of a user within a garbage group.

@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.GarbageGroups.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.GarbageGroups;
+namespace WasteFree.Application.Features.GarbageGroups;
 
 public record GetGarbageGroupsListQuery(Guid UserId) : IRequest<ICollection<GarbageGroupInfoDto>>;
 
@@ -17,6 +17,7 @@ public class GetWalletBalanceQueryHandler(ApplicationDataContext context)
         CancellationToken cancellationToken)
     {
         var userGroups = await context.UserGarbageGroups
+            .AsNoTracking()
             .FilterNonPrivate()
             .Include(x => x.GarbageGroup)
             .Where(x => x.UserId == request.UserId && !x.IsPending)
@@ -25,8 +26,6 @@ public class GetWalletBalanceQueryHandler(ApplicationDataContext context)
                 Id = x.GarbageGroupId,
                 Name = x.GarbageGroup.Name,
                 IsUserOwner = x.Role == GarbageGroupRole.Owner,
-                City = x.GarbageGroup.City,
-                PostalCode = x.GarbageGroup.PostalCode,
                 Address = x.GarbageGroup.Address
             })
             .ToListAsync(cancellationToken);

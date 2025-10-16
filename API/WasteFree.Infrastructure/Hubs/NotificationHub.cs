@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.SignalR;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Domain.Interfaces;
 
 namespace WasteFree.Infrastructure.Hubs;
 public class NotificationHub(ICurrentUserService currentUserService) : Hub

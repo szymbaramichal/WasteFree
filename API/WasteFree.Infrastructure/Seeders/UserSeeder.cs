@@ -1,8 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
+using WasteFree.Domain.Models;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
 namespace WasteFree.Infrastructure.Seeders;
 
@@ -28,7 +30,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
-                IsActive = true
+                IsActive = true,
+                Address = new Address { City = "Kraków", PostalCode = "30-001", Street = "ul. Floriańska 1" }
             },
             new User
             {
@@ -42,7 +45,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
-                IsActive = true
+                IsActive = true,
+                Address = new Address { City = "Kraków", PostalCode = "31-001", Street = "ul. Wawelska 10" }
             },
             new User
             {
@@ -56,7 +60,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
-                IsActive = true
+                IsActive = true,
+                Address = new Address { City = "Kraków", PostalCode = "30-062", Street = "ul. Straszewskiego 5" }
             },
             new User
             {
@@ -70,7 +75,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
-                IsActive = true
+                IsActive = true,
+                Address = new Address { City = "Warszawa", PostalCode = "00-001", Street = "ul. Nowy Świat 15" }
             },
             new User
             {
@@ -84,7 +90,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
-                IsActive = true
+                IsActive = true,
+                Address = new Address { City = "Warszawa", PostalCode = "00-002", Street = "ul. Krakowskie Przedmieście 20" }
             },
             // Garbage administrators
             new User
@@ -99,7 +106,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.GarbageAdmin,
                 LanguagePreference = LanguagePreference.Polish,
-                IsActive = true
+                IsActive = true,
+                Address = new Address { City = "Kraków", PostalCode = "30-001", Street = "ul. Długa 2" }
             },
             new User
             {
@@ -113,7 +121,8 @@ public class UserSeeder(ApplicationDataContext context)
                 CreatedBy = Guid.Empty,
                 Role = UserRole.GarbageAdmin,
                 LanguagePreference = LanguagePreference.Polish,
-                IsActive = true
+                IsActive = true,
+                Address = new Address { City = "Warszawa", PostalCode = "02-591", Street = "ul. Puławska 145" }
             }
         };
 
@@ -150,9 +159,12 @@ public class UserSeeder(ApplicationDataContext context)
                 Id = Guid.CreateVersion7(),
                 Name = $"{existingUser.Username} Private Group",
                 Description = $"Private garbage group for {existingUser.Username}",
-                City = existingUser.City ?? string.Empty,
-                PostalCode = string.Empty,
-                Address = string.Empty,
+                Address = new Address
+                {
+                    City = existingUser.Address.City,
+                    PostalCode = string.Empty,
+                    Street = string.Empty
+                },
                 IsPrivate = true
             };
 

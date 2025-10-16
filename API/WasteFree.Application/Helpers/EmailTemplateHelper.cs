@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace WasteFree.Business.Helpers;
+namespace WasteFree.Application.Helpers;
 
 public static class EmailTemplateHelper
 {

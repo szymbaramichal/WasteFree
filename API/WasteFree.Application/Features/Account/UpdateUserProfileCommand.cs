@@ -1,14 +1,14 @@
 ﻿using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Account.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Account.Dtos;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Account;
+namespace WasteFree.Application.Features.Account;
 
-public record UpdateUserProfileCommand(Guid UserId, string Description, string BankAccountNumber, string City) :
+public record UpdateUserProfileCommand(Guid UserId, string Description, string BankAccountNumber, Address Address) :
     IRequest<ProfileDto>;
 
 public class UpdateUserProfileCommandHandler(ApplicationDataContext context) : IRequestHandler<UpdateUserProfileCommand, ProfileDto>
@@ -22,9 +22,9 @@ public class UpdateUserProfileCommandHandler(ApplicationDataContext context) : I
         if (user is null)
             return Result<ProfileDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
 
-    user.Description = request.Description;
+        user.Description = request.Description;
         user.Wallet.WithdrawalAccountNumber = request.BankAccountNumber;
-    user.City = request.City;
+        user.Address = request.Address;
 
         await context.SaveChangesAsync(cancellationToken);
         

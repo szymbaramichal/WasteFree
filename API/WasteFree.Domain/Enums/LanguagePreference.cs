@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Enums;
+﻿namespace WasteFree.Domain.Enums;
 
 /// <summary>
 /// Language preference options for a user or localized content.

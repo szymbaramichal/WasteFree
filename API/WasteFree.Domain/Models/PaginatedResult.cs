@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json.Serialization;
 
-namespace WasteFree.Shared.Models;
+namespace WasteFree.Domain.Models;
 
 /// <summary>
 /// Specialized result wrapper that adds pagination metadata. Use this only for endpoints that return paged data

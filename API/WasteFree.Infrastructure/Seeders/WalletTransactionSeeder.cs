@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
 
 namespace WasteFree.Infrastructure.Seeders;
 
@@ -41,6 +41,7 @@ public class WalletTransactionSeeder(ApplicationDataContext context)
 
             await context.WalletTransactions.AddAsync(new WalletTransaction
             {
+                Id = Guid.CreateVersion7(),
                 WalletId = walletId,
                 Amount = transaction.Amount,
                 TransactionType = transaction.Type

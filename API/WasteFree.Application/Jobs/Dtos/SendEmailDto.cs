@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Business.Jobs.Dtos;
+﻿namespace WasteFree.Application.Jobs.Dtos;
 
 public class SendEmailDto
 {

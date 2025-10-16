@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace WasteFree.Business.Helpers;
+namespace WasteFree.Application.Helpers;
 
 public static class TokenHelper
 {

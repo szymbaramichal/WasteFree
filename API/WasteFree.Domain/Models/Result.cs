@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json.Serialization;
 
-namespace WasteFree.Shared.Models;
+namespace WasteFree.Domain.Models;
 
 /// <summary>
 /// Wrapper used by API responses to return either a successful result or an error.

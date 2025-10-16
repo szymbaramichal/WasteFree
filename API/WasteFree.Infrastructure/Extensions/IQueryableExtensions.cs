@@ -1,5 +1,5 @@
-﻿using WasteFree.Shared.Entities;
-using WasteFree.Shared.Models;
+﻿using WasteFree.Domain.Entities;
+using WasteFree.Domain.Models;
 
 namespace WasteFree.Infrastructure.Extensions;
 

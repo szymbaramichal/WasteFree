@@ -1,12 +1,12 @@
 ﻿using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Wallet.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Wallet.Dtos;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Wallet;
+namespace WasteFree.Application.Features.Wallet;
 
 public record GetWalletBalanceQuery(Guid UserId) : IRequest<BalanceDto>;
 

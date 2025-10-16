@@ -1,6 +1,6 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Domain.Interfaces;
 
 namespace WasteFree.Infrastructure.Services;
 

@@ -1,14 +1,14 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Account.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Account.Dtos;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Account;
+namespace WasteFree.Application.Features.Account;
 
 public record UploadAvatarCommand(Guid UserId, IFormFile Avatar) : IRequest<ProfileDto>;
 

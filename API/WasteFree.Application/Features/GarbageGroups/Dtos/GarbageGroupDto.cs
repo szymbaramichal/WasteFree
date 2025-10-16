@@ -1,6 +1,7 @@
-using WasteFree.Shared.Entities;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.GarbageGroups.Dtos;
+namespace WasteFree.Application.Features.GarbageGroups.Dtos;
 
 /// <summary>
 /// DTO representing a garbage group with its metadata and members.
@@ -23,19 +24,9 @@ public class GarbageGroupDto
     public required string Description { get; set; }
 
     /// <summary>
-    /// City where the garbage group is located.
-    /// </summary>
-    public required string City { get; set; }
-
-    /// <summary>
-    /// Postal code associated with the garbage group's address.
-    /// </summary>
-    public required string PostalCode { get; set; }
-
-    /// <summary>
     /// Street address of the garbage group.
     /// </summary>
-    public required string Address { get; set; }
+    public required Address Address { get; set; }
 
     
     /// <summary>
@@ -57,8 +48,6 @@ public static class GarbageGroupDtoExtensions
             Name = garbageGroup.Name,
             Id = garbageGroup.Id,
             Users = garbageGroupUsers,
-            City = garbageGroup.City,
-            PostalCode = garbageGroup.PostalCode,
             Address = garbageGroup.Address
         };
     }

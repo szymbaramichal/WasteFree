@@ -1,6 +1,6 @@
-﻿using WasteFree.Shared.Models;
+﻿using WasteFree.Domain.Models;
 
-namespace WasteFree.Shared.Entities;
+namespace WasteFree.Domain.Entities;
 
 public class Wallet : DatabaseEntity
 {

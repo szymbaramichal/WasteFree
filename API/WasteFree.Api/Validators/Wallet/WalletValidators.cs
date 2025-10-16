@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
-using WasteFree.App.Endpoints;
-using WasteFree.Shared.Constants;
+using WasteFree.Api.Endpoints;
+using WasteFree.Domain.Constants;
 
-namespace WasteFree.App.Validators.Wallet;
+namespace WasteFree.Api.Validators.Wallet;
 
 public class MakePaymentRequestValidator : AbstractValidator<WalletTransactionRequest>
 {

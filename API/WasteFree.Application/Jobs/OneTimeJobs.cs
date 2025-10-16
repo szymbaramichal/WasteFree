@@ -1,9 +1,9 @@
 ﻿using TickerQ.Utilities.Base;
 using TickerQ.Utilities.Models;
-using WasteFree.Business.Jobs.Dtos;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Application.Jobs.Dtos;
+using WasteFree.Domain.Interfaces;
 
-namespace WasteFree.Business.Jobs;
+namespace WasteFree.Application.Jobs;
 
 public class OneTimeJobs(IEmailService emailService)
 {

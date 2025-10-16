@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Abstractions.Messaging;
+namespace WasteFree.Application.Abstractions.Messaging;
 
 public interface IMediator
 {

@@ -1,7 +1,7 @@
-﻿using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
+﻿using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
 
-namespace WasteFree.Business.Features;
+namespace WasteFree.Application.Features;
 
 /// <summary>
 /// Data transfer object for a user returned by the API.

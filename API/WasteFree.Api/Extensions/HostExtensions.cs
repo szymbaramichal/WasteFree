@@ -4,7 +4,7 @@ using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Seeders;
 using WasteFree.Infrastructure.Services;
 
-namespace WasteFree.App.Extensions;
+namespace WasteFree.Api.Extensions;
 
 public static class HostExtensions
 {

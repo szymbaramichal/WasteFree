@@ -1,6 +1,6 @@
-﻿using WasteFree.Shared.Enums;
+﻿using WasteFree.Domain.Enums;
 
-namespace WasteFree.Business.Features.Wallet.Dtos;
+namespace WasteFree.Application.Features.Wallet.Dtos;
 
 /// <summary>
 /// DTO representing a payment transaction and its status.

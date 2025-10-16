@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Business.Features.Auth.Dtos;
+﻿namespace WasteFree.Application.Features.Auth.Dtos;
 
 /// <summary>
 /// DTO used to activate a user account by Id.

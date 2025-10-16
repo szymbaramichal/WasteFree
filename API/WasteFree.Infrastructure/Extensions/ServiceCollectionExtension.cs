@@ -6,7 +6,7 @@ using TickerQ.DependencyInjection;
 using TickerQ.EntityFrameworkCore.DependencyInjection;
 using WasteFree.Infrastructure.Seeders;
 using WasteFree.Infrastructure.Services;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Domain.Interfaces;
 
 namespace WasteFree.Infrastructure.Extensions;
 

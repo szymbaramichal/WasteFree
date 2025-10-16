@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Business.Features.Wallet.Dtos;
+﻿namespace WasteFree.Application.Features.Wallet.Dtos;
 
 /// <summary>
 /// DTO returned for wallet balance queries.

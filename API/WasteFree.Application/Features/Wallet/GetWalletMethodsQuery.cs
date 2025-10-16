@@ -1,8 +1,8 @@
-﻿using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Models;
+﻿using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Wallet;
+namespace WasteFree.Application.Features.Wallet;
 
 public record GetWalletMethodsQuery : IRequest<IReadOnlyCollection<WalletMethod>>;
 

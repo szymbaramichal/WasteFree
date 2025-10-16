@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Enums;
+﻿namespace WasteFree.Domain.Enums;
 
 /// <summary>
 /// Indicates the current status of a payment transaction.

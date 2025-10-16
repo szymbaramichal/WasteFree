@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Interfaces
+﻿namespace WasteFree.Domain.Interfaces
 {
     public interface ICurrentUserService
     {

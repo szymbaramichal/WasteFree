@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Models;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Shared.Entities;
+namespace WasteFree.Domain.Entities;
 
 public class User : DatabaseEntity
 {
@@ -27,8 +28,7 @@ public class User : DatabaseEntity
 
     public string? AvatarName { get; set; }
     
-    [MaxLength(100)]
-    public string? City { get; set; }
+    public required Address Address { get; set; } = new();
     
     public ICollection<UserGarbageGroup> UserGarbageGroups { get; set; } = new List<UserGarbageGroup>();
     public ICollection<InboxNotification> InboxNotifications { get; set; } = new List<InboxNotification>();

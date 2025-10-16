@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Constants;
+﻿namespace WasteFree.Domain.Constants;
 
 public static class BlobContainerNames
 {

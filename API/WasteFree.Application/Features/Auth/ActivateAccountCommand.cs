@@ -1,16 +1,16 @@
 ﻿using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Auth.Dtos;
-using WasteFree.Business.Helpers;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Auth.Dtos;
+using WasteFree.Application.Helpers;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Auth;
+namespace WasteFree.Application.Features.Auth;
 
 public record ActivateAccountCommand(string AesToken) : IRequest<ActivateAccountDto>;
 
@@ -38,7 +38,7 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
 
             user.IsActive = true;
 
-            var wallet = new WasteFree.Shared.Entities.Wallet
+            var wallet = new WasteFree.Domain.Entities.Wallet
             {
                 UserId = user.Id,
                 Funds = 0.00
@@ -49,9 +49,7 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
                 Id = Guid.CreateVersion7(),
                 Name = $"{user.Username} Private Group",
                 Description = $"Private garbage group for {user.Username}",
-                City = user.City ?? string.Empty,
-                PostalCode = string.Empty,
-                Address = string.Empty,
+                Address = user.Address,
                 IsPrivate = true
             };
 

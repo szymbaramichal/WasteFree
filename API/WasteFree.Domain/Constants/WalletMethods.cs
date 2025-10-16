@@ -1,6 +1,6 @@
-﻿using WasteFree.Shared.Enums;
+﻿using WasteFree.Domain.Enums;
 
-namespace WasteFree.Shared.Constants;
+namespace WasteFree.Domain.Constants;
 
 public static class WalletMethods
 {

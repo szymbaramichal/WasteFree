@@ -1,14 +1,14 @@
 ﻿using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Helpers;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Helpers;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Auth;
+namespace WasteFree.Application.Features.Auth;
 
 public record LoginUserCommand(string Username, string Password) : IRequest<UserDto>;
 

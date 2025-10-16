@@ -1,20 +1,20 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Helpers;
-using WasteFree.Business.Jobs;
-using WasteFree.Business.Jobs.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Helpers;
+using WasteFree.Application.Jobs;
+using WasteFree.Application.Jobs.Dtos;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
 using WasteFree.Infrastructure.Hubs;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.GarbageGroups;
+namespace WasteFree.Application.Features.GarbageGroups;
 
 public record InviteToGarbageGroupCommand(Guid GroupId, string UsernameToInvite) : IRequest<bool>;
 

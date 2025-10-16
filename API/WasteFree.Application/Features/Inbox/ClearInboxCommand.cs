@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
+using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Inbox;
+namespace WasteFree.Application.Features.Inbox;
 
 public record ClearInboxCommand(Guid UserId) : IRequest<bool>;
 

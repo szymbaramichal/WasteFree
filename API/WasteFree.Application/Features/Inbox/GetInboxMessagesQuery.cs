@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Inbox.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Inbox.Dtos;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Inbox;
+namespace WasteFree.Application.Features.Inbox;
 
 public record GetInboxMessagesQuery(Guid UserId, Pager Pager)  : IRequest<ICollection<InboxMessageDto>>;
 

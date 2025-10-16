@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Localization;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.App.Endpoints;
+namespace WasteFree.Api.Endpoints;
 
 public static class CitiesEndpoints
 {

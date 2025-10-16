@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WasteFree.Shared.Models;
+namespace WasteFree.Domain.Models;
 
 /// <summary>
 /// Represents paging metadata for paginated responses.

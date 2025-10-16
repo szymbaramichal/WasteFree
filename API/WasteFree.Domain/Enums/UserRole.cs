@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Enums;
+﻿namespace WasteFree.Domain.Enums;
 
 /// <summary>
 /// Global user roles used for authorization and role-based UI behavior.

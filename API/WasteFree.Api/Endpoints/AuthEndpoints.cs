@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using WasteFree.App.Filters;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features;
-using WasteFree.Business.Features.Auth;
-using WasteFree.Business.Features.Auth.Dtos;
-using WasteFree.Shared.Models;
+using WasteFree.Api.Filters;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features;
+using WasteFree.Application.Features.Auth;
+using WasteFree.Application.Features.Auth.Dtos;
+using WasteFree.Domain.Models;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.App.Endpoints;
+namespace WasteFree.Api.Endpoints;
 
 public static class AuthEndpoints
 {
@@ -49,7 +50,7 @@ public static class AuthEndpoints
         CancellationToken cancellationToken)
     {
         var command = new RegisterUserCommand(request.Email, request.Username, request.Password,
-            request.Role, request.LanguagePreference);
+            request.Role, request.LanguagePreference, request.Address);
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
@@ -134,6 +135,11 @@ public record RegisterUserRequest
     /// Preferred language code for localized communication.
     /// </summary>
     public string LanguagePreference { get; init; } = string.Empty;
+    
+    /// <summary>
+    /// Address object
+    /// </summary>
+    public required Address Address { get; set; }
 }
 
 /// <summary>

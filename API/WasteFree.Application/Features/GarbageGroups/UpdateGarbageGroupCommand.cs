@@ -1,22 +1,20 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.GarbageGroups.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.GarbageGroups.Dtos;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.GarbageGroups;
+namespace WasteFree.Application.Features.GarbageGroups;
 
 public record UpdateGarbageGroupCommand(Guid GroupId,
     Guid CurrentUserId,
     string GroupName,
     string GroupDescription,
-    string City,
-    string PostalCode,
-    string Address) : IRequest<GarbageGroupDto>;
+    Address Address) : IRequest<GarbageGroupDto>;
 
 public class UpdateGarbageGroupCommandHandler(ApplicationDataContext context) 
     : IRequestHandler<UpdateGarbageGroupCommand, GarbageGroupDto>
@@ -43,8 +41,6 @@ public class UpdateGarbageGroupCommandHandler(ApplicationDataContext context)
 
         garbageGroup.Name = request.GroupName;
         garbageGroup.Description = request.GroupDescription;
-        garbageGroup.City = request.City;
-        garbageGroup.PostalCode = request.PostalCode;
         garbageGroup.Address = request.Address;
 
         await context.SaveChangesAsync(cancellationToken);

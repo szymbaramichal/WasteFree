@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
 
 namespace WasteFree.Infrastructure.Seeders;
 
@@ -59,6 +59,7 @@ public class InboxNotificationSeeder(ApplicationDataContext context)
 
             await context.InboxNotifications.AddAsync(new InboxNotification
             {
+                Id = Guid.CreateVersion7(),
                 UserId = userId,
                 Title = notification.Title,
                 Message = notification.Message,

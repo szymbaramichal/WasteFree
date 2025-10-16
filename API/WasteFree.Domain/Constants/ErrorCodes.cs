@@ -1,4 +1,4 @@
-﻿namespace WasteFree.Shared.Constants;
+﻿namespace WasteFree.Domain.Constants;
 
 public static class ApiErrorCodes
 {
@@ -35,7 +35,7 @@ public static class ValidationErrorCodes
     public const string GroupCityRequired = "ERR_GROUP_CITY_REQUIRED";
     public const string GroupPostalCodeRequired = "ERR_GROUP_POSTAL_CODE_REQUIRED";
     public const string GroupPostalCodeInvalid = "ERR_GROUP_POSTAL_CODE_INVALID";
-    public const string GroupAddressRequired = "ERR_GROUP_ADDRESS_REQUIRED";
+    public const string GroupStreetRequired = "ERR_GROUP_STREET_REQUIRED";
     public const string InvalidRole = "INVALID_ROLE";
     public const string InvalidLang = "INVALID_LANG";
     

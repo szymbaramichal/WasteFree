@@ -3,20 +3,21 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Helpers;
-using WasteFree.Business.Jobs;
-using WasteFree.Business.Jobs.Dtos;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Helpers;
+using WasteFree.Application.Jobs;
+using WasteFree.Application.Jobs.Dtos;
 using WasteFree.Infrastructure;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.Auth;
+namespace WasteFree.Application.Features.Auth;
 
-public record RegisterUserCommand(string Email, string Username, string Password, string Role, string LanguagePreference) 
+public record RegisterUserCommand(string Email, string Username, string Password, string Role, 
+    string LanguagePreference, Address Address) 
     : IRequest<UserDto>;
 
 public class RegisterUserCommandHandler(ApplicationDataContext context, 
@@ -45,8 +46,11 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             PasswordHash = hashAndSalt.passwordHash,
             PasswordSalt = hashAndSalt.passwordSalt,
             Username = command.Username,
-            Role = Enum.TryParse<UserRole>(command.Role, true, out var role) ? role : UserRole.User,
-            LanguagePreference= Enum.TryParse<LanguagePreference>(command.LanguagePreference, true, out var language) ? language : LanguagePreference.English,
+            Role = Enum.TryParse<UserRole>(command.Role, true, out var role) 
+                ? role : UserRole.User,
+            LanguagePreference= Enum.TryParse<LanguagePreference>(command.LanguagePreference, true, out var language) 
+                ? language : LanguagePreference.English,
+            Address = command.Address
         };
         
         context.Users.Add(newUser);

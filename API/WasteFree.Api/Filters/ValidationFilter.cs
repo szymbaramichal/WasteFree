@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace WasteFree.App.Filters;
+namespace WasteFree.Api.Filters;
 
 public sealed class ValidationFilter<T> : IEndpointFilter where T : class
 {

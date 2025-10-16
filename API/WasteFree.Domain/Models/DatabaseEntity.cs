@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WasteFree.Shared.Models;
+namespace WasteFree.Domain.Models;
 
 public class DatabaseEntity
 {

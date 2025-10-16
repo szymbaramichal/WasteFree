@@ -9,7 +9,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace WasteFree.App.Swagger;
+namespace WasteFree.Api.Swagger;
 
 public sealed class EnumDescriptionsSchemaFilter : ISchemaFilter
 {

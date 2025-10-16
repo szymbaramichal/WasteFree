@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Account;
-using WasteFree.Business.Features.Account.Dtos;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Account;
+using WasteFree.Application.Features.Account.Dtos;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.App.Endpoints;
+namespace WasteFree.Api.Endpoints;
 
 public static class AccountEndpoints
 {
@@ -52,7 +52,7 @@ public static class AccountEndpoints
         CancellationToken cancellationToken)
     {
         var result = await mediator.SendAsync(new UpdateUserProfileCommand(currentUserService.UserId,
-                request.Description, request.BankAccountNumber, request.City),
+                request.Description, request.BankAccountNumber, request.Address),
             cancellationToken);
 
         if (!result.IsValid)
@@ -124,9 +124,9 @@ public record UpdateProfileRequest
     public string BankAccountNumber { get; init; } = string.Empty;
 
     /// <summary>
-    /// City in which the user resides.
+    /// Address object
     /// </summary>
-    public string City { get; init; } = string.Empty;
+    public required Address Address { get; init; }
 }
 
 /// <summary>

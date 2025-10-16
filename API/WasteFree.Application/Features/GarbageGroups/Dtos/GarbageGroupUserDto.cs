@@ -1,7 +1,7 @@
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
 
-namespace WasteFree.Business.Features.GarbageGroups.Dtos;
+namespace WasteFree.Application.Features.GarbageGroups.Dtos;
 
 /// <summary>
 /// DTO representing a user that is a member of a garbage group.

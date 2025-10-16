@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Inbox;
-using WasteFree.Business.Features.Inbox.Dtos;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Inbox;
+using WasteFree.Application.Features.Inbox.Dtos;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.App.Endpoints;
+namespace WasteFree.Api.Endpoints;
 
 public static class InboxEndpoints
 {

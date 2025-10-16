@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WasteFree.App.Resources {
+namespace WasteFree.Api.Resources {
     using System;
     
     

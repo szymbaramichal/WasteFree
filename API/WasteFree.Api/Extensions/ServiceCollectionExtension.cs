@@ -2,12 +2,12 @@
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using WasteFree.App.Services;
-using WasteFree.Business.Extensions;
+using WasteFree.Api.Services;
+using WasteFree.Application.Extensions;
 using WasteFree.Infrastructure.Extensions;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Domain.Interfaces;
 
-namespace WasteFree.App.Extensions;
+namespace WasteFree.Api.Extensions;
 
 public static class ServiceCollectionExtension
 {

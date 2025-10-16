@@ -1,7 +1,7 @@
-﻿using WasteFree.Shared.Constants;
-using WasteFree.Shared.Enums;
+﻿using WasteFree.Domain.Constants;
+using WasteFree.Domain.Enums;
 
-namespace WasteFree.App.Extensions;
+namespace WasteFree.Api.Extensions;
 
 public static class AuthorizationExtensions
 {

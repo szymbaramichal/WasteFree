@@ -1,10 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.Localization;
-using WasteFree.App.Endpoints;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Enums;
+using WasteFree.Api.Endpoints;
+using WasteFree.Api.Validators.Shared;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Enums;
 
-namespace WasteFree.App.Validators.Auth;
+namespace WasteFree.Api.Validators.Auth;
 
 public class RegisterUserRequestValidator : AbstractValidator<RegisterUserRequest>
 {
@@ -26,6 +27,8 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
             .MinimumLength(8)
             .WithMessage(localizer[ValidationErrorCodes.PasswordTooShort]);
         
+        RuleFor(x => x.Address)
+            .SetValidator(new AddressValidator(localizer));  
         
         RuleFor(x => x.Role)
             .Must(role => role.Equals(nameof(UserRole.User), StringComparison.InvariantCultureIgnoreCase) || 

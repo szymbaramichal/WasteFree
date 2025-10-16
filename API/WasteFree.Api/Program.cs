@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Localization;
 using Scalar.AspNetCore;
 using TickerQ.DependencyInjection;
-using WasteFree.App.Endpoints;
-using WasteFree.App.Extensions;
+using WasteFree.Api.Endpoints;
+using WasteFree.Api.Extensions;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Hubs;
 using Microsoft.OpenApi.Models;
@@ -55,7 +55,7 @@ builder.Services.AddSwaggerGen(opt =>
     }
 
     // Add schema filter that injects enum member descriptions (from XML comments) into schema.Description and x-enumDescriptions
-    opt.SchemaFilter<WasteFree.App.Swagger.EnumDescriptionsSchemaFilter>();
+    opt.SchemaFilter<WasteFree.Api.Swagger.EnumDescriptionsSchemaFilter>();
 });
 
 

@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Domain.Interfaces;
 
-namespace WasteFree.App.Services;
+namespace WasteFree.Api.Services;
 
 public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService
 {

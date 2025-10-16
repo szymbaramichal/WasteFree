@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace WasteFree.Business.Helpers;
+namespace WasteFree.Application.Helpers;
 
 public static class PasswordHasher
 {

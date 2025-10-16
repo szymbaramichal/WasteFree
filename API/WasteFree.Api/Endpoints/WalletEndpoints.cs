@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
-using WasteFree.App.Filters;
-using WasteFree.Business.Abstractions.Messaging;
-using WasteFree.Business.Features.Wallet;
-using WasteFree.Business.Features.Wallet.Dtos;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Api.Filters;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.Wallet;
+using WasteFree.Application.Features.Wallet.Dtos;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.App.Endpoints;
+namespace WasteFree.Api.Endpoints;
 
 public static class WalletEndpoints
 {

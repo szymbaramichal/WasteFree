@@ -1,7 +1,7 @@
 ﻿using TickerQ.Utilities;
 using TickerQ.Utilities.Interfaces.Managers;
 using TickerQ.Utilities.Models.Ticker;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Domain.Interfaces;
 
 namespace WasteFree.Infrastructure.Services;
 

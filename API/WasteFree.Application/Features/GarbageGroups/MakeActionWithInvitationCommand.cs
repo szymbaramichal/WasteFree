@@ -1,12 +1,12 @@
 ﻿using System.Net;
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Business.Abstractions.Messaging;
+using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
-using WasteFree.Shared.Constants;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Models;
 
-namespace WasteFree.Business.Features.GarbageGroups;
+namespace WasteFree.Application.Features.GarbageGroups;
 
 public record MakeActionWithInvitationCommand(Guid UserId, Guid GroupId, bool MakeAction) : IRequest<bool>;
 
@@ -34,7 +34,7 @@ public class MakeActionWithInvitationCommandHandler(ApplicationDataContext appli
         await applicationDataContext.InboxNotifications
                 .Where(x => x.UserId == request.UserId 
                     && x.RelatedEntityId == pendingInvitation.GarbageGroupId 
-                    && x.ActionType == Shared.Enums.InboxActionType.GroupInvitation)
+                    && x.ActionType == Domain.Enums.InboxActionType.GroupInvitation)
                 .ExecuteDeleteAsync(cancellationToken);
 
         await applicationDataContext.SaveChangesAsync(cancellationToken);
