@@ -43,6 +43,7 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DB_CONN_STRING: ${{ secrets.DB_CONN_STRING }}
+          AZURE_BLOB_STORAGE_CONN_STRING: ${{ secrets.AZURE_BLOB_STORAGE_CONN_STRING }}
           INTEGRATIONS__SMTP__PASSWORD: ${{ secrets.INTEGRATIONS__SMTP__PASSWORD }}
           SECURITY__AESENCRYPTIONKEY: ${{ secrets.SECURITY__AESENCRYPTIONKEY }}
           TICKERQBASICAUTH__USERNAME: ${{ secrets.TICKERQBASICAUTH__USERNAME }}
@@ -53,7 +54,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
-          envs: DOCKERHUB_USERNAME,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD,SECURITY__AESENCRYPTIONKEY,TICKERQBASICAUTH__USERNAME,TICKERQBASICAUTH__PASSWORD,SECURITY__JWT__KEY
+          envs: DOCKERHUB_USERNAME,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD,SECURITY__AESENCRYPTIONKEY,TICKERQBASICAUTH__USERNAME,TICKERQBASICAUTH__PASSWORD,SECURITY__JWT__KEY,AZURE_BLOB_STORAGE_CONN_STRING
           script: |
             set -euo pipefail
 
@@ -68,7 +69,8 @@ jobs:
             docker pull "$IMAGE"
             docker run -d --restart unless-stopped --name wastefree-api \
               -p 8080:8080 \
-              -e "ConnectionStrings__SqlServerDatabase=$DB_CONN_STRING" \
+              -e "ConnectionStrings__Database=$DB_CONN_STRING" \
+              -e "ConnectionStrings__BlobStorage=$AZURE_BLOB_STORAGE_CONN_STRING" \
               -e "Integrations__Smtp__Password=$INTEGRATIONS__SMTP__PASSWORD" \
               -e "Security__AesEncryptionKey=$SECURITY__AESENCRYPTIONKEY" \
               -e "TickerQBasicAuth__Username=$TICKERQBASICAUTH__USERNAME" \

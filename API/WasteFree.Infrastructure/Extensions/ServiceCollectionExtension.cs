@@ -14,7 +14,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("SqlServerDatabase");
+        var connectionString = configuration.GetConnectionString("Database");
         services.AddDbContext<ApplicationDataContext>(opt => {
             opt.UseSqlite(connectionString);
         });
@@ -67,7 +67,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<InboxNotificationSeeder>();
         services.AddScoped<NotificationTemplateSeeder>();
         
-        var blobConn = configuration["Integrations:BlobStorage:ConnectionString"];
+        var blobConn = configuration.GetConnectionString("BlobStorage");
         services.AddSingleton<IBlobStorageService>(_ => new AzureBlobStorageService(blobConn));
         
         return services;
