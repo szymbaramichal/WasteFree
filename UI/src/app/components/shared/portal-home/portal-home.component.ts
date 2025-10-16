@@ -1,10 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { RouterModule } from '@angular/router';
-import { InboxService } from '../services/inbox.service';
-import { WalletService } from '../services/wallet.service';
-import { CurrentUserService } from '../services/current-user.service';
+import { InboxService } from '@app/services/inbox.service';
+import { WalletService } from '@app/services/wallet.service';
+import { CurrentUserService } from '@app/services/current-user.service';
 
 @Component({
   selector: 'app-portal-home',

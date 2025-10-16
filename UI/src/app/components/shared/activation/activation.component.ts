@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { TranslatePipe } from '../pipes/translate.pipe';
-import { TranslationService } from '../services/translation.service';
-import { AuthService } from '../services/auth.service';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { TranslationService } from '@app/services/translation.service';
+import { AuthService } from '@app/services/auth.service';
 
 @Component({
   selector: 'app-activation',

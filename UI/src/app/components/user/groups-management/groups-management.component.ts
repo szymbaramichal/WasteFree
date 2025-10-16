@@ -1,13 +1,13 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GarbageGroupInfo, GarbageGroupInvitation, RegisterGarbageGroupRequest } from '../_models/garbageGroups';
-import { GarbageGroupService } from '../services/garbage-group.service';
+import { GarbageGroupInfo, GarbageGroupInvitation, RegisterGarbageGroupRequest } from '@app/_models/garbageGroups';
+import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { ToastrService } from 'ngx-toastr';
-import { TranslationService } from '../services/translation.service';
+import { TranslationService } from '@app/services/translation.service';
 
 @Component({
   selector: 'app-groups-management',

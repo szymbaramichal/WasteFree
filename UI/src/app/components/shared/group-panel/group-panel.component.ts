@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { TranslatePipe } from '../pipes/translate.pipe';
-import { GarbageGroup, GarbageGroupInfo, GarbageGroupRole } from '../_models/garbageGroups';
-import { GarbageGroupService } from '../services/garbage-group.service';
-import { TranslationService } from '../services/translation.service';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { GarbageGroup, GarbageGroupInfo, GarbageGroupRole } from '@app/_models/garbageGroups';
+import { GarbageGroupService } from '@app/services/garbage-group.service';
+import { TranslationService } from '@app/services/translation.service';
 import { ToastrService } from 'ngx-toastr';
-import { CurrentUserService } from '../services/current-user.service';
+import { CurrentUserService } from '@app/services/current-user.service';
 
 @Component({
   selector: 'app-group-panel',

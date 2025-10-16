@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { WalletService } from '../services/wallet.service';
-import { PaymentStatus } from '../_models/wallet';
+import { WalletService } from '@app/services/wallet.service';
+import { PaymentStatus } from '@app/_models/wallet';
 import { RouterModule } from '@angular/router';
-import { TranslatePipe } from '../pipes/translate.pipe';
-import { TranslationService } from '../services/translation.service';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { TranslationService } from '@app/services/translation.service';
 import { Subscription } from 'rxjs';
-import { ProfileService } from '../services/profile.service';
+import { ProfileService } from '@app/services/profile.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

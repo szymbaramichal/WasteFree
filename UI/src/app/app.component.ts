@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TranslationService } from './services/translation.service';
-import { LanguageSwitcherComponent } from './language-switcher/language-switcher.component';
-import { TopbarComponent } from './topbar/topbar.component';
-import { LoaderOverlayComponent } from './loader-overlay/loader-overlay.component';
+import { TranslationService } from '@app/services/translation.service';
+import { LanguageSwitcherComponent } from '@components/shared/language-switcher/language-switcher.component';
+import { TopbarComponent } from '@components/shared/topbar/topbar.component';
+import { LoaderOverlayComponent } from '@components/shared/loader-overlay/loader-overlay.component';
 import { ToastrService } from 'ngx-toastr';
-import { SignalRService } from './services/signalr.service';
+import { SignalRService } from '@app/services/signalr.service';
 
 @Component({
   selector: 'app-root',

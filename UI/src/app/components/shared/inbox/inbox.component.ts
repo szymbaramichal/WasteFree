@@ -1,12 +1,12 @@
 import { Component, signal, inject, computed } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
-import { InboxService } from '../services/inbox.service';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { InboxService } from '@app/services/inbox.service';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { RouterModule } from '@angular/router';
-import { NotificationItem } from '../_models/inbox';
+import { NotificationItem } from '@app/_models/inbox';
 import { ToastrService } from 'ngx-toastr';
-import { TranslationService } from '../services/translation.service';
+import { TranslationService } from '@app/services/translation.service';
 
 @Component({
   selector: 'app-inbox',

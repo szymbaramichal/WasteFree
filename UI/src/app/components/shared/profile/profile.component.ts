@@ -1,11 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '../pipes/translate.pipe';
-import { ProfileService } from '../services/profile.service';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { ProfileService } from '@app/services/profile.service';
 import { ToastrService } from 'ngx-toastr';
-import { TranslationService } from '../services/translation.service';
-import { CityService } from '../services/city.service';
+import { TranslationService } from '@app/services/translation.service';
+import { CityService } from '@app/services/city.service';
 
 @Component({
   selector: 'app-profile',

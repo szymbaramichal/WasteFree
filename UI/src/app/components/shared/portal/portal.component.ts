@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CurrentUserService } from '../services/current-user.service';
+import { CurrentUserService } from '@app/services/current-user.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
 

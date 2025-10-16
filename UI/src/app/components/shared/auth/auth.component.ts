@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { CurrentUserService } from '../services/current-user.service';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { CurrentUserService } from '@app/services/current-user.service';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { Router, RouterModule } from '@angular/router';
-import { TranslationService } from '../services/translation.service';
+import { TranslationService } from '@app/services/translation.service';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { User, UserRole } from '../_models/user';
+import { AuthService } from '@app/services/auth.service';
+import { User, UserRole } from '@app/_models/user';
 
 @Component({
   selector: 'app-auth',

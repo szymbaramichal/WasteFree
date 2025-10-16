@@ -1,11 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule, NgIf, NgForOf, NgClass, SlicePipe } from '@angular/common';
-import { GarbageGroupInfo } from '../_models/garbageGroups';
-import { GarbageGroupService } from '../services/garbage-group.service';
+import { GarbageGroupInfo } from '@app/_models/garbageGroups';
+import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-groups',

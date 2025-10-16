@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LoaderService } from '../services/loader.service';
+import { LoaderService } from '@app/services/loader.service';
 import { AsyncPipe } from '@angular/common';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 
 @Component({
   selector: 'app-loader-overlay',

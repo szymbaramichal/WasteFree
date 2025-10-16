@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslatePipe } from '../pipes/translate.pipe';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { CommonModule } from '@angular/common';
-import { LoaderService } from '../services/loader.service';
-import { CityService } from '../services/city.service';
+import { LoaderService } from '@app/services/loader.service';
+import { CityService } from '@app/services/city.service';
 
 @Component({
   selector: 'app-home',

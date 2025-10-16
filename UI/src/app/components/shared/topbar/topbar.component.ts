@@ -1,14 +1,14 @@
 import { Component, EffectRef, OnDestroy, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CurrentUserService } from '../services/current-user.service';
+import { CurrentUserService } from '@app/services/current-user.service';
 import { AsyncPipe } from '@angular/common';
 import { Router, RouterModule, NavigationEnd, ActivatedRoute } from '@angular/router';
-import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
-import { TranslatePipe } from '../pipes/translate.pipe';
-import { WalletService } from '../services/wallet.service';
+import { LanguageSwitcherComponent } from '@components/shared/language-switcher/language-switcher.component';
+import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { WalletService } from '@app/services/wallet.service';
 import { filter } from 'rxjs/operators';
-import { UserRole } from '../_models/user';
-import { InboxService } from '../services/inbox.service';
+import { UserRole } from '@app/_models/user';
+import { InboxService } from '@app/services/inbox.service';
 
 @Component({
   selector: 'app-topbar',
