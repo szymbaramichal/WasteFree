@@ -5,6 +5,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
 import { ProfileService } from '../services/profile.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslationService } from '../services/translation.service';
+import { CityService } from '../services/city.service';
 
 @Component({
   selector: 'app-profile',
@@ -17,6 +18,7 @@ export class ProfileComponent implements OnInit {
   profileSvc = inject(ProfileService);
   toastr = inject(ToastrService);
   translationService = inject(TranslationService);
+  cityService = inject(CityService);
   
   editMode = false;
   draftDescription = '';
@@ -27,9 +29,13 @@ export class ProfileComponent implements OnInit {
   savingBank = false;
   ibanInvalid = false;
   citySaving = false;
+  citiesLoading = false;
+  citiesLoadError = false;
+  cities: string[] = [];
 
   ngOnInit(): void {
     this.profileSvc.refresh();
+    this.loadCities();
   }
 
   startEdit(current: string | undefined | null) {
@@ -101,6 +107,15 @@ export class ProfileComponent implements OnInit {
   }
 
   onCityChanged(city: string) {
+    if (this.citySaving) {
+      return;
+    }
+
+    const current = this.profileSvc.profile()?.city ?? '';
+    if (city === current) {
+      return;
+    }
+
     this.citySaving = true;
     this.profileSvc.updateProfile({ city }).subscribe({
       next: () => {
@@ -110,6 +125,26 @@ export class ProfileComponent implements OnInit {
       },
       error: () => {
         this.citySaving = false;
+        this.toastr.error(this.translationService.translate('profile.citySaveError'));
+      }
+    });
+  }
+
+  private loadCities(): void {
+    this.citiesLoading = true;
+    this.citiesLoadError = false;
+    this.cities = [];
+
+    this.cityService.getCitiesList().subscribe({
+      next: (res) => {
+        const list = res?.resultModel ?? [];
+        this.cities = Array.isArray(list) ? list : [];
+        this.citiesLoading = false;
+      },
+      error: () => {
+        this.citiesLoading = false;
+        this.citiesLoadError = true;
+        this.toastr.error(this.translationService.translate('profile.cityLoadError'));
       }
     });
   }
