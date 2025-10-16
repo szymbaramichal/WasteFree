@@ -42,4 +42,27 @@ public class AzureBlobStorageService : IBlobStorageService
 
         return sasUri.ToString();
     }
+
+    public async Task<string?> GetReadSasUrlAsync(string containerName, string blobName, TimeSpan ttl, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(containerName)) throw new ArgumentException("Container name must be provided.", nameof(containerName));
+        if (string.IsNullOrWhiteSpace(blobName)) return string.Empty;
+
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var blobClient = containerClient.GetBlobClient(blobName);
+
+        var exists = await blobClient.ExistsAsync(cancellationToken);
+        if (!exists.Value)
+        {
+            return null;
+        }
+
+        if (!blobClient.CanGenerateSasUri)
+        {
+            return null;
+        }
+
+        var sasUri = blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.Add(ttl));
+        return sasUri.ToString();
+    }
 }

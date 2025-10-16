@@ -5,13 +5,15 @@ using WasteFree.Business.Abstractions.Messaging;
 using WasteFree.Business.Helpers;
 using WasteFree.Infrastructure;
 using WasteFree.Shared.Constants;
+using WasteFree.Shared.Interfaces;
 using WasteFree.Shared.Models;
 
 namespace WasteFree.Business.Features.Auth;
 
 public record LoginUserCommand(string Username, string Password) : IRequest<UserDto>;
 
-public class LoginUserCommandHandler(ApplicationDataContext context, IConfiguration configuration) : IRequestHandler<LoginUserCommand, UserDto>
+public class LoginUserCommandHandler(ApplicationDataContext context, 
+    IConfiguration configuration, IBlobStorageService blobStorageService) : IRequestHandler<LoginUserCommand, UserDto>
 {
     public async Task<Result<UserDto>> HandleAsync(LoginUserCommand request, CancellationToken cancellationToken)
     {
@@ -31,8 +33,12 @@ public class LoginUserCommandHandler(ApplicationDataContext context, IConfigurat
         
         var token = TokenHelper.GenerateJwtToken(user.Username, user.Id.ToString(), (int)user.Role,
             configuration["Security:Jwt:Key"]);
+        
+        var avatarUrl = 
+            await blobStorageService.GetReadSasUrlAsync("avatars", user.AvatarName ?? string.Empty, 
+                TimeSpan.FromMinutes(5), cancellationToken);
 
-        var dto = user.MapToUserDto(token);
+        var dto = user.MapToUserDto(token, avatarUrl);
 
         return Result<UserDto>.Success(dto);
     }
