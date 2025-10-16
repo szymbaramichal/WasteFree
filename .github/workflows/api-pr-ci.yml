@@ -26,7 +26,7 @@ jobs:
         run: dotnet build API/WasteFree.sln --configuration Release --no-restore
 
       - name: Publish API
-        run: dotnet publish API/WasteFree.App/WasteFree.App.csproj --configuration Release --output ./publish
+        run: dotnet publish API/WasteFree.Api/WasteFree.Api.csproj --configuration Release --output ./publish
 
       - name: Build Docker image
         run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest -f API/Dockerfile ./API

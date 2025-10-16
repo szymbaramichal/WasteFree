@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WasteFree.App.Resources {
+namespace WasteFree.Api.Resources {
     using System;
     
     
@@ -21,14 +21,14 @@ namespace WasteFree.App.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Shared_en_US {
+    internal class Shared_pl_PL {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Shared_en_US() {
+        internal Shared_pl_PL() {
         }
         
         /// <summary>
@@ -38,7 +38,7 @@ namespace WasteFree.App.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WasteFree.App.Resources.Shared.en-US", typeof(Shared_en_US).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WasteFree.Api.Resources.Shared.pl-PL", typeof(Shared_pl_PL).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -56,15 +56,6 @@ namespace WasteFree.App.Resources {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to List of users.
-        /// </summary>
-        internal static string UserList {
-            get {
-                return ResourceManager.GetString("UserList", resourceCulture);
             }
         }
     }

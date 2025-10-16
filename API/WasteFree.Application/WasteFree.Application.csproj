@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\WasteFree.Shared\WasteFree.Shared.csproj" />
+    <ProjectReference Include="..\WasteFree.Domain\WasteFree.Domain.csproj" />
     <ProjectReference Include="..\WasteFree.Infrastructure\WasteFree.Infrastructure.csproj" />
   </ItemGroup>
 
@@ -13,8 +13,8 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  <NoWarn>$(NoWarn);1591</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
 </Project>

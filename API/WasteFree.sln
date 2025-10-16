@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.App", "WasteFree.App\WasteFree.App.csproj", "{54B0C054-39CB-4AA7-AE4A-0B1B0C1A36FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Api", "WasteFree.Api\WasteFree.Api.csproj", "{54B0C054-39CB-4AA7-AE4A-0B1B0C1A36FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Business", "WasteFree.Business\WasteFree.Business.csproj", "{5013980D-AF74-479F-AF9A-34376ABBB357}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Application", "WasteFree.Application\WasteFree.Application.csproj", "{5013980D-AF74-479F-AF9A-34376ABBB357}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Shared", "WasteFree.Shared\WasteFree.Shared.csproj", "{3602BE2B-6120-4D2A-9923-FCB2D30E0FC5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Domain", "WasteFree.Domain\WasteFree.Domain.csproj", "{3602BE2B-6120-4D2A-9923-FCB2D30E0FC5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WasteFree.Infrastructure", "WasteFree.Infrastructure\WasteFree.Infrastructure.csproj", "{ED40128B-B9B3-4CF8-B552-DBCF8299AD4D}"
 EndProject
