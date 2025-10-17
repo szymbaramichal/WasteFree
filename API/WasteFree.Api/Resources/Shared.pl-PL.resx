@@ -12,6 +12,7 @@
   <data name="UNSUPPORTED_IMAGE_TYPE" xml:space="preserve"><value>Niewspierany typ zdjęcia.</value></data>
   <data name="INVALID_NOTIFICATION_TYPE" xml:space="preserve"><value>Niepoprawy rodzaj notyfikacji.</value></data>
   <data name="USER_NOT_ACTIVATED" xml:space="preserve"><value>Aktywuj najpierw konto przez link wysłany na adres email aby korzystać z WasteFree Cloud!</value></data>
+  <data name="CONSENT_NOT_FOUND" xml:space="preserve"><value>Nie znaleziono zgody.</value></data>
   <data name="STH_WENT_WRONG" xml:space="preserve"><value>Ups, coś poszło nie tak. Spróbuj jeszcze raz!</value></data>
   <data name="INVALID_PAYMENT_CODE" xml:space="preserve"><value>Niepoprawny kod płatności</value></data>
   <data name="INVALID_TOPUP_CODE" xml:space="preserve"><value>Niepoprawny kod doładowania.</value></data>
@@ -24,6 +25,7 @@
   <data name="INVALID_LANG" xml:space="preserve"><value>Niepoprawny język</value></data>
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Adres e-mail jest już zajęty</value></data>
   <data name="LOGIN_FAILED" xml:space="preserve"><value>Login lub hasło są nieprawidłowe</value></data>
+  <data name="CONSENT_CONTENT_REQUIRED" xml:space="preserve"><value>Treść zgody jest wymagana.</value></data>
   <data name="ERR_EMAIL_REQUIRED"><value>Adres e-mail jest wymagany</value></data>
   <data name="ERR_EMAIL_INVALID"><value>Adres e-mail jest nieprawidłowy</value></data>
   <data name="ERR_USERNAME_REQUIRED"><value>Nazwa użytkownika jest wymagana</value></data>

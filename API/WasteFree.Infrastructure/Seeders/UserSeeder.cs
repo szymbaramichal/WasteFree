@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using WasteFree.Domain.Models;
 using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
@@ -107,6 +108,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.GarbageAdmin,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
+                ConsentsAgreed = false,
                 Address = new Address { City = "Kraków", PostalCode = "30-001", Street = "ul. Długa 2" }
             },
             new User
@@ -122,6 +124,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.GarbageAdmin,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
+                ConsentsAgreed = false,
                 Address = new Address { City = "Warszawa", PostalCode = "02-591", Street = "ul. Puławska 145" }
             }
         };

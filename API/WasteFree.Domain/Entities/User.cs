@@ -22,6 +22,8 @@ public class User : DatabaseEntity
     
     public bool IsActive { get; set; } = false;
     
+    public bool ConsentsAgreed { get; set; } = true;
+    
     public required LanguagePreference LanguagePreference { get; set; }
     
     public required UserRole Role { get; set; }

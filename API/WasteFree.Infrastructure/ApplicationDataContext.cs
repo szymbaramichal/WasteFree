@@ -14,32 +14,33 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
     public DbSet<WalletTransaction> WalletTransactions { get; set; }
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
     public DbSet<InboxNotification> InboxNotifications { get; set; }
+    public DbSet<GarbageAdminConsent> GarbageAdminConsents { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.ApplyConfiguration(new TimeTickerConfigurations());
         modelBuilder.ApplyConfiguration(new CronTickerConfigurations());
         modelBuilder.ApplyConfiguration(new CronTickerOccurrenceConfigurations());
-        
+
         modelBuilder.Entity<User>()
             .HasOne(u => u.Wallet)
             .WithOne(w => w.User)
             .HasForeignKey<Wallet>(w => w.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<User>()
             .OwnsOne(u => u.Address);
-        
+
         modelBuilder.Entity<User>()
             .HasMany(u => u.InboxNotifications)
             .WithOne(w => w.User)
             .HasForeignKey(x => x.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<GarbageGroup>()
             .OwnsOne(u => u.Address);
     }

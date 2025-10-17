@@ -7,13 +7,12 @@ namespace WasteFree.Infrastructure.Services;
 
 public class AzureBlobStorageService : IBlobStorageService
 {
-    private readonly BlobServiceClient _blobServiceClient;
+    private readonly BlobServiceClient? _blobServiceClient;
 
     public AzureBlobStorageService(string connectionString)
     {
-        if (string.IsNullOrWhiteSpace(connectionString))
-            throw new ArgumentException("Blob Storage connection string is missing.", nameof(connectionString));
-        _blobServiceClient = new BlobServiceClient(connectionString);
+        if (!string.IsNullOrWhiteSpace(connectionString))
+            _blobServiceClient = new BlobServiceClient(connectionString);
     }
 
     public async Task<string> UploadAsync(Stream content, string contentType, string containerName, string blobName, CancellationToken cancellationToken = default)
@@ -22,7 +21,7 @@ public class AzureBlobStorageService : IBlobStorageService
         if (string.IsNullOrWhiteSpace(containerName)) throw new ArgumentException("Container name must be provided.", nameof(containerName));
         if (string.IsNullOrWhiteSpace(blobName)) throw new ArgumentException("Blob name must be provided.", nameof(blobName));
 
-        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var containerClient = _blobServiceClient!.GetBlobContainerClient(containerName);
         await containerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
 
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -48,7 +47,7 @@ public class AzureBlobStorageService : IBlobStorageService
         if (string.IsNullOrWhiteSpace(containerName)) throw new ArgumentException("Container name must be provided.", nameof(containerName));
         if (string.IsNullOrWhiteSpace(blobName)) return string.Empty;
 
-        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        var containerClient = _blobServiceClient!.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(blobName);
 
         var exists = await blobClient.ExistsAsync(cancellationToken);

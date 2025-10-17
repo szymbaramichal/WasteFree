@@ -73,6 +73,13 @@ public static class HostExtensions
                         notificationTemplateSeeder.SeedAsync().GetAwaiter().GetResult();
                         logger.LogInformation("Executed NotificationTemplateSeeder.SeedAsync");
                     }
+
+                    var garbageAdminConsentSeeder = services.GetService<GarbageAdminConsentSeeder>();
+                    if (garbageAdminConsentSeeder != null)
+                    {
+                        garbageAdminConsentSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed GarbageAdminConsentSeeder.SeedAsync");
+                    }
                 }
             }
             catch (SqlException ex)

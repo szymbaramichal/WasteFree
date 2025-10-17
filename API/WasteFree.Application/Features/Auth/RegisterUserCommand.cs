@@ -53,6 +53,9 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             Address = command.Address
         };
         
+        // Set false for garbageAdmin
+        newUser.ConsentsAgreed = newUser.Role == UserRole.User;
+        
         context.Users.Add(newUser);
         
         var notificationTemplate = await context.NotificationTemplates
