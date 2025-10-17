@@ -187,7 +187,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("TimeTickers", "ticker");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.GarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,7 +218,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("GarbageGroups");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.NotificationTemplate", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.NotificationTemplate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -255,7 +255,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("NotificationTemplates");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.User", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -306,7 +306,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.UserGarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.UserGarbageGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -363,15 +363,15 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Navigation("ParentJob");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.UserGarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.UserGarbageGroup", b =>
                 {
-                    b.HasOne("WasteFree.Shared.Entities.GarbageGroup", "GarbageGroup")
+                    b.HasOne("WasteFree.Domain.Entities.GarbageGroup", "GarbageGroup")
                         .WithMany("UserGarbageGroups")
                         .HasForeignKey("GarbageGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WasteFree.Shared.Entities.User", "User")
+                    b.HasOne("WasteFree.Domain.Entities.User", "User")
                         .WithMany("UserGarbageGroups")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -387,12 +387,12 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Navigation("ChildJobs");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.GarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroup", b =>
                 {
                     b.Navigation("UserGarbageGroups");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.User", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.User", b =>
                 {
                     b.Navigation("UserGarbageGroups");
                 });

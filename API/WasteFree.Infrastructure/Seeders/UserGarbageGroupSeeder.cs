@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Enums;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
 
 namespace WasteFree.Infrastructure.Seeders;
 
@@ -12,8 +12,6 @@ public class UserGarbageGroupSeeder(ApplicationDataContext context)
         {
             new { Username = "test1", GroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"), Role = GarbageGroupRole.Owner, IsPending = false },
             new { Username = "test2", GroupId = Guid.Parse("66666666-6666-6666-6666-666666666666"), Role = GarbageGroupRole.Owner, IsPending = false },
-            new { Username = "test3", GroupId = Guid.Parse("77777777-7777-7777-7777-777777777777"), Role = GarbageGroupRole.User, IsPending = true },
-            new { Username = "test4", GroupId = Guid.Parse("77777777-7777-7777-7777-777777777777"), Role = GarbageGroupRole.Owner, IsPending = false },
             new { Username = "test5", GroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"), Role = GarbageGroupRole.User, IsPending = false }
         };
 
@@ -51,6 +49,7 @@ public class UserGarbageGroupSeeder(ApplicationDataContext context)
 
             await context.UserGarbageGroups.AddAsync(new UserGarbageGroup
             {
+                Id = Guid.CreateVersion7(),
                 UserId = userId,
                 GarbageGroupId = membership.GroupId,
                 Role = membership.Role,

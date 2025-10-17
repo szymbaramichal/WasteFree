@@ -184,18 +184,10 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("TimeTickers", "ticker");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.GarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CreatedBy")
@@ -221,16 +213,12 @@ namespace WasteFree.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.ToTable("GarbageGroups");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.InboxNotification", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.InboxNotification", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -272,7 +260,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("InboxNotifications");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.NotificationTemplate", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.NotificationTemplate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -312,17 +300,13 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("NotificationTemplates");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.User", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AvatarName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("City")
-                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("CreatedBy")
@@ -376,7 +360,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.UserGarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.UserGarbageGroup", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -415,7 +399,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("UserGarbageGroups");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.Wallet", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.Wallet", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -450,7 +434,7 @@ namespace WasteFree.Infrastructure.Migrations
                     b.ToTable("Wallets");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.WalletTransaction", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.WalletTransaction", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -505,9 +489,43 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Navigation("ParentJob");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.InboxNotification", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroup", b =>
                 {
-                    b.HasOne("WasteFree.Shared.Entities.User", "User")
+                    b.OwnsOne("WasteFree.Domain.Models.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("GarbageGroupId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(6)
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("GarbageGroupId");
+
+                            b1.ToTable("GarbageGroups");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GarbageGroupId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WasteFree.Domain.Entities.InboxNotification", b =>
+                {
+                    b.HasOne("WasteFree.Domain.Entities.User", "User")
                         .WithMany("InboxNotifications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -516,15 +534,49 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.UserGarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.User", b =>
                 {
-                    b.HasOne("WasteFree.Shared.Entities.GarbageGroup", "GarbageGroup")
+                    b.OwnsOne("WasteFree.Domain.Models.Address", "Address", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("City")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("PostalCode")
+                                .IsRequired()
+                                .HasMaxLength(6)
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Street")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Address")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WasteFree.Domain.Entities.UserGarbageGroup", b =>
+                {
+                    b.HasOne("WasteFree.Domain.Entities.GarbageGroup", "GarbageGroup")
                         .WithMany("UserGarbageGroups")
                         .HasForeignKey("GarbageGroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WasteFree.Shared.Entities.User", "User")
+                    b.HasOne("WasteFree.Domain.Entities.User", "User")
                         .WithMany("UserGarbageGroups")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -535,20 +587,20 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.Wallet", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.Wallet", b =>
                 {
-                    b.HasOne("WasteFree.Shared.Entities.User", "User")
+                    b.HasOne("WasteFree.Domain.Entities.User", "User")
                         .WithOne("Wallet")
-                        .HasForeignKey("WasteFree.Shared.Entities.Wallet", "UserId")
+                        .HasForeignKey("WasteFree.Domain.Entities.Wallet", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.WalletTransaction", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.WalletTransaction", b =>
                 {
-                    b.HasOne("WasteFree.Shared.Entities.Wallet", "Wallet")
+                    b.HasOne("WasteFree.Domain.Entities.Wallet", "Wallet")
                         .WithMany("WalletTransactions")
                         .HasForeignKey("WalletId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -562,12 +614,12 @@ namespace WasteFree.Infrastructure.Migrations
                     b.Navigation("ChildJobs");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.GarbageGroup", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroup", b =>
                 {
                     b.Navigation("UserGarbageGroups");
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.User", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.User", b =>
                 {
                     b.Navigation("InboxNotifications");
 
@@ -577,7 +629,7 @@ namespace WasteFree.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WasteFree.Shared.Entities.Wallet", b =>
+            modelBuilder.Entity("WasteFree.Domain.Entities.Wallet", b =>
                 {
                     b.Navigation("WalletTransactions");
                 });

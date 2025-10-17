@@ -1,0 +1,47 @@
+using Microsoft.EntityFrameworkCore;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.GarbageGroups.Dtos;
+using WasteFree.Infrastructure;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
+
+namespace WasteFree.Application.Features.GarbageGroups;
+
+public record RegisterGarbageGroupCommand(string GroupName, string GroupDescription, Address Address) : IRequest<GarbageGroupDto>;
+
+public class RegisterGarbageGroupCommandHandler(ApplicationDataContext context,
+    ICurrentUserService currentUserService) : IRequestHandler<RegisterGarbageGroupCommand, GarbageGroupDto>
+{
+    public async Task<Result<GarbageGroupDto>> HandleAsync(RegisterGarbageGroupCommand request, CancellationToken cancellationToken)
+    {
+        var garbageGroup = new GarbageGroup
+        {
+            Id = Guid.CreateVersion7(),
+            Name = request.GroupName,
+            Description = request.GroupDescription,
+            Address = request.Address,
+            IsPrivate = false
+        };
+
+        context.Add(garbageGroup);
+
+        Guid userGarbageGroupId = Guid.CreateVersion7();
+        context.Add(new UserGarbageGroup
+        {
+            Id = userGarbageGroupId,
+            UserId = currentUserService.UserId,
+            GarbageGroupId = garbageGroup.Id,
+            Role = GarbageGroupRole.Owner
+        });
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        var userGarbageGroup = await context.UserGarbageGroups
+            .Include(x => x.User)
+            .FirstAsync(x => x.Id == userGarbageGroupId, cancellationToken);
+
+        return Result<GarbageGroupDto>.Success(garbageGroup.MapToGarbageGroupDto([userGarbageGroup]));
+    }
+}

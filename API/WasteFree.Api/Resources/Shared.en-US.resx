@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="USERNAME_TAKEN" xml:space="preserve"><value>Username is already taken</value></data>
+  <data name="INVALID_REGISTRATION_TOKEN" xml:space="preserve"><value>Registration token has expired</value></data>
+  <data name="FORBIDDEN" xml:space="preserve"><value>You are not privileged make this action.</value></data>
+  <data name="INVALID_USER" xml:space="preserve"><value>Invalid user</value></data>
+  <data name="NOT_FOUND" xml:space="preserve"><value>Resource not found.</value></data>
+  <data name="EMPTY_IMAGE" xml:space="preserve"><value>Empty image.</value></data>
+  <data name="TOO_BIG_IMAGE" xml:space="preserve"><value>Too big image size. Max is 5mb.</value></data>
+  <data name="UNSUPPORTED_IMAGE_TYPE" xml:space="preserve"><value>Unsupported image type.</value></data>
+  <data name="INVITED_USER_NOT_FOUND" xml:space="preserve"><value>Invited user not found.</value></data>
+  <data name="ALREADY_IN_GROUP" xml:space="preserve"><value>Invited user is already group member.</value></data>
+  <data name="INVALID_NOTIFICATION_TYPE" xml:space="preserve"><value>Invalid notification type.</value></data>
+  <data name="USER_NOT_ACTIVATED" xml:space="preserve"><value>Activate account via email link to make use of WasteFree Cloud!</value></data>
+  <data name="INVALID_PAYMENT_CODE" xml:space="preserve"><value>Invalid payment code</value></data>
+  <data name="AMOUNT_OUTSIDE_RANGE" xml:space="preserve"><value>Amount must be between 1 and 10 000PLN.</value></data>
+  <data name="INVALID_TOPUP_CODE" xml:space="preserve"><value>Invalid top up code.</value></data>
+  <data name="MISSING_ACCOUNT_NUMBER" xml:space="preserve"><value>Before your withdrawal, fill up account number in profile.</value></data>
+  <data name="NOT_ENOUGH_FUNDS" xml:space="preserve"><value>Not enough funds to withdraw</value></data>
+  <data name="PAYMENT_PROPERTY_REQUIRED" xml:space="preserve"><value>Payment property is required</value></data>
+  <data name="PAYMENT_CODE_REQUIRED" xml:space="preserve"><value>Payment method code is required</value></data>
+  <data name="STH_WENT_WRONG" xml:space="preserve"><value>Oops, something went wrong. Please try again!</value></data>
+  <data name="INVALID_ROLE" xml:space="preserve"><value>Invalid user role</value></data>
+  <data name="INVALID_LANG" xml:space="preserve"><value>Invalid language</value></data>
+  <data name="EMAIL_TAKEN" xml:space="preserve"><value>Email is already taken</value></data>
+  <data name="LOGIN_FAILED" xml:space="preserve"><value>Login or password is incorrect</value></data>
+  <data name="ERR_EMAIL_REQUIRED"><value>Email is required</value></data>
+  <data name="ERR_EMAIL_INVALID"><value>Email must be a valid email address</value></data>
+  <data name="ERR_USERNAME_REQUIRED"><value>Username is required</value></data>
+  <data name="ERR_PASSWORD_REQUIRED"><value>Password is required</value></data>
+  <data name="ERR_PASSWORD_TOO_SHORT"><value>Password must be at least 8 characters long</value></data>
+  <data name="ERR_GROUP_NAME_REQUIRED"><value>Group name is required</value></data>
+  <data name="ERR_GROUP_DESCRIPTION_REQUIRED"><value>Group description is required</value></data>
+  <data name="ERR_GROUP_CITY_REQUIRED"><value>Group city is required</value></data>
+  <data name="ERR_GROUP_POSTAL_CODE_REQUIRED"><value>Postal code is required</value></data>
+  <data name="ERR_GROUP_POSTAL_CODE_INVALID"><value>Postal code must follow format 00-000.</value></data>
+  <data name="ERR_GROUP_STREET_REQUIRED"><value>Street is required</value></data>
+</root>

@@ -1,18 +1,18 @@
-import { PortalComponent } from './portal/portal.component';
-import { HomeComponent } from './home/home.component';
+import { PortalComponent } from '@components/shared/portal/portal.component';
+import { HomeComponent } from '@components/shared/home/home.component';
 import { Routes } from '@angular/router';
-import { AuthComponent } from './auth/auth.component';
-import { authGuard } from './guards/auth.guard';
-import { ActivationComponent } from './activation/activation.component';
+import { AuthComponent } from '@components/shared/auth/auth.component';
+import { authGuard } from '@app/guards/auth.guard';
+import { ActivationComponent } from '@components/shared/activation/activation.component';
 import { UrlSegment, UrlMatchResult } from '@angular/router';
-import { WalletComponent } from './wallet/wallet.component';
-import { InboxComponent } from './inbox/inbox.component';
-import { PortalHomeComponent } from './portal-home/portal-home.component';
-import { GroupsComponent } from './groups/groups.component';
-import { GroupsManagementComponent } from './groups-management/groups-management.component';
-import { ProfileComponent } from './profile/profile.component';
-import { GroupPanelComponent } from './group-panel/group-panel.component';
-import { groupResolver } from './resolvers/group.resolver';
+import { WalletComponent } from '@components/shared/wallet/wallet.component';
+import { InboxComponent } from '@components/shared/inbox/inbox.component';
+import { PortalHomeComponent } from '@components/shared/portal-home/portal-home.component';
+import { GroupsComponent } from '@components/user/groups/groups.component';
+import { GroupsManagementComponent } from '@components/user/groups-management/groups-management.component';
+import { ProfileComponent } from '@components/shared/profile/profile.component';
+import { GroupPanelComponent } from '@components/shared/group-panel/group-panel.component';
+import { groupResolver } from '@app/resolvers/group.resolver';
 
 function activateAccountMatcher(segments: UrlSegment[]): UrlMatchResult | null {
     if (!segments || segments.length === 0) return null;

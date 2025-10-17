@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
-using WasteFree.Shared.Interfaces;
+using WasteFree.Domain.Interfaces;
 
 namespace WasteFree.Infrastructure.Services;
 

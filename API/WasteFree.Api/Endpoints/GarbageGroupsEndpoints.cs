@@ -1,0 +1,314 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using WasteFree.Api.Filters;
+using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Features.GarbageGroups;
+using WasteFree.Application.Features.GarbageGroups.Dtos;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
+
+namespace WasteFree.Api.Endpoints;
+
+public static class GarbageGroupsEndpoints
+{
+    public static void MapGarbageGroupsEndpoints(this WebApplication app)
+    {
+        app.MapPost("/garbage-groups/register", RegisterGarbageGroupAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .AddEndpointFilter(new ValidationFilter<RegisterGarbageGroupRequest>())
+            .WithOpenApi()
+            .Produces<Result<GarbageGroupDto>>()
+            .Produces<Dictionary<string, string[]>>(422)
+            .WithTags("GarbageGroups")
+            .WithDescription("Register garbage group.");
+
+        app.MapGet("/garbage-groups/list", GetGarbageGroupsListAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<ICollection<GarbageGroupInfoDto>>>()
+            .WithTags("GarbageGroups")
+            .WithDescription("Get list of garbage groups with quick info.");
+
+        app.MapGet("/garbage-groups/pending-invitations", GetPendingGroupInvitations)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<ICollection<GarbageGroupInvitationDto>>>()
+            .WithTags("GarbageGroups")
+            .WithDescription("Get list of pending invitations.");
+        
+        app.MapPost("/garbage-groups/{groupId:guid}/makeAction/{makeAction}", MakeActionWithInvitation)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<ICollection<GarbageGroupInvitationDto>>>()
+            .Produces<Result<EmptyResult>>(404)
+            .WithTags("GarbageGroups")
+            .WithDescription("Accept/decline group invitation.");
+        
+        app.MapGet("/garbage-groups/{groupId:guid}", GetGarbageGroupDetailsAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<GarbageGroupDto>>()
+            .Produces<Result<EmptyResult>>(403)
+            .Produces<Result<EmptyResult>>(404)
+            .WithTags("GarbageGroups")
+            .WithDescription("Get details of garbage group.");
+
+        app.MapDelete("/garbage-groups/{groupId:guid}/{userId:guid}", DeleteUserFromGarbageGroupAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<bool>>()
+            .Produces<Result<EmptyResult>>(404)
+            .WithTags("GarbageGroups")
+            .WithDescription("Remove user from garbage group.");
+
+        app.MapPost("/garbage-groups/{groupId:guid}/invite", InviteUserToGarbageGroupAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<bool>>()
+            .Produces<Result<EmptyResult>>(404)
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageGroups")
+            .WithDescription("Invite existing user to garbage group.");
+
+        app.MapPut("/garbage-groups/{groupId:guid}/update", UpdateGarbageGroupData)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .AddEndpointFilter(new ValidationFilter<UpdateGarbageGroupRequest>())
+            .WithOpenApi()
+            .Produces<Result<GarbageGroupDto>>()
+            .Produces<Result<EmptyResult>>(404)
+            .Produces<Result<EmptyResult>>(400)
+            .Produces<Result<EmptyResult>>(422)
+            .WithTags("GarbageGroups")
+            .WithDescription("Update garbage group details.");
+    }
+
+    /// <summary>
+    /// Registers a new garbage group and assigns the current user as owner.
+    /// </summary>
+    private static async Task<IResult> RegisterGarbageGroupAsync(
+        [FromBody] RegisterGarbageGroupRequest request,
+        IStringLocalizer localizer,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new RegisterGarbageGroupCommand(request.GroupName, 
+            request.GroupDescription, request.Address);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Retrieves the list of garbage groups the authenticated user participates in.
+    /// </summary>
+    private static async Task<IResult> GetGarbageGroupsListAsync(
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new GetGarbageGroupsListQuery(currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return Results.Ok(result);
+    }
+    
+    /// <summary>
+    /// Retrieves the list of pending group invitations.
+    /// </summary>
+    private static async Task<IResult> GetPendingGroupInvitations(
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new GetPendingGroupInvitationsQuery(currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return Results.Ok(result);
+    }
+    
+    /// <summary>
+    /// Accept/decline group invitation.
+    /// </summary>
+    private static async Task<IResult> MakeActionWithInvitation(
+        [FromRoute] Guid groupId,
+        [FromRoute] bool makeAction,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new MakeActionWithInvitationCommand(currentUserService.UserId, groupId, makeAction);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Retrieves detailed information about a specific garbage group including members.
+    /// </summary>
+    private static async Task<IResult> GetGarbageGroupDetailsAsync(
+        [FromRoute] Guid groupId,
+        IStringLocalizer localizer,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new GetGarbageGroupDetailsQuery(currentUserService.UserId, groupId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Removes a specified user from the given garbage group.
+    /// </summary>
+    private static async Task<IResult> DeleteUserFromGarbageGroupAsync(
+        [FromRoute] Guid userId,
+        [FromRoute] Guid groupId,
+        ICurrentUserService currentUserService,
+        IStringLocalizer localizer,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new DeleteUserFromGroupCommand(groupId, currentUserService.UserId, userId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Sends an invitation to an existing user to join the specified garbage group.
+    /// </summary>
+    private static async Task<IResult> InviteUserToGarbageGroupAsync(
+        [FromRoute] Guid groupId,
+        [FromBody] InviteUserToGarbageGroupRequest request,
+        IStringLocalizer localizer,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new InviteToGarbageGroupCommand(groupId, request.UserName);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Update group data.
+    /// </summary>
+    private static async Task<IResult> UpdateGarbageGroupData(
+        [FromRoute] Guid groupId,
+        [FromBody] UpdateGarbageGroupRequest request,
+        IStringLocalizer localizer,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateGarbageGroupCommand(
+            groupId,
+            currentUserService.UserId,
+            request.GroupName,
+            request.GroupDescription,
+            request.Address
+        );
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+}
+
+/// <summary>
+/// Request payload for registering a new garbage group.
+/// </summary>
+public record RegisterGarbageGroupRequest
+{
+    /// <summary>
+    /// Display name assigned to the garbage group.
+    /// </summary>
+    public string GroupName { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Description shared with members about the group's purpose.
+    /// </summary>
+    public string GroupDescription { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Address object
+    /// </summary>
+    public required Address Address { get; set; }
+}
+
+/// <summary>
+/// Request payload for inviting an existing user to join a garbage group.
+/// </summary>
+public record InviteUserToGarbageGroupRequest
+{
+    /// <summary>
+    /// Username of the person receiving the invitation.
+    /// </summary>
+    public string UserName { get; init; } = string.Empty;
+}
+
+
+/// <summary>
+/// Request payload for updating garbage group details. You must send all data even when its not updated.
+/// </summary>
+public record UpdateGarbageGroupRequest
+{
+    /// <summary>
+    /// Garbage Group name
+    /// </summary>
+    public string GroupName { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Garbage Group description
+    /// </summary>
+    public string GroupDescription { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Address object
+    /// </summary>
+    public required Address Address { get; set; }
+}

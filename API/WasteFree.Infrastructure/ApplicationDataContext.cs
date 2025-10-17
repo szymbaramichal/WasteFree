@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TickerQ.EntityFrameworkCore.Configurations;
-using WasteFree.Shared.Entities;
-using WasteFree.Shared.Interfaces;
-using WasteFree.Shared.Models;
+using WasteFree.Domain.Entities;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 
 namespace WasteFree.Infrastructure;
 public class ApplicationDataContext(DbContextOptions options, ICurrentUserService currentUserService) : DbContext(options)
@@ -31,11 +31,17 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
             .OnDelete(DeleteBehavior.Cascade);
         
         modelBuilder.Entity<User>()
+            .OwnsOne(u => u.Address);
+        
+        modelBuilder.Entity<User>()
             .HasMany(u => u.InboxNotifications)
             .WithOne(w => w.User)
             .HasForeignKey(x => x.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<GarbageGroup>()
+            .OwnsOne(u => u.Address);
     }
 
     public override int SaveChanges()
