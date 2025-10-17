@@ -12,13 +12,15 @@ namespace WasteFree.Application.Features;
 /// <param name="Token">JWT token for authenticated requests; null when not issued.</param>
 /// <param name="AvatarUrl">Avatar sas url.</param>
 /// <param name="UserRole">Role assigned to the user.</param>
+/// <param name="AcceptedConsents">Accepted user consents</param>
 public record UserDto(
     Guid Id,
     string Email,
     string Username,
     string? Token,
     string? AvatarUrl,
-    UserRole UserRole
+    UserRole UserRole,
+    bool AcceptedConsents
 );
 
 public static class UserDtoExtensions
@@ -31,7 +33,8 @@ public static class UserDtoExtensions
             user.Username,
             token,
             avatarUrl,
-            user.Role
+            user.Role,
+            user.ConsentsAgreed
         );
     }
 }

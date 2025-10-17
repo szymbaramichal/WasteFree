@@ -66,6 +66,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<WalletTransactionSeeder>();
         services.AddScoped<InboxNotificationSeeder>();
         services.AddScoped<NotificationTemplateSeeder>();
+        services.AddScoped<GarbageAdminConsentSeeder>();
         
         var blobConn = configuration.GetConnectionString("BlobStorage");
         services.AddSingleton<IBlobStorageService>(_ => new AzureBlobStorageService(blobConn));

@@ -20,6 +20,8 @@ public static class ApiErrorCodes
     public const string InvalidNotificationType = "INVALID_NOTIFICATION_TYPE";
     public const string InvitedUserNotFound = "INVITED_USER_NOT_FOUND";
     public const string AlreadyInGroup = "ALREADY_IN_GROUP";
+    public const string ConsentNotFound = "CONSENT_NOT_FOUND";
+	public const string ConsentContentRequired = "CONSENT_CONTENT_REQUIRED";
 }
 
 public static class ValidationErrorCodes

@@ -99,7 +99,7 @@ var app = builder.Build();
         x.WithTheme(ScalarTheme.Kepler);
         x.Servers = new List<ScalarServer>
         {
-            new ScalarServer(builder.Configuration["BaseApiUrl"], "DEV server"),
+            new ScalarServer(builder.Configuration["BaseApiUrl"] ?? string.Empty, "DEV server"),
         };
     });
 //}
@@ -136,6 +136,7 @@ app.MapWalletEndpoints();
 app.MapAccountEndpoints();
 app.MapInboxEndpoints();
 app.MapCitiesEndpoints();
+app.MapConsentsEndpoints();
 
 app.UseHttpsRedirection();
  

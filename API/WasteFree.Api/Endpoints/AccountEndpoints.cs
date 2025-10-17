@@ -39,6 +39,12 @@ public static class AccountEndpoints
             .WithTags("Account")
             .WithDescription("Get authenticated user's profile.");
 
+        app.MapPatch("/user/consents/accept", AcceptConsentAsync)
+            .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
+            .WithOpenApi()
+            .Produces<Result<bool>>()
+            .WithTags("Account")
+            .WithDescription("Accept garbage admin consent.");
     }
 
     /// <summary>
@@ -63,6 +69,29 @@ public static class AccountEndpoints
 
         return Results.Ok(result);
     }
+    
+    /// <summary>
+    /// Accept garbage admin consent
+    /// </summary>
+    private static async Task<IResult> AcceptConsentAsync(
+        ICurrentUserService currentUserService,
+        IStringLocalizer localizer,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new AcceptGarbageAdminConsentCommand(currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
     
     /// <summary>
     /// Upload user avatar image.

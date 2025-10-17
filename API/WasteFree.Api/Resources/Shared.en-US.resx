@@ -12,6 +12,7 @@
   <data name="ALREADY_IN_GROUP" xml:space="preserve"><value>Invited user is already group member.</value></data>
   <data name="INVALID_NOTIFICATION_TYPE" xml:space="preserve"><value>Invalid notification type.</value></data>
   <data name="USER_NOT_ACTIVATED" xml:space="preserve"><value>Activate account via email link to make use of WasteFree Cloud!</value></data>
+  <data name="CONSENT_NOT_FOUND" xml:space="preserve"><value>Consent entry was not found.</value></data>
   <data name="INVALID_PAYMENT_CODE" xml:space="preserve"><value>Invalid payment code</value></data>
   <data name="AMOUNT_OUTSIDE_RANGE" xml:space="preserve"><value>Amount must be between 1 and 10 000PLN.</value></data>
   <data name="INVALID_TOPUP_CODE" xml:space="preserve"><value>Invalid top up code.</value></data>
@@ -24,6 +25,7 @@
   <data name="INVALID_LANG" xml:space="preserve"><value>Invalid language</value></data>
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Email is already taken</value></data>
   <data name="LOGIN_FAILED" xml:space="preserve"><value>Login or password is incorrect</value></data>
+  <data name="CONSENT_CONTENT_REQUIRED" xml:space="preserve"><value>Consent content is required.</value></data>
   <data name="ERR_EMAIL_REQUIRED"><value>Email is required</value></data>
   <data name="ERR_EMAIL_INVALID"><value>Email must be a valid email address</value></data>
   <data name="ERR_USERNAME_REQUIRED"><value>Username is required</value></data>
