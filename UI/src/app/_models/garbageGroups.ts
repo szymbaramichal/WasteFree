@@ -6,7 +6,7 @@ export interface GarbageGroup {
     description: string;
     city?: string | null;
     postalCode?: string | null;
-    address?: string | Address | null;
+    address: Address;
     users: GarbageGroupUser[];
 };
 

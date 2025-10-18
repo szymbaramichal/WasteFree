@@ -3,7 +3,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { GarbageGroup, GarbageGroupInfo, GarbageGroupRole } from '@app/_models/garbageGroups';
-import { Address } from '@app/_models/address';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { TranslationService } from '@app/services/translation.service';
 import { ToastrService } from 'ngx-toastr';
@@ -45,7 +44,13 @@ export class GroupPanelComponent implements OnInit {
       const state: any = history?.state;
       const preview: GarbageGroupInfo | undefined = state?.group;
       if (preview && preview.id === id) {
-        this.group = { id: preview.id, name: preview.name, description: '', users: [] } as GarbageGroup;
+        this.group = {
+          id: preview.id,
+          name: preview.name,
+          description: '',
+          users: [],
+          address: { city: '', postalCode: '', street: '' }
+        } as GarbageGroup;
       }
       if (!id) {
         this.error = this.t.translate('groups.details.invalidId');
@@ -140,7 +145,6 @@ export class GroupPanelComponent implements OnInit {
         this.actLoading = false;
       },
       error: () => {
-        // keep current view; action completed, but refresh failed
         this.actLoading = false;
       }
     });
@@ -148,31 +152,18 @@ export class GroupPanelComponent implements OnInit {
 
   getGroupCity(): string {
     if (!this.group) return '';
-    const addr = this.ensureAddressObject(this.group.address);
-    if (addr?.city) return addr.city;
+    if (this.group.address.city) return this.group.address.city;
     return this.group.city ?? '';
   }
 
   getGroupPostalCode(): string {
     if (!this.group) return '';
-    const addr = this.ensureAddressObject(this.group.address);
-    if (addr?.postalCode) return addr.postalCode;
+    if (this.group.address.postalCode) return this.group.address.postalCode;
     return this.group.postalCode ?? '';
   }
 
   getGroupStreet(): string {
     if (!this.group) return '';
-    const addr = this.ensureAddressObject(this.group.address);
-    if (addr?.street) return addr.street;
-    if (typeof this.group.address === 'string') return this.group.address;
-    return '';
-  }
-
-  private ensureAddressObject(address: GarbageGroup['address']): Address | null {
-    if (!address) return null;
-    if (typeof address === 'string') {
-      return { city: '', postalCode: '', street: address };
-    }
-    return address;
+    return this.group.address.street;
   }
 }
