@@ -1,10 +1,12 @@
+import { Address } from './address';
+
 export interface GarbageGroup {
     id: string;
     name: string;
     description: string;
     city?: string | null;
     postalCode?: string | null;
-    address?: string | null;
+    address?: string | Address | null;
     users: GarbageGroupUser[];
 };
 
@@ -29,9 +31,7 @@ export enum GarbageGroupRole {
 export interface RegisterGarbageGroupRequest {
     groupName: string;
     groupDescription: string;
-    city: string;
-    postalCode: string;
-    address: string;
+    address: Address;
 }
 
 export interface GarbageGroupInvitation {

@@ -66,29 +66,64 @@
           </ng-template>
         </dd>
 
-        <dt class="col-sm-3">{{ 'profile.city' | translate }}</dt>
+        <dt class="col-sm-3">{{ 'profile.address.title' | translate }}</dt>
         <dd class="col-sm-9">
-          <div class="row g-2 align-items-center" *ngIf="profileSvc.profile() as p">
-            <div class="col-md-7">
-              <div class="city-select-wrapper position-relative">
-                <svg class="city-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
-                </svg>
-                <select class="form-select city-select"
-                        [ngModel]="p.city"
-                        (ngModelChange)="onCityChanged($event)"
-                        [disabled]="citySaving || citiesLoading">
-                  <option [ngValue]="''">{{ 'profile.city.placeholder' | translate }}</option>
-                  <option *ngIf="citiesLoading" disabled>{{ 'loading' | translate }}</option>
-                  <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
-                </select>
+          <ng-container *ngIf="profileSvc.profile() as p">
+            <div *ngIf="!editAddress; else editAddressTpl" class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+              <div class="address-preview">
+                <div class="address-line">{{ p.address.street || '—' }}</div>
+                <div class="address-line">
+                  <span>{{ p.address.postalCode || '—' }}</span>
+                  <span *ngIf="p.address.city" class="ms-1">{{ p.address.city | translate }}</span>
+                </div>
               </div>
+              <button class="btn btn-sm btn-outline-primary btn-ghost-primary" (click)="startEditAddress(p.address)">{{ 'common.edit' | translate }}</button>
             </div>
-            <div class="col-md-5 d-flex align-items-center gap-2">
-              <span class="spinner-border spinner-border-sm" *ngIf="citySaving || citiesLoading" aria-hidden="true"></span>
-              <span class="text-danger small" *ngIf="citiesLoadError">{{ 'profile.cityLoadError' | translate }}</span>
-            </div>
-          </div>
+          </ng-container>
+          <ng-template #editAddressTpl>
+            <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="address-form">
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="profile-city">{{ 'profile.address.city' | translate }}</label>
+                  <div class="city-select-wrapper position-relative">
+                    <svg class="city-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
+                    </svg>
+                    <select id="profile-city" class="form-select city-select" formControlName="city" [disabled]="citiesLoading">
+                      <option value="" disabled>{{ citiesLoading ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
+                      <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                    </select>
+                  </div>
+                  <div class="form-text text-danger" *ngIf="addressForm.get('city')?.invalid && addressForm.get('city')?.touched">
+                    {{ 'profile.address.cityRequired' | translate }}
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label" for="profile-postal">{{ 'profile.address.postalCode' | translate }}</label>
+                  <input id="profile-postal" type="text" class="form-control" formControlName="postalCode" />
+                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.invalid && addressForm.get('postalCode')?.touched">
+                    {{ 'profile.address.postalRequired' | translate }}
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label class="form-label" for="profile-street">{{ 'profile.address.street' | translate }}</label>
+                  <input id="profile-street" type="text" class="form-control" formControlName="street" />
+                  <div class="form-text text-danger" *ngIf="addressForm.get('street')?.invalid && addressForm.get('street')?.touched">
+                    {{ 'profile.address.streetRequired' | translate }}
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap mt-3">
+                <button type="submit" class="btn btn-sm btn-primary d-inline-flex align-items-center btn-elevated" [disabled]="savingAddress" [attr.aria-busy]="savingAddress">
+                  <span *ngIf="savingAddress" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span>{{ 'common.save' | translate }}</span>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-secondary btn-ghost" (click)="cancelAddress()" [disabled]="savingAddress">{{ 'common.cancel' | translate }}</button>
+                <span class="spinner-border spinner-border-sm" *ngIf="citiesLoading" aria-hidden="true"></span>
+                <span class="text-danger small" *ngIf="citiesLoadError">{{ 'profile.cityLoadError' | translate }}</span>
+              </div>
+            </form>
+          </ng-template>
         </dd>
 
         <dt class="col-sm-3">{{ 'profile.bankAccountNumber' | translate }}</dt>

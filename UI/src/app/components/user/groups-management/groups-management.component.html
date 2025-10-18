@@ -32,41 +32,50 @@
               <div class="invalid-feedback" *ngIf="hasError('groupDescription','maxlength')">{{ 'groups.form.errors.desc.max' | translate }}</div>
               <div class="form-text text-end small opacity-75 mt-1">{{ form.get('groupDescription')?.value?.length || 0 }}/500</div>
             </div>
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="groupCity" class="form-label fw-semibold">{{ 'groups.form.city' | translate }}</label>
-                <div class="form-icon-group">
-                  <i class="bi bi-geo-alt"></i>
-                  <input id="groupCity" type="text" class="form-control" [placeholder]="'groups.form.placeholder.city' | translate" formControlName="city" [class.is-invalid]="hasError('city','required') || hasError('city','maxlength')">
+            <div formGroupName="address">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="groupCity" class="form-label fw-semibold">{{ 'groups.form.city' | translate }}</label>
+                  <div class="form-icon-group position-relative">
+                    <i class="bi bi-geo-alt"></i>
+                    <select id="groupCity" class="form-select" formControlName="city"
+                            [disabled]="citiesLoading || citiesLoadError || !cities.length"
+                            [class.is-invalid]="hasError('address.city','required') || hasError('address.city','maxlength')">
+                      <option value="" disabled>{{ citiesLoading ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
+                      <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                    </select>
+                    <span class="spinner-border spinner-border-sm city-select-spinner" *ngIf="citiesLoading" role="status" aria-hidden="true"></span>
+                  </div>
+                  <div class="invalid-feedback d-block" *ngIf="hasError('address.city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
+                  <div class="invalid-feedback d-block" *ngIf="hasError('address.city','maxlength')">{{ 'groups.form.errors.city.max' | translate }}</div>
+                  <div class="form-text text-danger" *ngIf="citiesLoadError">{{ 'profile.cityLoadError' | translate }}</div>
                 </div>
-                <div class="invalid-feedback d-block" *ngIf="hasError('city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
-                <div class="invalid-feedback d-block" *ngIf="hasError('city','maxlength')">{{ 'groups.form.errors.city.max' | translate }}</div>
-              </div>
-              <div class="col-md-6">
-                <label for="groupPostalCode" class="form-label fw-semibold">{{ 'groups.form.postalCode' | translate }}</label>
-                <div class="form-icon-group">
-                  <i class="bi bi-mailbox"></i>
-                  <input id="groupPostalCode" type="text" class="form-control" [placeholder]="'groups.form.placeholder.postalCode' | translate" formControlName="postalCode" [class.is-invalid]="hasError('postalCode','required') || hasError('postalCode','maxlength')">
+                <div class="col-md-6">
+                  <label for="groupPostalCode" class="form-label fw-semibold">{{ 'groups.form.postalCode' | translate }}</label>
+                  <div class="form-icon-group">
+                    <i class="bi bi-mailbox"></i>
+                    <input id="groupPostalCode" type="text" class="form-control" [placeholder]="'groups.form.placeholder.postalCode' | translate" formControlName="postalCode" [class.is-invalid]="hasError('address.postalCode','required') || hasError('address.postalCode','maxlength')">
+                  </div>
+                  <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','required')">{{ 'groups.form.errors.postalCode.required' | translate }}</div>
+                  <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','maxlength')">{{ 'groups.form.errors.postalCode.max' | translate }}</div>
                 </div>
-                <div class="invalid-feedback d-block" *ngIf="hasError('postalCode','required')">{{ 'groups.form.errors.postalCode.required' | translate }}</div>
-                <div class="invalid-feedback d-block" *ngIf="hasError('postalCode','maxlength')">{{ 'groups.form.errors.postalCode.max' | translate }}</div>
               </div>
-            </div>
-            <div class="mb-4 mt-3">
-              <label for="groupAddress" class="form-label fw-semibold">{{ 'groups.form.address' | translate }}</label>
-              <div class="form-icon-group">
-                <i class="bi bi-building"></i>
-                <input id="groupAddress" type="text" class="form-control" [placeholder]="'groups.form.placeholder.address' | translate" formControlName="address" [class.is-invalid]="hasError('address','required') || hasError('address','maxlength')">
+              <div class="mb-4 mt-3">
+                <label for="groupStreet" class="form-label fw-semibold">{{ 'groups.form.address' | translate }}</label>
+                <div class="form-icon-group">
+                  <i class="bi bi-building"></i>
+                  <input id="groupStreet" type="text" class="form-control" [placeholder]="'groups.form.placeholder.address' | translate" formControlName="street" [class.is-invalid]="hasError('address.street','required') || hasError('address.street','maxlength')">
+                </div>
+                <div class="invalid-feedback d-block" *ngIf="hasError('address.street','required')">{{ 'groups.form.errors.address.required' | translate }}</div>
+                <div class="invalid-feedback d-block" *ngIf="hasError('address.street','maxlength')">{{ 'groups.form.errors.address.max' | translate }}</div>
               </div>
-              <div class="invalid-feedback d-block" *ngIf="hasError('address','required')">{{ 'groups.form.errors.address.required' | translate }}</div>
-              <div class="invalid-feedback d-block" *ngIf="hasError('address','maxlength')">{{ 'groups.form.errors.address.max' | translate }}</div>
             </div>
             <div class="form-actions d-flex align-items-center gap-3 flex-wrap">
               <button type="submit" class="btn btn-success" [disabled]="submitting || form.invalid">
                 <span *ngIf="!submitting" class="d-inline-flex align-items-center"><i class="bi bi-check2-circle"></i> {{ 'groups.form.create' | translate }}</span>
                 <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
               </button>
-              <button type="button" class="btn btn-outline-secondary" (click)="form.reset()" [disabled]="submitting">{{ 'groups.form.reset' | translate }}</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="resetFormDefaults(false)" [disabled]="submitting">{{ 'groups.form.reset' | translate }}</button>
             </div>
           </form>
         </div>

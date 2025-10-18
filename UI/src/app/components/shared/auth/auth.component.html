@@ -56,6 +56,24 @@
         </div>
       </div>
 
+      <div formGroupName="address" class="address-section">
+        <label for="reg-city">{{ 'auth.address.city' | translate }}</label>
+        <div class="city-select" [attr.aria-busy]="isLoadingCities">
+          <select id="reg-city" formControlName="city" [disabled]="isLoadingCities || cityLoadError || !cities.length">
+            <option value="" disabled>{{ isLoadingCities ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
+            <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+          </select>
+          <span *ngIf="isLoadingCities" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </div>
+        <div *ngIf="cityLoadError" class="form-helper error-text">{{ 'auth.address.cityLoadError' | translate }}</div>
+
+        <label for="reg-postal">{{ 'auth.address.postalCode' | translate }}</label>
+        <input id="reg-postal" formControlName="postalCode" type="text" />
+
+        <label for="reg-street">{{ 'auth.address.street' | translate }}</label>
+        <input id="reg-street" formControlName="street" type="text" />
+      </div>
+
       <button type="submit" [disabled]="registerForm.invalid || isRegisterLoading">
         <span *ngIf="!isRegisterLoading">{{ 'auth.register.btn' | translate }}</span>
         <span *ngIf="isRegisterLoading" class="d-flex align-items-center" style="gap:8px;">

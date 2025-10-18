@@ -38,15 +38,15 @@
           <div class="row g-3 mb-4">
             <div class="col-md-4">
               <div class="fw-semibold">{{ 'groups.details.city' | translate }}</div>
-              <div class="text-muted">{{ group.city || '-' }}</div>
+              <div class="text-muted">{{ getGroupCity() || '-' }}</div>
             </div>
             <div class="col-md-4">
               <div class="fw-semibold">{{ 'groups.details.postalCode' | translate }}</div>
-              <div class="text-muted">{{ group.postalCode || '-' }}</div>
+              <div class="text-muted">{{ getGroupPostalCode() || '-' }}</div>
             </div>
             <div class="col-md-4">
               <div class="fw-semibold">{{ 'groups.details.address' | translate }}</div>
-              <div class="text-muted">{{ group.address || '-' }}</div>
+              <div class="text-muted">{{ getGroupStreet() || '-' }}</div>
             </div>
           </div>
 

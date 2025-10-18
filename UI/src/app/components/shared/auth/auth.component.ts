@@ -7,7 +7,10 @@ import { Router, RouterModule } from '@angular/router';
 import { TranslationService } from '@app/services/translation.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from '@app/services/auth.service';
-import { User, UserRole } from '@app/_models/user';
+import { CityService } from '@app/services/city.service';
+import { RegisterRequest } from '@app/_models/auth';
+import { User } from '@app/_models/user';
+import { buildAddressFormGroup } from '@app/forms/address-form';
 
 @Component({
   selector: 'app-auth',
@@ -31,6 +34,10 @@ export class AuthComponent {
   loginForm: FormGroup;
   registerForm: FormGroup;
 
+  cities: string[] = [];
+  isLoadingCities = false;
+  cityLoadError = false;
+
   private langSub: Subscription | null = null;
 
   constructor(
@@ -38,7 +45,8 @@ export class AuthComponent {
     private authService: AuthService,
     private translation: TranslationService,
     private currentUser: CurrentUserService,
-    private router: Router, 
+    private router: Router,
+    private cityService: CityService,
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -50,11 +58,12 @@ export class AuthComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       role: ['User', Validators.required],
-      languagePreference: ['English', Validators.required]
+      languagePreference: ['English', Validators.required],
+      address: buildAddressFormGroup(this.fb)
     });
 
     const initialLang = this.mapLangForControl(this.translation.currentLang);
-    this.registerForm.get('languagePreference')?.setValue(initialLang);
+    this.registerForm.patchValue({ languagePreference: initialLang });
 
     this.langSub = this.translation.onLangChange.subscribe((l) => {
       const mapped = this.mapLangForControl(l);
@@ -64,6 +73,7 @@ export class AuthComponent {
 
   ngOnInit(): void {
     document.body.classList.add(this.bodyClass);
+    this.loadSupportedCities();
   }
 
   ngOnDestroy(): void {
@@ -74,6 +84,9 @@ export class AuthComponent {
   toggleMode(event: Event) {
     event.preventDefault();
     this.isLoginMode = !this.isLoginMode;
+    if (!this.isLoginMode && !this.isLoadingCities && this.cities.length === 0) {
+      this.loadSupportedCities();
+    }
   }
 
   onLogin() {
@@ -111,13 +124,13 @@ export class AuthComponent {
 
     this.showActivationSection = false;
 
-    const { username, email, password, role, languagePreference } = this.registerForm.value;
+    const { username, email, password, role, languagePreference, address } = this.registerForm.value as RegisterRequest;
 
     this.isRegisterLoading = true;
     const start = Date.now();
     let success = false;
 
-    this.authService.register({ username, email, password, role, languagePreference }).subscribe({
+    this.authService.register({ username, email, password, role, languagePreference, address }).subscribe({
       next: () => {
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
@@ -126,6 +139,7 @@ export class AuthComponent {
         this.finishLoading(start, success, () => {
           this.isRegisterLoading = false;
           this.showRegisterLoadingText = false;
+          this.resetRegisterFormDefaults();
         });
       },
       error: () => {
@@ -141,6 +155,7 @@ export class AuthComponent {
     this.showActivationSection = false;
     this.isLoginMode = true;
     this.loginForm.reset();
+    this.resetRegisterFormDefaults();
   }
 
 
@@ -171,4 +186,51 @@ export class AuthComponent {
     return 'English';
   }
 
+  private loadSupportedCities() {
+    this.isLoadingCities = true;
+    this.cityLoadError = false;
+
+    this.cityService.getCitiesList().subscribe({
+      next: response => {
+        const rawCities = response.resultModel ?? [];
+        this.cities = rawCities
+          .filter(city => !!city && city.trim().length > 0)
+          .map(city => city.trim());
+
+        const firstCity = this.cities[0] ?? '';
+        const currentCity = this.registerAddressGroup.get('city')?.value;
+        if (!currentCity && firstCity) {
+          this.registerAddressGroup.get('city')?.setValue(firstCity);
+        }
+
+        this.isLoadingCities = false;
+      },
+      error: () => {
+        this.isLoadingCities = false;
+        this.cityLoadError = true;
+      }
+    });
+  }
+
+  private resetRegisterFormDefaults() {
+    const initialLang = this.mapLangForControl(this.translation.currentLang);
+    const defaultCity = this.cities[0] ?? '';
+
+    this.registerForm.reset({
+      username: '',
+      email: '',
+      password: '',
+      role: 'User',
+      languagePreference: initialLang,
+      address: {
+        city: defaultCity,
+        postalCode: '',
+        street: ''
+      }
+    });
+  }
+
+  private get registerAddressGroup(): FormGroup {
+    return this.registerForm.get('address') as FormGroup;
+  }
 }

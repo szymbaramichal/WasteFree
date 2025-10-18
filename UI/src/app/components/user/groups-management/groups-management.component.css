@@ -30,6 +30,9 @@
 .groups-mgmt .form-icon-group > i { position:absolute; left: .9rem; top:50%; transform:translateY(-50%); color: var(--bs-gray-600); font-size:1.05rem; pointer-events:none; }
 .groups-mgmt .form-icon-group .form-control { padding-left: 2.35rem; border-radius:.75rem; }
 .groups-mgmt .form-icon-group .form-control.is-invalid { padding-right:2.75rem; }
+.groups-mgmt .form-icon-group select.form-select { padding-left: 2.35rem; border-radius:.75rem; }
+.groups-mgmt .form-icon-group select.form-select.is-invalid { padding-right: 2.75rem; }
+.groups-mgmt .form-icon-group .city-select-spinner { position: absolute; right: .85rem; top: 50%; transform: translateY(-50%); }
 
 /* Button alignment tweaks */
 .groups-mgmt .form-actions .btn { display:inline-flex; align-items:center; gap:.4rem; }

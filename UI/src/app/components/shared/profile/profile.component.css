@@ -101,6 +101,26 @@
   font-weight: 400;
 }
 
+.address-preview {
+  min-width: 220px;
+}
+.address-line {
+  color: rgba(0,0,0,0.75);
+  line-height: 1.4;
+}
+.address-form .form-label {
+  font-weight: 600;
+  color: rgba(0,0,0,0.75);
+}
+.address-form .form-text {
+  font-size: 0.85rem;
+}
+.address-form .form-control.ng-invalid.ng-touched,
+.address-form .form-select.ng-invalid.ng-touched {
+  border-color: rgba(211,47,47,0.65);
+  box-shadow: 0 0 0 .1rem rgba(211,47,47,0.12);
+}
+
 .animate-in { animation: fadeInUp .35s ease-out both; }
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(6px); }
