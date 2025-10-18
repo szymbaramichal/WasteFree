@@ -8,6 +8,9 @@ import { finalize } from 'rxjs';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { ToastrService } from 'ngx-toastr';
 import { TranslationService } from '@app/services/translation.service';
+import { CityService } from '@app/services/city.service';
+import { buildAddressFormGroup } from '@app/forms/address-form';
+import { Address } from '@app/_models/address';
 
 @Component({
   selector: 'app-groups-management',
@@ -21,6 +24,7 @@ export class GroupsManagementComponent implements OnInit {
   private groupService = inject(GarbageGroupService);
   private toastr = inject(ToastrService);
   private translationService = inject(TranslationService);
+  private cityService = inject(CityService);
 
   groups: GarbageGroupInfo[] = [];
   loading = false;
@@ -31,16 +35,37 @@ export class GroupsManagementComponent implements OnInit {
   pendingInvitations: GarbageGroupInvitation[] = [];
   invitationActions: Record<string, boolean> = {};
 
+  cities: string[] = [];
+  citiesLoading = false;
+  citiesLoadError = false;
+
+  private addressGroup: FormGroup = buildAddressFormGroup(this.fb);
+
   form: FormGroup = this.fb.group({
     groupName: ['', [Validators.required, Validators.maxLength(100)]],
     groupDescription: ['', [Validators.required, Validators.maxLength(500)]],
-    city: ['', [Validators.required, Validators.maxLength(100)]],
-    postalCode: ['', [Validators.required, Validators.maxLength(12)]],
-    address: ['', [Validators.required, Validators.maxLength(200)]]
+    address: this.addressGroup
   });
+
+  constructor() {
+    const cityControl = this.addressGroup.get('city');
+    const postalControl = this.addressGroup.get('postalCode');
+    const streetControl = this.addressGroup.get('street');
+
+    cityControl?.addValidators(Validators.maxLength(100));
+    cityControl?.updateValueAndValidity({ emitEvent: false });
+
+    postalControl?.addValidators(Validators.maxLength(12));
+    postalControl?.updateValueAndValidity({ emitEvent: false });
+
+    streetControl?.addValidators(Validators.maxLength(200));
+    streetControl?.updateValueAndValidity({ emitEvent: false });
+  }
 
   ngOnInit(): void {
     this.fetchPendingInvitations();
+    this.loadCities();
+    this.resetFormDefaults(false);
   }
 
   submit(): void {
@@ -49,19 +74,23 @@ export class GroupsManagementComponent implements OnInit {
       return;
     }
     this.submitting = true;
-    const payload: RegisterGarbageGroupRequest = this.form.getRawValue();
+    const raw = this.form.getRawValue() as { groupName: string; groupDescription: string; address: Address | undefined };
+    const rawAddress = raw.address ?? { city: '', postalCode: '', street: '' };
+    const payload: RegisterGarbageGroupRequest = {
+      groupName: raw.groupName.trim(),
+      groupDescription: raw.groupDescription.trim(),
+      address: {
+        city: rawAddress.city?.trim() ?? '',
+        postalCode: rawAddress.postalCode?.trim() ?? '',
+        street: rawAddress.street?.trim() ?? ''
+      }
+    };
     this.groupService.register(payload)
       .pipe(finalize(() => this.submitting = false))
       .subscribe({
         next: () => {
           this.toastr.success(this.translationService.translate('success.update'));
-          this.form.reset({
-            groupName: '',
-            groupDescription: '',
-            city: '',
-            postalCode: '',
-            address: ''
-          });
+          this.resetFormDefaults();
           this.fetchPendingInvitations();
         }
       });
@@ -114,5 +143,47 @@ export class GroupsManagementComponent implements OnInit {
 
   isInvitationBusy(groupId: string): boolean {
     return !!this.invitationActions[groupId];
+  }
+
+  resetFormDefaults(preserveCity: boolean = true): void {
+    const cityControl = this.addressGroup.get('city');
+    const currentCity = cityControl?.value ?? '';
+    const defaultCity = preserveCity ? (currentCity || this.cities[0] || '') : (this.cities[0] || '');
+
+    this.form.reset({
+      groupName: '',
+      groupDescription: '',
+      address: {
+        city: defaultCity,
+        postalCode: '',
+        street: ''
+      }
+    });
+  }
+
+  private loadCities(): void {
+    this.citiesLoading = true;
+    this.citiesLoadError = false;
+    this.cities = [];
+
+    this.cityService.getCitiesList().subscribe({
+      next: res => {
+        const list = res?.resultModel ?? [];
+        this.cities = Array.isArray(list)
+          ? list.filter(city => !!city && city.trim().length > 0).map(city => city.trim())
+          : [];
+        this.citiesLoading = false;
+
+        const cityControl = this.addressGroup.get('city');
+        if (cityControl && !cityControl.value && this.cities.length > 0) {
+          cityControl.setValue(this.cities[0], { emitEvent: false });
+        }
+      },
+      error: () => {
+        this.citiesLoading = false;
+        this.citiesLoadError = true;
+        this.toastr.error(this.translationService.translate('profile.cityLoadError'));
+      }
+    });
   }
 }

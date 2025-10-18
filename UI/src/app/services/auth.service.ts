@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Result } from '../_models/result';
 import { User } from '../_models/user';
+import { RegisterRequest } from '../_models/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  register(data: any): Observable<Result<User>> {
+  register(data: RegisterRequest): Observable<Result<User>> {
     return this.http.post<Result<User>>(`${this.apiUrl}/register`, data);
   }
 

@@ -44,7 +44,13 @@ export class GroupPanelComponent implements OnInit {
       const state: any = history?.state;
       const preview: GarbageGroupInfo | undefined = state?.group;
       if (preview && preview.id === id) {
-        this.group = { id: preview.id, name: preview.name, description: '', users: [] } as GarbageGroup;
+        this.group = {
+          id: preview.id,
+          name: preview.name,
+          description: '',
+          users: [],
+          address: { city: '', postalCode: '', street: '' }
+        } as GarbageGroup;
       }
       if (!id) {
         this.error = this.t.translate('groups.details.invalidId');
@@ -139,9 +145,25 @@ export class GroupPanelComponent implements OnInit {
         this.actLoading = false;
       },
       error: () => {
-        // keep current view; action completed, but refresh failed
         this.actLoading = false;
       }
     });
+  }
+
+  getGroupCity(): string {
+    if (!this.group) return '';
+    if (this.group.address.city) return this.group.address.city;
+    return this.group.city ?? '';
+  }
+
+  getGroupPostalCode(): string {
+    if (!this.group) return '';
+    if (this.group.address.postalCode) return this.group.address.postalCode;
+    return this.group.postalCode ?? '';
+  }
+
+  getGroupStreet(): string {
+    if (!this.group) return '';
+    return this.group.address.street;
   }
 }

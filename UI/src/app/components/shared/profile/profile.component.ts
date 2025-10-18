@@ -1,16 +1,19 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { ProfileService } from '@app/services/profile.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslationService } from '@app/services/translation.service';
 import { CityService } from '@app/services/city.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { buildAddressFormGroup } from '@app/forms/address-form';
+import { Address } from '@app/_models/address';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -19,6 +22,7 @@ export class ProfileComponent implements OnInit {
   toastr = inject(ToastrService);
   translationService = inject(TranslationService);
   cityService = inject(CityService);
+  fb = inject(FormBuilder);
   
   editMode = false;
   draftDescription = '';
@@ -28,10 +32,13 @@ export class ProfileComponent implements OnInit {
   draftBank = '';
   savingBank = false;
   ibanInvalid = false;
-  citySaving = false;
   citiesLoading = false;
   citiesLoadError = false;
   cities: string[] = [];
+
+  editAddress = false;
+  savingAddress = false;
+  addressForm: FormGroup = buildAddressFormGroup(this.fb);
 
   ngOnInit(): void {
     this.profileSvc.refresh();
@@ -106,26 +113,59 @@ export class ProfileComponent implements OnInit {
     return basicOk && remainder === 1;
   }
 
-  onCityChanged(city: string) {
-    if (this.citySaving) {
+  startEditAddress(address: Address | undefined | null) {
+    const existing: Address = {
+      city: address?.city ?? '',
+      postalCode: address?.postalCode ?? '',
+      street: address?.street ?? ''
+    };
+    this.addressForm.reset(existing);
+    if (!existing.city && this.cities.length > 0) {
+      this.addressForm.get('city')?.setValue(this.cities[0]);
+    }
+    if (!this.cities.length && !this.citiesLoading) {
+      this.loadCities();
+    }
+    this.editAddress = true;
+    this.savingAddress = false;
+  }
+
+  cancelAddress() {
+    this.editAddress = false;
+    this.savingAddress = false;
+    const currentAddress = this.profileSvc.profile()?.address;
+    const fallback: Address = {
+      city: currentAddress?.city ?? '',
+      postalCode: currentAddress?.postalCode ?? '',
+      street: currentAddress?.street ?? ''
+    };
+    this.addressForm.reset(fallback);
+  }
+
+  saveAddress() {
+    if (this.addressForm.invalid) {
+      this.addressForm.markAllAsTouched();
       return;
     }
 
-    const current = this.profileSvc.profile()?.city ?? '';
-    if (city === current) {
-      return;
-    }
+    this.savingAddress = true;
+    const formValue = this.addressForm.value as Address;
+    const address: Address = {
+      city: formValue.city?.trim() ?? '',
+      postalCode: formValue.postalCode?.trim() ?? '',
+      street: formValue.street?.trim() ?? ''
+    };
 
-    this.citySaving = true;
-    this.profileSvc.updateProfile({ city }).subscribe({
+    this.profileSvc.updateProfile({ address }).subscribe({
       next: () => {
-        this.citySaving = false;
+        this.savingAddress = false;
+        this.editAddress = false;
         this.profileSvc.refresh();
-        this.toastr.success(this.translationService.translate('profile.citySaved'));
+        this.toastr.success(this.translationService.translate('profile.addressSaved'));
       },
       error: () => {
-        this.citySaving = false;
-        this.toastr.error(this.translationService.translate('profile.citySaveError'));
+        this.savingAddress = false;
+        this.toastr.error(this.translationService.translate('profile.addressSaveError'));
       }
     });
   }
@@ -140,6 +180,9 @@ export class ProfileComponent implements OnInit {
         const list = res?.resultModel ?? [];
         this.cities = Array.isArray(list) ? list : [];
         this.citiesLoading = false;
+        if (this.editAddress && !this.addressForm.get('city')?.value && this.cities.length > 0) {
+          this.addressForm.get('city')?.setValue(this.cities[0]);
+        }
       },
       error: () => {
         this.citiesLoading = false;
