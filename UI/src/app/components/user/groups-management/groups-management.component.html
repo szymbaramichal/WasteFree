@@ -54,9 +54,11 @@
                   <label for="groupPostalCode" class="form-label fw-semibold">{{ 'groups.form.postalCode' | translate }}</label>
                   <div class="form-icon-group">
                     <i class="bi bi-mailbox"></i>
-                    <input id="groupPostalCode" type="text" class="form-control" [placeholder]="'groups.form.placeholder.postalCode' | translate" formControlName="postalCode" [class.is-invalid]="hasError('address.postalCode','required') || hasError('address.postalCode','maxlength')">
+                    <input id="groupPostalCode" type="text" class="form-control" [placeholder]="'groups.form.placeholder.postalCode' | translate" formControlName="postalCode" [class.is-invalid]="hasError('address.postalCode','required') || hasError('address.postalCode','maxlength') || hasError('address.postalCode','pattern') || hasError('address.postalCode','cityMismatch')">
                   </div>
                   <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','required')">{{ 'groups.form.errors.postalCode.required' | translate }}</div>
+                  <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','cityMismatch')">{{ 'groups.form.errors.postalCode.cityMismatch' | translate }}</div>
+                  <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','pattern')">{{ 'groups.form.errors.postalCode.pattern' | translate }}</div>
                   <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','maxlength')">{{ 'groups.form.errors.postalCode.max' | translate }}</div>
                 </div>
               </div>
@@ -64,9 +66,10 @@
                 <label for="groupStreet" class="form-label fw-semibold">{{ 'groups.form.address' | translate }}</label>
                 <div class="form-icon-group">
                   <i class="bi bi-building"></i>
-                  <input id="groupStreet" type="text" class="form-control" [placeholder]="'groups.form.placeholder.address' | translate" formControlName="street" [class.is-invalid]="hasError('address.street','required') || hasError('address.street','maxlength')">
+                  <input id="groupStreet" type="text" class="form-control" [placeholder]="'groups.form.placeholder.address' | translate" formControlName="street" [class.is-invalid]="hasError('address.street','required') || hasError('address.street','maxlength') || hasError('address.street','pattern')">
                 </div>
                 <div class="invalid-feedback d-block" *ngIf="hasError('address.street','required')">{{ 'groups.form.errors.address.required' | translate }}</div>
+                <div class="invalid-feedback d-block" *ngIf="hasError('address.street','pattern')">{{ 'groups.form.errors.address.number' | translate }}</div>
                 <div class="invalid-feedback d-block" *ngIf="hasError('address.street','maxlength')">{{ 'groups.form.errors.address.max' | translate }}</div>
               </div>
             </div>

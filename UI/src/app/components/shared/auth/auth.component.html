@@ -68,10 +68,25 @@
         <div *ngIf="cityLoadError" class="form-helper error-text">{{ 'auth.address.cityLoadError' | translate }}</div>
 
         <label for="reg-postal">{{ 'auth.address.postalCode' | translate }}</label>
-        <input id="reg-postal" formControlName="postalCode" type="text" />
+        <input id="reg-postal" formControlName="postalCode" type="text" [class.is-invalid]="registerForm.get('address.postalCode')?.touched && (registerForm.get('address.postalCode')?.hasError('required') || registerForm.get('address.postalCode')?.hasError('pattern') || registerForm.get('address.postalCode')?.hasError('cityMismatch'))" />
+        <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('required')" class="form-helper error-text">
+          {{ 'auth.address.postalCodeRequired' | translate }}
+        </div>
+        <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('pattern')" class="form-helper error-text">
+          {{ 'auth.address.postalCodeInvalid' | translate }}
+        </div>
+        <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('cityMismatch')" class="form-helper error-text">
+          {{ 'auth.address.postalCodeCityMismatch' | translate }}
+        </div>
 
         <label for="reg-street">{{ 'auth.address.street' | translate }}</label>
-        <input id="reg-street" formControlName="street" type="text" />
+        <input id="reg-street" formControlName="street" type="text" [class.is-invalid]="registerForm.get('address.street')?.touched && (registerForm.get('address.street')?.hasError('required') || registerForm.get('address.street')?.hasError('pattern'))" />
+        <div *ngIf="registerForm.get('address.street')?.touched && registerForm.get('address.street')?.hasError('required')" class="form-helper error-text">
+          {{ 'auth.address.streetRequired' | translate }}
+        </div>
+        <div *ngIf="registerForm.get('address.street')?.touched && registerForm.get('address.street')?.hasError('pattern')" class="form-helper error-text">
+          {{ 'auth.address.streetNumberRequired' | translate }}
+        </div>
       </div>
 
       <button type="submit" [disabled]="registerForm.invalid || isRegisterLoading">

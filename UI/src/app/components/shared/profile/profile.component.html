@@ -100,16 +100,25 @@
                 </div>
                 <div class="col-12 col-md-6">
                   <label class="form-label" for="profile-postal">{{ 'profile.address.postalCode' | translate }}</label>
-                  <input id="profile-postal" type="text" class="form-control" formControlName="postalCode" />
-                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.invalid && addressForm.get('postalCode')?.touched">
+                  <input id="profile-postal" type="text" class="form-control" formControlName="postalCode" [class.is-invalid]="addressForm.get('postalCode')?.touched && (addressForm.get('postalCode')?.hasError('required') || addressForm.get('postalCode')?.hasError('pattern') || addressForm.get('postalCode')?.hasError('cityMismatch'))" />
+                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('required')">
                     {{ 'profile.address.postalRequired' | translate }}
+                  </div>
+                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('pattern')">
+                    {{ 'profile.address.postalInvalid' | translate }}
+                  </div>
+                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('cityMismatch')">
+                    {{ 'profile.address.postalCityMismatch' | translate }}
                   </div>
                 </div>
                 <div class="col-12">
                   <label class="form-label" for="profile-street">{{ 'profile.address.street' | translate }}</label>
-                  <input id="profile-street" type="text" class="form-control" formControlName="street" />
-                  <div class="form-text text-danger" *ngIf="addressForm.get('street')?.invalid && addressForm.get('street')?.touched">
+                  <input id="profile-street" type="text" class="form-control" formControlName="street" [class.is-invalid]="addressForm.get('street')?.touched && (addressForm.get('street')?.hasError('required') || addressForm.get('street')?.hasError('pattern'))" />
+                  <div class="form-text text-danger" *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.hasError('required')">
                     {{ 'profile.address.streetRequired' | translate }}
+                  </div>
+                  <div class="form-text text-danger" *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.hasError('pattern')">
+                    {{ 'profile.address.streetNumberRequired' | translate }}
                   </div>
                 </div>
               </div>
