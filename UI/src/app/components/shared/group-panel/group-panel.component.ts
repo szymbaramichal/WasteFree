@@ -10,6 +10,7 @@ import { CurrentUserService } from '@app/services/current-user.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { buildAddressFormGroup } from '@app/forms/address-form';
 import { CityService } from '@app/services/city.service';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-group-panel',
@@ -159,15 +160,12 @@ export class GroupPanelComponent implements OnInit {
     if (!this.group) return;
     this.actLoading = true;
     this.warn = null;
-    this.groupService.removeUser(this.group.id, userId).subscribe({
+    this.groupService.removeUser(this.group.id, userId)
+      .pipe(finalize(() => this.actLoading = false))
+      .subscribe({
       next: () => {
         this.toastr.success(this.t.translate('groups.details.remove.success'));
         this.refreshDetails();
-      },
-      error: (err) => {
-        this.warn = this.t.translate('groups.details.remove.error');
-        this.actLoading = false;
-        try { console.error('Remove user failed', { id: this.group?.id, userId, err }); } catch {}
       }
     });
   }
