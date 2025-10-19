@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Microsoft.Net.Http.Headers;
 using WasteFree.Api.Filters;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.Wallet;
@@ -16,7 +17,12 @@ public static class WalletEndpoints
     {
         app.MapGet("/wallet/methods", GetWalletMethodsAsync)
             .RequireAuthorization(PolicyNames.GenericPolicy)
-            .CacheOutput(c => c.Expire(TimeSpan.FromSeconds(60)).Tag("wallet_methods"))
+            .CacheOutput(c =>
+            {
+                c.Expire(TimeSpan.FromMinutes(60))
+                 .Tag("wallet_methods")
+                 .SetVaryByHeader(HeaderNames.Origin);
+            })	            
             .WithOpenApi()
             .Produces<Result<IReadOnlyCollection<WalletMethod>>>()
             .WithTags("Wallet")
