@@ -69,11 +69,12 @@ export class AuthComponent {
       const mapped = this.mapLangForControl(l);
       this.registerForm.get('languagePreference')?.setValue(mapped);
     });
+
+    this.cities = cityService.cities() ?? [];
   }
 
   ngOnInit(): void {
     document.body.classList.add(this.bodyClass);
-    this.loadSupportedCities();
   }
 
   ngOnDestroy(): void {
@@ -84,9 +85,6 @@ export class AuthComponent {
   toggleMode(event: Event) {
     event.preventDefault();
     this.isLoginMode = !this.isLoginMode;
-    if (!this.isLoginMode && !this.isLoadingCities && this.cities.length === 0) {
-      this.loadSupportedCities();
-    }
   }
 
   onLogin() {
@@ -186,33 +184,6 @@ export class AuthComponent {
     if (code.startsWith('pl')) return 'Polish';
     return 'English';
   }
-
-  private loadSupportedCities() {
-    this.isLoadingCities = true;
-    this.cityLoadError = false;
-
-    this.cityService.getCitiesList().subscribe({
-      next: response => {
-        const rawCities = response.resultModel ?? [];
-        this.cities = rawCities
-          .filter(city => !!city && city.trim().length > 0)
-          .map(city => city.trim());
-
-        const firstCity = this.cities[0] ?? '';
-        const currentCity = this.registerAddressGroup.get('city')?.value;
-        if (!currentCity && firstCity) {
-          this.registerAddressGroup.get('city')?.setValue(firstCity);
-        }
-
-        this.isLoadingCities = false;
-      },
-      error: () => {
-        this.isLoadingCities = false;
-        this.cityLoadError = true;
-      }
-    });
-  }
-
   private resetRegisterFormDefaults() {
     const initialLang = this.mapLangForControl(this.translation.currentLang);
     const defaultCity = this.cities[0] ?? '';

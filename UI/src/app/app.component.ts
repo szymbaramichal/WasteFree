@@ -6,7 +6,6 @@ import { LanguageSwitcherComponent } from '@components/shared/language-switcher/
 import { TopbarComponent } from '@components/shared/topbar/topbar.component';
 import { LoaderOverlayComponent } from '@components/shared/loader-overlay/loader-overlay.component';
 import { ToastrService } from 'ngx-toastr';
-import { SignalRService } from '@app/services/signalr.service';
 
 @Component({
   selector: 'app-root',
@@ -20,13 +19,10 @@ export class AppComponent {
   dropdownOpen = false;
   showGlobalLang = true;
   toastr = inject(ToastrService);
-  private signalR = inject(SignalRService);
 
   constructor(public t: TranslationService, private router: Router) {
-    // hide global language switcher on portal routes (including wallet) to avoid duplicate controls
     const check = () => {
       const url = this.router.url || '';
-      // hide when on /portal or any child like /portal/wallet
       this.showGlobalLang = !url.startsWith('/portal');
     };
     check();

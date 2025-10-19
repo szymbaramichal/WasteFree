@@ -124,8 +124,6 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 
 app.MigrateDatabase<ApplicationDataContext>();
 
-app.UseOutputCache();
-
 app.UseTickerQ();
 
 app.MapHub<NotificationHub>("/notificationHub");
@@ -146,5 +144,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();
+app.UseOutputCache();
 
 app.Run();
