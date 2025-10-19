@@ -1,113 +1,39 @@
-import { Injectable, effect, inject } from '@angular/core';
-import {
-  HubConnection,
-  HubConnectionBuilder,
-  HubConnectionState,
-  LogLevel
-} from '@microsoft/signalr';
-import { environment } from '../../environments/environment';
-import { CurrentUserService } from './current-user.service';
+import { inject, Inject, Injectable } from '@angular/core';
+import * as signalR from '@microsoft/signalr';
+import { environment } from 'environments/environment';
 import { InboxService } from './inbox.service';
 
-const INBOX_COUNTER_METHOD = 'UpdateInboxCounter';
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class SignalRService {
-  private hubConnection: HubConnection | null = null;
-  private readonly hubUrl = this.resolveHubUrl();
+  private hubConnection!: signalR.HubConnection;
+  private inboxService = inject(InboxService);
+  notifications: string[] = [];
+  private api = `${environment.apiUrl}`;
 
-  private readonly currentUser = inject(CurrentUserService);
-  private readonly inbox = inject(InboxService);
-
-  private readonly watcher = effect(() => {
-    const user = this.currentUser.user();
-    const token = this.getToken();
-
-    if (user && token) {
-      this.startConnection();
-    } else {
-      this.stopConnection();
-    }
-  });
-
-  private readonly handleInboxCounter = (payload: unknown) => {
-    const parsed = this.parseCounter(payload);
-    if (parsed !== null) {
-      this.inbox.setCounter(parsed);
-    }
-  };
-
-  private resolveHubUrl(): string {
-    const trimmed = environment.apiUrl.replace(/\/+$/, '');
-    const withoutApi = trimmed.replace(/\/api$/i, '');
-    return `${withoutApi}/notificationHub`;
-  }
-
-  private getToken(): string | null {
-    try {
-      return localStorage.getItem('authToken');
-    } catch {
-      return null;
-    }
-  }
-
-  private startConnection(): void {
-    const token = this.getToken();
-    if (!token) {
-      return;
-    }
-
-    if (this.hubConnection) {
-      const state = this.hubConnection.state;
-      if (state === HubConnectionState.Connected || state === HubConnectionState.Connecting) {
-        return;
-      }
-    }
-
-    if (this.hubConnection) {
-      this.hubConnection.off(INBOX_COUNTER_METHOD, this.handleInboxCounter);
-    }
-
-    this.hubConnection = new HubConnectionBuilder()
-      .withUrl(this.hubUrl, {
-        accessTokenFactory: () => this.getToken() ?? ''
+  startConnection() {
+    this.hubConnection = new signalR.HubConnectionBuilder()
+      .withUrl(`${this.api}/notificationHub`, {
+        accessTokenFactory: () => localStorage.getItem('authToken') ?? ''
       })
-      .withAutomaticReconnect([0, 2000, 5000, 10000])
-      .configureLogging(LogLevel.Warning)
+      .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.on(INBOX_COUNTER_METHOD, this.handleInboxCounter);
-
-    this.hubConnection.onreconnected(() => {
-      this.inbox.refreshCounter();
+    this.hubConnection.on('UpdateInboxCounter', (message: string) => {
+      this.inboxService.notifyPush();
+      const count = parseInt(message, 10);
+      if (!isNaN(count)) {
+        this.inboxService.counter.set(count);
+      } else {
+        console.warn('Invalid counter value from SignalR:', message);
+      }
+      this.notifications.push(message);
     });
 
     this.hubConnection
       .start()
-      .then(() => this.inbox.refreshCounter())
-  .catch((err: unknown) => console.error('SignalR connection start failed', err));
-  }
-
-  private stopConnection(): void {
-    if (!this.hubConnection) {
-      return;
-    }
-
-    const connection = this.hubConnection;
-    this.hubConnection = null;
-
-  connection.off(INBOX_COUNTER_METHOD, this.handleInboxCounter);
-
-    connection
-      .stop()
-    .catch((err: unknown) => console.warn('SignalR connection stop failed', err));
-  }
-
-  private parseCounter(payload: unknown): number | null {
-    const value = typeof payload === 'string' ? Number.parseInt(payload, 10) : Number(payload);
-    if (Number.isNaN(value) || value < 0) {
-      return null;
-    }
-    return value;
+      .then(() => console.log('SignalR connected'))
+      .catch(err => console.error('Error while connecting SignalR:', err));
   }
 }

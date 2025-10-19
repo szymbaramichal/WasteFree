@@ -11,10 +11,12 @@ export class TranslatePipe implements PipeTransform, OnDestroy {
   private sub: Subscription | null = null;
 
   constructor(private t: TranslationService, private cdr: ChangeDetectorRef) {
-    // subscribe to language changes so pipe updates templates
     this.sub = this.t.onLangChange.subscribe(() => {
-      // mark for check so impure pipe results are refreshed
-      try { this.cdr.markForCheck(); } catch { /* noop in some envs */ }
+      try { 
+        this.cdr.markForCheck(); 
+      } 
+      catch 
+      { /* noop in some envs */ }
     });
   }
 

@@ -26,6 +26,10 @@ export class InboxService {
     constructor(private http: HttpClient) {
     }
 
+    notifyPush() {
+        this._lastPush.set(Date.now());
+    }
+
     setCounter(counter: number) {
         const normalized = Number.isFinite(counter) ? counter : 0;
         const previous = this.counter();

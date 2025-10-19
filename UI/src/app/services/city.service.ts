@@ -1,7 +1,8 @@
-import { inject, Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { Result } from '../_models/result';
 
 @Injectable({
@@ -10,8 +11,19 @@ import { Result } from '../_models/result';
 export class CityService {
   private apiUrl = `${environment.apiUrl}/cities`;
   private http = inject(HttpClient);
-  
-  getCitiesList() : Observable<Result<string[]>> {
-    return this.http.get<Result<string[]>>(`${this.apiUrl}`);
+
+  private _cities = signal<string[] | null>(null);
+  cities = this._cities.asReadonly();
+
+  getCitiesList(): Observable<string[]> {
+    const cached = this._cities();
+    if (cached !== null) {
+      return of(cached);
+    }
+
+    return this.http.get<Result<string[]>>(`${this.apiUrl}`).pipe(
+      map(response => response.resultModel ?? []),
+      tap(cities => this._cities.set(cities))
+    );
   }
 }

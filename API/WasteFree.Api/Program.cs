@@ -124,11 +124,12 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 
 app.MigrateDatabase<ApplicationDataContext>();
 
-app.UseOutputCache();
+app.UseHttpsRedirection();
+ 
+app.UseCors(allowLocalFrontendOrigins);
 
-app.UseTickerQ();
-
-app.MapHub<NotificationHub>("/notificationHub");
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapGarbageGroupsEndpoints();
@@ -138,13 +139,13 @@ app.MapInboxEndpoints();
 app.MapCitiesEndpoints();
 app.MapConsentsEndpoints();
 
-app.UseHttpsRedirection();
- 
-app.UseCors(allowLocalFrontendOrigins);
+app.MapHub<NotificationHub>("/notificationHub")
+   .RequireCors(allowLocalFrontendOrigins);
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseTickerQ();
 
 app.UseRateLimiter();
+app.UseOutputCache();
+
 
 app.Run();

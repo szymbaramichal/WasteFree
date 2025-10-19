@@ -36,7 +36,7 @@ export class GroupPanelComponent implements OnInit {
   actLoading = false;
   editDetails = false;
   savingDetails = false;
-  cities: string[] = [];
+  cities: string[] = this.cityService.cities() ?? [];
   citiesLoading = false;
   citiesLoadError = false;
 
@@ -94,7 +94,6 @@ export class GroupPanelComponent implements OnInit {
       // Try to fetch; if backend not ready, component will show error but route stays open
       this.fetch(id);
     });
-    this.loadCities();
   }
 
   fetch(id: string) {
@@ -207,9 +206,6 @@ export class GroupPanelComponent implements OnInit {
     this.editDetails = true;
     this.savingDetails = false;
     this.warn = null;
-    if (!this.cities.length && !this.citiesLoading) {
-      this.loadCities();
-    }
     this.syncFormWithGroup(this.group, true);
     this.groupForm.markAsPristine();
   }
@@ -286,38 +282,5 @@ export class GroupPanelComponent implements OnInit {
       }
     });
     this.groupForm.markAsPristine();
-  }
-
-  private loadCities(): void {
-    this.citiesLoading = true;
-    this.citiesLoadError = false;
-    this.cities = [];
-
-    this.cityService.getCitiesList().subscribe({
-      next: res => {
-        const list = res?.resultModel ?? [];
-        this.cities = Array.isArray(list)
-          ? list.filter(city => !!city && city.trim().length > 0).map(city => city.trim())
-          : [];
-        this.citiesLoading = false;
-        this.citiesLoadError = false;
-
-        const cityControl = this.addressGroup.get('city');
-        const currentCity = String(cityControl?.value ?? '').trim();
-        if (currentCity && !this.cities.includes(currentCity)) {
-          this.cities = [currentCity, ...this.cities];
-        }
-        if (this.cities.length && cityControl && !cityControl.value) {
-          cityControl.setValue(this.cities[0], { emitEvent: false });
-        }
-      },
-      error: () => {
-        this.citiesLoading = false;
-        this.citiesLoadError = true;
-        const cityControl = this.addressGroup.get('city');
-        const currentCity = String(cityControl?.value ?? '').trim();
-        this.cities = currentCity ? [currentCity] : [];
-      }
-    });
   }
 }

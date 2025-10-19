@@ -32,9 +32,7 @@ export class ProfileComponent implements OnInit {
   draftBank = '';
   savingBank = false;
   ibanInvalid = false;
-  citiesLoading = false;
-  citiesLoadError = false;
-  cities: string[] = [];
+  cities: string[] = this.cityService.cities() ?? [];
 
   editAddress = false;
   savingAddress = false;
@@ -42,7 +40,6 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.profileSvc.refresh();
-    this.loadCities();
   }
 
   startEdit(current: string | undefined | null) {
@@ -123,9 +120,6 @@ export class ProfileComponent implements OnInit {
     if (!existing.city && this.cities.length > 0) {
       this.addressForm.get('city')?.setValue(this.cities[0]);
     }
-    if (!this.cities.length && !this.citiesLoading) {
-      this.loadCities();
-    }
     this.editAddress = true;
     this.savingAddress = false;
   }
@@ -166,28 +160,6 @@ export class ProfileComponent implements OnInit {
       error: () => {
         this.savingAddress = false;
         this.toastr.error(this.translationService.translate('profile.addressSaveError'));
-      }
-    });
-  }
-
-  private loadCities(): void {
-    this.citiesLoading = true;
-    this.citiesLoadError = false;
-    this.cities = [];
-
-    this.cityService.getCitiesList().subscribe({
-      next: (res) => {
-        const list = res?.resultModel ?? [];
-        this.cities = Array.isArray(list) ? list : [];
-        this.citiesLoading = false;
-        if (this.editAddress && !this.addressForm.get('city')?.value && this.cities.length > 0) {
-          this.addressForm.get('city')?.setValue(this.cities[0]);
-        }
-      },
-      error: () => {
-        this.citiesLoading = false;
-        this.citiesLoadError = true;
-        this.toastr.error(this.translationService.translate('profile.cityLoadError'));
       }
     });
   }

@@ -35,9 +35,7 @@ export class GroupsManagementComponent implements OnInit {
   pendingInvitations: GarbageGroupInvitation[] = [];
   invitationActions: Record<string, boolean> = {};
 
-  cities: string[] = [];
-  citiesLoading = false;
-  citiesLoadError = false;
+  cities: string[] = this.cityService.cities() ?? [];
 
   private addressGroup: FormGroup = buildAddressFormGroup(this.fb);
 
@@ -64,7 +62,6 @@ export class GroupsManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchPendingInvitations();
-    this.loadCities();
     this.resetFormDefaults(false);
   }
 
@@ -157,32 +154,6 @@ export class GroupsManagementComponent implements OnInit {
         city: defaultCity,
         postalCode: '',
         street: ''
-      }
-    });
-  }
-
-  private loadCities(): void {
-    this.citiesLoading = true;
-    this.citiesLoadError = false;
-    this.cities = [];
-
-    this.cityService.getCitiesList().subscribe({
-      next: res => {
-        const list = res?.resultModel ?? [];
-        this.cities = Array.isArray(list)
-          ? list.filter(city => !!city && city.trim().length > 0).map(city => city.trim())
-          : [];
-        this.citiesLoading = false;
-
-        const cityControl = this.addressGroup.get('city');
-        if (cityControl && !cityControl.value && this.cities.length > 0) {
-          cityControl.setValue(this.cities[0], { emitEvent: false });
-        }
-      },
-      error: () => {
-        this.citiesLoading = false;
-        this.citiesLoadError = true;
-        this.toastr.error(this.translationService.translate('profile.cityLoadError'));
       }
     });
   }
