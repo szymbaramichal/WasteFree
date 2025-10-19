@@ -10,11 +10,11 @@
           <small class="opacity-75">{{ 'groups.subtitle' | translate }}</small>
         </div>
         <div class="d-flex align-items-center gap-2">
-          <div class="text-end me-2 small">
+          <div class="text-end me-2 small summary-pill">
             <div class="fw-semibold">{{ 'groups.total' | translate }}</div>
             <div class="fs-5 lh-1">{{ groups.length }}</div>
           </div>
-          <button class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center px-3" (click)="fetchGroups()" [disabled]="loading" style="height:32px;">
+          <button class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center px-3 refresh-btn" (click)="fetchGroups()" [disabled]="loading">
             <span *ngIf="!loading" class="d-inline-flex align-items-center gap-1"><i class="bi bi-arrow-clockwise"></i><span class="ms-1">{{ 'groups.refresh' | translate }}</span></span>
             <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
           </button>
@@ -24,36 +24,41 @@
     </div>
     <div class="card-body p-0 d-flex flex-column">
       <div *ngIf="loadError" class="alert alert-danger m-3">{{ loadError }}</div>
-      <div *ngIf="!loadError" class="flex-grow-1 position-relative">
-  <div class="groups-scroll list-group list-group-flush px-3">
-          <div *ngIf="loading" class="p-4 text-center text-muted">
-            <div class="spinner-border"></div>
-            <div class="small mt-2">{{ 'groups.loading' | translate }}</div>
-          </div>
-         <a *ngFor="let g of groups; let i = index" class="list-group-item list-group-item-action group-item py-3"
-          [routerLink]="['/portal/groups', g.id]" [state]="{ group: g }">
-            <div class="d-flex align-items-center gap-3">
-              <div class="avatar flex-shrink-0" [ngClass]="{'owner': g.isUserOwner}" [attr.data-initial]="g.name | slice:0:1" [style.background]="avatarColor(g.name)"></div>
-              <div class="flex-grow-1">
-                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                  <div>
-                    <div class="fw-semibold group-name mb-1 text-truncate" [title]="g.name">{{ g.name }}</div>
-                    <div class="d-flex gap-2 small text-muted">
-                      <span class="badge rounded-pill" [ngClass]="g.isUserOwner ? 'bg-success-subtle text-success-emphasis border border-success-subtle' : 'bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle'">
+      <div *ngIf="!loadError" class="flex-grow-1 position-relative groups-wrapper">
+        <div *ngIf="loading" class="groups-loading-overlay">
+          <div class="spinner-border"></div>
+          <div class="small mt-2 text-muted">{{ 'groups.loading' | translate }}</div>
+        </div>
+        <div class="groups-scroll px-3" [class.is-loading]="loading">
+          <div *ngIf="!loading && groups.length > 0" class="groups-grid">
+            <a *ngFor="let g of groups; let i = index" class="group-card" [routerLink]="['/portal/groups', g.id]" [state]="{ group: g }">
+              <span class="group-card__accent"></span>
+              <div class="group-card__body">
+                <div class="group-card__header">
+                  <div class="group-card__avatar" [ngClass]="{'owner': g.isUserOwner}" [attr.data-initial]="g.name | slice:0:1" [style.background]="avatarColor(g.name)"></div>
+                  <div class="group-card__meta">
+                    <h6 class="group-card__name" [title]="g.name">{{ g.name }}</h6>
+                    <div class="group-card__tags">
+                      <span class="role-chip" [class.owner]="g.isUserOwner">
+                        <i class="bi" [ngClass]="g.isUserOwner ? 'bi-patch-check-fill' : 'bi-people-fill'"></i>
                         {{ g.isUserOwner ? ('groups.role.owner' | translate) : ('groups.role.member' | translate) }}
                       </span>
+                      <span class="index-chip">#{{ i + 1 }}</span>
                     </div>
                   </div>
-                  <div class="text-end small text-muted opacity-75">#{{ i + 1 }}</div>
+                </div>
+                <div class="group-card__footer">
+                  <i class="bi bi-arrow-up-right"></i>
                 </div>
               </div>
-              <i class="bi bi-chevron-right text-muted opacity-50"></i>
+            </a>
+          </div>
+          <div *ngIf="!loading && groups.length === 0" class="empty-state text-center text-muted">
+            <div class="empty-visual">
+              <i class="bi bi-stack"></i>
             </div>
-          </a>
-          <div *ngIf="!loading && groups.length === 0" class="p-5 text-center text-muted empty-state">
-            <i class="bi bi-folder2-open display-6 d-block mb-3 opacity-50"></i>
-            <div class="fw-semibold mb-1">{{ 'groups.empty.title' | translate }}</div>
-            <div class="small mb-3">{{ 'groups.empty.desc' | translate }}</div>
+            <p class="fw-semibold mb-1">{{ 'groups.empty.title' | translate }}</p>
+            <small class="opacity-75">{{ 'groups.empty.desc' | translate }}</small>
           </div>
         </div>
       </div>
