@@ -173,7 +173,8 @@ export class AuthComponent {
       this.currentUser.setUser({
         id: res.id,
         username: res.username,
-        role: res.userRole
+        role: res.userRole,
+        acceptedConsents: res.acceptedConsents
       });
       return;
     }
