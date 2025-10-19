@@ -3,7 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Result } from '../_models/result';
-import { GarbageGroup, GarbageGroupInfo, RegisterGarbageGroupRequest, GarbageGroupInvitation } from '../_models/garbageGroups';
+import { GarbageGroup, GarbageGroupInfo, RegisterGarbageGroupRequest, GarbageGroupInvitation, UpdateGarbageGroupRequest } from '../_models/garbageGroups';
 
 @Injectable({
   providedIn: 'root'
@@ -43,5 +43,10 @@ export class GarbageGroupService {
   respondToInvitation(groupId: string, accept: boolean): Observable<Result<any>> {
     const g = encodeURIComponent(groupId);
     return this.http.post<Result<any>>(`${this.apiUrl}/${g}/makeAction/${accept}`, {});
+  }
+
+  update(groupId: string, payload: UpdateGarbageGroupRequest): Observable<Result<GarbageGroup>> {
+    const g = encodeURIComponent(groupId);
+    return this.http.put<Result<GarbageGroup>>(`${this.apiUrl}/${g}/update`, payload);
   }
 }
