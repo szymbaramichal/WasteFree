@@ -13,6 +13,7 @@ import { GroupsManagementComponent } from '@components/user/groups-management/gr
 import { ProfileComponent } from '@components/shared/profile/profile.component';
 import { GroupPanelComponent } from '@components/shared/group-panel/group-panel.component';
 import { groupResolver } from '@app/resolvers/group.resolver';
+import { NotFoundComponent } from '@components/shared/not-found/not-found.component';
 
 function activateAccountMatcher(segments: UrlSegment[]): UrlMatchResult | null {
     if (!segments || segments.length === 0) return null;
@@ -50,5 +51,6 @@ export const routes: Routes = [
         ]
     },
     { path: 'auth', component: AuthComponent },
-    { matcher: activateAccountMatcher, component: ActivationComponent }
+    { matcher: activateAccountMatcher, component: ActivationComponent },
+    { path: '**', component: NotFoundComponent }
 ];
