@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
@@ -12,13 +12,15 @@ import { AuthService } from '@app/services/auth.service';
   templateUrl: './activation.component.html',
   styleUrls: ['./activation.component.css']
 })
-export class ActivationComponent implements OnInit {
+export class ActivationComponent implements OnInit, OnDestroy {
+  private readonly bodyClass = 'auth-bg';
   status: 'pending'|'success'|'error' = 'pending';
   message?: string | null = null;
 
   constructor(private route: ActivatedRoute, private auth: AuthService, private router: Router, private t: TranslationService) {}
 
   ngOnInit(): void {
+    document.body.classList.add(this.bodyClass);
     let token: string | null = null;
 
     token = this.route.snapshot.paramMap.get('token');
@@ -66,6 +68,10 @@ export class ActivationComponent implements OnInit {
         this.message = err?.error?.errorMessage;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    document.body.classList.remove(this.bodyClass);
   }
 
   gotoLogin(){

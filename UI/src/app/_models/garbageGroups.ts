@@ -34,6 +34,12 @@ export interface RegisterGarbageGroupRequest {
     address: Address;
 }
 
+export interface UpdateGarbageGroupRequest {
+    groupName: string;
+    groupDescription: string;
+    address: Address;
+}
+
 export interface GarbageGroupInvitation {
         groupId: string;
         groupName: string;

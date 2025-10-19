@@ -1,2 +1,17 @@
 .bg-gradient-green{background:linear-gradient(135deg,#2bb673,#1f8b56)}
 .fancy-card .card-header{position:relative}.fancy-card .card-header .header-accent{position:absolute;bottom:-8px;left:16px;right:16px;height:8px;background:linear-gradient(90deg,rgba(43,182,115,.3),rgba(13,110,253,.3));border-radius:0 0 .5rem .5rem}
+
+.btn-ghost-light{background:transparent;border-color:rgba(255,255,255,.6);color:#fff;transition:background .2s ease,color .2s ease,box-shadow .2s ease}
+.btn-ghost-light:hover{background:rgba(255,255,255,.12);color:#fff}
+.btn-ghost-light:disabled{opacity:.85;color:rgba(255,255,255,.9)}
+
+.group-details-form{background:linear-gradient(180deg,rgba(43,182,115,.05),transparent 70%);border-radius:1rem;border:1px solid rgba(0,0,0,.06);padding:1.5rem}
+.group-details-form .form-label{font-weight:600;color:rgba(0,0,0,.75)}
+.group-details-form .form-control,.group-details-form .form-select{border-radius:12px;border-color:rgba(0,0,0,.1)}
+.group-details-form .form-control:focus,.group-details-form .form-select:focus{box-shadow:0 0 0 .15rem rgba(43,182,115,.15);border-color:rgba(43,182,115,.45)}
+.group-details-form .form-text.text-danger{font-size:.85rem}
+
+.btn-elevated{box-shadow:0 4px 10px rgba(31,139,86,.2);border-radius:999px}
+.btn-elevated:active{transform:translateY(1px)}
+
+.form-spinner{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:var(--primary-green-dark,#1f8b56)}

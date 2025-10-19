@@ -225,6 +225,7 @@
   "groups.details.remove": "Remove",
   "groups.details.remove.success": "User removed from group",
   "groups.details.remove.error": "Failed to remove user",
+  "groups.details.updateError": "Failed to update group",
   "groups.invitations.title": "Pending invitations",
   "groups.invitations.subtitle": "Review and decide on group invites",
   "groups.invitations.refresh": "Refresh",
