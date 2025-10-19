@@ -52,16 +52,12 @@
                     <label for="groupCity" class="form-label fw-semibold">{{ 'groups.form.city' | translate }}</label>
                     <div class="form-control-wrap">
                       <select id="groupCity" class="form-select" formControlName="city"
-                              [disabled]="citiesLoading || citiesLoadError || !cities.length"
                               [class.is-invalid]="hasError('address.city','required') || hasError('address.city','maxlength')">
-                        <option value="" disabled>{{ citiesLoading ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
                         <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
                       </select>
-                      <span class="spinner-border spinner-border-sm city-select-spinner" *ngIf="citiesLoading" role="status" aria-hidden="true"></span>
                     </div>
                     <div class="invalid-feedback d-block" *ngIf="hasError('address.city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
                     <div class="invalid-feedback d-block" *ngIf="hasError('address.city','maxlength')">{{ 'groups.form.errors.city.max' | translate }}</div>
-                    <div class="form-text text-danger" *ngIf="citiesLoadError">{{ 'profile.cityLoadError' | translate }}</div>
                   </div>
                   <div class="form-field">
                     <label for="groupPostalCode" class="form-label fw-semibold">{{ 'groups.form.postalCode' | translate }}</label>
