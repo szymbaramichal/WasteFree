@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CurrentUserService } from '@app/services/current-user.service';
@@ -11,6 +11,7 @@ import { CityService } from '@app/services/city.service';
 import { RegisterRequest } from '@app/_models/auth';
 import { User } from '@app/_models/user';
 import { buildAddressFormGroup } from '@app/forms/address-form';
+import { SignalRService } from '@app/services/signalr.service';
 
 @Component({
   selector: 'app-auth',
@@ -21,6 +22,7 @@ import { buildAddressFormGroup } from '@app/forms/address-form';
 })
 export class AuthComponent {
   private bodyClass = 'auth-bg';
+  private signalR = inject(SignalRService);
 
   isLoginMode = true;
 
@@ -105,6 +107,7 @@ export class AuthComponent {
         this.finishLoading(start, success, () => {
           this.isLoading = false;
           this.showLoadingText = false;
+          this.signalR.startConnection();
           try { this.router.navigate(['/portal']); } catch { location.href = '/portal'; }
         });
       },

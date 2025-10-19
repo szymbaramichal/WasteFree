@@ -33,6 +33,21 @@ public static class ServiceCollectionExtension
                     ValidateIssuer = false, // no issuer in token
                     ValidateAudience = false // no audience in token
                 };
+                
+                opt.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/notificationHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
 
@@ -75,6 +90,7 @@ public static class ServiceCollectionExtension
                 policy  =>
                 {
                     policy.AllowAnyHeader()
+                        .AllowCredentials()
                         .AllowAnyMethod()
                         .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:5000", "https://localhost:5000");
                 });
