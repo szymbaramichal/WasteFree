@@ -232,8 +232,8 @@ public static class GarbageGroupsEndpoints
     /// Update group data.
     /// </summary>
     private static async Task<IResult> UpdateGarbageGroupData(
-        [FromRoute] Guid groupId,
         [FromBody] UpdateGarbageGroupRequest request,
+        [FromRoute] Guid groupId,
         IStringLocalizer localizer,
         ICurrentUserService currentUserService,
         IMediator mediator,

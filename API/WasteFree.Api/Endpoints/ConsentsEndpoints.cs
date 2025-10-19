@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using Microsoft.Net.Http.Headers;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.Consent;
 using WasteFree.Domain.Constants;
@@ -15,7 +16,12 @@ public static class ConsentsEndpoints
 	{
 		app.MapGet("/garbage-admin-consents", GetConsentAsync)
 			.RequireAuthorization(PolicyNames.GarbageAdminPolicy)
-            .CacheOutput(c => c.Expire(TimeSpan.FromMinutes(60)).Tag("consent"))
+            .CacheOutput(c =>
+            {
+                c.Expire(TimeSpan.FromMinutes(60))
+                 .Tag("consents")
+                 .SetVaryByHeader(HeaderNames.Origin);
+            })			
 			.WithOpenApi()
 			.Produces<Result<string>>()
 			.WithTags("Consents")
