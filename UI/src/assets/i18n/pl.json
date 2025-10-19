@@ -7,6 +7,9 @@
   "nav.contact": "Kontakt",
   "nav.goApp": "Przejdź do aplikacji",
   "loading": "Ładowanie...",
+  "notFound.title": "Nie znaleziono strony",
+  "notFound.message": "Strona, której szukasz, mogła zostać usunięta albo adres jest niepoprawny.",
+  "notFound.goHome": "Wróć na stronę główną",
 
   "Cracow": "Kraków",
   "Warsaw": "Warszawa",

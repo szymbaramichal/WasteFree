@@ -1,0 +1,44 @@
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  text-align: center;
+  padding: 2rem;
+  color: #1f2933;
+}
+
+.not-found__code {
+  font-size: clamp(4rem, 12vw, 8rem);
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.not-found__title {
+  margin: 1rem 0 0.5rem;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.not-found__message {
+  max-width: 540px;
+  margin-bottom: 1.5rem;
+  color: #475569;
+}
+
+.not-found__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.not-found__link:hover {
+  background-color: #1d4ed8;
+}
