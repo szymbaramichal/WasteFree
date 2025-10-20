@@ -6,30 +6,18 @@ import { CurrentUser } from '../_models/user';
 })
 export class CurrentUserService {
   private storageKey = 'wf_current_user';
-  private avatarPrefix = 'wf_avatar_';
   private _user = signal<CurrentUser | null>(this.loadFromStorage());
   user = this._user.asReadonly();
 
   setUser(u: CurrentUser | null) {
-    const previous = this._user();
     if (u) {
-      const cachedAvatar = this.restoreCachedAvatar(u.id);
-      const incomingAvatar = typeof u.avatarUrl === 'string' ? u.avatarUrl.trim() : u.avatarUrl ?? null;
-      const avatarUrl = incomingAvatar && incomingAvatar.length > 0 ? incomingAvatar : cachedAvatar ?? null;
+      const avatarUrl = this.normalizeAvatar(u.avatarUrl);
       const normalized: CurrentUser = { ...u, avatarUrl };
       this._user.set(normalized);
       localStorage.setItem(this.storageKey, JSON.stringify(normalized));
-      if (avatarUrl) {
-        localStorage.setItem(this.avatarCacheKey(normalized.id), avatarUrl);
-      } else {
-        localStorage.removeItem(this.avatarCacheKey(normalized.id));
-      }
     } else {
       this._user.set(null);
       localStorage.removeItem(this.storageKey);
-      if (previous?.id) {
-        localStorage.removeItem(this.avatarCacheKey(previous.id));
-      }
     }
   }
 
@@ -41,31 +29,18 @@ export class CurrentUserService {
       if (!parsed?.id) {
         return parsed;
       }
-      const incomingAvatar = typeof parsed.avatarUrl === 'string' ? parsed.avatarUrl.trim() : parsed.avatarUrl ?? null;
-      if (!incomingAvatar) {
-        const cached = this.restoreCachedAvatar(parsed.id);
-        if (cached) {
-          parsed.avatarUrl = cached;
-        }
-      } else {
-        parsed.avatarUrl = incomingAvatar;
-        localStorage.setItem(this.avatarCacheKey(parsed.id), incomingAvatar);
-      }
+      parsed.avatarUrl = this.normalizeAvatar(parsed.avatarUrl);
       return parsed;
     } catch {
       return null;
     }
   }
 
-  private restoreCachedAvatar(userId: string): string | null {
-    try {
-      return localStorage.getItem(this.avatarCacheKey(userId)) ?? null;
-    } catch {
+  private normalizeAvatar(value: unknown): string | null {
+    if (typeof value !== 'string') {
       return null;
     }
-  }
-
-  private avatarCacheKey(userId: string): string {
-    return `${this.avatarPrefix}${userId}`;
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
   }
 }

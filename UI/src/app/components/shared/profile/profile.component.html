@@ -22,7 +22,6 @@
                 </ng-template>
                 <input #avatarInput type="file" class="d-none" accept="image/*" (change)="onAvatarSelected($event)" />
               </div>
-              <div class="avatar-error text-danger" *ngIf="avatarUploadError">{{ avatarUploadError }}</div>
             </div>
             <div class="col">
               <div class="fw-semibold username">{{ p.username }}</div>

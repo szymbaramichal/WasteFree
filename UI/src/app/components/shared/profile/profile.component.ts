@@ -10,6 +10,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { buildAddressFormGroup } from '@app/forms/address-form';
 import { Address } from '@app/_models/address';
 import { CurrentUserService } from '@app/services/current-user.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
@@ -30,7 +31,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   draftDescription = '';
   saving = false;
   avatarUploading = false;
-  avatarUploadError: string | null = null;
   avatarLoadFailed = false;
   readonly maxAvatarSize = 5 * 1024 * 1024; // 5 MB
 
@@ -62,7 +62,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   triggerAvatarPicker() {
-    this.avatarUploadError = null;
     this.avatarInput?.nativeElement.click();
   }
 
@@ -85,23 +84,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.avatarUploadError = null;
     this.avatarUploading = true;
     this.avatarLoadFailed = false;
 
-    this.profileSvc.uploadAvatar(file).subscribe({
-      next: () => {
-        this.avatarUploading = false;
-        this.toastr.success(this.translationService.translate('profile.avatar.uploadSuccess'));
-        this.profileSvc.refresh();
-        this.resetAvatarInput();
-      },
-      error: () => {
-        this.avatarUploading = false;
-        this.toastr.error(this.translationService.translate('profile.avatar.uploadError'));
-        this.resetAvatarInput();
-      }
-    });
+    this.profileSvc
+      .uploadAvatar(file)
+      .pipe(
+        finalize(() => {
+          this.avatarUploading = false;
+          this.resetAvatarInput();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.toastr.success(this.translationService.translate('profile.avatar.uploadSuccess'));
+          this.profileSvc.refresh();
+        }
+      });
   }
 
   onAvatarError() {
@@ -119,9 +118,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   private handleAvatarError(key: string) {
-    const message = this.translationService.translate(key);
-    this.avatarUploadError = message;
-    this.toastr.error(message);
+    this.toastr.error(this.translationService.translate(key));
   }
 
   avatarSource(p: { avatarUrl: string | null } | null): string | null {
