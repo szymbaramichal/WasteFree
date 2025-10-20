@@ -27,7 +27,12 @@
         </div>
         <div class="user-info order-lg-3" *ngIf="currentUser.user() as u">
           <div class="user-pill">
-            <img src="/assets/images/user.svg" alt="" width="18" height="18" class="user-avatar" aria-hidden="true" />
+            <ng-container *ngIf="!avatarFailed && avatarUrlOrFallback(u) as avatar; else defaultAvatar">
+              <img [src]="avatar" alt="" width="36" height="36" class="user-avatar-img" (error)="onAvatarError()" (load)="onAvatarLoad()" />
+            </ng-container>
+            <ng-template #defaultAvatar>
+              <div class="user-avatar-fallback" aria-hidden="true">{{ (u.username || '?').slice(0,1).toUpperCase() }}</div>
+            </ng-template>
             <div class="user-text">
               <div class="name"><a class="text-white text-decoration-underline" routerLink="/portal/profile">{{ u.username }}</a></div>
               <div class="role">{{ roleKeyMap[u.role] | translate }}</div>

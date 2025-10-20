@@ -7,7 +7,22 @@
         <ng-container *ngIf="profileSvc.profile() as p; else errorTpl">
           <div class="row g-3 align-items-center">
             <div class="col-auto">
-              <div class="avatar" aria-hidden="true">{{ (p.username || '?').slice(0,1).toUpperCase() }}</div>
+              <div class="avatar-wrapper">
+                <ng-container *ngIf="!avatarLoadFailed && avatarSource(p) as avatar; else fallbackAvatar">
+                  <img [src]="avatar" alt="" class="avatar-img" (error)="onAvatarError()" (load)="onAvatarLoad()" [class.loading]="avatarUploading" />
+                </ng-container>
+                <ng-template #fallbackAvatar>
+                  <div class="avatar" aria-hidden="true">{{ (p.username || '?').slice(0,1).toUpperCase() }}</div>
+                </ng-template>
+                <button class="avatar-upload-btn" type="button" (click)="triggerAvatarPicker()" [disabled]="avatarUploading" [attr.aria-busy]="avatarUploading">
+                  <span *ngIf="!avatarUploading; else uploadingTpl">{{ 'profile.avatar.change' | translate }}</span>
+                </button>
+                <ng-template #uploadingTpl>
+                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                </ng-template>
+                <input #avatarInput type="file" class="d-none" accept="image/*" (change)="onAvatarSelected($event)" />
+              </div>
+              <div class="avatar-error text-danger" *ngIf="avatarUploadError">{{ avatarUploadError }}</div>
             </div>
             <div class="col">
               <div class="fw-semibold username">{{ p.username }}</div>

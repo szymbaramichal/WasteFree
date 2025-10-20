@@ -267,6 +267,11 @@
   "profile.settings": "Settings",
   "profile.comingSoon": "More settings coming soon."
   ,
+  "profile.avatar.change": "Change avatar",
+  "profile.avatar.invalidFile": "Please select an image file.",
+  "profile.avatar.fileTooLarge": "Avatar must be 5 MB or smaller.",
+  "profile.avatar.uploadSuccess": "Avatar updated successfully",
+  "profile.avatar.uploadError": "Failed to upload avatar",
   "common.edit": "Edit",
   "common.save": "Save",
   "common.cancel": "Cancel",

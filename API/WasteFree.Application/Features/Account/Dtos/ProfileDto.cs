@@ -21,7 +21,7 @@ public class ProfileDto
     /// <summary>
     /// User's avatar sas url
     /// </summary>
-    public string AvatarUrl { get; set; } = null!;
+    public string? AvatarUrl { get; set; }
 
     /// <summary>
     /// User's email address.
@@ -46,20 +46,7 @@ public class ProfileDto
 
 public static class ProfileDtoExtensions
 {
-    public static ProfileDto MapToProfileDto(this User user)
-    {
-        return new ProfileDto
-        {
-            UserId = user.Id,
-            BankAccountNumber = user.Wallet?.WithdrawalAccountNumber ?? string.Empty,
-            Description = user.Description ?? string.Empty,
-            Email = user.Email,
-            Username = user.Username, 
-            Address = user.Address
-        };
-    }
-    
-    public static ProfileDto MapToProfileWithAvatarUrl(this User user, string avatarUrl)
+    public static ProfileDto MapToProfileDto(this User user, string? avatarUrl = null)
     {
         return new ProfileDto
         {
@@ -69,7 +56,12 @@ public static class ProfileDtoExtensions
             Email = user.Email,
             Username = user.Username,
             Address = user.Address,
-            AvatarUrl = avatarUrl
+            AvatarUrl = string.IsNullOrWhiteSpace(avatarUrl) ? null : avatarUrl
         };
+    }
+    
+    public static ProfileDto MapToProfileWithAvatarUrl(this User user, string avatarUrl)
+    {
+        return user.MapToProfileDto(avatarUrl);
     }
 }

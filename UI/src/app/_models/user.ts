@@ -5,6 +5,7 @@ export interface User {
     token?: string;
     userRole: UserRole;
     acceptedConsents: boolean;
+    avatarUrl?: string | null;
 };
 
 export interface CurrentUser {
@@ -12,6 +13,7 @@ export interface CurrentUser {
   username: string;
   role: UserRole;
   acceptedConsents?: boolean;
+  avatarUrl?: string | null;
 }
 
 export enum UserRole {
