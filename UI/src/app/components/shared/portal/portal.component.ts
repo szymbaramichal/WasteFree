@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subject, filter, takeUntil } from 'rxjs';
+import { UserRole } from '@app/_models/user';
+import { ShowForRolesDirective } from '@app/directives/show-for-roles.directive';
 
 @Component({
   selector: 'app-portal',
@@ -12,7 +14,8 @@ import { Subject, filter, takeUntil } from 'rxjs';
   imports: [
   CommonModule,
   RouterModule,
-  TranslatePipe
+  TranslatePipe,
+  ShowForRolesDirective
   ],
   templateUrl: './portal.component.html',
   styleUrls: ['./portal.component.css']
@@ -22,6 +25,7 @@ export class PortalComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   groupsExpanded = false;
   groupsRouteActive = false;
+  userRole = UserRole;
 
   constructor(public currentUser: CurrentUserService, private router: Router) {}
 
