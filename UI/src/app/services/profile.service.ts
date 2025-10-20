@@ -16,48 +16,36 @@ export class ProfileService {
   private _loading = signal<boolean>(false);
   loading = this._loading.asReadonly();
 
-  private _error = signal<string | null>(null);
-  error = this._error.asReadonly();
 
   constructor(private http: HttpClient, private currentUser: CurrentUserService) {}
 
   refresh(): void {
     this._loading.set(true);
-    this._error.set(null);
     this.http.get<any>(this.api).subscribe({
       next: (res) => {
         const dto: Profile | null = this.unwrap(res);
-        const previous = this._profile();
-        const userAvatar = this.currentUser.user()?.avatarUrl ?? null;
-        const sameUser = dto && previous && previous.userId === dto.userId;
-        const previousAvatar = sameUser ? this.normalizeAvatar(previous?.avatarUrl) : null;
-        const merged = dto
-          ? {
-              ...dto,
-              avatarUrl:
-                this.normalizeAvatar(dto.avatarUrl) ?? previousAvatar ?? userAvatar ?? null
-            }
-          : null;
-        this._profile.set(merged);
-        if (merged) {
+        this._profile.set(dto);
+        if (dto) {
           const existing = this.currentUser.user();
-          if (existing) {
-            const nextAvatar = this.normalizeAvatar(merged.avatarUrl) ?? existing.avatarUrl ?? null;
+          if (existing && existing.id === dto.userId) {
             this.currentUser.setUser({
               ...existing,
-              username: merged.username || existing.username,
-              avatarUrl: nextAvatar
+              username: dto.username || existing.username
             });
           }
         }
         this._loading.set(false);
       },
       error: (err) => {
-        this._error.set('load_failed');
         this._loading.set(false);
         this._profile.set(null);
       }
     });
+  }
+
+  clear(): void {
+    this._loading.set(false);
+    this._profile.set(null);
   }
 
   updateDescription(description: string) { return this.updateProfile({ description }); }
