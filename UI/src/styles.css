@@ -4,7 +4,7 @@
 html, body { height: 100%; margin: 0; }
 body { background: initial; overflow-x: hidden; }
 /* Use a CSS var for the topbar height */
-:root { --topbar-height: 56px; }
+:root { --topbar-height: 72px; }
 
 .toast-success {
   font-weight: bold !important;
@@ -35,7 +35,7 @@ body.auth-bg, body.portal-bg {
 /* Ensure toast container sits above fixed elements like sidebar */
 .toast-container, .ngx-toastr { z-index: 4000 !important; }
 
-.topbar-placeholder { height: 56px; }
+.topbar-placeholder { height: var(--topbar-height); }
 
 .navbar .navbar-nav {
 	flex-wrap: nowrap;

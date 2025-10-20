@@ -27,7 +27,7 @@ public class UpdateUserProfileCommandHandler(ApplicationDataContext context) : I
         user.Address = request.Address;
 
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return Result<ProfileDto>.Success(user.MapToProfileDto());
     }
 }

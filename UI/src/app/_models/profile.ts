@@ -8,6 +8,7 @@ export interface Profile {
   bankAccountNumber: string;
   city: string;
   address: Address;
+  avatarUrl: string | null;
 }
 
 export interface ProfileUpdateRequest {

@@ -1,16 +1,18 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.Account.Dtos;
 using WasteFree.Infrastructure;
 using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
 using WasteFree.Domain.Models;
 
 namespace WasteFree.Application.Features.Account;
 
 public record GetUserProfileQuery(Guid UserId) : IRequest<ProfileDto>;
 
-public class GetUserProfileQueryHandler(ApplicationDataContext context) : IRequestHandler<GetUserProfileQuery, ProfileDto>
+public class GetUserProfileQueryHandler(ApplicationDataContext context, IBlobStorageService blobStorageService) : IRequestHandler<GetUserProfileQuery, ProfileDto>
 {
     public async Task<Result<ProfileDto>> HandleAsync(GetUserProfileQuery request, CancellationToken cancellationToken)
     {
@@ -22,8 +24,17 @@ public class GetUserProfileQueryHandler(ApplicationDataContext context) : IReque
         if (user is null)
             return Result<ProfileDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
 
-        await context.SaveChangesAsync(cancellationToken);
-        
-        return Result<ProfileDto>.Success(user.MapToProfileDto());
+        string? avatarUrl = null;
+
+        if (!string.IsNullOrWhiteSpace(user.AvatarName))
+        {
+            avatarUrl = await blobStorageService.GetReadSasUrlAsync(
+                BlobContainerNames.Avatars,
+                user.AvatarName,
+                TimeSpan.FromMinutes(5),
+                cancellationToken);
+        }
+
+        return Result<ProfileDto>.Success(user.MapToProfileDto(avatarUrl));
     }
 }

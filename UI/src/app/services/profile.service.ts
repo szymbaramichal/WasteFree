@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Profile, ProfileUpdateRequest } from '@app/_models/profile';
 import { Address } from '@app/_models/address';
+import { CurrentUserService } from '@app/services/current-user.service';
+import { tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -17,15 +19,37 @@ export class ProfileService {
   private _error = signal<string | null>(null);
   error = this._error.asReadonly();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private currentUser: CurrentUserService) {}
 
   refresh(): void {
     this._loading.set(true);
     this._error.set(null);
     this.http.get<any>(this.api).subscribe({
       next: (res) => {
-  const dto: Profile | null = this.unwrap(res);
-        this._profile.set(dto);
+        const dto: Profile | null = this.unwrap(res);
+        const previous = this._profile();
+        const userAvatar = this.currentUser.user()?.avatarUrl ?? null;
+        const sameUser = dto && previous && previous.userId === dto.userId;
+        const previousAvatar = sameUser ? this.normalizeAvatar(previous?.avatarUrl) : null;
+        const merged = dto
+          ? {
+              ...dto,
+              avatarUrl:
+                this.normalizeAvatar(dto.avatarUrl) ?? previousAvatar ?? userAvatar ?? null
+            }
+          : null;
+        this._profile.set(merged);
+        if (merged) {
+          const existing = this.currentUser.user();
+          if (existing) {
+            const nextAvatar = this.normalizeAvatar(merged.avatarUrl) ?? existing.avatarUrl ?? null;
+            this.currentUser.setUser({
+              ...existing,
+              username: merged.username || existing.username,
+              avatarUrl: nextAvatar
+            });
+          }
+        }
         this._loading.set(false);
       },
       error: (err) => {
@@ -50,11 +74,36 @@ export class ProfileService {
     return this.http.put<any>(this.api, body);
   }
 
+  uploadAvatar(file: File) {
+    const endpoint = `${environment.apiUrl}/user/avatar/upload`;
+    const formData = new FormData();
+    formData.append('avatar', file);
+    return this.http.post<any>(endpoint, formData).pipe(
+      tap(res => {
+        const resolved = this.extractAvatarUrl(res);
+        if (!resolved) {
+          return;
+        }
+        const avatarUrl = this.applyCacheBuster(resolved);
+        const currentProfile = this._profile();
+        if (currentProfile) {
+          this._profile.set({ ...currentProfile, avatarUrl });
+        }
+        const existing = this.currentUser.user();
+        if (existing) {
+          this.currentUser.setUser({ ...existing, avatarUrl });
+        }
+      })
+    );
+  }
+
   private unwrap(res: any): Profile | null {
     if (!res) return null;
     const raw = res?.resultModel ?? res; // support both wrapped and raw
     if (!raw) return null;
     const address = this.normalizeAddress(raw);
+    const avatarRaw = raw.avatarUrl ?? raw.AvatarUrl ?? null;
+    const avatarUrl = this.normalizeAvatar(avatarRaw);
     return {
       userId: String(raw.userId ?? raw.UserId ?? ''),
       username: String(raw.username ?? raw.Username ?? ''),
@@ -62,8 +111,35 @@ export class ProfileService {
       description: String(raw.description ?? raw.Description ?? ''),
       bankAccountNumber: String(raw.bankAccountNumber ?? raw.BankAccountNumber ?? ''),
       city: address.city,
-      address
+      address,
+      avatarUrl
     };
+  }
+
+  private extractAvatarUrl(res: any): string | null {
+    const raw = res?.resultModel ?? res ?? {};
+    return this.normalizeAvatar(raw.avatarUrl ?? raw.AvatarUrl ?? null);
+  }
+
+  private applyCacheBuster(url: string): string {
+    try {
+      const base = typeof window !== 'undefined' ? window.location.origin : undefined;
+      const parsed = new URL(url, base);
+      parsed.searchParams.delete('v');
+      parsed.searchParams.set('v', Date.now().toString());
+      return parsed.toString();
+    } catch {
+      const sep = url.includes('?') ? '&' : '?';
+      return `${url}${sep}v=${Date.now()}`;
+    }
+  }
+
+  private normalizeAvatar(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
   }
 
   private normalizeAddress(raw: any): Address {

@@ -25,14 +25,14 @@ public record UserDto(
 
 public static class UserDtoExtensions
 {
-    public static UserDto MapToUserDto(this User user, string token = "", string avatarUrl = "")
+    public static UserDto MapToUserDto(this User user, string token = "", string? avatarUrl = null)
     {
         return new UserDto(
             user.Id,
             user.Email,
             user.Username,
-            token,
-            avatarUrl,
+            string.IsNullOrWhiteSpace(token) ? null : token,
+            string.IsNullOrWhiteSpace(avatarUrl) ? null : avatarUrl,
             user.Role,
             user.ConsentsAgreed
         );

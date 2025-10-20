@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, EffectRef, ElementRef, OnDestroy, OnInit, ViewChild, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
@@ -9,6 +9,8 @@ import { CityService } from '@app/services/city.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { buildAddressFormGroup } from '@app/forms/address-form';
 import { Address } from '@app/_models/address';
+import { CurrentUserService } from '@app/services/current-user.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
@@ -17,16 +19,20 @@ import { Address } from '@app/_models/address';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
   profileSvc = inject(ProfileService);
   toastr = inject(ToastrService);
   translationService = inject(TranslationService);
   cityService = inject(CityService);
   fb = inject(FormBuilder);
+  currentUserSvc = inject(CurrentUserService);
   
   editMode = false;
   draftDescription = '';
   saving = false;
+  avatarUploading = false;
+  avatarLoadFailed = false;
+  readonly maxAvatarSize = 5 * 1024 * 1024; // 5 MB
 
   editBank = false;
   draftBank = '';
@@ -38,8 +44,88 @@ export class ProfileComponent implements OnInit {
   savingAddress = false;
   addressForm: FormGroup = buildAddressFormGroup(this.fb);
 
+  @ViewChild('avatarInput') avatarInput?: ElementRef<HTMLInputElement>;
+  private avatarResetEffect: EffectRef = effect(() => {
+    const profile = this.profileSvc.profile();
+    if (profile) {
+      this.avatarLoadFailed = false;
+    }
+  });
+
   ngOnInit(): void {
+    this.avatarLoadFailed = false;
     this.profileSvc.refresh();
+  }
+
+  ngOnDestroy(): void {
+    this.avatarResetEffect.destroy();
+  }
+
+  triggerAvatarPicker() {
+    this.avatarInput?.nativeElement.click();
+  }
+
+  onAvatarSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input?.files && input.files.length > 0 ? input.files[0] : null;
+    if (!file) {
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      this.handleAvatarError('profile.avatar.invalidFile');
+      this.resetAvatarInput();
+      return;
+    }
+
+    if (file.size > this.maxAvatarSize) {
+      this.handleAvatarError('profile.avatar.fileTooLarge');
+      this.resetAvatarInput();
+      return;
+    }
+
+    this.avatarUploading = true;
+    this.avatarLoadFailed = false;
+
+    this.profileSvc
+      .uploadAvatar(file)
+      .pipe(
+        finalize(() => {
+          this.avatarUploading = false;
+          this.resetAvatarInput();
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.toastr.success(this.translationService.translate('profile.avatar.uploadSuccess'));
+          this.profileSvc.refresh();
+        }
+      });
+  }
+
+  onAvatarError() {
+    this.avatarLoadFailed = true;
+  }
+
+  onAvatarLoad() {
+    this.avatarLoadFailed = false;
+  }
+
+  private resetAvatarInput() {
+    if (this.avatarInput?.nativeElement) {
+      this.avatarInput.nativeElement.value = '';
+    }
+  }
+
+  private handleAvatarError(key: string) {
+    this.toastr.error(this.translationService.translate(key));
+  }
+
+  avatarSource(p: { avatarUrl: string | null } | null): string | null {
+    if (p?.avatarUrl) {
+      return p.avatarUrl;
+    }
+    return this.currentUserSvc.user()?.avatarUrl ?? null;
   }
 
   startEdit(current: string | undefined | null) {

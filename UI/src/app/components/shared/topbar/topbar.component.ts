@@ -9,6 +9,7 @@ import { WalletService } from '@app/services/wallet.service';
 import { filter } from 'rxjs/operators';
 import { UserRole } from '@app/_models/user';
 import { InboxService } from '@app/services/inbox.service';
+import { ProfileService } from '@app/services/profile.service';
 
 @Component({
   selector: 'app-topbar',
@@ -21,6 +22,7 @@ export class TopbarComponent implements OnDestroy {
   userRole = UserRole;
   currentUser = inject(CurrentUserService);
   inbox = inject(InboxService);
+  profileSvc = inject(ProfileService);
   visible = false;
   walletBalance$ = this.wallet.balance$;
   animateInbox = false;
@@ -30,9 +32,11 @@ export class TopbarComponent implements OnDestroy {
     [UserRole.GarbageAdmin]: 'auth.role.garbageAdmin',
     [UserRole.Admin]: 'auth.role.admin'
   };
+  avatarFailed = false;
 
   private inboxAnimationTimer: ReturnType<typeof setTimeout> | null = null;
   private inboxPulseEffect: EffectRef;
+  private avatarResetEffect: EffectRef;
   private lastAnimationMark = 0;
 
   constructor(private router: Router, private activated: ActivatedRoute, private wallet: WalletService) {
@@ -60,6 +64,13 @@ export class TopbarComponent implements OnDestroy {
       this.lastAnimationMark = stamp;
       this.triggerInboxAnimation();
     });
+
+    this.avatarResetEffect = effect(() => {
+      const avatar = this.currentAvatarUrl();
+      if (avatar) {
+        this.avatarFailed = false;
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -68,6 +79,7 @@ export class TopbarComponent implements OnDestroy {
       this.inboxAnimationTimer = null;
     }
     this.inboxPulseEffect.destroy();
+    this.avatarResetEffect.destroy();
   }
 
   logout() {
@@ -79,6 +91,31 @@ export class TopbarComponent implements OnDestroy {
   openInbox() {
     this.animateInbox = false;
     this.router.navigate(['/portal/inbox']);
+  }
+
+  onAvatarError() {
+    this.avatarFailed = true;
+  }
+
+  onAvatarLoad() {
+    this.avatarFailed = false;
+  }
+
+  avatarUrlOrFallback(user: { avatarUrl?: string | null } | null): string | null {
+    if (user?.avatarUrl) {
+      return user.avatarUrl;
+    }
+    const prof = this.profileSvc.profile();
+    return prof?.avatarUrl ?? null;
+  }
+
+  private currentAvatarUrl(): string | null {
+    const user = this.currentUser.user();
+    if (user?.avatarUrl) {
+      return user.avatarUrl;
+    }
+    const prof = this.profileSvc.profile();
+    return prof?.avatarUrl ?? null;
   }
 
   private triggerInboxAnimation() {

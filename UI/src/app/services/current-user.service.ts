@@ -10,10 +10,13 @@ export class CurrentUserService {
   user = this._user.asReadonly();
 
   setUser(u: CurrentUser | null) {
-    this._user.set(u);
     if (u) {
-      localStorage.setItem(this.storageKey, JSON.stringify(u));
+      const avatarUrl = this.normalizeAvatar(u.avatarUrl);
+      const normalized: CurrentUser = { ...u, avatarUrl };
+      this._user.set(normalized);
+      localStorage.setItem(this.storageKey, JSON.stringify(normalized));
     } else {
+      this._user.set(null);
       localStorage.removeItem(this.storageKey);
     }
   }
@@ -22,9 +25,22 @@ export class CurrentUserService {
     try {
       const raw = localStorage.getItem(this.storageKey);
       if (!raw) return null;
-      return JSON.parse(raw) as CurrentUser;
+      const parsed = JSON.parse(raw) as CurrentUser;
+      if (!parsed?.id) {
+        return parsed;
+      }
+      parsed.avatarUrl = this.normalizeAvatar(parsed.avatarUrl);
+      return parsed;
     } catch {
       return null;
     }
+  }
+
+  private normalizeAvatar(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return null;
+    }
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
   }
 }
