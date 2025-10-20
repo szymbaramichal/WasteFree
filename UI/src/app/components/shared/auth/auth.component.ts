@@ -12,6 +12,7 @@ import { RegisterRequest } from '@app/_models/auth';
 import { User } from '@app/_models/user';
 import { buildAddressFormGroup } from '@app/forms/address-form';
 import { SignalRService } from '@app/services/signalr.service';
+import { ProfileService } from '@app/services/profile.service';
 
 @Component({
   selector: 'app-auth',
@@ -45,8 +46,9 @@ export class AuthComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private translation: TranslationService,
-    private currentUser: CurrentUserService,
+  private translation: TranslationService,
+  private currentUser: CurrentUserService,
+  private profileService: ProfileService,
     private router: Router,
     private cityService: CityService,
   ) {
@@ -171,6 +173,7 @@ export class AuthComponent {
 
     if (token) {
       localStorage.setItem('authToken', token);
+      this.profileService.clear();
       this.currentUser.setUser({
         id: res.id,
         username: res.username,
