@@ -224,7 +224,8 @@
   "groups.invitations.accepted": "Zaproszenie zaakceptowane",
   "groups.invitations.declined": "Zaproszenie odrzucone",
   "groups.invitations.acceptError": "Nie udało się zaakceptować zaproszenia",
-  "groups.invitations.declineError": "Nie udało się odrzucić zaproszenia"
+  "groups.invitations.declineError": "Nie udało się odrzucić zaproszenia",
+  "groups.invitations.invitedByPrefix": "Zaprosił:"
   ,
   "groups.details.title": "Szczegóły grupy",
   "groups.details.description": "Opis grupy",
