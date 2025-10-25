@@ -240,7 +240,8 @@
   "groups.invitations.accepted": "Invitation accepted",
   "groups.invitations.declined": "Invitation declined",
   "groups.invitations.acceptError": "Failed to accept invitation",
-  "groups.invitations.declineError": "Failed to decline invitation"
+  "groups.invitations.declineError": "Failed to decline invitation",
+  "groups.invitations.invitedByPrefix": "Invited by:"
   ,
   "profile.title": "Your profile",
   "profile.details": "Details",

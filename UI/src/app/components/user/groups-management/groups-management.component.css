@@ -1,7 +1,23 @@
+.btn.btn-xs { padding:.35rem .75rem; font-size:.82rem; border-radius:.7rem; letter-spacing:.02em; font-weight:600; display:inline-flex; align-items:center; justify-content:center; gap:.3rem; }
+.btn.btn-xs .spinner-border { width:.85rem; height:.85rem; }
+.card-heading__icon .bi { font-size:1.2rem; }
+.form-card .card-heading__icon { background:rgba(32,201,151,0.25); }
+.invitation-card .card-heading__icon { background:rgba(43,182,115,0.25); }
 /* Fancy groups management styling */
 
-.groups-mgmt .fancy-card { border-radius: 1rem; }
-.groups-mgmt .card-header { border-top-left-radius: 1rem; border-top-right-radius: 1rem; }
+.groups-mgmt { padding-block:1.5rem; max-width:1200px; margin-inline:auto; }
+.groups-mgmt .fancy-card { border-radius:1.35rem; overflow:hidden; width:100%; }
+.groups-mgmt .fancy-card .card-header { border-top-left-radius:1.35rem; border-top-right-radius:1.35rem; padding:1.2rem 1.5rem; box-shadow:inset 0 -1px 0 rgba(255,255,255,0.2); }
+.groups-mgmt .fancy-card .card-header h5 { font-size:1.25rem; margin:0; }
+.groups-mgmt .fancy-card .card-header small { font-size:.85rem; }
+
+.groups-mgmt .card-heading { display:flex; align-items:center; gap:.75rem; }
+.groups-mgmt .card-heading__icon { width:44px; height:44px; border-radius:16px; background:rgba(255,255,255,0.18); display:flex; align-items:center; justify-content:center; box-shadow:0 12px 28px rgba(0,0,0,0.14); position:relative; overflow:hidden; }
+.groups-mgmt .card-heading__icon::after { content:""; position:absolute; inset:0; background-size:20px; background-repeat:no-repeat; background-position:center; opacity:.95; }
+.card-heading__icon--form::after { background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23ffffff' viewBox='0 0 16 16'%3e%3cpath d='M10.854.146a.5.5 0 0 1 .707 0l2.293 2.293a.5.5 0 0 1 0 .707l-9.5 9.5-3.182.53a.5.5 0 0 1-.576-.576l.53-3.182 9.5-9.5zM11.207 2 13 3.793 13.5 3.293 11.707 1.5 11.207 2zM12.5 4.293 10.707 2.5 5 8.207V9h.793L12.5 4.293zM4.5 9.5V8H3v1.5H1.5v1H3V12h1.5v-1.5H6v-1H4.5z'/%3e%3c/svg%3e"); background-size:20px; }
+.card-heading__icon--invite::after { background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='%23ffffff' viewBox='0 0 16 16'%3e%3cpath d='M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1l-8 5-8-5V4zm0 2.236 7.555 4.722a.5.5 0 0 0 .89 0L16 6.236V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6.236z'/%3e%3c/svg%3e"); }
+
+.groups-mgmt .card-body--compact { padding:1.4rem; display:flex; flex-direction:column; gap:1rem; }
 
 .bg-gradient-green { background: linear-gradient(135deg,#2bb673,#1f8b56); }
 .bg-gradient-teal { background: linear-gradient(135deg,#20c997,#198754); }
@@ -12,17 +28,15 @@
 
 @keyframes fadeIn { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform: translateY(0);} }
 
-.groups-mgmt .groups-form { display:flex; flex-direction:column; gap:2rem; }
-.groups-mgmt .form-grid { display:grid; gap:1.5rem; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); }
-.groups-mgmt .form-panel { position:relative; padding:1.75rem; background: var(--bs-body-bg); border-radius:1rem; box-shadow:0 10px 30px rgba(12,39,54,.1); border:1px solid rgba(32,201,151,.08); }
-.groups-mgmt fieldset.form-panel { border:0; min-inline-size:0; }
-.groups-mgmt .address-panel { background:linear-gradient(145deg,rgba(32,201,151,.12),rgba(32,201,151,.02)); border:1px solid rgba(32,201,151,.18); }
-.groups-mgmt .panel-heading { display:flex; align-items:center; gap:.85rem; margin-bottom:1.5rem; }
-.groups-mgmt .panel-heading h6 { font-weight:700; }
-.groups-mgmt .panel-icon { display:inline-flex; align-items:center; justify-content:center; width:2.5rem; height:2.5rem; border-radius:50%; background:linear-gradient(135deg,rgba(32,201,151,.18),rgba(32,201,151,.32)); color: var(--bs-green); }
+.groups-mgmt .groups-form { display:flex; flex-direction:column; gap:1.1rem; height:100%; }
+.groups-mgmt .panel-compact { background:var(--bs-body-bg); border-radius:1.05rem; border:1px solid rgba(32,201,151,.08); box-shadow:0 12px 26px rgba(12,39,54,.06); padding:1rem 1.15rem; display:flex; flex-direction:column; gap:.85rem; }
+.groups-mgmt .panel-compact--accent { background:rgba(32,201,151,.06); border-color:rgba(32,201,151,.16); }
+.groups-mgmt .panel-compact--actions { background:rgba(32,201,151,.04); align-items:flex-start; padding:.9rem 1.15rem; }
+.groups-mgmt .panel-title { display:flex; align-items:center; gap:.45rem; font-weight:600; font-size:.85rem; color:var(--bs-gray-700); text-transform:uppercase; letter-spacing:.04em; margin-bottom:.35rem; }
+.groups-mgmt .panel-title .bi { font-size:1.05rem; color:#198754; }
+.groups-mgmt .groups-form-layout { margin:0; }
 
-.groups-mgmt .form-field { display:flex; flex-direction:column; gap:.6rem; margin-bottom:1.25rem; animation:fadeIn .35s ease both; }
-.groups-mgmt .form-field:last-child { margin-bottom:0; }
+.groups-mgmt .form-field { display:flex; flex-direction:column; gap:.55rem; margin:0; animation:fadeIn .3s ease both; }
 .groups-mgmt .form-field label { color: var(--bs-gray-700); }
 .groups-mgmt .form-field:has(.is-invalid) label { color: var(--bs-danger); }
 .groups-mgmt .form-field:focus-within label { color: var(--bs-green); }
@@ -36,7 +50,8 @@
 
 .groups-mgmt .char-counter { text-align:right; font-size:.8rem; color: var(--bs-gray-600); }
 
-.groups-mgmt .field-grid { display:grid; gap:1.25rem; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); }
+.groups-mgmt .field-grid { display:grid; gap:.9rem; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-bottom:1rem; }
+.groups-mgmt .field-grid .form-field { margin-bottom:0; }
 
 .groups-mgmt .btn-success { background: linear-gradient(135deg,#2bb673,#1f8b56); border:0; }
 .groups-mgmt .btn-success:hover { filter:brightness(1.05); }
@@ -45,12 +60,14 @@
 /* Utility */
 @media (max-width: 991.98px) { .groups-mgmt .fancy-card { min-height:auto; } }
 @media (max-width: 767.98px) {
-	.groups-mgmt .panel-heading { flex-direction:row; align-items:center; }
-	.groups-mgmt .panel-heading small { display:block; }
+	.groups-mgmt .panel-title { font-size:.8rem; }
 }
 @media (max-width: 575.98px) {
-	.groups-mgmt .form-panel { padding:1.25rem; }
-	.groups-mgmt .panel-icon { width:2.1rem; height:2.1rem; font-size:.95rem; }
+	.groups-mgmt .panel-compact { padding:.9rem 1rem; }
+	.groups-mgmt .panel-compact--actions { padding:.85rem 1rem; }
+	.groups-mgmt .panel-title { font-size:.78rem; }
+	.groups-mgmt .panel-body { padding:1rem; }
+	.groups-mgmt .field-grid { grid-template-columns:1fr; gap:.75rem; }
 }
 
 /* Icon inputs */
@@ -76,34 +93,31 @@
 .groups-mgmt .form-actions .btn .spinner-border { width:1rem; height:1rem; }
 .groups-mgmt .form-actions { row-gap:.75rem; column-gap:1rem; }
 
-.groups-mgmt .invitation-table thead th { border-top: 0; color: var(--bs-gray-600); font-weight: 600; }
-.groups-mgmt .invitation-table tbody tr:hover { background-color: rgba(32,201,151,.08); }
-.groups-mgmt .invitation-actions .btn { min-width: 110px; display:inline-flex; align-items:center; justify-content:center; gap:.35rem; }
-.groups-mgmt .refresh-btn { white-space: nowrap; display:inline-flex; align-items:center; gap:.4rem; }
+.groups-mgmt .invitation-panel { background:rgba(32,201,151,.05); border:1px solid rgba(32,201,151,.12); border-radius:1.1rem; box-shadow:0 10px 24px rgba(12,39,54,.07); display:flex; flex-direction:column; overflow:hidden; }
+.groups-mgmt .panel-body { padding:.95rem 1.25rem 1.2rem; display:flex; flex-direction:column; gap:.85rem; flex:1 1 auto; }
+.groups-mgmt .loading-state { min-height:160px; }
+.groups-mgmt .invitation-alert { border-radius:.85rem; }
 
-.groups-mgmt .invitation-card { overflow:hidden; }
-.groups-mgmt .invitation-panel { gap:1.2rem; }
-.groups-mgmt .loading-state { min-height:260px; }
-.groups-mgmt .invitation-alert { border-radius:.9rem; }
+.groups-mgmt .invitation-list { display:flex; flex-direction:column; gap:.85rem; }
+.groups-mgmt .invitation-item { display:flex; flex-direction:column; gap:.75rem; padding:.85rem 1.05rem; border-radius:.95rem; background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(240,255,250,.85)); border:1px solid rgba(32,201,151,.14); box-shadow:0 8px 20px rgba(23,70,90,.08); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.groups-mgmt .invitation-item:hover { transform:translateY(-2px); box-shadow:0 14px 24px rgba(23,70,90,.12); border-color:rgba(32,201,151,.28); }
 
-.groups-mgmt .invitation-list { display:flex; flex-direction:column; gap:1rem; }
-.groups-mgmt .invitation-item { display:flex; gap:1.25rem; align-items:center; justify-content:space-between; padding:1.1rem 1.35rem; border-radius:1rem; background:linear-gradient(135deg,rgba(255,255,255,.92),rgba(240,255,250,.78)); border:1px solid rgba(32,201,151,.12); box-shadow:0 12px 25px rgba(23,70,90,.08); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-.groups-mgmt .invitation-item:hover { transform:translateY(-3px); box-shadow:0 18px 30px rgba(23,70,90,.12); border-color:rgba(32,201,151,.3); }
+.groups-mgmt .group-name-row { display:flex; align-items:flex-start; gap:.75rem; }
+.groups-mgmt .group-chip__icon { font-size:1.35rem; color:#198754; display:inline-flex; align-items:center; justify-content:center; }
+.groups-mgmt .group-name-wrap { display:flex; flex-direction:column; gap:.2rem; }
+.groups-mgmt .group-name { font-weight:700; font-size:1rem; line-height:1.3; }
+.groups-mgmt .invited-by { display:flex; align-items:center; gap:.35rem; font-size:.8rem; letter-spacing:.01em; }
+.groups-mgmt .invited-by .bi { font-size:.95rem; color:#20c997; }
 
-.groups-mgmt .invitation-meta { flex:1 1 auto; min-width:0; }
-.groups-mgmt .group-chip { display:flex; align-items:center; gap:1.1rem; }
-.groups-mgmt .chip-avatar { width:3rem; height:3rem; border-radius:1rem; background:linear-gradient(135deg,#20c997,#198754); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.25rem; box-shadow:0 10px 20px rgba(25,135,84,.25); }
-.groups-mgmt .group-name { font-weight:700; font-size:1.05rem; }
+.groups-mgmt .invitation-controls { display:flex; gap:.5rem; flex-wrap:wrap; justify-content:flex-start; align-items:center; }
+.groups-mgmt .invitation-controls .btn { flex:1 0 120px; min-width:0; }
 
-.groups-mgmt .invitation-controls { display:flex; gap:.6rem; flex-wrap:nowrap; justify-content:flex-end; align-items:center; }
-.groups-mgmt .invitation-controls .btn { min-width:120px; flex:0 0 auto; }
-
-.groups-mgmt .empty-state { gap:1rem; min-height:260px; }
-.groups-mgmt .empty-illustration { width:68px; height:68px; border-radius:1.4rem; background:rgba(32,201,151,.15); color:#198754; display:flex; align-items:center; justify-content:center; font-size:1.75rem; margin-bottom:.5rem; }
+.groups-mgmt .empty-state { gap:.9rem; min-height:160px; }
+.groups-mgmt .empty-illustration { width:60px; height:60px; border-radius:1.2rem; background:rgba(32,201,151,.12); color:#198754; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:.35rem; }
 
 @media (max-width: 639.98px) {
 	.groups-mgmt .invitation-item { flex-direction:column; align-items:flex-start; }
 	.groups-mgmt .invitation-controls { width:100%; justify-content:stretch; gap:.75rem; }
-	.groups-mgmt .invitation-controls .btn { flex:1 1 auto; min-width:0; }
+	.groups-mgmt .invitation-controls .btn { flex:1 1 100%; min-width:0; }
 }
 

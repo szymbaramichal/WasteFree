@@ -1,173 +1,179 @@
-<div class="container py-4 groups-mgmt">
+<div class="container-fluid px-3 groups-mgmt">
   <div class="row gy-4">
-    <div class="col-12 col-xl-6">
-      <div class="card fancy-card border-0 shadow-lg h-100">
+  <div class="col-12 col-xl-7 col-xxl-8 d-flex">
+      <div class="card fancy-card form-card border-0 shadow-lg flex-grow-1">
         <div class="card-header bg-gradient-teal text-white py-3 position-relative overflow-hidden">
-          <div class="d-flex justify-content-between align-items-start gap-3">
-            <div>
-              <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
-                <i class="bi bi-plus-circle"></i>
-                {{ 'groups.form.title' | translate }}
-              </h5>
-              <small class="opacity-75">{{ 'groups.form.subtitle' | translate }}</small>
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="card-heading">
+              <div class="card-heading__icon card-heading__icon--form"></div>
+              <div>
+                <h5 class="mb-1 fw-bold">{{ 'groups.form.title' | translate }}</h5>
+                <small class="opacity-75">{{ 'groups.form.subtitle' | translate }}</small>
+              </div>
             </div>
           </div>
           <div class="header-accent"></div>
         </div>
-        <div class="card-body">
+        <div class="card-body card-body--compact">
           <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="needs-validation groups-form">
-            <div class="form-grid">
-              <section class="form-panel">
-                <header class="panel-heading">
-                  <span class="panel-icon"><i class="bi bi-pencil-square"></i></span>
-                  <div>
-                    <h6 class="mb-0">{{ 'groups.form.title' | translate }}</h6>
-                    <small class="opacity-75">{{ 'groups.form.subtitle' | translate }}</small>
+            <div class="row g-3 g-xl-4 groups-form-layout">
+              <div class="col-12 col-lg-6">
+                <div class="panel-compact">
+                  <div class="panel-title">
+                    <i class="bi bi-clipboard-check"></i>
+                    <span>{{ 'groups.form.subtitle' | translate }}</span>
                   </div>
-                </header>
-                <div class="form-field">
-                  <label for="groupName" class="form-label fw-semibold">{{ 'groups.form.name' | translate }}</label>
-                  <div class="form-control-wrap">
-                    <input #groupNameInput id="groupName" type="text" class="form-control" [placeholder]="'groups.form.placeholder.name' | translate" formControlName="groupName" [class.is-invalid]="hasError('groupName','required') || hasError('groupName','maxlength')">
+                  <div class="form-field">
+                    <label for="groupName" class="form-label fw-semibold">{{ 'groups.form.name' | translate }}</label>
+                    <div class="form-control-wrap">
+                      <input #groupNameInput id="groupName" type="text" class="form-control" [placeholder]="'groups.form.placeholder.name' | translate" formControlName="groupName" [class.is-invalid]="hasError('groupName','required') || hasError('groupName','maxlength')">
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="hasError('groupName','required')">{{ 'groups.form.errors.name.required' | translate }}</div>
+                    <div class="invalid-feedback d-block" *ngIf="hasError('groupName','maxlength')">{{ 'groups.form.errors.name.max' | translate }}</div>
                   </div>
-                  <div class="invalid-feedback d-block" *ngIf="hasError('groupName','required')">{{ 'groups.form.errors.name.required' | translate }}</div>
-                  <div class="invalid-feedback d-block" *ngIf="hasError('groupName','maxlength')">{{ 'groups.form.errors.name.max' | translate }}</div>
-                </div>
-                <div class="form-field">
-                  <label for="groupDescription" class="form-label fw-semibold">{{ 'groups.form.description' | translate }}</label>
-                  <textarea id="groupDescription" rows="4" class="form-control" [placeholder]="'groups.form.placeholder.description' | translate" formControlName="groupDescription" [class.is-invalid]="hasError('groupDescription','required') || hasError('groupDescription','maxlength')"></textarea>
-                  <div class="invalid-feedback" *ngIf="hasError('groupDescription','required')">{{ 'groups.form.errors.desc.required' | translate }}</div>
-                  <div class="invalid-feedback" *ngIf="hasError('groupDescription','maxlength')">{{ 'groups.form.errors.desc.max' | translate }}</div>
-                  <div class="char-counter">{{ form.get('groupDescription')?.value?.length || 0 }}/500</div>
-                </div>
-              </section>
 
-              <fieldset class="form-panel address-panel" formGroupName="address">
-                <legend class="panel-heading">
-                  <span class="panel-icon"><i class="bi bi-geo-alt"></i></span>
-                  <h6 class="mb-0">{{ 'groups.form.address' | translate }}</h6>
-                </legend>
-                <div class="field-grid">
                   <div class="form-field">
-                    <label for="groupCity" class="form-label fw-semibold">{{ 'groups.form.city' | translate }}</label>
-                    <div class="form-control-wrap">
-                      <select id="groupCity" class="form-select" formControlName="city"
-                              [class.is-invalid]="hasError('address.city','required') || hasError('address.city','maxlength')">
-                        <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
-                      </select>
-                    </div>
-                    <div class="invalid-feedback d-block" *ngIf="hasError('address.city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
-                    <div class="invalid-feedback d-block" *ngIf="hasError('address.city','maxlength')">{{ 'groups.form.errors.city.max' | translate }}</div>
-                  </div>
-                  <div class="form-field">
-                    <label for="groupPostalCode" class="form-label fw-semibold">{{ 'groups.form.postalCode' | translate }}</label>
-                    <div class="form-control-wrap">
-                      <input id="groupPostalCode" type="text" class="form-control" [placeholder]="'groups.form.placeholder.postalCode' | translate" formControlName="postalCode" [class.is-invalid]="hasError('address.postalCode','required') || hasError('address.postalCode','maxlength') || hasError('address.postalCode','pattern') || hasError('address.postalCode','cityMismatch')">
-                    </div>
-                    <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','required')">{{ 'groups.form.errors.postalCode.required' | translate }}</div>
-                    <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','cityMismatch')">{{ 'groups.form.errors.postalCode.cityMismatch' | translate }}</div>
-                    <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','pattern')">{{ 'groups.form.errors.postalCode.pattern' | translate }}</div>
-                    <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','maxlength')">{{ 'groups.form.errors.postalCode.max' | translate }}</div>
+                    <label for="groupDescription" class="form-label fw-semibold">{{ 'groups.form.description' | translate }}</label>
+                    <textarea id="groupDescription" rows="4" class="form-control" [placeholder]="'groups.form.placeholder.description' | translate" formControlName="groupDescription" [class.is-invalid]="hasError('groupDescription','required') || hasError('groupDescription','maxlength')"></textarea>
+                    <div class="invalid-feedback" *ngIf="hasError('groupDescription','required')">{{ 'groups.form.errors.desc.required' | translate }}</div>
+                    <div class="invalid-feedback" *ngIf="hasError('groupDescription','maxlength')">{{ 'groups.form.errors.desc.max' | translate }}</div>
+                    <div class="char-counter">{{ form.get('groupDescription')?.value?.length || 0 }}/500</div>
                   </div>
                 </div>
-                <div class="form-field">
-                  <label for="groupStreet" class="form-label fw-semibold">{{ 'groups.form.address' | translate }}</label>
-                  <div class="form-control-wrap">
-                    <input id="groupStreet" type="text" class="form-control" [placeholder]="'groups.form.placeholder.address' | translate" formControlName="street" [class.is-invalid]="hasError('address.street','required') || hasError('address.street','maxlength') || hasError('address.street','pattern')">
+              </div>
+
+              <div class="col-12 col-lg-6" formGroupName="address">
+                <div class="panel-compact panel-compact--accent">
+                  <div class="panel-title">
+                    <i class="bi bi-geo-alt"></i>
+                    <span>{{ 'groups.form.address' | translate }}</span>
                   </div>
-                  <div class="invalid-feedback d-block" *ngIf="hasError('address.street','required')">{{ 'groups.form.errors.address.required' | translate }}</div>
-                  <div class="invalid-feedback d-block" *ngIf="hasError('address.street','pattern')">{{ 'groups.form.errors.address.number' | translate }}</div>
-                  <div class="invalid-feedback d-block" *ngIf="hasError('address.street','maxlength')">{{ 'groups.form.errors.address.max' | translate }}</div>
+                  <div class="field-grid">
+                    <div class="form-field">
+                      <label for="groupCity" class="form-label fw-semibold">{{ 'groups.form.city' | translate }}</label>
+                      <div class="form-control-wrap">
+                        <select id="groupCity" class="form-select" formControlName="city"
+                                [class.is-invalid]="hasError('address.city','required') || hasError('address.city','maxlength')">
+                          <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                        </select>
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="hasError('address.city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
+                      <div class="invalid-feedback d-block" *ngIf="hasError('address.city','maxlength')">{{ 'groups.form.errors.city.max' | translate }}</div>
+                    </div>
+
+                    <div class="form-field">
+                      <label for="groupPostalCode" class="form-label fw-semibold">{{ 'groups.form.postalCode' | translate }}</label>
+                      <div class="form-control-wrap">
+                        <input id="groupPostalCode" type="text" class="form-control" [placeholder]="'groups.form.placeholder.postalCode' | translate" formControlName="postalCode" [class.is-invalid]="hasError('address.postalCode','required') || hasError('address.postalCode','maxlength') || hasError('address.postalCode','pattern') || hasError('address.postalCode','cityMismatch')">
+                      </div>
+                      <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','required')">{{ 'groups.form.errors.postalCode.required' | translate }}</div>
+                      <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','cityMismatch')">{{ 'groups.form.errors.postalCode.cityMismatch' | translate }}</div>
+                      <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','pattern')">{{ 'groups.form.errors.postalCode.pattern' | translate }}</div>
+                      <div class="invalid-feedback d-block" *ngIf="hasError('address.postalCode','maxlength')">{{ 'groups.form.errors.postalCode.max' | translate }}</div>
+                    </div>
+                  </div>
+
+                  <div class="form-field">
+                    <label for="groupStreet" class="form-label fw-semibold">{{ 'groups.form.address' | translate }}</label>
+                    <div class="form-control-wrap">
+                      <input id="groupStreet" type="text" class="form-control" [placeholder]="'groups.form.placeholder.address' | translate" formControlName="street" [class.is-invalid]="hasError('address.street','required') || hasError('address.street','maxlength') || hasError('address.street','pattern')">
+                    </div>
+                    <div class="invalid-feedback d-block" *ngIf="hasError('address.street','required')">{{ 'groups.form.errors.address.required' | translate }}</div>
+                    <div class="invalid-feedback d-block" *ngIf="hasError('address.street','pattern')">{{ 'groups.form.errors.address.number' | translate }}</div>
+                    <div class="invalid-feedback d-block" *ngIf="hasError('address.street','maxlength')">{{ 'groups.form.errors.address.max' | translate }}</div>
+                  </div>
                 </div>
-              </fieldset>
+              </div>
             </div>
 
-            <div class="form-actions d-flex align-items-center gap-3 flex-wrap">
-              <button type="submit" class="btn btn-success" [disabled]="submitting || form.invalid">
-                <span *ngIf="!submitting" class="d-inline-flex align-items-center"><i class="bi bi-check2-circle"></i> {{ 'groups.form.create' | translate }}</span>
-                <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
-              </button>
-              <button type="button" class="btn btn-outline-secondary" (click)="resetFormDefaults(false)" [disabled]="submitting">{{ 'groups.form.reset' | translate }}</button>
+            <div class="panel-compact panel-compact--actions mt-2">
+              <div class="form-actions d-flex align-items-center gap-3 flex-wrap">
+                <button type="submit" class="btn btn-success" [disabled]="submitting || form.invalid">
+                  <span *ngIf="!submitting" class="d-inline-flex align-items-center"><i class="bi bi-check2-circle"></i> {{ 'groups.form.create' | translate }}</span>
+                  <span *ngIf="submitting" class="spinner-border spinner-border-sm"></span>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" (click)="resetFormDefaults(false)" [disabled]="submitting">{{ 'groups.form.reset' | translate }}</button>
+              </div>
             </div>
           </form>
         </div>
       </div>
     </div>
-    <div class="col-12 col-xl-6">
-      <div class="card fancy-card border-0 shadow-lg h-100 invitation-card">
+
+  <div class="col-12 col-xl-5 col-xxl-4 d-flex">
+      <div class="card fancy-card invitation-card border-0 shadow-lg flex-grow-1">
         <div class="card-header bg-gradient-green text-white py-3 position-relative overflow-hidden">
-          <div class="d-flex justify-content-between align-items-start gap-3">
-            <div>
-              <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
-                <i class="bi bi-people"></i>
-                {{ 'groups.invitations.title' | translate }}
-              </h5>
-              <small class="opacity-75">{{ 'groups.invitations.subtitle' | translate }}</small>
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div class="card-heading">
+              <div class="card-heading__icon card-heading__icon--invite"></div>
+              <div>
+                <h5 class="mb-1 fw-bold">{{ 'groups.invitations.title' | translate }}</h5>
+                <small class="opacity-75">{{ 'groups.invitations.subtitle' | translate }}</small>
+              </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-light refresh-btn" (click)="fetchPendingInvitations()" [disabled]="invitationsLoading">
-              <span *ngIf="!invitationsLoading" class="d-inline-flex align-items-center gap-1">
-                <i class="bi bi-arrow-clockwise"></i>
-                {{ 'groups.invitations.refresh' | translate }}
-              </span>
-              <span *ngIf="invitationsLoading" class="spinner-border spinner-border-sm"></span>
-            </button>
           </div>
           <div class="header-accent"></div>
         </div>
-        <div class="card-body d-flex flex-column invitation-panel">
-          <div *ngIf="invitationsLoading" class="flex-grow-1 d-flex flex-column justify-content-center align-items-center gap-3 text-muted loading-state">
-            <div class="spinner-border" role="status"></div>
-            <span>{{ 'groups.invitations.loading' | translate }}</span>
-          </div>
 
-          <div *ngIf="!invitationsLoading && invitationsError" class="alert alert-danger d-flex align-items-center gap-2 invitation-alert" role="alert">
-            <i class="bi bi-exclamation-triangle-fill"></i>
-            <span>{{ invitationsError }}</span>
-          </div>
+        <div class="card-body card-body--compact d-flex flex-column">
+          <section class="invitation-panel flex-grow-1">
+            <div class="panel-body flex-grow-1 d-flex flex-column">
+              <div *ngIf="invitationsLoading" class="flex-grow-1 d-flex flex-column justify-content-center align-items-center gap-3 text-muted loading-state">
+                <div class="spinner-border" role="status"></div>
+                <span>{{ 'groups.invitations.loading' | translate }}</span>
+              </div>
 
-          <ng-container *ngIf="!invitationsLoading && !invitationsError">
-            <div *ngIf="pendingInvitations.length; else noInvites" class="invitation-list">
-              <div class="invitation-item" *ngFor="let invitation of pendingInvitations">
-                <div class="invitation-meta">
-                  <div class="group-chip">
-                    <div class="chip-avatar">{{ invitation.groupName.slice(0,1) }}</div>
-                    <div>
-                      <p class="group-name mb-0">{{ invitation.groupName }}</p>
-                      <small class="text-muted d-flex align-items-center gap-1">
-                        <i class="bi bi-person-check"></i>
-                        {{ invitation.invitingUsername }}
-                      </small>
+              <div *ngIf="!invitationsLoading && invitationsError" class="alert alert-danger d-flex align-items-center gap-2 invitation-alert" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>{{ invitationsError }}</span>
+              </div>
+
+              <ng-container *ngIf="!invitationsLoading && !invitationsError">
+                <div *ngIf="pendingInvitations.length; else noInvites" class="invitation-list">
+                  <div class="invitation-item" *ngFor="let invitation of pendingInvitations">
+                      <div class="invitation-meta">
+                        <div class="group-name-row">
+                          <i class="bi bi-people-fill group-chip__icon"></i>
+                          <div class="group-name-wrap">
+                            <p class="group-name mb-1">{{ invitation.groupName }}</p>
+                            <div class="invited-by text-muted">
+                              <i class="bi bi-person-check"></i>
+                              <span>{{ 'groups.invitations.invitedByPrefix' | translate }} {{ invitation.invitingUsername }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="invitation-controls">
+                        <button type="button" class="btn btn-outline-success btn-xs" (click)="acceptInvitation(invitation.groupId)" [disabled]="isInvitationBusy(invitation.groupId)">
+                          <span *ngIf="!isInvitationBusy(invitation.groupId)" class="d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-check2"></i>
+                            {{ 'groups.invitations.accept' | translate }}
+                          </span>
+                          <span *ngIf="isInvitationBusy(invitation.groupId)" class="spinner-border spinner-border-sm"></span>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger btn-xs" (click)="declineInvitation(invitation.groupId)" [disabled]="isInvitationBusy(invitation.groupId)">
+                          <span *ngIf="!isInvitationBusy(invitation.groupId)" class="d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-x-circle"></i>
+                            {{ 'groups.invitations.decline' | translate }}
+                          </span>
+                          <span *ngIf="isInvitationBusy(invitation.groupId)" class="spinner-border spinner-border-sm"></span>
+                        </button>
+                      </div>
                     </div>
+                </div>
+
+                <ng-template #noInvites>
+                  <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center text-muted empty-state">
+                    <div class="empty-illustration">
+                      <i class="bi bi-envelope-open"></i>
+                    </div>
+                    <p class="mb-1 fw-semibold">{{ 'groups.invitations.empty' | translate }}</p>
+                    <small class="opacity-75">{{ 'groups.invitations.emptyHint' | translate }}</small>
                   </div>
-                </div>
-                <div class="invitation-controls">
-                  <button type="button" class="btn btn-outline-success btn-sm" (click)="acceptInvitation(invitation.groupId)" [disabled]="isInvitationBusy(invitation.groupId)">
-                    <span *ngIf="!isInvitationBusy(invitation.groupId)" class="d-inline-flex align-items-center gap-1">
-                      <i class="bi bi-check2"></i>
-                      {{ 'groups.invitations.accept' | translate }}
-                    </span>
-                    <span *ngIf="isInvitationBusy(invitation.groupId)" class="spinner-border spinner-border-sm"></span>
-                  </button>
-                  <button type="button" class="btn btn-outline-danger btn-sm" (click)="declineInvitation(invitation.groupId)" [disabled]="isInvitationBusy(invitation.groupId)">
-                    <span *ngIf="!isInvitationBusy(invitation.groupId)" class="d-inline-flex align-items-center gap-1">
-                      <i class="bi bi-x-circle"></i>
-                      {{ 'groups.invitations.decline' | translate }}
-                    </span>
-                    <span *ngIf="isInvitationBusy(invitation.groupId)" class="spinner-border spinner-border-sm"></span>
-                  </button>
-                </div>
-              </div>
+                </ng-template>
+              </ng-container>
             </div>
-            <ng-template #noInvites>
-              <div class="flex-grow-1 d-flex flex-column justify-content-center align-items-center text-center text-muted empty-state">
-                <div class="empty-illustration">
-                  <i class="bi bi-envelope-open"></i>
-                </div>
-                <p class="mb-1 fw-semibold">{{ 'groups.invitations.empty' | translate }}</p>
-                <small class="opacity-75">{{ 'groups.invitations.emptyHint' | translate }}</small>
-              </div>
-            </ng-template>
-          </ng-container>
+          </section>
         </div>
       </div>
     </div>
