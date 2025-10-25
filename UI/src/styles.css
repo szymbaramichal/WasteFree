@@ -32,6 +32,10 @@ body.auth-bg, body.portal-bg {
 	--topbar-contrast: rgba(255,255,255,0.08);
 }
 
+.gradient-groups {
+	background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+}
+
 /* Ensure toast container sits above fixed elements like sidebar */
 .toast-container, .ngx-toastr { z-index: 4000 !important; }
 
