@@ -1,4 +1,4 @@
-import { inject, Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from 'environments/environment';
 import { InboxService } from './inbox.service';
@@ -10,11 +10,11 @@ export class SignalRService {
   private hubConnection!: signalR.HubConnection;
   private inboxService = inject(InboxService);
   notifications: string[] = [];
-  private api = `${environment.apiUrl}`;
+  private readonly hubUrl = this.resolveHubUrl();
 
   startConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${this.api}/notificationHub`, {
+      .withUrl(this.hubUrl, {
         accessTokenFactory: () => localStorage.getItem('authToken') ?? ''
       })
       .withAutomaticReconnect()
@@ -35,5 +35,10 @@ export class SignalRService {
       .start()
       .then(() => console.log('SignalR connected'))
       .catch(err => console.error('Error while connecting SignalR:', err));
+  }
+
+  private resolveHubUrl(): string {
+    const base = environment.apiUrl.replace(/\/+$/, '');
+    return `${base}/notificationHub`;
   }
 }
