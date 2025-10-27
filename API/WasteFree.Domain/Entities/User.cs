@@ -70,7 +70,7 @@ public class User : DatabaseEntity
         }
         set
         {
-            if (value.Length == 0)
+            if (value == null || value.Length == 0)
             {
                 PickupOptions = string.Empty;
                 return;

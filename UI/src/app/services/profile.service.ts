@@ -1,10 +1,32 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Profile, ProfileUpdateRequest } from '@app/_models/profile';
+import { PickupOptionKey, Profile, ProfileUpdateRequest } from '@app/_models/profile';
 import { Address } from '@app/_models/address';
 import { CurrentUserService } from '@app/services/current-user.service';
 import { tap } from 'rxjs';
+
+const PICKUP_OPTION_VALUE_BY_KEY: Record<PickupOptionKey, number> = {
+  smallPickup: 0,
+  pickup: 1,
+  container: 2,
+  specialOrder: 3
+};
+
+const PICKUP_OPTION_KEY_BY_VALUE = new Map<number, PickupOptionKey>(
+  Object.entries(PICKUP_OPTION_VALUE_BY_KEY).map(([key, value]) => [value, key as PickupOptionKey])
+);
+
+const PICKUP_OPTION_KEY_BY_NAME = new Map<string, PickupOptionKey>(
+  (Object.keys(PICKUP_OPTION_VALUE_BY_KEY) as PickupOptionKey[]).map(key => [key.toLowerCase(), key] as const)
+);
+
+interface ApiProfileUpdateRequest {
+  description: string;
+  bankAccountNumber: string;
+  address: Address;
+  pickupOptions: number[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
@@ -23,7 +45,7 @@ export class ProfileService {
     this._loading.set(true);
     this.http.get<any>(this.api).subscribe({
       next: (res) => {
-  const dto: Profile | null = this.unwrap(res);
+        const dto: Profile | null = this.unwrap(res);
         this._profile.set(dto);
         if (dto) {
           const existing = this.currentUser.user();
@@ -36,7 +58,7 @@ export class ProfileService {
         }
         this._loading.set(false);
       },
-      error: (err) => {
+      error: () => {
         this._loading.set(false);
         this._profile.set(null);
       }
@@ -51,12 +73,16 @@ export class ProfileService {
   updateDescription(description: string) { return this.updateProfile({ description }); }
 
   updateProfile(payload: ProfileUpdateRequest) {
-
     const current = this._profile();
-    const body: ProfileUpdateRequest = {
-      description: payload.description !== undefined ? payload.description : current?.description,
-      bankAccountNumber: payload.bankAccountNumber !== undefined ? payload.bankAccountNumber : current?.bankAccountNumber,
-      address: this.buildAddressPayload(payload.address, current?.address)
+    const pickupSelection = payload.pickupOptions === undefined
+      ? current?.pickupOptions ?? []
+      : payload.pickupOptions ?? [];
+
+    const body: ApiProfileUpdateRequest = {
+      description: this.resolveString(payload.description, current?.description),
+      bankAccountNumber: this.resolveString(payload.bankAccountNumber, current?.bankAccountNumber),
+      address: this.buildAddressPayload(payload.address, current?.address),
+      pickupOptions: this.toApiPickupOptions(pickupSelection)
     };
 
     return this.http.put<any>(this.api, body);
@@ -100,7 +126,8 @@ export class ProfileService {
       bankAccountNumber: String(raw.bankAccountNumber ?? raw.BankAccountNumber ?? ''),
       city: address.city,
       address,
-      avatarUrl
+      avatarUrl,
+      pickupOptions: this.normalizePickupOptions(raw.pickupOptions ?? raw.PickupOptions)
     };
   }
 
@@ -149,5 +176,76 @@ export class ProfileService {
       postalCode: String(base.postalCode ?? '').trim(),
       street: String(base.street ?? '').trim()
     };
+  }
+
+  private resolveString(value: string | null | undefined, fallback: string | undefined): string {
+    if (value !== undefined) {
+      return value ?? '';
+    }
+    return fallback ?? '';
+  }
+
+  private normalizePickupOptions(raw: unknown): PickupOptionKey[] {
+    if (!Array.isArray(raw)) {
+      return [];
+    }
+
+    const result: PickupOptionKey[] = [];
+    const seen = new Set<PickupOptionKey>();
+
+    for (const entry of raw) {
+      const mapped = this.mapPickupOption(entry);
+      if (mapped && !seen.has(mapped)) {
+        seen.add(mapped);
+        result.push(mapped);
+      }
+    }
+
+    return result;
+  }
+
+  private mapPickupOption(value: unknown): PickupOptionKey | null {
+    if (typeof value === 'number') {
+      return PICKUP_OPTION_KEY_BY_VALUE.get(value) ?? null;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return null;
+      }
+
+      const numeric = Number(trimmed);
+      if (!Number.isNaN(numeric)) {
+        const numericMatch = PICKUP_OPTION_KEY_BY_VALUE.get(numeric);
+        if (numericMatch) {
+          return numericMatch;
+        }
+      }
+
+      return PICKUP_OPTION_KEY_BY_NAME.get(trimmed.toLowerCase()) ?? null;
+    }
+
+    return null;
+  }
+
+  private toApiPickupOptions(values: PickupOptionKey[] | null | undefined): number[] {
+    if (!values || values.length === 0) {
+      return [];
+    }
+
+    const result: number[] = [];
+    const seen = new Set<number>();
+
+    for (const key of values) {
+      const numeric = PICKUP_OPTION_VALUE_BY_KEY[key];
+      if (numeric === undefined || seen.has(numeric)) {
+        continue;
+      }
+      seen.add(numeric);
+      result.push(numeric);
+    }
+
+    return result;
   }
 }
