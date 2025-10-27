@@ -46,3 +46,49 @@
 	.notif-item.unread { background:#f7fbff; }
 	.notif-item.unread:before { background:#0d6efd; }
 }
+
+.portal-home--garbageadmin .dispatch-card .card-body {
+	min-height: 220px;
+	display: flex;
+	flex-direction: column;
+	gap: .75rem;
+	justify-content: flex-start;
+}
+
+.portal-home--garbageadmin .dispatch-card__empty {
+	margin: 0;
+	text-align: center;
+}
+
+.portal-home--garbageadmin .dispatch-card__empty-wrapper {
+	flex: 1 1 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.portal-home--garbageadmin .dispatch-actions-card .card-body {
+	display: flex;
+	flex-direction: column;
+	gap: .75rem;
+}
+
+.portal-home--garbageadmin .dispatch-actions-card .btn {
+	min-width: 140px;
+}
+
+.portal-home--garbageadmin .dispatch-notifications-card .card-body {
+	display: flex;
+	flex-direction: column;
+	gap: .75rem;
+}
+
+.portal-home--garbageadmin .dispatch-notifications-card ul {
+	overflow-y: auto;
+}
+
+@media (max-width: 991.98px) {
+	.portal-home--garbageadmin .dispatch-card .card-body {
+		min-height: auto;
+	}
+}
