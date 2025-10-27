@@ -24,19 +24,16 @@ public class DeleteUserFromGroupCommandHandler(ApplicationDataContext context) :
         if (userGroupInfo is null)
             return Result<bool>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
 
-        int rows = await context.UserGarbageGroups
+        await context.UserGarbageGroups
             .Where(x => x.UserId == request.UserToRemoveId && x.GarbageGroupId == request.GroupId)
             .ExecuteDeleteAsync(cancellationToken);
 
-        int deletedNotifcations = await context.InboxNotifications
+        await context.InboxNotifications
             .Where(x => x.UserId == request.UserToRemoveId 
                         && x.ActionType == InboxActionType.GroupInvitation
                         && x.RelatedEntityId == request.GroupId)
             .ExecuteDeleteAsync(cancellationToken);
         
-        if(rows + deletedNotifcations > 1)
-            return Result<bool>.Success(true);
-        
-        return Result<bool>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
+        return Result<bool>.Success(true);
     }
 }
