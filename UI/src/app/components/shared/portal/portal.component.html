@@ -53,3 +53,16 @@
 		</div>
 	</section>
 </div>
+
+<ng-container *appShowForRoles="userRole.GarbageAdmin">
+	<style>
+		.portal-sidebar .nav-link.active {
+			background-color: #3ea8a8;
+			color: #fff;
+		}
+
+		.portal-sidebar .nav-link.active:hover {
+			background-color: #3296a6;
+		}
+	</style>
+</ng-container>
