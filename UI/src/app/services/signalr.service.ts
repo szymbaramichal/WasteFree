@@ -39,7 +39,6 @@ export class SignalRService {
 
   private resolveHubUrl(): string {
     const base = environment.apiUrl.replace(/\/+$/, '');
-    const withoutApi = base.endsWith('/api') ? base.slice(0, -4) : base;
-    return `${withoutApi}/notificationHub`;
+    return `${base}/notificationHub`;
   }
 }
