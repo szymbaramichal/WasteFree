@@ -103,6 +103,8 @@ public class InviteToGarbageGroupCommandHandler(ApplicationDataContext context,
             UserId = userToAdd.Id,
             RelatedEntityId = userGroupInfo.GarbageGroupId
         }, cancellationToken);
+        
+        await context.SaveChangesAsync(cancellationToken);
 
         var inboxCounter = await context.InboxNotifications.CountAsync(x => x.UserId == userToAdd.Id, 
             cancellationToken);
