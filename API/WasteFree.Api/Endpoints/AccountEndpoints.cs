@@ -4,6 +4,7 @@ using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.Account;
 using WasteFree.Application.Features.Account.Dtos;
 using WasteFree.Domain.Constants;
+using WasteFree.Domain.Enums;
 using WasteFree.Domain.Interfaces;
 using WasteFree.Domain.Models;
 
@@ -58,7 +59,7 @@ public static class AccountEndpoints
         CancellationToken cancellationToken)
     {
         var result = await mediator.SendAsync(new UpdateUserProfileCommand(currentUserService.UserId,
-                request.Description, request.BankAccountNumber, request.Address),
+                request.Description, request.BankAccountNumber, request.Address, request.PickupOptions),
             cancellationToken);
 
         if (!result.IsValid)
@@ -156,6 +157,11 @@ public record UpdateProfileRequest
     /// Address object
     /// </summary>
     public required Address Address { get; init; }
+    
+    /// <summary>
+    /// Pickup options for garbage admin
+    /// </summary>
+    public PickupOption[]? PickupOptions { get; init; }
 }
 
 /// <summary>
