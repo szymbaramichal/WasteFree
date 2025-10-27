@@ -296,6 +296,13 @@
 .iban-pill { display: inline-block; padding: .25rem .5rem; border-radius: 999px; background: rgba(0,0,0,0.04); }
 .iban-pill code { color: #475569; background: transparent; padding: 0; font-weight: 400; }
 
+.pickup-badges { display:flex; flex-wrap:wrap; gap:.4rem; }
+.pickup-pill { display:inline-flex; align-items:center; gap:.3rem; padding:.28rem .7rem; border-radius:999px; background:rgba(62,168,168,0.12); border:1px solid rgba(62,168,168,0.3); color:#11626d; font-size:.82rem; font-weight:600; }
+.pickup-option-list { display:flex; flex-direction:column; gap:.45rem; margin-bottom:.85rem; }
+.pickup-option-list .form-check { margin:0; display:flex; align-items:center; gap:.5rem; }
+.pickup-option-list .form-check-input { cursor:pointer; }
+.pickup-option-list .form-check-label { cursor:pointer; font-weight:600; color:rgba(15,23,42,0.78); }
+
 .address-preview {
   min-width: 220px;
   flex: 1 1 220px;
