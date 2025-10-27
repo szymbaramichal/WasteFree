@@ -1,175 +1,246 @@
 <div class="profile-container container py-4 profile-page">
-  <h1 class="h3 mb-3 page-title">{{ 'profile.title' | translate }}</h1>
-
-  <div class="card shadow-sm mb-3 profile-card profile-intro animate-in">
-    <div class="card-body">
+  <div class="profile-shell card animate-in shadow-sm">
+  <div class="card-header gradient-groups text-white position-relative overflow-hidden profile-card-header">
+      <div class="profile-heading">
+        <div class="profile-heading__icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.866 0-7 3.134-7 7 0 .552.448 1 1 1h12c.552 0 1-.448 1-1 0-3.866-3.134-7-7-7z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div>
+          <div class="card-title mb-0">{{ 'profile.title' | translate }}</div>
+        </div>
+      </div>
+      <div class="header-accent"></div>
+    </div>
+    <div class="card-body profile-card-body">
       <ng-container *ngIf="!profileSvc.loading(); else loadingTpl">
         <ng-container *ngIf="profileSvc.profile() as p; else errorTpl">
-          <div class="row g-3 align-items-center">
-            <div class="col-auto">
-              <div class="avatar-wrapper">
-                <ng-container *ngIf="!avatarLoadFailed && avatarSource(p) as avatar; else fallbackAvatar">
-                  <img [src]="avatar" alt="" class="avatar-img" (error)="onAvatarError()" (load)="onAvatarLoad()" [class.loading]="avatarUploading" />
+          <div class="profile-hero">
+            <div class="avatar-wrapper profile-avatar">
+              <ng-container *ngIf="!avatarLoadFailed && avatarSource(p) as avatar; else fallbackAvatar">
+                <img [src]="avatar" alt="" class="avatar-img" (error)="onAvatarError()" (load)="onAvatarLoad()" [class.loading]="avatarUploading" />
+              </ng-container>
+              <ng-template #fallbackAvatar>
+                <div class="avatar" aria-hidden="true">{{ (p.username || '?').slice(0,1).toUpperCase() }}</div>
+              </ng-template>
+              <input #avatarInput type="file" class="d-none" accept="image/*" (change)="onAvatarSelected($event)" />
+            </div>
+            <div class="profile-meta">
+              <div class="profile-username">{{ p.username }}</div>
+              <div class="profile-id muted">ID: {{ p.userId }}</div>
+              <button class="avatar-upload-btn" type="button" (click)="triggerAvatarPicker()" [disabled]="avatarUploading" [attr.aria-busy]="avatarUploading">
+                <ng-container *ngIf="!avatarUploading; else uploadingTpl">
+                  <i class="bi bi-camera-fill" aria-hidden="true"></i>
+                  <span>{{ 'profile.avatar.change' | translate }}</span>
                 </ng-container>
-                <ng-template #fallbackAvatar>
-                  <div class="avatar" aria-hidden="true">{{ (p.username || '?').slice(0,1).toUpperCase() }}</div>
-                </ng-template>
-                <button class="avatar-upload-btn" type="button" (click)="triggerAvatarPicker()" [disabled]="avatarUploading" [attr.aria-busy]="avatarUploading">
-                  <span *ngIf="!avatarUploading; else uploadingTpl">{{ 'profile.avatar.change' | translate }}</span>
-                </button>
-                <ng-template #uploadingTpl>
-                  <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                </ng-template>
-                <input #avatarInput type="file" class="d-none" accept="image/*" (change)="onAvatarSelected($event)" />
+              </button>
+            </div>
+            <ng-template #uploadingTpl>
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </ng-template>
+          </div>
+
+          <div class="profile-divider"></div>
+
+          <div class="profile-details">
+            <dl class="details-grid mb-0">
+              <div class="detail-item detail-item--split">
+                <dt>{{ 'profile.email' | translate }}</dt>
+                <dd>
+                  <div class="detail-text">{{ p.email }}</div>
+                </dd>
               </div>
-            </div>
-            <div class="col">
-              <div class="fw-semibold username">{{ p.username }}</div>
-              <div class="muted small">ID: {{ p.userId }}</div>
-            </div>
+
+              <div class="detail-item detail-item--editable detail-item--split">
+                <button class="detail-edit" type="button" (click)="startEdit(p.description)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M13.586 3.586a2 2 0 0 1 2.828 0l1.999 1.999a2 2 0 0 1 0 2.828l-8.486 8.486a2 2 0 0 1-.878.513l-3.515.939a1 1 0 0 1-1.213-1.213l.939-3.515a2 2 0 0 1 .513-.878l8.486-8.486Zm1.414 1.414L6.514 13.486l-.47 1.76 1.76-.47 8.486-8.486-1.76-1.76Zm-9 13.172h12a1 1 0 1 1 0 2h-12a1 1 0 0 1 0-2Z" fill="currentColor"/>
+                  </svg>
+                  <span class="visually-hidden">{{ 'common.edit' | translate }}</span>
+                </button>
+                <dt>{{ 'profile.description' | translate }}</dt>
+                <dd>
+                  <div *ngIf="!editMode; else editTpl" class="detail-content">
+                    <div class="detail-text">{{ p.description || '—' }}</div>
+                  </div>
+                  <ng-template #editTpl>
+                    <div class="mb-2">
+                      <textarea class="form-control" rows="3" [(ngModel)]="draftDescription" [disabled]="saving"></textarea>
+                    </div>
+                    <div class="detail-actions">
+                      <button class="btn btn-xs btn-primary d-inline-flex align-items-center btn-elevated" (click)="save()" [disabled]="saving" [attr.aria-busy]="saving">
+                        <span *ngIf="saving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{ 'common.save' | translate }}</span>
+                      </button>
+                      <button class="btn btn-xs btn-outline-secondary btn-ghost" (click)="cancel()" [disabled]="saving">{{ 'common.cancel' | translate }}</button>
+                    </div>
+                  </ng-template>
+                </dd>
+              </div>
+
+              <div class="detail-item detail-item--editable detail-item--split detail-item--address">
+                <button class="detail-edit" type="button" (click)="startEditAddress(p.address)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M13.586 3.586a2 2 0 0 1 2.828 0l1.999 1.999a2 2 0 0 1 0 2.828l-8.486 8.486a2 2 0 0 1-.878.513l-3.515.939a1 1 0 0 1-1.213-1.213l.939-3.515a2 2 0 0 1 .513-.878l8.486-8.486Zm1.414 1.414L6.514 13.486l-.47 1.76 1.76-.47 8.486-8.486-1.76-1.76Zm-9 13.172h12a1 1 0 1 1 0 2h-12a1 1 0 0 1 0-2Z" fill="currentColor"/>
+                  </svg>
+                  <span class="visually-hidden">{{ 'common.edit' | translate }}</span>
+                </button>
+                <dt>{{ 'profile.address.title' | translate }}</dt>
+                <dd>
+                  <div *ngIf="!editAddress; else editAddressTpl" class="detail-content flex-column flex-md-row align-items-md-start">
+                    <ng-container *ngIf="p.address?.street || p.address?.postalCode || p.address?.city; else addressEmptyTpl">
+                      <div class="address-preview">
+                        <span class="address-line" *ngIf="p.address?.street">{{ p.address.street }}</span>
+                        <span class="address-line" *ngIf="p.address?.postalCode || p.address?.city">
+                          <span *ngIf="p.address?.postalCode">{{ p.address.postalCode }}</span>
+                          <span *ngIf="p.address?.city" class="address-city">{{ p.address.city | translate }}</span>
+                        </span>
+                      </div>
+                    </ng-container>
+                    <ng-template #addressEmptyTpl>
+                      <div class="address-preview address-preview--empty">
+                        <span class="address-line">—</span>
+                      </div>
+                    </ng-template>
+                  </div>
+                  <ng-template #editAddressTpl>
+                    <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="address-form">
+                      <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                          <label class="form-label" for="profile-city">{{ 'profile.address.city' | translate }}</label>
+                          <div class="city-select-wrapper position-relative">
+                            <svg class="city-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                              <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
+                            </svg>
+                            <select id="profile-city" class="form-select city-select" formControlName="city">
+                              <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                            </select>
+                          </div>
+                          <div class="form-text text-danger" *ngIf="addressForm.get('city')?.invalid && addressForm.get('city')?.touched">
+                            {{ 'profile.address.cityRequired' | translate }}
+                          </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                          <label class="form-label" for="profile-postal">{{ 'profile.address.postalCode' | translate }}</label>
+                          <input id="profile-postal" type="text" class="form-control" formControlName="postalCode" [class.is-invalid]="addressForm.get('postalCode')?.touched && (addressForm.get('postalCode')?.hasError('required') || addressForm.get('postalCode')?.hasError('pattern') || addressForm.get('postalCode')?.hasError('cityMismatch'))" />
+                          <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('required')">
+                            {{ 'profile.address.postalRequired' | translate }}
+                          </div>
+                          <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('pattern')">
+                            {{ 'profile.address.postalInvalid' | translate }}
+                          </div>
+                          <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('cityMismatch')">
+                            {{ 'profile.address.postalCityMismatch' | translate }}
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <label class="form-label" for="profile-street">{{ 'profile.address.street' | translate }}</label>
+                          <input id="profile-street" type="text" class="form-control" formControlName="street" [class.is-invalid]="addressForm.get('street')?.touched && (addressForm.get('street')?.hasError('required') || addressForm.get('street')?.hasError('pattern'))" />
+                          <div class="form-text text-danger" *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.hasError('required')">
+                            {{ 'profile.address.streetRequired' | translate }}
+                          </div>
+                          <div class="form-text text-danger" *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.hasError('pattern')">
+                            {{ 'profile.address.streetNumberRequired' | translate }}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="detail-actions justify-content-center justify-content-md-start">
+                        <button type="submit" class="btn btn-xs btn-primary d-inline-flex align-items-center btn-elevated" [disabled]="savingAddress" [attr.aria-busy]="savingAddress">
+                          <span *ngIf="savingAddress" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          <span>{{ 'common.save' | translate }}</span>
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-secondary btn-ghost" (click)="cancelAddress()" [disabled]="savingAddress">{{ 'common.cancel' | translate }}</button>
+                      </div>
+                    </form>
+                  </ng-template>
+                </dd>
+              </div>
+
+              <div class="detail-item detail-item--editable detail-item--split" *appShowForRoles="userRole.GarbageAdmin">
+                  <button class="detail-edit" type="button" (click)="startEditPickups()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M13.586 3.586a2 2 0 0 1 2.828 0l1.999 1.999a2 2 0 0 1 0 2.828l-8.486 8.486a2 2 0 0 1-.878.513l-3.515.939a1 1 0 0 1-1.213-1.213l.939-3.515a2 2 0 0 1 .513-.878l8.486-8.486Zm1.414 1.414L6.514 13.486l-.47 1.76 1.76-.47 8.486-8.486-1.76-1.76Zm-9 13.172h12a1 1 0 1 1 0 2h-12a1 1 0 0 1 0-2Z" fill="currentColor"/>
+                    </svg>
+                    <span class="visually-hidden">{{ 'common.edit' | translate }}</span>
+                  </button>
+                  <dt>{{ 'profile.pickups.title' | translate }}</dt>
+                  <dd>
+                    <ng-container *ngIf="!editPickups; else editPickupsTpl">
+                      <div class="detail-content pickup-badges" *ngIf="selectedPickups.length; else pickupEmptyTpl">
+                        <span class="pickup-pill" *ngFor="let value of selectedPickups">
+                          {{ ('profile.pickups.options.' + value) | translate }}
+                        </span>
+                      </div>
+                    </ng-container>
+                    <ng-template #pickupEmptyTpl>
+                      <div class="detail-text">{{ 'profile.pickups.none' | translate }}</div>
+                    </ng-template>
+                    <ng-template #editPickupsTpl>
+                      <div class="pickup-option-list">
+                        <label class="form-check" *ngFor="let option of pickupOptions">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            [value]="option.value"
+                            [checked]="draftPickups.includes(option.value)"
+                            (change)="onPickupToggle(option.value, $event)"
+                            [disabled]="savingPickups"
+                          />
+                          <span class="form-check-label">{{ option.label | translate }}</span>
+                        </label>
+                      </div>
+                      <div class="detail-actions">
+                        <button class="btn btn-xs btn-primary d-inline-flex align-items-center btn-elevated" type="button" (click)="savePickups()" [disabled]="savingPickups" [attr.aria-busy]="savingPickups">
+                          <span *ngIf="savingPickups" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          <span>{{ 'common.save' | translate }}</span>
+                        </button>
+                        <button class="btn btn-xs btn-outline-secondary btn-ghost" type="button" (click)="cancelPickups()" [disabled]="savingPickups">{{ 'common.cancel' | translate }}</button>
+                      </div>
+                    </ng-template>
+                  </dd>
+              </div>
+
+              <div class="detail-item detail-item--editable detail-item--split">
+                <button class="detail-edit" type="button" (click)="startEditBank(p.bankAccountNumber)">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path d="M13.586 3.586a2 2 0 0 1 2.828 0l1.999 1.999a2 2 0 0 1 0 2.828l-8.486 8.486a2 2 0 0 1-.878.513l-3.515.939a1 1 0 0 1-1.213-1.213l.939-3.515a2 2 0 0 1 .513-.878l8.486-8.486Zm1.414 1.414L6.514 13.486l-.47 1.76 1.76-.47 8.486-8.486-1.76-1.76Zm-9 13.172h12a1 1 0 1 1 0 2h-12a1 1 0 0 1 0-2Z" fill="currentColor"/>
+                  </svg>
+                  <span class="visually-hidden">{{ 'common.edit' | translate }}</span>
+                </button>
+                <dt>{{ 'profile.bankAccountNumber' | translate }}</dt>
+                <dd>
+                  <div *ngIf="!editBank; else editBankTpl" class="detail-content">
+                    <span class="iban-pill mb-0"><code>{{ p.bankAccountNumber || '—' }}</code></span>
+                  </div>
+                  <ng-template #editBankTpl>
+                    <div class="mb-2">
+                      <input type="text" class="form-control" [(ngModel)]="draftBank" [disabled]="savingBank" placeholder="PL11 2222 3333 4444 5555 6666" [class.is-invalid]="ibanInvalid" />
+                      <div class="invalid-feedback" *ngIf="ibanInvalid">
+                        {{ 'wallet.errors.invalidIban' | translate }}
+                      </div>
+                    </div>
+                    <div class="detail-actions">
+                      <button class="btn btn-xs btn-primary d-inline-flex align-items-center btn-elevated" (click)="saveBank()" [disabled]="savingBank" [attr.aria-busy]="savingBank">
+                        <span *ngIf="savingBank" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{ 'common.save' | translate }}</span>
+                      </button>
+                      <button class="btn btn-xs btn-outline-secondary btn-ghost" (click)="cancelBank()" [disabled]="savingBank">{{ 'common.cancel' | translate }}</button>
+                    </div>
+                  </ng-template>
+                </dd>
+              </div>
+            </dl>
           </div>
         </ng-container>
       </ng-container>
       <ng-template #loadingTpl>
-        <div class="muted">{{ 'loading' | translate }}</div>
+        <div class="muted text-center">{{ 'loading' | translate }}</div>
       </ng-template>
       <ng-template #errorTpl>
-        <div class="text-danger">{{ 'profile.loadError' | translate }}</div>
+        <div class="text-danger text-center">{{ 'profile.loadError' | translate }}</div>
       </ng-template>
-    </div>
-  </div>
-
-  <div class="card shadow-sm profile-card animate-in">
-    <div class="card-header bg-gradient-teal text-white py-3 position-relative overflow-hidden profile-card-header">
-      <div class="d-flex align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-2">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.866 0-7 3.134-7 7 0 .552.448 1 1 1h12c.552 0 1-.448 1-1 0-3.866-3.134-7-7-7z" fill="currentColor"/>
-          </svg>
-          <span class="card-title mb-0">{{ 'profile.details' | translate }}</span>
-        </div>
-        <button class="btn btn-sm btn-outline-light btn-ghost" (click)="profileSvc.refresh()" [disabled]="profileSvc.loading()">{{ 'inbox.refresh' | translate }}</button>
-      </div>
-      <div class="header-accent"></div>
-    </div>
-    <div class="card-body">
-      <dl class="row mb-0 details-list" *ngIf="profileSvc.profile() as p">
-        <dt class="col-sm-3">{{ 'profile.username' | translate }}</dt>
-        <dd class="col-sm-9">{{ p.username }}</dd>
-
-        <dt class="col-sm-3">{{ 'profile.email' | translate }}</dt>
-        <dd class="col-sm-9">{{ p.email }}</dd>
-
-        <dt class="col-sm-3">{{ 'profile.description' | translate }}</dt>
-        <dd class="col-sm-9">
-          <div *ngIf="!editMode; else editTpl" class="d-flex align-items-center gap-2 flex-wrap">
-            <div class="me-2">{{ p.description || '—' }}</div>
-            <button class="btn btn-sm btn-outline-primary btn-ghost-primary" (click)="startEdit(p.description)">{{ 'common.edit' | translate }}</button>
-          </div>
-          <ng-template #editTpl>
-            <div class="mb-2">
-              <textarea class="form-control" rows="3" [(ngModel)]="draftDescription" [disabled]="saving"></textarea>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-primary d-inline-flex align-items-center btn-elevated" (click)="save()" [disabled]="saving" [attr.aria-busy]="saving">
-                <span *ngIf="saving" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                <span>{{ 'common.save' | translate }}</span>
-              </button>
-              <button class="btn btn-sm btn-outline-secondary btn-ghost" (click)="cancel()" [disabled]="saving">{{ 'common.cancel' | translate }}</button>
-            </div>
-          </ng-template>
-        </dd>
-
-        <dt class="col-sm-3">{{ 'profile.address.title' | translate }}</dt>
-        <dd class="col-sm-9">
-          <ng-container *ngIf="profileSvc.profile() as p">
-            <div *ngIf="!editAddress; else editAddressTpl" class="d-flex flex-column flex-md-row align-items-md-center gap-3">
-              <div class="address-preview">
-                <div class="address-line">{{ p.address.street || '—' }}</div>
-                <div class="address-line">
-                  <span>{{ p.address.postalCode || '—' }}</span>
-                  <span *ngIf="p.address.city" class="ms-1">{{ p.address.city | translate }}</span>
-                </div>
-              </div>
-              <button class="btn btn-sm btn-outline-primary btn-ghost-primary" (click)="startEditAddress(p.address)">{{ 'common.edit' | translate }}</button>
-            </div>
-          </ng-container>
-          <ng-template #editAddressTpl>
-            <form [formGroup]="addressForm" (ngSubmit)="saveAddress()" class="address-form">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
-                  <label class="form-label" for="profile-city">{{ 'profile.address.city' | translate }}</label>
-                  <div class="city-select-wrapper position-relative">
-                    <svg class="city-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
-                    </svg>
-                    <select id="profile-city" class="form-select city-select" formControlName="city">
-                      <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
-                    </select>
-                  </div>
-                  <div class="form-text text-danger" *ngIf="addressForm.get('city')?.invalid && addressForm.get('city')?.touched">
-                    {{ 'profile.address.cityRequired' | translate }}
-                  </div>
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label" for="profile-postal">{{ 'profile.address.postalCode' | translate }}</label>
-                  <input id="profile-postal" type="text" class="form-control" formControlName="postalCode" [class.is-invalid]="addressForm.get('postalCode')?.touched && (addressForm.get('postalCode')?.hasError('required') || addressForm.get('postalCode')?.hasError('pattern') || addressForm.get('postalCode')?.hasError('cityMismatch'))" />
-                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('required')">
-                    {{ 'profile.address.postalRequired' | translate }}
-                  </div>
-                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('pattern')">
-                    {{ 'profile.address.postalInvalid' | translate }}
-                  </div>
-                  <div class="form-text text-danger" *ngIf="addressForm.get('postalCode')?.touched && addressForm.get('postalCode')?.hasError('cityMismatch')">
-                    {{ 'profile.address.postalCityMismatch' | translate }}
-                  </div>
-                </div>
-                <div class="col-12">
-                  <label class="form-label" for="profile-street">{{ 'profile.address.street' | translate }}</label>
-                  <input id="profile-street" type="text" class="form-control" formControlName="street" [class.is-invalid]="addressForm.get('street')?.touched && (addressForm.get('street')?.hasError('required') || addressForm.get('street')?.hasError('pattern'))" />
-                  <div class="form-text text-danger" *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.hasError('required')">
-                    {{ 'profile.address.streetRequired' | translate }}
-                  </div>
-                  <div class="form-text text-danger" *ngIf="addressForm.get('street')?.touched && addressForm.get('street')?.hasError('pattern')">
-                    {{ 'profile.address.streetNumberRequired' | translate }}
-                  </div>
-                </div>
-              </div>
-              <div class="d-flex gap-2 flex-wrap mt-3">
-                <button type="submit" class="btn btn-sm btn-primary d-inline-flex align-items-center btn-elevated" [disabled]="savingAddress" [attr.aria-busy]="savingAddress">
-                  <span *ngIf="savingAddress" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  <span>{{ 'common.save' | translate }}</span>
-                </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary btn-ghost" (click)="cancelAddress()" [disabled]="savingAddress">{{ 'common.cancel' | translate }}</button>
-              </div>
-            </form>
-          </ng-template>
-        </dd>
-
-        <dt class="col-sm-3">{{ 'profile.bankAccountNumber' | translate }}</dt>
-        <dd class="col-sm-9">
-          <div *ngIf="!editBank; else editBankTpl" class="d-flex align-items-center gap-2 flex-wrap">
-            <span class="iban-pill mb-0"><code>{{ p.bankAccountNumber || '—' }}</code></span>
-            <button class="btn btn-sm btn-outline-primary btn-ghost-primary" (click)="startEditBank(p.bankAccountNumber)">{{ 'common.edit' | translate }}</button>
-          </div>
-          <ng-template #editBankTpl>
-            <div class="mb-2">
-              <input type="text" class="form-control" [(ngModel)]="draftBank" [disabled]="savingBank" placeholder="PL11 2222 3333 4444 5555 6666" [class.is-invalid]="ibanInvalid" />
-              <div class="invalid-feedback" *ngIf="ibanInvalid">
-                {{ 'wallet.errors.invalidIban' | translate }}
-              </div>
-            </div>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-primary d-inline-flex align-items-center btn-elevated" (click)="saveBank()" [disabled]="savingBank" [attr.aria-busy]="savingBank">
-                <span *ngIf="savingBank" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                <span>{{ 'common.save' | translate }}</span>
-              </button>
-              <button class="btn btn-sm btn-outline-secondary btn-ghost" (click)="cancelBank()" [disabled]="savingBank">{{ 'common.cancel' | translate }}</button>
-            </div>
-          </ng-template>
-        </dd>
-      </dl>
-      <div *ngIf="!profileSvc.profile() && !profileSvc.loading()" class="text-muted">{{ 'profile.noData' | translate }}</div>
+      <div *ngIf="!profileSvc.profile() && !profileSvc.loading()" class="text-muted text-center">{{ 'profile.noData' | translate }}</div>
     </div>
   </div>
 </div>

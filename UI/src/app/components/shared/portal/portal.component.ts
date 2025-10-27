@@ -12,10 +12,10 @@ import { ShowForRolesDirective } from '@app/directives/show-for-roles.directive'
   selector: 'app-portal',
   standalone: true,
   imports: [
-  CommonModule,
-  RouterModule,
-  TranslatePipe,
-  ShowForRolesDirective
+    CommonModule,
+    RouterModule,
+    TranslatePipe,
+    ShowForRolesDirective
   ],
   templateUrl: './portal.component.html',
   styleUrls: ['./portal.component.css']

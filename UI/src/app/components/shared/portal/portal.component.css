@@ -57,6 +57,15 @@
 	background-color: var(--primary-green-dark, #1f8b56);
 }
 
+.portal-sidebar.portal-sidebar--garbageadmin .nav-link.active {
+	background-color: #3ea8a8;
+	color: #fff;
+}
+
+.portal-sidebar.portal-sidebar--garbageadmin .nav-link.active:hover {
+	background-color: #3296a6;
+}
+
 
 /* Sidebar nav uses flex so the last item (profile) can sit at bottom via mt-auto */
 .portal-sidebar .nav { display:flex; flex-direction: column; flex:1 1 auto; overflow: hidden; }

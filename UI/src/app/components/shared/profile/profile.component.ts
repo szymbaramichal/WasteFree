@@ -11,11 +11,13 @@ import { buildAddressFormGroup } from '@app/forms/address-form';
 import { Address } from '@app/_models/address';
 import { CurrentUserService } from '@app/services/current-user.service';
 import { finalize } from 'rxjs/operators';
+import { ShowForRolesDirective } from '@app/directives/show-for-roles.directive';
+import { UserRole } from '@app/_models/user';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, ShowForRolesDirective],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
@@ -26,6 +28,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   cityService = inject(CityService);
   fb = inject(FormBuilder);
   currentUserSvc = inject(CurrentUserService);
+  userRole = UserRole;
   
   editMode = false;
   draftDescription = '';
@@ -44,11 +47,31 @@ export class ProfileComponent implements OnInit, OnDestroy {
   savingAddress = false;
   addressForm: FormGroup = buildAddressFormGroup(this.fb);
 
+  editPickups = false;
+  savingPickups = false;
+  selectedPickups: string[] = [];
+  draftPickups: string[] = [];
+  readonly pickupOptions = [
+    { value: 'smallPickup', label: 'profile.pickups.options.smallPickup' },
+    { value: 'pickup', label: 'profile.pickups.options.pickup' },
+    { value: 'container', label: 'profile.pickups.options.container' },
+    { value: 'specialOrder', label: 'profile.pickups.options.specialOrder' }
+  ];
+  private readonly pickupStoragePrefix = 'wf_pickup_types_';
+
   @ViewChild('avatarInput') avatarInput?: ElementRef<HTMLInputElement>;
-  private avatarResetEffect: EffectRef = effect(() => {
+  private profileEffect: EffectRef = effect(() => {
     const profile = this.profileSvc.profile();
     if (profile) {
       this.avatarLoadFailed = false;
+      if (!this.editPickups) {
+        const stored = this.loadStoredPickups(profile.userId);
+        this.selectedPickups = [...stored];
+        this.draftPickups = [...stored];
+      }
+    } else if (!this.editPickups) {
+      this.selectedPickups = [];
+      this.draftPickups = [];
     }
   });
 
@@ -58,7 +81,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.avatarResetEffect.destroy();
+    this.profileEffect.destroy();
   }
 
   triggerAvatarPicker() {
@@ -248,6 +271,97 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.toastr.error(this.translationService.translate('profile.addressSaveError'));
       }
     });
+  }
+
+  startEditPickups() {
+    this.draftPickups = [...this.selectedPickups];
+    this.editPickups = true;
+    this.savingPickups = false;
+  }
+
+  cancelPickups() {
+    this.editPickups = false;
+    this.savingPickups = false;
+    this.draftPickups = [...this.selectedPickups];
+  }
+
+  onPickupToggle(value: string, event: Event) {
+    const input = event.target as HTMLInputElement | null;
+    if (!input) {
+      return;
+    }
+
+    const checked = input.checked;
+    if (checked) {
+      if (!this.draftPickups.includes(value)) {
+        this.draftPickups = [...this.draftPickups, value];
+      }
+    } else {
+      this.draftPickups = this.draftPickups.filter(item => item !== value);
+    }
+  }
+
+  savePickups() {
+    const profile = this.profileSvc.profile();
+    if (!profile) {
+      return;
+    }
+
+    this.savingPickups = true;
+    const payload = [...this.draftPickups];
+    const stored = this.storePickups(profile.userId, payload);
+    this.selectedPickups = [...stored];
+    this.draftPickups = [...stored];
+    this.editPickups = false;
+    this.savingPickups = false;
+    this.toastr.success(this.translationService.translate('profile.pickups.saved'));
+  }
+
+  private pickupStorageKey(userId: string): string {
+    return `${this.pickupStoragePrefix}${userId}`;
+  }
+
+  private loadStoredPickups(userId: string): string[] {
+    if (typeof window === 'undefined') {
+      return [];
+    }
+    try {
+      const allowed = new Set(this.pickupOptions.map(option => option.value));
+      const raw = window.localStorage.getItem(this.pickupStorageKey(userId));
+      if (!raw) {
+        return [];
+      }
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {
+        return [];
+      }
+      return parsed
+        .map(entry => (typeof entry === 'string' ? entry.trim() : String(entry ?? '').trim()))
+        .filter(entry => entry.length > 0 && allowed.has(entry));
+    } catch {
+      return [];
+    }
+  }
+
+  private storePickups(userId: string, values: string[]): string[] {
+    const order = this.pickupOptions.map(option => option.value);
+    const allowed = new Set(order);
+    const unique = Array.from(new Set(values.filter(value => value && value.length > 0 && allowed.has(value))));
+    unique.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+    if (typeof window === 'undefined') {
+      return unique;
+    }
+    try {
+      const key = this.pickupStorageKey(userId);
+      if (unique.length === 0) {
+        window.localStorage.removeItem(key);
+      } else {
+        window.localStorage.setItem(key, JSON.stringify(unique));
+      }
+      return unique;
+    } catch {
+      return unique;
+    }
   }
 }
 

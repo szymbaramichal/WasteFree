@@ -23,7 +23,7 @@ export class ProfileService {
     this._loading.set(true);
     this.http.get<any>(this.api).subscribe({
       next: (res) => {
-        const dto: Profile | null = this.unwrap(res);
+  const dto: Profile | null = this.unwrap(res);
         this._profile.set(dto);
         if (dto) {
           const existing = this.currentUser.user();
