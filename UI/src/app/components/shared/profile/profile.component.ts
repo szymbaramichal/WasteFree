@@ -13,6 +13,7 @@ import { CurrentUserService } from '@app/services/current-user.service';
 import { finalize } from 'rxjs/operators';
 import { ShowForRolesDirective } from '@app/directives/show-for-roles.directive';
 import { UserRole } from '@app/_models/user';
+import { PickupOptionKey } from '@app/_models/profile';
 
 @Component({
   selector: 'app-profile',
@@ -49,15 +50,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   editPickups = false;
   savingPickups = false;
-  selectedPickups: string[] = [];
-  draftPickups: string[] = [];
-  readonly pickupOptions = [
+  selectedPickups: PickupOptionKey[] = [];
+  draftPickups: PickupOptionKey[] = [];
+  readonly pickupOptions: ReadonlyArray<{ value: PickupOptionKey; label: string }> = [
     { value: 'smallPickup', label: 'profile.pickups.options.smallPickup' },
     { value: 'pickup', label: 'profile.pickups.options.pickup' },
     { value: 'container', label: 'profile.pickups.options.container' },
     { value: 'specialOrder', label: 'profile.pickups.options.specialOrder' }
   ];
-  private readonly pickupStoragePrefix = 'wf_pickup_types_';
 
   @ViewChild('avatarInput') avatarInput?: ElementRef<HTMLInputElement>;
   private profileEffect: EffectRef = effect(() => {
@@ -65,9 +65,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (profile) {
       this.avatarLoadFailed = false;
       if (!this.editPickups) {
-        const stored = this.loadStoredPickups(profile.userId);
-        this.selectedPickups = [...stored];
-        this.draftPickups = [...stored];
+        const options = profile.pickupOptions ?? [];
+        this.selectedPickups = [...options];
+        this.draftPickups = [...options];
       }
     } else if (!this.editPickups) {
       this.selectedPickups = [];
@@ -285,7 +285,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.draftPickups = [...this.selectedPickups];
   }
 
-  onPickupToggle(value: string, event: Event) {
+  onPickupToggle(value: PickupOptionKey, event: Event) {
     const input = event.target as HTMLInputElement | null;
     if (!input) {
       return;
@@ -302,66 +302,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   savePickups() {
-    const profile = this.profileSvc.profile();
-    if (!profile) {
-      return;
-    }
-
     this.savingPickups = true;
     const payload = [...this.draftPickups];
-    const stored = this.storePickups(profile.userId, payload);
-    this.selectedPickups = [...stored];
-    this.draftPickups = [...stored];
-    this.editPickups = false;
-    this.savingPickups = false;
-    this.toastr.success(this.translationService.translate('profile.pickups.saved'));
-  }
-
-  private pickupStorageKey(userId: string): string {
-    return `${this.pickupStoragePrefix}${userId}`;
-  }
-
-  private loadStoredPickups(userId: string): string[] {
-    if (typeof window === 'undefined') {
-      return [];
-    }
-    try {
-      const allowed = new Set(this.pickupOptions.map(option => option.value));
-      const raw = window.localStorage.getItem(this.pickupStorageKey(userId));
-      if (!raw) {
-        return [];
+    this.profileSvc.updateProfile({ pickupOptions: payload }).subscribe({
+      next: () => {
+        this.savingPickups = false;
+        this.editPickups = false;
+        this.selectedPickups = [...payload];
+        this.draftPickups = [...payload];
+        this.profileSvc.refresh();
+        const successMessage: string = this.translationService.translate('profile.pickups.saved');
+        this.toastr.success(successMessage);
+      },
+      error: () => {
+        this.savingPickups = false;
       }
-      const parsed = JSON.parse(raw);
-      if (!Array.isArray(parsed)) {
-        return [];
-      }
-      return parsed
-        .map(entry => (typeof entry === 'string' ? entry.trim() : String(entry ?? '').trim()))
-        .filter(entry => entry.length > 0 && allowed.has(entry));
-    } catch {
-      return [];
-    }
-  }
-
-  private storePickups(userId: string, values: string[]): string[] {
-    const order = this.pickupOptions.map(option => option.value);
-    const allowed = new Set(order);
-    const unique = Array.from(new Set(values.filter(value => value && value.length > 0 && allowed.has(value))));
-    unique.sort((a, b) => order.indexOf(a) - order.indexOf(b));
-    if (typeof window === 'undefined') {
-      return unique;
-    }
-    try {
-      const key = this.pickupStorageKey(userId);
-      if (unique.length === 0) {
-        window.localStorage.removeItem(key);
-      } else {
-        window.localStorage.setItem(key, JSON.stringify(unique));
-      }
-      return unique;
-    } catch {
-      return unique;
-    }
+    });
   }
 }
 

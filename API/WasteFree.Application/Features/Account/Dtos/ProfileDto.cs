@@ -1,4 +1,5 @@
 ﻿using WasteFree.Domain.Entities;
+using WasteFree.Domain.Enums;
 using WasteFree.Domain.Models;
 
 namespace WasteFree.Application.Features.Account.Dtos;
@@ -37,6 +38,11 @@ public class ProfileDto
     /// Bank account number used for withdrawals (if provided).
     /// </summary>
     public string BankAccountNumber { get; set; } = null!;
+    
+    /// <summary>
+    /// Pickup options selected by the garbageAdmin.
+    /// </summary>
+    public PickupOption[] PickupOptions { get; set; } = null!;
 
     /// <summary>
     /// Address object.
@@ -56,7 +62,8 @@ public static class ProfileDtoExtensions
             Email = user.Email,
             Username = user.Username,
             Address = user.Address,
-            AvatarUrl = string.IsNullOrWhiteSpace(avatarUrl) ? null : avatarUrl
+            AvatarUrl = string.IsNullOrWhiteSpace(avatarUrl) ? null : avatarUrl,
+            PickupOptions = user.PickupOptionsList ?? []
         };
     }
     
