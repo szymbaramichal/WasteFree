@@ -37,7 +37,7 @@
               <span class="group-card__accent"></span>
               <div class="group-card__body">
                 <div class="group-card__header">
-                  <div class="group-card__avatar" [ngClass]="{'owner': g.isUserOwner}" [attr.data-initial]="g.name | slice:0:1" [style.background]="avatarColor(g.name)"></div>
+                  <div class="group-card__avatar" [ngClass]="{'owner': g.isUserOwner}" [attr.data-initial]="g.name | slice:0:1 | uppercase" [style.background]="avatarColor(g.name)"></div>
                   <div class="group-card__meta">
                     <h6 class="group-card__name" [title]="g.name">{{ g.name }}</h6>
                     <div class="group-card__tags">

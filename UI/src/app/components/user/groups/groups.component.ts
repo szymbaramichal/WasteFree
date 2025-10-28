@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule, NgIf, NgForOf, NgClass, SlicePipe } from '@angular/common';
+import { CommonModule, NgIf, NgForOf, NgClass, SlicePipe, UpperCasePipe } from '@angular/common';
 import { GarbageGroupInfo } from '@app/_models/garbageGroups';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { HttpClientModule } from '@angular/common/http';
@@ -10,7 +10,7 @@ import { TranslatePipe } from '@app/pipes/translate.pipe';
 @Component({
   selector: 'app-groups',
   standalone: true,
-  imports: [RouterModule, CommonModule, TranslatePipe, NgIf, NgForOf, NgClass, SlicePipe, HttpClientModule],
+  imports: [RouterModule, CommonModule, TranslatePipe, NgIf, NgForOf, NgClass, SlicePipe, UpperCasePipe, HttpClientModule],
   templateUrl: './groups.component.html',
   styleUrls: ['./groups.component.css']
 })

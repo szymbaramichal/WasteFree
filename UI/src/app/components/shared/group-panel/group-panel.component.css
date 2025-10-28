@@ -1,17 +1,81 @@
-.bg-gradient-green{background:linear-gradient(135deg,#2bb673,#1f8b56)}
-.fancy-card .card-header{position:relative}.fancy-card .card-header .header-accent{position:absolute;bottom:-8px;left:16px;right:16px;height:8px;background:linear-gradient(90deg,rgba(43,182,115,.3),rgba(13,110,253,.3));border-radius:0 0 .5rem .5rem}
+.btn.btn-xs{padding:.35rem .75rem;font-size:.82rem;border-radius:.7rem;letter-spacing:.02em;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:.3rem}
+.btn.btn-xs .spinner-border{width:.85rem;height:.85rem}
 
-.btn-ghost-light{background:transparent;border-color:rgba(255,255,255,.6);color:#fff;transition:background .2s ease,color .2s ease,box-shadow .2s ease}
-.btn-ghost-light:hover{background:rgba(255,255,255,.12);color:#fff}
-.btn-ghost-light:disabled{opacity:.85;color:rgba(255,255,255,.9)}
+.btn-ghost-light{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.55);color:#fff;transition:background .2s ease,color .2s ease,box-shadow .2s ease,transform .2s ease,border-color .2s ease}
+.btn-ghost-light:hover,.btn-ghost-light:focus-visible{background:rgba(255,255,255,.32);border-color:rgba(255,255,255,.85);color:#fff;transform:translateY(-1px)}
+.btn-ghost-light:disabled{opacity:.7;color:rgba(255,255,255,.85);transform:none}
+.btn-icon{display:inline-flex;align-items:center;justify-content:center;width:1.75rem;height:1.75rem;border-radius:999px;margin-right:.3rem;transition:background .2s ease,color .2s ease,box-shadow .2s ease}
+.btn-icon--back{background:rgba(255,255,255,.18);color:#0b3f2f;box-shadow:0 8px 18px rgba(14,69,91,.18)}
+.btn-icon--back svg{width:1rem;height:1rem;fill:currentColor}
+.btn-ghost-light:hover .btn-icon--back,.btn-ghost-light:focus-visible .btn-icon--back{background:rgba(255,255,255,.26);color:#0d9663}
 
-.group-details-form{background:linear-gradient(180deg,rgba(43,182,115,.05),transparent 70%);border-radius:1rem;border:1px solid rgba(0,0,0,.06);padding:1.5rem}
-.group-details-form .form-label{font-weight:600;color:rgba(0,0,0,.75)}
-.group-details-form .form-control,.group-details-form .form-select{border-radius:12px;border-color:rgba(0,0,0,.1)}
-.group-details-form .form-control:focus,.group-details-form .form-select:focus{box-shadow:0 0 0 .15rem rgba(43,182,115,.15);border-color:rgba(43,182,115,.45)}
-.group-details-form .form-text.text-danger{font-size:.85rem}
+.group-panel{padding-block:1.5rem;max-width:1200px;margin-inline:auto;width:100%}
+.group-panel .fancy-card{border-radius:1.5rem;overflow:hidden}
+.group-panel .fancy-card .card-header{border-top-left-radius:1.5rem;border-top-right-radius:1.5rem;padding:1.5rem;box-shadow:inset 0 -1px 0 rgba(255,255,255,.25)}
+.group-panel .card-heading{display:flex;align-items:center;gap:.75rem}
+.group-panel .group-avatar{width:2.65rem;height:2.65rem;border-radius:.9rem;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:1.1rem;letter-spacing:.05em;box-shadow:0 10px 20px rgba(25,135,84,.25);position:relative;overflow:hidden}
+.group-panel .group-avatar::after{content:attr(data-initial)}
+.group-panel .group-avatar.empty{background:#6c757d}
+.group-panel__actions .btn{display:inline-flex;align-items:center;gap:.35rem}
+.group-panel__actions .btn-label{white-space:nowrap}
 
-.btn-elevated{box-shadow:0 4px 10px rgba(31,139,86,.2);border-radius:999px}
+.group-panel .summary-pill{display:flex;flex-direction:column;align-items:center;gap:.15rem;padding:.45rem .85rem;border-radius:1rem;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);box-shadow:0 8px 20px rgba(0,0,0,.12);min-width:110px;text-align:center}
+.summary-pill__label{text-transform:uppercase;letter-spacing:.12em;font-size:.68rem;opacity:.82;font-weight:600}
+.summary-pill__value{font-size:1.35rem;font-weight:700;line-height:1}
+
+.group-panel__refresh{min-width:128px;border-color:rgba(32,201,151,.55);background:rgba(32,201,151,.22);box-shadow:0 12px 22px rgba(32,201,151,.22);transition:transform .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease}
+.group-panel__refresh:hover,.group-panel__refresh:focus-visible{background:rgba(32,201,151,.3);border-color:rgba(255,255,255,.9);box-shadow:0 18px 28px rgba(32,201,151,.28)}
+.group-panel__refresh:disabled{opacity:.68;box-shadow:0 8px 16px rgba(32,201,151,.18);transform:none}
+.group-panel__back{min-width:118px;padding-left:1rem;padding-right:1.1rem}
+.group-panel__back .btn-label{padding-left:.05rem}
+.group-panel__back:hover,.group-panel__back:focus-visible{border-color:rgba(255,255,255,.78)}
+
+.group-panel .header-accent{position:absolute;inset:0;pointer-events:none}
+.group-panel .header-accent::after{content:"";position:absolute;top:-40%;right:-20%;width:220px;height:220px;background:radial-gradient(circle at center,rgba(255,255,255,.35),transparent 70%);filter:blur(4px)}
+
+.group-panel .card-body--compact{padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem}
+.group-panel__body>.alert{margin-bottom:0}
+
+.group-panel .panel-compact{background:var(--bs-body-bg);border-radius:1.05rem;border:1px solid rgba(32,201,151,.1);box-shadow:0 12px 26px rgba(12,39,54,.06);padding:1.05rem 1.3rem;display:flex;flex-direction:column;gap:.85rem}
+.group-panel .panel-compact--accent{background:rgba(32,201,151,.05);border-color:rgba(32,201,151,.16)}
+.group-panel .panel-compact--info{background:linear-gradient(140deg,rgba(255,255,255,.97),rgba(236,249,243,.94));border-color:rgba(32,201,151,.18);box-shadow:0 16px 30px rgba(17,78,59,.08)}
+.group-panel .panel-compact--pickup{background:linear-gradient(140deg,rgba(236,254,246,.98),rgba(217,247,234,.92));border-color:rgba(13,150,99,.24);box-shadow:0 18px 30px rgba(13,150,99,.12)}
+.group-panel .panel-compact--pickup .panel-title .bi{color:#0d9663}
+.group-panel .panel-compact--members{background:rgba(255,255,255,.97)}
+.group-panel .panel-compact--loading{justify-content:center;align-items:center;min-height:160px;background:rgba(255,255,255,.92)}
+.group-panel .panel-compact--form{gap:1.1rem}
+.group-panel__details .panel-compact{height:100%}
+
+.group-panel .panel-title{display:flex;align-items:center;gap:.45rem;font-weight:600;font-size:.85rem;color:var(--bs-gray-700);text-transform:uppercase;letter-spacing:.04em}
+.group-panel .panel-title .bi{font-size:1.05rem;color:#198754}
+
+.group-details-form{gap:1rem}
+.group-details-form .form-label{font-weight:600;color:var(--bs-gray-700)}
+.group-details-form .form-control,.group-details-form .form-select{border-radius:.9rem;border-color:rgba(32,201,151,.25);transition:border-color .2s ease,box-shadow .2s ease,background .2s ease}
+.group-details-form .form-control:focus,.group-details-form .form-select:focus{border-color:#20c997;box-shadow:0 0 0 .25rem rgba(32,201,151,.15)}
+.group-details-form .form-text.text-danger{font-size:.82rem}
+
+.group-panel__meta .meta-label{text-transform:uppercase;letter-spacing:.04em;font-size:.78rem;font-weight:600;color:var(--bs-gray-700)}
+.group-panel__meta .meta-value{color:var(--bs-gray-600)}
+
+.group-panel__invite{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.group-panel__invite .form-control{flex:1 1 220px;min-width:0;border-radius:.9rem}
+.group-panel__invite .btn{flex:0 0 auto}
+
+.group-panel .list-group{display:flex;flex-direction:column;gap:.75rem}
+.group-panel .list-group-item{border:0;border-radius:.95rem;box-shadow:0 8px 18px rgba(12,39,54,.08);padding:.85rem 1rem;background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(240,255,250,.9))}
+
+.group-panel .btn-success{background:linear-gradient(135deg,#2bb673,#1f8b56);border:0}
+.group-panel .btn-success:hover{filter:brightness(1.05)}
+.group-panel .btn-success:active{filter:brightness(.95)}
+
+.btn-elevated{box-shadow:0 6px 14px rgba(31,139,86,.2);border-radius:999px;transition:transform .2s ease}
 .btn-elevated:active{transform:translateY(1px)}
 
 .form-spinner{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:var(--primary-green-dark,#1f8b56)}
+
+@media (max-width:767.98px){
+	.group-panel__actions{justify-content:flex-start}
+	.group-panel .card-body--compact{padding:1.25rem}
+	.group-panel .panel-compact{padding:.9rem 1rem}
+}
