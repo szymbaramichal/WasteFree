@@ -50,25 +50,37 @@
       <ng-container *ngIf="!loading">
         <ng-container *ngIf="group; else groupEmpty">
           <ng-container *ngIf="!editDetails; else editDetailsTpl">
-            <div class="panel-compact panel-compact--info">
-              <div class="panel-title">
-                <i class="bi bi-info-circle"></i>
-                <span>{{ 'groups.details.description' | translate }}</span>
+            <div class="row g-3 align-items-stretch group-panel__details">
+              <div class="col-12 col-xl-6">
+                <div class="panel-compact panel-compact--info h-100">
+                  <div class="panel-title">
+                    <i class="bi bi-info-circle"></i>
+                    <span>{{ 'groups.details.description' | translate }}</span>
+                  </div>
+                  <div class="text-muted">{{ group.description || '-' }}</div>
+                </div>
               </div>
-              <div class="text-muted">{{ group.description || '-' }}</div>
 
-              <div class="row g-3 mt-2 group-panel__meta">
-                <div class="col-md-4">
-                  <div class="meta-label">{{ 'groups.details.city' | translate }}</div>
-                  <div class="meta-value">{{ getGroupCity() || '-' }}</div>
-                </div>
-                <div class="col-md-4">
-                  <div class="meta-label">{{ 'groups.details.postalCode' | translate }}</div>
-                  <div class="meta-value">{{ getGroupPostalCode() || '-' }}</div>
-                </div>
-                <div class="col-md-4">
-                  <div class="meta-label">{{ 'groups.details.address' | translate }}</div>
-                  <div class="meta-value">{{ getGroupStreet() || '-' }}</div>
+              <div class="col-12 col-xl-6">
+                <div class="panel-compact panel-compact--pickup h-100">
+                  <div class="panel-title">
+                    <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                    <span>{{ 'groups.details.pickupSpot' | translate }}</span>
+                  </div>
+                  <div class="row g-3 mt-1 group-panel__meta">
+                    <div class="col-md-4">
+                      <div class="meta-label">{{ 'groups.details.city' | translate }}</div>
+                      <div class="meta-value">{{ getGroupCity() || '-' }}</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="meta-label">{{ 'groups.details.postalCode' | translate }}</div>
+                      <div class="meta-value">{{ getGroupPostalCode() || '-' }}</div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="meta-label">{{ 'groups.details.address' | translate }}</div>
+                      <div class="meta-value">{{ getGroupStreet() || '-' }}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

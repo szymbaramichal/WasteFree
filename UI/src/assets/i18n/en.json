@@ -214,6 +214,7 @@
   "groups.details.title": "Group details",
   "groups.details.subtitle": "Manage settings and members",
   "groups.details.description": "Description",
+  "groups.details.pickupSpot": "Pickup spot",
   "groups.details.members": "Members",
   "groups.details.pending": "Pending",
   "groups.details.loadError": "Failed to load group details",
