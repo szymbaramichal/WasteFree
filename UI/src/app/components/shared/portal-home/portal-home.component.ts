@@ -5,11 +5,13 @@ import { RouterModule } from '@angular/router';
 import { InboxService } from '@app/services/inbox.service';
 import { WalletService } from '@app/services/wallet.service';
 import { CurrentUserService } from '@app/services/current-user.service';
+import { ShowForRolesDirective } from '@app/directives/show-for-roles.directive';
+import { UserRole } from '@app/_models/user';
 
 @Component({
   selector: 'app-portal-home',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, RouterModule],
+  imports: [CommonModule, TranslatePipe, RouterModule, ShowForRolesDirective],
   templateUrl: './portal-home.component.html',
   styleUrl: './portal-home.component.css'
 })
@@ -17,6 +19,7 @@ export class PortalHomeComponent {
   inbox = inject(InboxService);
   private wallet = inject(WalletService);
   currentUser = inject(CurrentUserService).user;
+  userRole = UserRole;
 
   stats = signal([
     { key: 'savings', labelKey: 'portal.home.stats.savings', value: 1280, unit: 'PLN', icon: 'wallet' },
