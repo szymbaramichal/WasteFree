@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, SlicePipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
@@ -15,7 +15,7 @@ import { finalize } from 'rxjs';
 @Component({
   selector: 'app-group-panel',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, TranslatePipe, ReactiveFormsModule, SlicePipe, UpperCasePipe],
   templateUrl: './group-panel.component.html',
   styleUrls: ['./group-panel.component.css']
 })
@@ -186,8 +186,10 @@ export class GroupPanelComponent implements OnInit {
 
   getGroupCity(): string {
     if (!this.group) return '';
-    if (this.group.address.city) return this.group.address.city;
-    return this.group.city ?? '';
+    const rawCity = this.group.address.city || this.group.city || '';
+    if (!rawCity) return '';
+    const translated = this.t.translate(rawCity);
+    return translated && translated !== rawCity ? translated : rawCity;
   }
 
   getGroupPostalCode(): string {
@@ -282,5 +284,16 @@ export class GroupPanelComponent implements OnInit {
       }
     });
     this.groupForm.markAsPristine();
+  }
+
+  get computedAvatarColor(): string {
+    return this.avatarColor(this.group?.name ?? '');
+  }
+
+  private avatarColor(name: string): string {
+    if (!name) return '#6c757d';
+    const hash = Array.from(name).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    const colors = ['#2bb673', '#1f8b56', '#198754', '#0d6efd', '#20c997', '#6f42c1', '#fd7e14'];
+    return colors[hash % colors.length];
   }
 }

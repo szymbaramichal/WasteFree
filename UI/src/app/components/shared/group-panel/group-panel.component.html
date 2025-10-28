@@ -1,34 +1,42 @@
-<div class="container-fluid px-3">
-  <div class="card fancy-card h-100 border-0 shadow-lg mx-auto" style="max-width:1200px;">
-    <div class="card-header bg-gradient-green text-white py-3">
-      <div class="d-flex align-items-center justify-content-between">
-        <h5 class="mb-0 fw-bold d-flex align-items-center gap-2">
-          <i class="bi bi-people"></i>
-          <span>{{ group?.name || ('groups.details.title' | translate) }}</span>
-        </h5>
-        <div class="d-flex align-items-center gap-2">
-          <button *ngIf="isOwner() && !editDetails" class="btn btn-sm btn-outline-light btn-ghost-light" (click)="startEdit()" [disabled]="loading || actLoading">
+<div class="container-fluid px-3 group-panel">
+  <div class="card fancy-card h-100 border-0 shadow-lg mx-auto">
+    <div class="card-header gradient-groups text-white py-3 position-relative overflow-hidden">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="card-heading">
+          <div class="group-avatar" [ngClass]="{'empty': !(group?.name)}" [attr.data-initial]="group?.name | slice:0:1 | uppercase" [style.background]="computedAvatarColor"></div>
+          <div>
+            <h5 class="mb-1 fw-bold">{{ group?.name || ('groups.details.title' | translate) }}</h5>
+            <small class="opacity-75">{{ 'groups.details.subtitle' | translate }}</small>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 flex-wrap group-panel__actions">
+          <div class="summary-pill" *ngIf="group">
+            <div class="summary-pill__label">{{ 'groups.details.members' | translate }}</div>
+            <div class="summary-pill__value">{{ group.users?.length || 0 }}</div>
+          </div>
+          <button *ngIf="isOwner() && !editDetails" class="btn btn-xs btn-outline-light btn-ghost-light" (click)="startEdit()" [disabled]="loading || actLoading">
             <i class="bi bi-pencil"></i>
-            <span class="ms-1">{{ 'common.edit' | translate }}</span>
+            <span class="btn-label">{{ 'common.edit' | translate }}</span>
           </button>
-          <button *ngIf="editDetails" class="btn btn-sm btn-outline-light btn-ghost-light" (click)="cancelEdit()" [disabled]="savingDetails">
+          <button *ngIf="editDetails" class="btn btn-xs btn-outline-light btn-ghost-light" (click)="cancelEdit()" [disabled]="savingDetails">
             <i class="bi bi-x-lg"></i>
-            <span class="ms-1">{{ 'common.cancel' | translate }}</span>
+            <span class="btn-label">{{ 'common.cancel' | translate }}</span>
           </button>
-          <button class="btn btn-light btn-sm" (click)="retry()" [disabled]="loading">
+          <button class="btn btn-xs btn-outline-light group-panel__refresh" (click)="retry()" [disabled]="loading">
             <i class="bi bi-arrow-clockwise"></i>
-            <span class="ms-1">{{ 'groups.refresh' | translate }}</span>
+            <span class="btn-label">{{ 'groups.refresh' | translate }}</span>
           </button>
-          <a routerLink="/portal/groups" class="btn btn-outline-light btn-sm">
+          <a routerLink="/portal/groups" class="btn btn-xs btn-outline-light">
             <i class="bi bi-arrow-left"></i>
-            <span class="ms-1">{{ 'common.back' | translate }}</span>
+            <span class="btn-label">{{ 'common.back' | translate }}</span>
           </a>
         </div>
       </div>
+      <div class="header-accent"></div>
     </div>
 
-    <div class="card-body">
-      <div *ngIf="loading" class="text-center p-4 text-muted">
+    <div class="card-body card-body--compact group-panel__body">
+      <div *ngIf="loading" class="panel-compact panel-compact--loading text-center text-muted">
         <div class="spinner-border"></div>
         <div class="small mt-2">{{ 'groups.loading' | translate }}</div>
       </div>
@@ -38,28 +46,31 @@
       <ng-container *ngIf="!loading">
         <ng-container *ngIf="group; else groupEmpty">
           <ng-container *ngIf="!editDetails; else editDetailsTpl">
-            <div class="mb-3">
-              <div class="fw-semibold">{{ 'groups.details.description' | translate }}</div>
+            <div class="panel-compact panel-compact--info">
+              <div class="panel-title">
+                <i class="bi bi-info-circle"></i>
+                <span>{{ 'groups.details.description' | translate }}</span>
+              </div>
               <div class="text-muted">{{ group.description || '-' }}</div>
-            </div>
 
-            <div class="row g-3 mb-4">
-              <div class="col-md-4">
-                <div class="fw-semibold">{{ 'groups.details.city' | translate }}</div>
-                <div class="text-muted">{{ getGroupCity() || '-' }}</div>
-              </div>
-              <div class="col-md-4">
-                <div class="fw-semibold">{{ 'groups.details.postalCode' | translate }}</div>
-                <div class="text-muted">{{ getGroupPostalCode() || '-' }}</div>
-              </div>
-              <div class="col-md-4">
-                <div class="fw-semibold">{{ 'groups.details.address' | translate }}</div>
-                <div class="text-muted">{{ getGroupStreet() || '-' }}</div>
+              <div class="row g-3 mt-2 group-panel__meta">
+                <div class="col-md-4">
+                  <div class="meta-label">{{ 'groups.details.city' | translate }}</div>
+                  <div class="meta-value">{{ getGroupCity() || '-' }}</div>
+                </div>
+                <div class="col-md-4">
+                  <div class="meta-label">{{ 'groups.details.postalCode' | translate }}</div>
+                  <div class="meta-value">{{ getGroupPostalCode() || '-' }}</div>
+                </div>
+                <div class="col-md-4">
+                  <div class="meta-label">{{ 'groups.details.address' | translate }}</div>
+                  <div class="meta-value">{{ getGroupStreet() || '-' }}</div>
+                </div>
               </div>
             </div>
           </ng-container>
           <ng-template #editDetailsTpl>
-            <form [formGroup]="groupForm" (ngSubmit)="saveGroup()" class="group-details-form">
+            <form [formGroup]="groupForm" (ngSubmit)="saveGroup()" class="panel-compact panel-compact--form group-details-form">
               <div class="row g-3">
                 <div class="col-12">
                   <label class="form-label" for="group-edit-name">{{ 'groups.form.name' | translate }}</label>
@@ -107,29 +118,34 @@
                 </div>
               </div>
               <div class="d-flex gap-2 flex-wrap mt-3">
-                <button type="submit" class="btn btn-sm btn-primary btn-elevated" [disabled]="savingDetails" [attr.aria-busy]="savingDetails">
+                <button type="submit" class="btn btn-xs btn-success btn-elevated" [disabled]="savingDetails" [attr.aria-busy]="savingDetails">
                   <span *ngIf="savingDetails" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   <span>{{ 'common.save' | translate }}</span>
                 </button>
-                <button type="button" class="btn btn-sm btn-outline-secondary" (click)="cancelEdit()" [disabled]="savingDetails">{{ 'common.cancel' | translate }}</button>
+                <button type="button" class="btn btn-xs btn-outline-secondary" (click)="cancelEdit()" [disabled]="savingDetails">{{ 'common.cancel' | translate }}</button>
               </div>
             </form>
           </ng-template>
 
-          <!-- Owner actions: invite form -->
-          <div class="mb-3" *ngIf="isOwner()">
-            <div class="fw-semibold mb-2">{{ 'groups.details.invite.title' | translate }}</div>
-            <form class="d-flex gap-2 flex-wrap" (submit)="invite($event, inviteInput.value)">
-              <input #inviteInput type="text" class="form-control" style="max-width:260px" [placeholder]="'groups.details.invite.placeholder' | translate" [disabled]="actLoading">
-              <button type="submit" class="btn btn-success" [disabled]="actLoading">
+          <div class="panel-compact panel-compact--accent" *ngIf="isOwner()">
+            <div class="panel-title">
+              <i class="bi bi-person-plus"></i>
+              <span>{{ 'groups.details.invite.title' | translate }}</span>
+            </div>
+            <form class="group-panel__invite" (submit)="invite($event, inviteInput.value)">
+              <input #inviteInput type="text" class="form-control" [placeholder]="'groups.details.invite.placeholder' | translate" [disabled]="actLoading">
+              <button type="submit" class="btn btn-success btn-xs" [disabled]="actLoading">
                 <span *ngIf="!actLoading">{{ 'groups.details.invite.submit' | translate }}</span>
                 <span *ngIf="actLoading" class="spinner-border spinner-border-sm"></span>
               </button>
             </form>
           </div>
 
-          <div>
-            <div class="fw-semibold mb-2">{{ 'groups.details.members' | translate }}</div>
+          <div class="panel-compact panel-compact--members">
+            <div class="panel-title">
+              <i class="bi bi-people"></i>
+              <span>{{ 'groups.details.members' | translate }}</span>
+            </div>
             <div class="list-group" *ngIf="group.users?.length; else noMembers">
               <div class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let u of group.users">
                 <div class="d-flex align-items-center gap-2">
@@ -139,11 +155,11 @@
                     <div class="small text-muted" *ngIf="u.isPending">{{ 'groups.details.pending' | translate }}</div>
                   </div>
                 </div>
-                <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
                   <span class="badge rounded-pill" [ngClass]="u.garbageGroupRole === GarbageGroupRole.Owner ? 'bg-success' : 'bg-secondary'">
                     {{ u.garbageGroupRole === GarbageGroupRole.Owner ? ('groups.role.owner' | translate) : ('groups.role.member' | translate) }}
                   </span>
-                  <button *ngIf="isOwner() && u.garbageGroupRole !== GarbageGroupRole.Owner" class="btn btn-sm btn-outline-danger" (click)="remove(u.id)" [disabled]="actLoading">
+                  <button *ngIf="isOwner() && u.garbageGroupRole !== GarbageGroupRole.Owner" class="btn btn-xs btn-outline-danger" (click)="remove(u.id)" [disabled]="actLoading">
                     {{ 'groups.details.remove' | translate }}
                   </button>
                 </div>
@@ -155,7 +171,7 @@
           </div>
         </ng-container>
         <ng-template #groupEmpty>
-          <div class="text-muted">{{ 'groups.details.title' | translate }}</div>
+          <div class="panel-compact panel-compact--info text-muted">{{ 'groups.details.title' | translate }}</div>
         </ng-template>
       </ng-container>
     </div>

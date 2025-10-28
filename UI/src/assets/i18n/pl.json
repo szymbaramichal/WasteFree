@@ -231,6 +231,7 @@
   "groups.invitations.invitedByPrefix": "Zaprosił:"
   ,
   "groups.details.title": "Szczegóły grupy",
+  "groups.details.subtitle": "Zarządzaj ustawieniami i członkami",
   "groups.details.description": "Opis grupy",
   "groups.details.members": "Członkowie",
   "groups.details.pending": "Oczekujący",

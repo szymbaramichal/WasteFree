@@ -212,6 +212,7 @@
   "groups.form.errors.loadFailed": "Failed to load groups"
   ,
   "groups.details.title": "Group details",
+  "groups.details.subtitle": "Manage settings and members",
   "groups.details.description": "Description",
   "groups.details.members": "Members",
   "groups.details.pending": "Pending",
