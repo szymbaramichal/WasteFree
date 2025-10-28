@@ -22,12 +22,16 @@
             <i class="bi bi-x-lg"></i>
             <span class="btn-label">{{ 'common.cancel' | translate }}</span>
           </button>
-          <button class="btn btn-xs btn-outline-light group-panel__refresh" (click)="retry()" [disabled]="loading">
+          <button class="btn btn-xs btn-outline-light btn-ghost-light group-panel__refresh" (click)="retry()" [disabled]="loading">
             <i class="bi bi-arrow-clockwise"></i>
             <span class="btn-label">{{ 'groups.refresh' | translate }}</span>
           </button>
-          <a routerLink="/portal/groups" class="btn btn-xs btn-outline-light">
-            <i class="bi bi-arrow-left"></i>
+          <a routerLink="/portal/groups" class="btn btn-xs btn-outline-light btn-ghost-light group-panel__back">
+            <span class="btn-icon btn-icon--back" aria-hidden="true">
+              <svg viewBox="0 0 16 16" role="img" focusable="false">
+                <path d="M15 8a.5.5 0 0 1-.5.5H4.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L4.707 7.5H14.5A.5.5 0 0 1 15 8Z" />
+              </svg>
+            </span>
             <span class="btn-label">{{ 'common.back' | translate }}</span>
           </a>
         </div>
