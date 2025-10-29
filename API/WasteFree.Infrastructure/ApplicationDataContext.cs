@@ -15,6 +15,8 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
     public DbSet<InboxNotification> InboxNotifications { get; set; }
     public DbSet<GarbageAdminConsent> GarbageAdminConsents { get; set; }
+    public DbSet<GarbageOrder> GarbageOrders { get; set; }
+    public DbSet<GarbageOrderUsers> GarbageOrderUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

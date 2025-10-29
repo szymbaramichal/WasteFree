@@ -37,4 +37,10 @@
   <data name="ERR_GROUP_POSTAL_CODE_REQUIRED"><value>Kod pocztowy jest wymagany</value></data>
   <data name="ERR_GROUP_POSTAL_CODE_INVALID"><value>Kod pocztowy musi mieć format 00-000.</value></data>
   <data name="ERR_GROUP_STREET_REQUIRED"><value>Adres grupy jest wymagany</value></data>
+  <data name="ERR_PICKUP_OPTION_INVALID"><value>Opcja odbioru jest nieprawidłowa</value></data>
+  <data name="ERR_CONTAINER_SIZE_REQUIRED"><value>Rozmiar kontenera jest wymagany, gdy opcja odbioru to kontener</value></data>
+  <data name="ERR_PICKUP_DATE_REQUIRED"><value>Data odbioru jest wymagana</value></data>
+  <data name="ERR_PICKUP_DATE_IN_PAST"><value>Data odbioru nie może być w przeszłości</value></data>
+  <data name="ERR_DROP_OFF_DATE_IN_PAST"><value>Data odbioru nie może być w przeszłości</value></data>
+  <data name="ERR_USER_IDS_EMPTY"><value>Przynajmniej jeden użytkownik musi być wybrany do zamówienia</value></data>
 </root>
