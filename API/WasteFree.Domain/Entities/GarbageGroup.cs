@@ -1,5 +1,4 @@
 using WasteFree.Domain.Models;
-using WasteFree.Domain.Models;
 
 namespace WasteFree.Domain.Entities
 {
