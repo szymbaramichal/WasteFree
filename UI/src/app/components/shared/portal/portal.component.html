@@ -60,3 +60,14 @@
 		</div>
 	</section>
 </div>
+
+<app-garbage-admin-consent-modal
+	[visible]="consentVisible"
+	[loading]="consentLoading"
+	[acceptLoading]="consentAccepting"
+	[consentText]="consentContent"
+	[error]="consentError"
+	(accept)="onConsentAccept()"
+	(reject)="onConsentReject()"
+	(retry)="onConsentRetry()"
+></app-garbage-admin-consent-modal>

@@ -296,5 +296,16 @@
   "profile.bankSaveError": "Failed to save bank account",
   "profile.citySaved": "City saved",
   "profile.citySaveError": "Failed to save city",
-  "profile.cityLoadError": "Could not load supported cities"
+  "profile.cityLoadError": "Could not load supported cities",
+  "consents.modal.title": "Waste manager consent",
+  "consents.modal.subtitle": "Please review the consent before continuing as a waste manager.",
+  "consents.modal.notice": "To access the WasteFree portal as a waste manager you must accept the consent below.",
+  "consents.modal.loading": "Loading consent content...",
+  "consents.modal.error": "We could not load the consent content. Please try again.",
+  "consents.modal.retry": "Try again",
+  "consents.modal.accept": "Accept",
+  "consents.modal.acceptSuccess": "Consent accepted.",
+  "consents.modal.acceptError": "We could not accept the consent.",
+  "consents.modal.reject": "Reject",
+  "consents.modal.rejectInfo": "Sign in again when you are ready to accept the consent."
 }
