@@ -20,7 +20,8 @@ public static class ConsentsEndpoints
             {
                 c.Expire(TimeSpan.FromMinutes(60))
                  .Tag("consents")
-                 .SetVaryByHeader(HeaderNames.Origin);
+                 .SetVaryByHeader(HeaderNames.Origin)
+                 .SetVaryByHeader(HeaderNames.AcceptLanguage);
             })			
 			.WithOpenApi()
 			.Produces<Result<string>>()
@@ -42,10 +43,11 @@ public static class ConsentsEndpoints
 	/// </summary>
 	private static async Task<IResult> GetConsentAsync(
 		ICurrentUserService currentUserService,
+		[FromHeader(Name = "Accept-Language")] string acceptLanguage,
 		IMediator mediator,
 		CancellationToken cancellationToken)
 	{
-		var command = new GetGarbageAdminConsentQuery(currentUserService.UserId);
+		var command = new GetGarbageAdminConsentQuery(currentUserService.UserId, acceptLanguage);
 
 		var result = await mediator.SendAsync(command, cancellationToken);
 

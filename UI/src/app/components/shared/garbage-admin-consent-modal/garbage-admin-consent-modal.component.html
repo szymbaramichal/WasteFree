@@ -1,0 +1,49 @@
+<div *ngIf="visible" class="consent-modal-root">
+  <div class="modal-backdrop fade show"></div>
+
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="garbageAdminConsentTitle">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content shadow-lg border-0">
+        <div class="modal-header border-0 bg-success-subtle text-success">
+          <div>
+            <h5 class="modal-title fw-semibold mb-1" id="garbageAdminConsentTitle">{{ 'consents.modal.title' | translate }}</h5>
+            <p class="modal-subtitle text-muted mb-0">{{ 'consents.modal.subtitle' | translate }}</p>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <p class="consent-note text-muted">{{ 'consents.modal.notice' | translate }}</p>
+
+          <div *ngIf="loading" class="d-flex align-items-center gap-3 py-3">
+            <span class="spinner-border text-success" role="status" aria-hidden="true"></span>
+            <span>{{ 'consents.modal.loading' | translate }}</span>
+          </div>
+
+          <div *ngIf="!loading && error" class="alert alert-danger" role="alert">
+            <p class="mb-2">{{ error }}</p>
+            <button type="button" class="btn btn-sm btn-outline-danger" (click)="onRetry()">{{ 'consents.modal.retry' | translate }}</button>
+          </div>
+
+          <div *ngIf="!loading && !error" class="consent-text">
+            <pre class="consent-pre">{{ consentText }}</pre>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light border-0 gap-2">
+          <button type="button" class="btn btn-outline-danger" (click)="onReject()">
+            {{ 'consents.modal.reject' | translate }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-success"
+            (click)="onAccept()"
+            [disabled]="acceptLoading || loading || !!error"
+          >
+            <span *ngIf="acceptLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ 'consents.modal.accept' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

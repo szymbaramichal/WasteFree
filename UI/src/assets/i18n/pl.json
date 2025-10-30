@@ -298,5 +298,16 @@
   "profile.bankSaveError": "Nie udało się zapisać numeru rachunku",
   "profile.citySaved": "Zapisano miasto",
   "profile.citySaveError": "Nie udało się zapisać miasta",
-  "profile.cityLoadError": "Nie udało się pobrać listy miast"
+  "profile.cityLoadError": "Nie udało się pobrać listy miast",
+  "consents.modal.title": "Zgoda dla zarządcy odpadów",
+  "consents.modal.subtitle": "Przeczytaj treść i zdecyduj, czy chcesz kontynuować jako zarządca odpadów.",
+  "consents.modal.notice": "Aby korzystać z portalu WasteFree jako zarządca odpadów, musisz zaakceptować poniższą zgodę.",
+  "consents.modal.loading": "Ładuję treść zgody...",
+  "consents.modal.error": "Nie udało się pobrać treści zgody. Spróbuj ponownie.",
+  "consents.modal.retry": "Spróbuj ponownie",
+  "consents.modal.accept": "Akceptuję",
+  "consents.modal.acceptSuccess": "Zgoda została zaakceptowana.",
+  "consents.modal.acceptError": "Nie udało się zaakceptować zgody.",
+  "consents.modal.reject": "Odrzuć",
+  "consents.modal.rejectInfo": "Zaloguj się ponownie, gdy będziesz gotowy zaakceptować zgodę."
 }

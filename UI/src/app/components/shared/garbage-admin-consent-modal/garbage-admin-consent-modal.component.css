@@ -1,0 +1,29 @@
+.consent-modal-root {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.consent-note {
+  font-size: 0.95rem;
+}
+
+.consent-text {
+  max-height: 50vh;
+  overflow-y: auto;
+  background-color: #f8f9fa;
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.consent-pre {
+  white-space: pre-wrap;
+  margin: 0;
+  font-family: inherit;
+  line-height: 1.55;
+}
