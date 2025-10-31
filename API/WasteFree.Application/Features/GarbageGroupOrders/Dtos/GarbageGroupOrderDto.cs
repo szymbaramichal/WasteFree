@@ -19,7 +19,7 @@ public class GarbageGroupOrderDto
     public GarbageOrderStatus GarbageOrderStatus { get; set; }
 
     public Guid GarbageGroupId { get; set; }
-    public ICollection<Guid> Users { get; set; } = [];
+    public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
 }
 
 public static class GarbageGroupOrderDtoExtensions
@@ -37,7 +37,11 @@ public static class GarbageGroupOrderDtoExtensions
             CollectingService = garbageOrder.CollectingService,
             GarbageOrderStatus = garbageOrder.GarbageOrderStatus,
             GarbageGroupId = garbageOrder.GarbageGroupId,
-            Users = garbageOrder.GarbageOrderUsers.Select(x => x.UserId).ToList()
+            Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
+            {
+                UserId = x.UserId,
+                HasAcceptedPayment = x.HasAcceptedPayment
+            }).ToList()
         };
     }
 }
