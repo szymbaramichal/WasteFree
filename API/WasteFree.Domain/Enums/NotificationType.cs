@@ -18,5 +18,10 @@ public enum NotificationType
     /// <summary>
     /// Garbage Group invitation.
     /// </summary>
-    GarbageGroupInvitation = 2
+    GarbageGroupInvitation = 2,
+    
+    /// <summary>
+    /// Garbage order created.
+    /// </summary>
+    GarbageOrderCreated = 3,
 }
