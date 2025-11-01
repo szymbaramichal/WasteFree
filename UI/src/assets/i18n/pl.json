@@ -89,6 +89,7 @@
   "auth.errors.unknown": "Wystąpił nieznany błąd"
   ,
   "wallet.title": "Portfel",
+  "wallet.subtitle": "Zarządzaj doładowaniami i wypłatami",
   "wallet.balance.label": "Aktualne saldo",
   "wallet.topup.title": "Doładuj",
   "wallet.topup.desc": "Dodaj środki do portfela.",
