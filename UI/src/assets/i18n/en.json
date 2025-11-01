@@ -89,6 +89,7 @@
   "auth.errors.unknown": "Unknown error occurred"
   ,
   "wallet.title": "Wallet",
+  "wallet.subtitle": "Manage top-ups and withdrawals",
   "wallet.balance.label": "Current balance",
   "wallet.topup.title": "Top up",
   "wallet.topup.desc": "Add funds to your wallet using Blik.",
