@@ -287,6 +287,7 @@
   "profile.avatar.fileTooLarge": "Avatar must be 5 MB or smaller.",
   "profile.avatar.uploadSuccess": "Avatar updated successfully",
   "profile.avatar.uploadError": "Failed to upload avatar",
+  "common.back": "Back",
   "common.edit": "Edit",
   "common.save": "Save",
   "common.cancel": "Cancel",
