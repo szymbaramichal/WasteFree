@@ -1,63 +1,253 @@
-/* Inbox card with subtle green/blue gradient overlay */
-.inbox-card { 
-	background:#fff; 
-	border:1px solid #e2e8f0; 
-	box-shadow:0 4px 18px -6px rgba(0,0,0,.08); 
-	position:relative; 
-	border-radius: 16px; 
-}
-.inbox-card:after { 
-	content:""; 
-	position:absolute; 
-	inset:0; 
-	background:linear-gradient(135deg, rgba(43,182,115,.08), rgba(13,110,253,.05)); 
-	pointer-events:none; 
-	border-radius: inherit; 
+/* Elevated inbox container */
+.inbox-card {
+	border-radius:1.35rem;
+	overflow:hidden;
+	background:#ffffff;
+	border:1px solid rgba(32,201,151,.14);
+	box-shadow:0 18px 44px -26px rgba(15,51,65,.24);
 }
 
-.inbox-header .badge { transform: translateY(-1px); }
-.inbox-icon-wrap { width:40px; height:40px; background:#fff; border:1px solid #e3e7ed; border-radius:50%; }
-.inbox-icon-wrap img { width:20px; height:20px; display:block; color:#1b2e44; }
-
-/* Inbox list visual tweaks */
-.inbox-list { border-radius:12px; overflow:visible; }
-.inbox-list .list-group-item {
-	border-color:#e6eaf0;
-	border-radius:16px;
-	margin-bottom:16px;
-	padding:20px 24px;
-	transition:background .2s ease, box-shadow .2s ease;
+.inbox-card__header {
 	position:relative;
+	display:flex;
+	align-items:center;
+	gap:1rem;
+	padding:1.25rem 1.6rem;
 }
-.inbox-list .list-group-item:last-child { margin-bottom:0; }
-.inbox-list .list-group-item:hover {
-	background:#f9fbff;
-	box-shadow:0 6px 18px -10px rgba(0,0,0,.15);
+
+.inbox-card__header .header-accent {
+	position:absolute;
+	inset:0;
+	pointer-events:none;
+}
+.inbox-card__header .header-accent::after {
+	content:"";
+	position:absolute;
+	top:-45%;
+	right:-25%;
+	width:220px;
+	height:220px;
+	background:radial-gradient(circle at center, rgba(255,255,255,.4), transparent 70%);
+	filter:blur(6px);
+}
+
+.inbox-card__titles small {
+	letter-spacing:.08em;
+	text-transform:uppercase;
+	font-size:.68rem;
+}
+
+.inbox-icon-wrap {
+	width:48px;
+	height:48px;
+	background:rgba(255,255,255,.18);
+	border:1px solid rgba(255,255,255,.35);
+	border-radius:16px;
+	box-shadow:0 14px 28px rgba(0,0,0,.18);
+}
+.inbox-icon-wrap img {
+	width:22px;
+	height:22px;
+	display:block;
+	filter:brightness(0) invert(1);
+}
+
+.inbox-badge {
+	background:rgba(255,255,255,.24);
+	color:#ffffff;
+	border-radius:999px;
+	padding:.32rem .8rem;
+	font-weight:600;
+	font-size:.82rem;
+	border:1px solid rgba(255,255,255,.35);
+}
+
+.inbox-clear {
+	display:inline-flex;
+	align-items:center;
+	gap:.4rem;
+	border-radius:.85rem;
+	padding:.38rem .95rem;
+	border:1px solid rgba(32,201,151,.35);
+	background:rgba(255,255,255,.15) !important;
+	color:#ffffff;
+	box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 8px 22px -16px rgba(15,51,65,.4);
+	transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.inbox-clear i {
+	color:#ffffff;
+	font-size:.9rem;
+}
+
+.inbox-clear:hover,
+.inbox-clear:focus {
+	border-color:rgba(32,201,151,.55);
+	background:rgba(255,255,255,.25) !important;
+	box-shadow:inset 0 1px 0 rgba(255,255,255,.5), 0 14px 30px -18px rgba(15,51,65,.45);
+	transform:translateY(-1px);
+}
+
+.inbox-card__body {
+	position:relative;
+	background:#ffffff;
+	min-height:260px;
+}
+
+.inbox-empty__img {
+	width:28px;
+	height:28px;
+	display:inline-block;
+	filter:brightness(0) invert(1);
+}
+
+/* Notifications list */
+.inbox-list {
+	border-radius:1.1rem;
+	background:transparent;
+	border:0;
+	display:flex;
+	flex-direction:column;
+	gap:1rem;
+	margin:0;
+	padding:0;
+}
+
+.notification-item {
+	border:1px solid rgba(32,201,151,.18);
+	border-radius:1.05rem;
+	padding:1.4rem 1.6rem 1.4rem calc(1.6rem + 8px);
+	transition:transform .2s ease, box-shadow .25s ease, border-color .2s ease;
+	background:linear-gradient(155deg, rgba(43,182,115,.08), rgba(244,247,250,.96));
+	box-shadow:0 14px 34px -24px rgba(15,51,65,.32);
+	position:relative;
+	display:flex;
+	gap:1.1rem;
+	overflow:hidden;
+}
+
+.notification-item:hover {
+	transform:translateY(-2px);
+	box-shadow:0 24px 44px -26px rgba(15,51,65,.35);
+	border-color:rgba(32,201,151,.32);
+}
+
+.notification-item::before {
+	content:"";
+	position:absolute;
+	left:0;
+	top:0;
+	bottom:0;
+	width:6px;
+	background:linear-gradient(180deg, rgba(32,201,151,.65), rgba(43,182,115,.25));
+	opacity:.9;
+	border-top-left-radius:inherit;
+	border-bottom-left-radius:inherit;
+}
+
+.notification-content {
+	display:flex;
+	flex-direction:column;
+	gap:1rem;
+	flex:1 1 auto;
+}
+
+.notification-meta {
+	display:flex;
+	align-items:center;
+	gap:.65rem;
+	flex-wrap:wrap;
+	font-size:1rem;
+}
+
+.notification-meta strong {
+	font-weight:700;
+	color:#132c3e;
+}
+
+.notification-date {
+	font-size:.8rem;
+	letter-spacing:.03em;
+	color:#4f6578;
+}
+
+.notification-message {
+	margin:0;
+	color:#2c3e4c;
+	line-height:1.52;
 }
 
 .notification-actions {
 	display:flex;
 	gap:12px;
 	flex-wrap:wrap;
+	align-items:center;
+}
+
+.notification-actions .btn {
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	gap:.35rem;
+}
+
+.btn.btn-xs {
+	padding:.36rem .8rem;
+	font-size:.82rem;
+	border-radius:.75rem;
+	letter-spacing:.02em;
+	font-weight:600;
 }
 
 .notification-close {
 	position:absolute;
-	top:12px;
+	top:16px;
 	right:16px;
-	color:#94a3b8;
-	text-decoration:none;
+	opacity:.55;
 }
+
 .notification-close:hover,
 .notification-close:focus {
-	color:#475569;
-	text-decoration:none;
+	opacity:1;
 }
 
-.inbox-pagination .btn { min-width:72px; }
+.inbox-pagination .btn {
+	min-width:0;
+	width:36px;
+	height:36px;
+	border-radius:50%;
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+}
 
-@media (prefers-color-scheme: dark) {
-	.inbox-card { background:#ffffff; border-color:#e2e8f0; color:#1b2e44; }
-	.inbox-card:after { background:linear-gradient(135deg, rgba(43,182,115,.08), rgba(13,110,253,.05)); }
-	.inbox-list .list-group-item { border-color:#e6eaf0; }
+.inbox-pagination span { color:#1b2e44; }
+
+@media (max-width: 767.98px) {
+	.inbox-card__header {
+		flex-direction:column;
+		align-items:flex-start;
+		gap:.75rem;
+	}
+	.inbox-card__body { padding:1.75rem 1.25rem !important; }
+	.inbox-pagination { flex-direction:column; gap:.75rem; align-items:flex-start !important; }
+}
+
+@media (max-width: 575.98px) {
+	.notification-item {
+		flex-direction:column;
+		padding:1.15rem 1.1rem 1.25rem;
+	}
+	.notification-close {
+		top:12px;
+		right:12px;
+	}
+	.notification-actions {
+		width:100%;
+		flex-direction:column;
+		align-items:stretch;
+	}
+	.notification-actions .btn {
+		width:100%;
+	}
 }
