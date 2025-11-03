@@ -68,6 +68,15 @@
 .group-panel .list-group{display:flex;flex-direction:column;gap:.75rem}
 .group-panel .list-group-item{border:0;border-radius:.95rem;box-shadow:0 8px 18px rgba(12,39,54,.08);padding:.85rem 1rem;background:linear-gradient(145deg,rgba(255,255,255,.95),rgba(240,255,250,.9))}
 
+.group-panel__tabs{border-bottom:1px solid rgba(32,201,151,.18);gap:.35rem}
+.group-panel__tabs .nav-link{border:0;border-bottom:3px solid transparent;color:var(--bs-gray-600);font-weight:600;letter-spacing:.02em;padding:.65rem 1.15rem;border-radius:.95rem .95rem 0 0;display:inline-flex;align-items:center;gap:.45rem;transition:color .2s ease,border-color .2s ease,background .2s ease}
+.group-panel__tabs .nav-link i{font-size:1rem;color:var(--primary-green-dark,#1f8b56);opacity:.7;transition:opacity .2s ease}
+.group-panel__tabs .nav-link.active{color:var(--primary-green-dark,#1f8b56);border-bottom-color:var(--primary-green-dark,#1f8b56);background:rgba(32,201,151,.08)}
+.group-panel__tabs .nav-link.active i{opacity:1}
+.group-panel__tabs .nav-link:not(.active):hover{color:var(--primary-green-dark,#1f8b56);border-bottom-color:rgba(32,201,151,.4);background:rgba(32,201,151,.05)}
+.group-panel__tab-pane{padding-top:1.15rem}
+.group-panel__tab-pane--stack{display:flex;flex-direction:column;gap:1.25rem}
+
 .group-panel .btn-success{background:linear-gradient(135deg,#2bb673,#1f8b56);border:0}
 .group-panel .btn-success:hover{filter:brightness(1.05)}
 .group-panel .btn-success:active{filter:brightness(.95)}

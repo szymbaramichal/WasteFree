@@ -12,6 +12,8 @@ import { buildAddressFormGroup } from '@app/forms/address-form';
 import { CityService } from '@app/services/city.service';
 import { finalize } from 'rxjs';
 
+type GroupPanelTab = 'details' | 'pickups' | 'chat';
+
 @Component({
   selector: 'app-group-panel',
   standalone: true,
@@ -39,6 +41,7 @@ export class GroupPanelComponent implements OnInit {
   cities: string[] = this.cityService.cities() ?? [];
   citiesLoading = false;
   citiesLoadError = false;
+  activeTab: GroupPanelTab = 'details';
 
   private addressGroup: FormGroup = buildAddressFormGroup(this.fb);
   groupForm: FormGroup = this.fb.group({
@@ -127,6 +130,10 @@ export class GroupPanelComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('groupId');
     if (!id) return;
     this.fetch(id);
+  }
+
+  selectTab(tab: GroupPanelTab): void {
+    this.activeTab = tab;
   }
 
   isOwner(): boolean {
