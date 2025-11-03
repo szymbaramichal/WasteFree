@@ -15,7 +15,7 @@ public static class GarbageGroupOrderEndpoints
 {
     public static void MapGarbageGroupOrderEndpoints(this WebApplication app)
     {
-        app.MapPost("/garbage-group/{groupId:guid}/orders", CreateGarbageOrderAsync)
+        app.MapPost("/garbage-group/{groupId:guid}/order", CreateGarbageOrderAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .AddEndpointFilter(new ValidationFilter<GarbageOrderRequest>())
             .WithOpenApi()
@@ -24,6 +24,16 @@ public static class GarbageGroupOrderEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
             .WithDescription("Create a new garbage order.");
+
+        app.MapPost("/garbage-group/{groupId:guid}/order/calculate", CalculateGarbageOrderCostAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .AddEndpointFilter(new ValidationFilter<GarbageOrderCalculationRequest>())
+            .WithOpenApi()
+            .Produces<Result<GarbageOrderCostDto>>()
+            .Produces<Dictionary<string, string[]>>(422)
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Calculate estimated cost for a garbage order.");
         
         app.MapPost("/garbage-group/{groupId:guid}/orders/filter", GetGarbageOrdersAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
@@ -64,6 +74,38 @@ public static class GarbageGroupOrderEndpoints
         }
 
         return Results.Ok(result);    
+    }
+
+    /// <summary>
+    /// Calculate estimated cost for a garbage order without persisting it.
+    /// </summary>
+    private static async Task<IResult> CalculateGarbageOrderCostAsync(
+        [FromRoute] Guid groupId,
+        [FromBody] GarbageOrderCalculationRequest request,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var query = new CalculateGarbageOrderCostQuery(
+            groupId,
+            currentUserService.UserId,
+            request.PickupOption,
+            request.ContainerSize,
+            request.DropOffDate,
+            request.PickupDate,
+            request.IsHighPriority,
+            request.CollectingService);
+
+        var result = await mediator.SendAsync(query, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
     }
 
     /// <summary>
@@ -123,6 +165,42 @@ public record GetGarbageOrdersRequest
     /// Array of order statuses to filter by. If empty, all statuses are returned.
     /// </summary>
     public GarbageOrderStatus[] Statuses { get; init; } = [];
+}
+
+/// <summary>
+/// Garbage order request used to calculate estimated cost.
+/// </summary>
+public record GarbageOrderCalculationRequest
+{
+    /// <summary>
+    /// Pickup option.
+    /// </summary>
+    public PickupOption PickupOption { get; init; }
+
+    /// <summary>
+    /// Container size if pickup option is container.
+    /// </summary>
+    public ContainerSize? ContainerSize { get; init; }
+
+    /// <summary>
+    /// Drop off date in case of container.
+    /// </summary>
+    public DateTime? DropOffDate { get; init; }
+
+    /// <summary>
+    /// Pickup date.
+    /// </summary>
+    public DateTime PickupDate { get; init; }
+
+    /// <summary>
+    /// Is high priority.
+    /// </summary>
+    public bool IsHighPriority { get; init; }
+
+    /// <summary>
+    /// Collecting service.
+    /// </summary>
+    public bool CollectingService { get; init; }
 }
 
 /// <summary>
