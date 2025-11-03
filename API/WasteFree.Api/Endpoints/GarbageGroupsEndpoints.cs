@@ -36,6 +36,13 @@ public static class GarbageGroupsEndpoints
             .Produces<Result<ICollection<GarbageGroupInvitationDto>>>()
             .WithTags("GarbageGroups")
             .WithDescription("Get list of pending invitations.");
+
+        app.MapGet("/garbage-groups/groups-with-users", GetGroupsWithUsers)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<ICollection<GarbageGroupMembersDto>>>()
+            .WithTags("GarbageGroups")
+            .WithDescription("Get list of users garbage groups with members.");
         
         app.MapPost("/garbage-groups/{groupId:guid}/makeAction/{makeAction}", MakeActionWithInvitation)
             .RequireAuthorization(PolicyNames.UserPolicy)
@@ -120,7 +127,7 @@ public static class GarbageGroupsEndpoints
 
         return Results.Ok(result);
     }
-    
+
     /// <summary>
     /// Retrieves the list of pending group invitations.
     /// </summary>
@@ -130,6 +137,21 @@ public static class GarbageGroupsEndpoints
         CancellationToken cancellationToken)
     {
         var command = new GetPendingGroupInvitationsQuery(currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        return Results.Ok(result);
+    }
+    
+    /// <summary>
+    /// Get user's garbage group with members.
+    /// </summary>
+    private static async Task<IResult> GetGroupsWithUsers(
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var command = new GetGarbageGroupsWithUsersQuery(currentUserService.UserId);
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
