@@ -1,12 +1,11 @@
 ﻿using System.Net;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Helpers;
 using WasteFree.Application.Jobs;
 using WasteFree.Application.Jobs.Dtos;
+using WasteFree.Application.Notifications.Facades;
 using WasteFree.Infrastructure;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Entities;
@@ -22,7 +21,8 @@ public record RegisterUserCommand(string Email, string Username, string Password
 
 public class RegisterUserCommandHandler(ApplicationDataContext context, 
     IJobSchedulerFacade jobScheduler,
-    IConfiguration configuration) 
+    IConfiguration configuration,
+    RegisterUserNotificationFacade notificationFacade) 
     : IRequestHandler<RegisterUserCommand, UserDto>
 {
     public async Task<Result<UserDto>> HandleAsync(RegisterUserCommand command, CancellationToken cancellationToken)
@@ -42,6 +42,7 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
         var hashAndSalt = PasswordHasher.GeneratePasswordHashAndSalt(command.Password);
         
         var newUser = new User {
+            Id = Guid.CreateVersion7(),
             Email = command.Email,
             PasswordHash = hashAndSalt.passwordHash,
             PasswordSalt = hashAndSalt.passwordSalt,
@@ -58,37 +59,27 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
         
         context.Users.Add(newUser);
         
-        var notificationTemplate = await context.NotificationTemplates
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Type == NotificationType.RegisterationConfirmation 
-                                      && x.Channel == NotificationChannel.Email
-                                      && x.LanguagePreference == newUser.LanguagePreference, cancellationToken);
+        var baseUrl = configuration["BaseUiUrl"] ?? throw new NotImplementedException();
+        var aesToken = configuration["Security:AesEncryptionKey"] ?? throw new NotImplementedException();
+        var activationLink = $"{baseUrl}/activate-account/{AesEncryptor.Encrypt(newUser.Id.ToString(), aesToken)}";
 
-        if (notificationTemplate is null)
+        var emailContent = await notificationFacade.CreateAsync(
+            newUser.LanguagePreference,
+            newUser.Username,
+            activationLink,
+            cancellationToken);
+
+        if (emailContent is null)
             return Result<UserDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
 
         await context.SaveChangesAsync(cancellationToken);
-        
-        var baseUrl = configuration["BaseUiUrl"] ?? throw new NotImplementedException();
-        var aesToken = configuration["Security:AesEncryptionKey"] ?? throw new NotImplementedException();
-        
-        var personalizedBody = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate.Body, new Dictionary<string, string>
-        {
-            {"Username", newUser.Username},
-            {
-                "Link", 
-                $"{baseUrl}/activate-account/{AesEncryptor.Encrypt(newUser.Id.ToString(),
-                aesToken)}"
-            }
-        });
-        
-        
+
         await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob), 
             new SendEmailDto
             {
                 Email = newUser.Email,
-                Subject = notificationTemplate.Subject,
-                Body = personalizedBody
+                Subject = emailContent.Subject,
+                Body = emailContent.Body
             },
             "Send registration confirmation email", 
             cancellationToken);

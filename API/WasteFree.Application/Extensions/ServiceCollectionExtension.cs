@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WasteFree.Application.Abstractions.Messaging;
+using WasteFree.Application.Notifications.Facades;
 
 namespace WasteFree.Application.Extensions;
 
@@ -16,6 +17,10 @@ public static class ServiceCollectionExtension
             .AsImplementedInterfaces()
             .WithScopedLifetime()
         );
+
+        services.AddScoped<RegisterUserNotificationFacade>();
+        services.AddScoped<GarbageGroupInvitationNotificationFacade>();
+        services.AddScoped<GarbageOrderCreatedNotificationFacade>();
         
         return services;
     }

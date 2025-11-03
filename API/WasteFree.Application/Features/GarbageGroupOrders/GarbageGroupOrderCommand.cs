@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.GarbageGroupOrders.Dtos;
-using WasteFree.Application.Helpers;
 using WasteFree.Application.Jobs;
 using WasteFree.Application.Jobs.Dtos;
+using WasteFree.Application.Notifications.Facades;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
@@ -30,7 +30,8 @@ public record GarbageGroupOrderCommand (
 public class GarbageGroupOrderCommandHandler(
     ApplicationDataContext context,
     IHubContext<NotificationHub> hubContext,
-    IJobSchedulerFacade jobScheduler) 
+    IJobSchedulerFacade jobScheduler,
+    GarbageOrderCreatedNotificationFacade notificationFacade) 
     : IRequestHandler<GarbageGroupOrderCommand, GarbageGroupOrderDto>
 {
     public async Task<Result<GarbageGroupOrderDto>> HandleAsync(GarbageGroupOrderCommand request, CancellationToken cancellationToken)
@@ -71,9 +72,23 @@ public class GarbageGroupOrderCommandHandler(
         
         var connectionIds = new HashSet<string>();
 
-        var notificationTemplates = await context
-            .NotificationTemplates.Where(x => x.Type == NotificationType.GarbageOrderCreated)
-            .ToListAsync(cancellationToken);
+        var notificationRequests = request.UserIds
+            .Select(userId =>
+            {
+                var user = groupUsers.First(x => x.UserId == userId);
+                return new GarbageOrderNotificationRequest(
+                    userId,
+                    user.User.LanguagePreference,
+                    user.User.Username,
+                    userGroup.GarbageGroup.Name,
+                    request.PickupDate);
+            })
+            .ToList();
+
+        var notificationContents = await notificationFacade
+            .CreateAsync(notificationRequests, cancellationToken);
+
+        var notificationsByUserId = notificationContents.ToDictionary(x => x.UserId);
 
         foreach (var userId in request.UserIds)
         {
@@ -91,50 +106,28 @@ public class GarbageGroupOrderCommandHandler(
             }
 
             var user = groupUsers.First(x => x.UserId == userId);
-            var emailTemplate = notificationTemplates
-                .FirstOrDefault(x =>
-                    x.LanguagePreference == user.User.LanguagePreference && x.Channel == NotificationChannel.Email);
+            notificationsByUserId.TryGetValue(userId, out var notificationContent);
 
-            if (emailTemplate != null)
+            if (notificationContent?.Email is not null)
             {
-                var emailBody = EmailTemplateHelper.ApplyPlaceholders(emailTemplate.Body,
-                    new Dictionary<string, string>
-                    {
-                        { "Username", user.User.Username },
-                        { "GroupName", userGroup.GarbageGroup.Name },
-                        { "PickupDate", request.PickupDate.ToString("dd-MM-yyyy") },
-                    });
-
                 await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob),
                     new SendEmailDto
                     {
                         Email = user.User.Email,
-                        Subject = emailTemplate.Subject,
-                        Body = emailBody
+                        Subject = notificationContent.Email.Subject,
+                        Body = notificationContent.Email.Body
                     },
                     "Garbage order email",
                     cancellationToken);
             }
 
-            var inboxTemplate = notificationTemplates
-                .FirstOrDefault(x =>
-                    x.LanguagePreference == user.User.LanguagePreference && x.Channel == NotificationChannel.Inbox);
-            
-            if (inboxTemplate is not null)
+            if (notificationContent?.Inbox is not null)
             {
-                var inboxBody = EmailTemplateHelper.ApplyPlaceholders(inboxTemplate.Body,
-                    new Dictionary<string, string>
-                    {
-                        { "Username", user.User.Username },
-                        { "GroupName", userGroup.GarbageGroup.Name },
-                        { "PickupDate", request.PickupDate.ToString("dd-MM-yyyy") },
-                    });
-                
                 await context.InboxNotifications.AddAsync(new InboxNotification
                 {
                     ActionType = InboxActionType.GroupInvitation,
-                    Title = inboxTemplate.Subject,
-                    Message = inboxBody,
+                    Title = notificationContent.Inbox.Subject,
+                    Message = notificationContent.Inbox.Body,
                     UserId = user.User.Id,
                     RelatedEntityId = garbageOrderId
                 }, cancellationToken);

@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
-using WasteFree.Application.Helpers;
 using WasteFree.Application.Jobs;
 using WasteFree.Application.Jobs.Dtos;
+using WasteFree.Application.Notifications.Facades;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
 using WasteFree.Infrastructure.Hubs;
@@ -21,7 +21,8 @@ public record InviteToGarbageGroupCommand(Guid GroupId, string UsernameToInvite)
 public class InviteToGarbageGroupCommandHandler(ApplicationDataContext context, 
     ICurrentUserService currentUserService,
     IJobSchedulerFacade jobScheduler,
-    IHubContext<NotificationHub> hubContext) : IRequestHandler<InviteToGarbageGroupCommand, bool>
+    IHubContext<NotificationHub> hubContext,
+    GarbageGroupInvitationNotificationFacade invitationNotificationFacade) : IRequestHandler<InviteToGarbageGroupCommand, bool>
 {
     public async Task<Result<bool>> HandleAsync(InviteToGarbageGroupCommand request, CancellationToken cancellationToken)
     {
@@ -59,61 +60,73 @@ public class InviteToGarbageGroupCommandHandler(ApplicationDataContext context,
         
         await context.UserGarbageGroups.AddAsync(userGarbageGroup, cancellationToken);
 
-        await SendNotifications(request, userToAdd, userGroupInfo, cancellationToken);
+        var notificationContent = await invitationNotificationFacade.CreateAsync(
+            userToAdd.LanguagePreference,
+            userToAdd.Username,
+            currentUserService.Username,
+            userGroupInfo.GarbageGroup.Name,
+            cancellationToken);
+
+        if (notificationContent is null)
+            return Result<bool>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
+
+        await SendNotifications(userToAdd, userGroupInfo, notificationContent, cancellationToken);
 
         await context.SaveChangesAsync(cancellationToken);
         return Result<bool>.Success(true);
     }
 
-    private async Task SendNotifications(InviteToGarbageGroupCommand request,
-        User userToAdd, UserGarbageGroup userGroupInfo, CancellationToken cancellationToken)
+    private async Task SendNotifications(
+        User userToAdd,
+        UserGarbageGroup userGroupInfo,
+        GarbageGroupInvitationNotificationContent notificationContent,
+        CancellationToken cancellationToken)
     {
-        var notificationTemplate = await context.NotificationTemplates
-            .FirstOrDefaultAsync(x => x.LanguagePreference == userToAdd.LanguagePreference
-                                      && x.Type == NotificationType.GarbageGroupInvitation
-                                      && x.Channel == NotificationChannel.Inbox, cancellationToken);
-        
-        var personalizedBody = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate!.Body, new Dictionary<string, string>
+        if (notificationContent.Email is not null)
         {
-            {"RecipientUsername", userToAdd.Username},
-            {"SenderUsername", currentUserService.Username},
-            {"GroupName", userGroupInfo.GarbageGroup.Name},
-        });
-        
-        var personalizedSubject = EmailTemplateHelper.ApplyPlaceholders(notificationTemplate!.Subject, new Dictionary<string, string>
-        {
-            {"GroupName", userGroupInfo.GarbageGroup.Name},
-        });
-        
-        await jobScheduler.ScheduleOneTimeJobAsync(nameof(OneTimeJobs.SendEmailJob), 
-            new SendEmailDto
-            {
-                Email = userToAdd.Email,
-                Subject = personalizedSubject,
-                Body = personalizedBody
-            },
-            "Send group invitation email", 
-            cancellationToken);
+            await jobScheduler.ScheduleOneTimeJobAsync(
+                nameof(OneTimeJobs.SendEmailJob),
+                new SendEmailDto
+                {
+                    Email = userToAdd.Email,
+                    Subject = notificationContent.Email.Subject,
+                    Body = notificationContent.Email.Body
+                },
+                "Send group invitation email",
+                cancellationToken);
+        }
 
-        await context.InboxNotifications.AddAsync(new InboxNotification
-        {
-            ActionType = InboxActionType.GroupInvitation,
-            Title = personalizedSubject,
-            Message = personalizedBody,
-            UserId = userToAdd.Id,
-            RelatedEntityId = userGroupInfo.GarbageGroupId
-        }, cancellationToken);
-        
-        await context.SaveChangesAsync(cancellationToken);
-
-        var inboxCounter = await context.InboxNotifications.CountAsync(x => x.UserId == userToAdd.Id, 
-            cancellationToken);
-        
         var connectionId = NotificationHub.GetConnectionId(userToAdd.Id);
+
+        if (notificationContent.Inbox is not null)
+        {
+            await context.InboxNotifications.AddAsync(new InboxNotification
+            {
+                ActionType = InboxActionType.GroupInvitation,
+                Title = notificationContent.Inbox.Subject,
+                Message = notificationContent.Inbox.Body,
+                UserId = userToAdd.Id,
+                RelatedEntityId = userGroupInfo.GarbageGroupId
+            }, cancellationToken);
+
+            await context.SaveChangesAsync(cancellationToken);
+
+            var inboxCounter = await context.InboxNotifications.CountAsync(
+                x => x.UserId == userToAdd.Id,
+                cancellationToken);
+
+            if (connectionId != null)
+            {
+                await hubContext.Clients.Client(connectionId)
+                    .SendAsync(SignalRMethods.UpdateInboxCounter, $"{inboxCounter}", cancellationToken);
+            }
+            return;
+        }
+
         if (connectionId != null)
         {
-            await hubContext.Clients.Client(connectionId).SendAsync(SignalRMethods.UpdateInboxCounter,
-                $"{inboxCounter}", cancellationToken);
+            await hubContext.Clients.Client(connectionId)
+                .SendAsync(SignalRMethods.UpdateInboxCounter, string.Empty, cancellationToken);
         }
     }
 }
