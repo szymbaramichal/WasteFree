@@ -107,6 +107,10 @@
 	display: inline-block;
 	object-fit: contain;
 }
+.portal-sidebar .nav-icon.nav-icon--pickup {
+	width: 28px;
+	height: 28px;
+}
 /* Only invert bitmap/svg image tags; inline SVG inherits currentColor */
 .portal-sidebar .nav-link.active img.nav-icon {
 	filter: brightness(0) invert(1);
