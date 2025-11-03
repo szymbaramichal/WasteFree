@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Notifications.Facades;
+using WasteFree.Application.Services.GarbageGroupOrders;
 
 namespace WasteFree.Application.Extensions;
 
@@ -21,6 +22,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<RegisterUserNotificationFacade>();
         services.AddScoped<GarbageGroupInvitationNotificationFacade>();
         services.AddScoped<GarbageOrderCreatedNotificationFacade>();
+        services.AddScoped<IGarbageOrderCostCalculator, GarbageOrderCostCalculator>();
         
         return services;
     }

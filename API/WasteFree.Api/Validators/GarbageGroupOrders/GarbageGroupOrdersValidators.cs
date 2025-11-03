@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using System;
+using System.Linq;
+using FluentValidation;
 using Microsoft.Extensions.Localization;
 using WasteFree.Api.Endpoints;
 using WasteFree.Domain.Constants;
@@ -25,15 +27,37 @@ public class GarbageOrderRequestValidator : AbstractValidator<GarbageOrderReques
             .GreaterThanOrEqualTo(DateTime.Today)
             .WithErrorCode(ValidationErrorCodes.PickupDateInPast);
 
-        When(x => x.DropOffDate.HasValue, () =>
-        {
-            RuleFor(x => x.DropOffDate.Value)
-                .GreaterThanOrEqualTo(DateTime.Today)
-                .WithErrorCode(ValidationErrorCodes.DropOffDateInPast);
-        });
+        RuleFor(x => x.DropOffDate)
+            .Must(dropOff => !dropOff.HasValue || dropOff.Value >= DateTime.Today)
+            .WithErrorCode(ValidationErrorCodes.DropOffDateInPast);
 
         RuleFor(x => x.UserIds)
             .Must(x => x.Any())
             .WithErrorCode(ValidationErrorCodes.UserIdsEmpty);
+    }
+}
+
+public class GarbageOrderCalculationRequestValidator : AbstractValidator<GarbageOrderCalculationRequest>
+{
+    public GarbageOrderCalculationRequestValidator()
+    {
+        RuleFor(x => x.PickupOption)
+            .IsInEnum()
+            .WithErrorCode(ValidationErrorCodes.PickupOptionInvalid);
+
+        RuleFor(x => x.ContainerSize)
+            .NotNull()
+            .When(x => x.PickupOption == PickupOption.Container)
+            .WithErrorCode(ValidationErrorCodes.ContainerSizeRequired);
+
+        RuleFor(x => x.PickupDate)
+            .NotEmpty()
+            .WithErrorCode(ValidationErrorCodes.PickupDateRequired)
+            .GreaterThanOrEqualTo(DateTime.Today)
+            .WithErrorCode(ValidationErrorCodes.PickupDateInPast);
+
+        RuleFor(x => x.DropOffDate)
+            .Must(dropOff => !dropOff.HasValue || dropOff.Value >= DateTime.Today)
+            .WithErrorCode(ValidationErrorCodes.DropOffDateInPast);
     }
 }
