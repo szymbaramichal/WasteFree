@@ -1,3 +1,5 @@
+using WasteFree.Domain.Models;
+
 namespace WasteFree.Application.Features.GarbageGroups.Dtos;
 
 /// <summary>
@@ -19,4 +21,10 @@ public class GarbageGroupMembersDto
     /// Is group only for user
     /// </summary>
     public bool IsPrivate { get; set; }
+
+
+    /// <summary>
+    /// Group address
+    /// </summary>
+    public required Address Address { get; set; }
 }
