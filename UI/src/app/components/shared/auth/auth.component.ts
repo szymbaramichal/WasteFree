@@ -13,6 +13,7 @@ import { User } from '@app/_models/user';
 import { buildAddressFormGroup } from '@app/forms/address-form';
 import { SignalRService } from '@app/services/signalr.service';
 import { ProfileService } from '@app/services/profile.service';
+import { WalletService } from '@app/services/wallet.service';
 
 @Component({
   selector: 'app-auth',
@@ -46,9 +47,10 @@ export class AuthComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-  private translation: TranslationService,
-  private currentUser: CurrentUserService,
-  private profileService: ProfileService,
+    private translation: TranslationService,
+    private currentUser: CurrentUserService,
+    private profileService: ProfileService,
+    private wallet: WalletService,
     private router: Router,
     private cityService: CityService,
   ) {
@@ -174,6 +176,8 @@ export class AuthComponent {
     if (token) {
       localStorage.setItem('authToken', token);
       this.profileService.clear();
+      this.wallet.resetState();
+      void this.wallet.refreshBalance();
       this.currentUser.setUser({
         id: res.id,
         username: res.username,

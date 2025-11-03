@@ -11,6 +11,7 @@ import { GarbageAdminConsentService } from '@app/services/garbage-admin-consent.
 import { GarbageAdminConsentModalComponent } from '@components/shared/garbage-admin-consent-modal/garbage-admin-consent-modal.component';
 import { ToastrService } from 'ngx-toastr';
 import { TranslationService } from '@app/services/translation.service';
+import { WalletService } from '@app/services/wallet.service';
 
 @Component({
   selector: 'app-portal',
@@ -44,7 +45,8 @@ export class PortalComponent implements OnInit, OnDestroy {
     private router: Router,
     private consentService: GarbageAdminConsentService,
     private toastr: ToastrService,
-    private translation: TranslationService
+    private translation: TranslationService,
+    private wallet: WalletService
   ) {
     this.consentEffect = effect(() => {
       const user = this.currentUser.user();
@@ -119,6 +121,7 @@ export class PortalComponent implements OnInit, OnDestroy {
     this.toastr.info(this.translation.translate('consents.modal.rejectInfo'));
     localStorage.removeItem('authToken');
     this.currentUser.setUser(null);
+    this.wallet.resetState();
     this.clearConsentState();
     this.router.navigate(['/auth']);
   }
