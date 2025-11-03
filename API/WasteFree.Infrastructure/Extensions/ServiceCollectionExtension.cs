@@ -29,7 +29,7 @@ public static class ServiceCollectionExtension
             
             opt.AddDashboard(opt =>
             {
-                opt.BasePath = "/tickerq";
+                opt.BasePath = "/api/tickerq";
                 opt.EnableBasicAuth = true;
             });
         });
