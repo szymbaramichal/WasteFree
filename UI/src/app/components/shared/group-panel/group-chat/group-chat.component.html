@@ -1,0 +1,79 @@
+<div class="group-chat card border-0 shadow-sm">
+  <div class="card-body d-flex flex-column gap-3">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <div>
+        <div class="text-uppercase small fw-semibold text-muted mb-1">{{ 'groups.tabs.chat.title' | translate }}</div>
+        <h5 class="mb-0 fw-bold">{{ groupName || ('groups.details.title' | translate) }}</h5>
+        <p class="text-muted small mb-0">{{ 'groups.tabs.chat.subtitle' | translate }}</p>
+      </div>
+      <span class="badge rounded-pill border px-3 py-2 {{ connectionBadgeClass() }}">
+        <span class="small text-uppercase fw-semibold">{{ ('groups.chat.status.' + connectionState) | translate }}</span>
+      </span>
+    </div>
+
+    <div class="alert alert-danger" role="alert" *ngIf="error">{{ error }}</div>
+
+    <div class="group-chat__history border rounded-4 bg-body-tertiary flex-grow-1 d-flex flex-column position-relative">
+      <div class="group-chat__loading" *ngIf="loading">
+        <div class="spinner-border text-success" role="status" aria-hidden="true"></div>
+        <div class="small text-muted mt-2">{{ 'groups.chat.loading' | translate }}</div>
+      </div>
+
+      <div class="group-chat__messages px-3 py-3" #messagesContainer>
+        <div class="d-flex justify-content-center mb-3" *ngIf="hasMore">
+          <button class="btn btn-outline-secondary btn-sm" type="button" (click)="loadMore()" [disabled]="loadingOlder">
+            <span *ngIf="!loadingOlder" class="d-inline-flex align-items-center gap-2">
+              <i class="bi bi-arrow-up-circle"></i>
+              <span>{{ 'groups.chat.loadOlder' | translate }}</span>
+            </span>
+            <span *ngIf="loadingOlder" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+        </div>
+
+        <div class="text-center text-muted small py-4" *ngIf="!loading && messages.length === 0">
+          {{ 'groups.chat.empty' | translate }}
+        </div>
+
+        <div *ngFor="let message of messages; trackBy: trackByMessageId" class="mb-3 d-flex"
+          [ngClass]="{ 'justify-content-end': isMine(message) }">
+          <div class="group-chat__bubble border shadow-sm"
+            [ngClass]="isMine(message) ? 'group-chat__bubble--mine' : 'group-chat__bubble--other'">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <span class="fw-semibold">{{ message.username }}</span>
+              <span class="small text-muted">{{ message.sentAtUtc | date:'shortTime' }}</span>
+            </div>
+            <div class="text-break">{{ message.content }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form class="group-chat__composer" [formGroup]="messageForm" (ngSubmit)="send()" novalidate>
+      <div class="input-group flex-column flex-md-row">
+        <textarea class="form-control group-chat__textarea" rows="2" formControlName="message"
+          [placeholder]="'groups.chat.placeholder' | translate"
+          [disabled]="sending"></textarea>
+        <button class="btn btn-success btn-elevated mt-2 mt-md-0 ms-md-2" type="submit"
+          [disabled]="sending || messageForm.invalid">
+          <span *ngIf="!sending" class="d-inline-flex align-items-center gap-2">
+            <i class="bi bi-send"></i>
+            <span>{{ 'groups.chat.send' | translate }}</span>
+          </span>
+          <span *ngIf="sending" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="form-text text-danger mt-2" *ngIf="sendError">{{ sendError }}</div>
+      <div class="form-text text-danger mt-2"
+        *ngIf="messageForm.controls.message.touched && messageForm.controls.message.hasError('required')">
+        {{ 'groups.chat.validation.required' | translate }}
+      </div>
+      <div class="form-text text-danger mt-1"
+        *ngIf="messageForm.controls.message.touched && messageForm.controls.message.hasError('maxlength')">
+        {{ 'groups.chat.validation.maxlength' | translate }}
+      </div>
+      <div class="form-text text-muted mt-2" *ngIf="connectionState !== 'connected'">
+        {{ 'groups.chat.connectionHint' | translate }}
+      </div>
+    </form>
+  </div>
+</div>

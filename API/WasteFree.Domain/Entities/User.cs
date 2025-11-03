@@ -40,6 +40,7 @@ public class User : DatabaseEntity
     
     public ICollection<UserGarbageGroup> UserGarbageGroups { get; set; } = new List<UserGarbageGroup>();
     public ICollection<InboxNotification> InboxNotifications { get; set; } = new List<InboxNotification>();
+    public ICollection<GarbageGroupMessage> GarbageGroupMessages { get; set; } = new List<GarbageGroupMessage>();
 
     [NotMapped]
     public PickupOption[]? PickupOptionsList

@@ -38,6 +38,8 @@ public static class ValidationErrorCodes
     public const string GroupPostalCodeRequired = "ERR_GROUP_POSTAL_CODE_REQUIRED";
     public const string GroupPostalCodeInvalid = "ERR_GROUP_POSTAL_CODE_INVALID";
     public const string GroupStreetRequired = "ERR_GROUP_STREET_REQUIRED";
+    public const string ChatMessageRequired = "ERR_CHAT_MESSAGE_REQUIRED";
+    public const string ChatMessageTooLong = "ERR_CHAT_MESSAGE_TOO_LONG";
     public const string InvalidRole = "INVALID_ROLE";
     public const string InvalidLang = "INVALID_LANG";
     

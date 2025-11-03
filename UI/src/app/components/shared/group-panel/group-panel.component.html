@@ -218,13 +218,8 @@
 
           <div class="tab-pane fade group-panel__tab-pane" role="tabpanel" id="group-tabpanel-chat" [class.show]="activeTab === 'chat'" [class.active]="activeTab === 'chat'" [attr.aria-labelledby]="'group-tab-chat'">
             <ng-container *ngIf="group; else tabRequiresGroup">
-              <div class="panel-compact panel-compact--info">
-                <div class="panel-title">
-                  <i class="bi bi-chat-dots"></i>
-                  <span>{{ 'groups.tabs.chat.title' | translate }}</span>
-                </div>
-                <p class="text-muted small mb-0">{{ 'groups.tabs.chat.subtitle' | translate }}</p>
-                <div class="alert alert-secondary mt-3 mb-0" role="status">{{ 'groups.tabs.chat.empty' | translate }}</div>
+              <div class="panel-compact panel-compact--info group-panel__chat">
+                <app-group-chat [groupId]="group.id" [groupName]="group.name" [active]="activeTab === 'chat'"></app-group-chat>
               </div>
             </ng-container>
           </div>

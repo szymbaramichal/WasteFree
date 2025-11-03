@@ -86,6 +86,9 @@
 
 .form-spinner{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:var(--primary-green-dark,#1f8b56)}
 
+.group-panel__chat{padding:0;background:transparent;border:0;box-shadow:none}
+.group-panel__chat app-group-chat{display:block}
+
 @media (max-width:767.98px){
 	.group-panel__actions{justify-content:flex-start}
 	.group-panel .card-body--compact{padding:1.25rem}

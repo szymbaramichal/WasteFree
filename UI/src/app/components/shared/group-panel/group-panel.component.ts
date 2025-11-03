@@ -11,13 +11,14 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { buildAddressFormGroup } from '@app/forms/address-form';
 import { CityService } from '@app/services/city.service';
 import { finalize } from 'rxjs';
+import { GroupChatComponent } from './group-chat/group-chat.component';
 
 type GroupPanelTab = 'details' | 'pickups' | 'chat';
 
 @Component({
   selector: 'app-group-panel',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, ReactiveFormsModule, SlicePipe, UpperCasePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe, ReactiveFormsModule, SlicePipe, UpperCasePipe, GroupChatComponent],
   templateUrl: './group-panel.component.html',
   styleUrls: ['./group-panel.component.css']
 })

@@ -17,6 +17,7 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
     public DbSet<GarbageAdminConsent> GarbageAdminConsents { get; set; }
     public DbSet<GarbageOrder> GarbageOrders { get; set; }
     public DbSet<GarbageOrderUsers> GarbageOrderUsers { get; set; }
+    public DbSet<GarbageGroupMessage> GarbageGroupMessages { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -45,6 +46,28 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
 
         modelBuilder.Entity<GarbageGroup>()
             .OwnsOne(u => u.Address);
+
+        modelBuilder.Entity<GarbageGroupMessage>()
+            .Property(m => m.Content)
+            .HasMaxLength(2000)
+            .IsRequired();
+
+        modelBuilder.Entity<GarbageGroupMessage>()
+            .HasOne(m => m.GarbageGroup)
+            .WithMany(g => g.Messages)
+            .HasForeignKey(m => m.GarbageGroupId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<GarbageGroupMessage>()
+            .HasOne(m => m.User)
+            .WithMany(u => u.GarbageGroupMessages)
+            .HasForeignKey(m => m.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<GarbageGroupMessage>()
+            .HasIndex(m => new { m.GarbageGroupId, m.CreatedDateUtc });
     }
 
     public override int SaveChanges()
