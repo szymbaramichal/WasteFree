@@ -17,6 +17,13 @@
 		</li>
 
 		<li class="nav-item" *appShowForRoles="[userRole.User, userRole.Admin]">
+			<a class="nav-link" routerLink="/portal/pickup-order" routerLinkActive="active">
+				<img src="/assets/images/pickup.svg" alt="" class="nav-icon nav-icon--pickup" aria-hidden="true" />
+				<span class="nav-text">{{ 'menu.pickupOrder' | translate }}</span>
+			</a>
+		</li>
+
+		<li class="nav-item" *appShowForRoles="[userRole.User, userRole.Admin]">
 			<a href="#" role="button" class="nav-link" (click)="toggleGroups($event)" [class.active]="groupsRouteActive" [attr.aria-expanded]="groupsExpanded">
 				<img src="/assets/images/groups.svg" alt="" class="nav-icon" aria-hidden="true" />
 				<span class="nav-text">{{ 'menu.groups' | translate }}</span>
