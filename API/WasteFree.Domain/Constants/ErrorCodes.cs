@@ -17,6 +17,7 @@ public static class ApiErrorCodes
     public const string NotEnoughFunds = "NOT_ENOUGH_FUNDS";
     public const string NotFound = "NOT_FOUND";
     public const string Forbidden = "FORBIDDEN";
+    public const string PaymentAlreadyCompleted = "PAYMENT_ALREADY_COMPLETED";
     public const string InvalidNotificationType = "INVALID_NOTIFICATION_TYPE";
     public const string InvitedUserNotFound = "INVITED_USER_NOT_FOUND";
     public const string AlreadyInGroup = "ALREADY_IN_GROUP";

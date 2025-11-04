@@ -1,8 +1,8 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
-using WasteFree.Application.Features.GarbageGroupOrders.Dtos;
+using WasteFree.Application.Features.GarbageOrders.Dtos;
 using WasteFree.Application.Jobs;
 using WasteFree.Application.Jobs.Dtos;
 using WasteFree.Application.Notifications.Facades;
@@ -14,9 +14,9 @@ using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Hubs;
 
-namespace WasteFree.Application.Features.GarbageGroupOrders;
+namespace WasteFree.Application.Features.GarbageOrders;
 
-public record GarbageGroupOrderCommand (
+public record GarbageOrderCommand(
     Guid GarbageGroupId,
     Guid CurrentUserId,
     PickupOption PickupOption,
@@ -25,16 +25,16 @@ public record GarbageGroupOrderCommand (
     DateTime? DropOffDate,
     DateTime PickupDate,
     bool IsHighPriority,
-    bool CollectingService) : IRequest<GarbageGroupOrderDto>;
+    bool CollectingService) : IRequest<GarbageOrderDto>;
 
-public class GarbageGroupOrderCommandHandler(
+public class GarbageOrderCommandHandler(
     ApplicationDataContext context,
     IHubContext<NotificationHub> hubContext,
     IJobSchedulerFacade jobScheduler,
-    GarbageOrderCreatedNotificationFacade notificationFacade) 
-    : IRequestHandler<GarbageGroupOrderCommand, GarbageGroupOrderDto>
+    GarbageOrderCreatedNotificationFacade notificationFacade)
+    : IRequestHandler<GarbageOrderCommand, GarbageOrderDto>
 {
-    public async Task<Result<GarbageGroupOrderDto>> HandleAsync(GarbageGroupOrderCommand request, CancellationToken cancellationToken)
+    public async Task<Result<GarbageOrderDto>> HandleAsync(GarbageOrderCommand request, CancellationToken cancellationToken)
     {
         var userGroup = await context.UserGarbageGroups
             .AsNoTracking()
@@ -43,7 +43,7 @@ public class GarbageGroupOrderCommandHandler(
                 && x.UserId == request.CurrentUserId && x.Role == GarbageGroupRole.Owner, cancellationToken);
         
         if (userGroup is null)
-            return Result<GarbageGroupOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
+            return Result<GarbageOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
         
         var groupUsers = await context.UserGarbageGroups
             .AsNoTracking()
@@ -54,7 +54,7 @@ public class GarbageGroupOrderCommandHandler(
         var groupUserIds = groupUsers.Select(x => x.UserId).ToHashSet();
         
         if (!request.UserIds.All(id => groupUserIds.Contains(id)))
-            return Result<GarbageGroupOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
+            return Result<GarbageOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
 
         var garbageOrderId = Guid.CreateVersion7();
         var garbageOrder = new GarbageOrder
@@ -146,6 +146,6 @@ public class GarbageGroupOrderCommandHandler(
         context.Add(garbageOrder);
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result<GarbageGroupOrderDto>.Success(garbageOrder.MapToGarbageGroupOrderDto());
+        return Result<GarbageOrderDto>.Success(garbageOrder.MapToGarbageOrderDto());
     }
 }

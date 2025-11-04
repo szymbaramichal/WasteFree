@@ -1,14 +1,14 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
-using WasteFree.Application.Features.GarbageGroupOrders.Dtos;
-using WasteFree.Application.Services.GarbageGroupOrders;
+using WasteFree.Application.Features.GarbageOrders.Dtos;
+using WasteFree.Application.Services.GarbageOrders;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Enums;
 using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
 
-namespace WasteFree.Application.Features.GarbageGroupOrders;
+namespace WasteFree.Application.Features.GarbageOrders;
 
 public record CalculateGarbageOrderCostQuery(
     Guid GarbageGroupId,

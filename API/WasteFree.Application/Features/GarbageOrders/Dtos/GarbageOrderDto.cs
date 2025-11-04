@@ -1,9 +1,9 @@
-﻿using WasteFree.Domain.Entities;
+using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
 
-namespace WasteFree.Application.Features.GarbageGroupOrders.Dtos;
+namespace WasteFree.Application.Features.GarbageOrders.Dtos;
 
-public class GarbageGroupOrderDto
+public class GarbageOrderDto
 {
     public Guid Id { get; set; }
     public PickupOption PickupOption { get; set; }
@@ -22,11 +22,11 @@ public class GarbageGroupOrderDto
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
 }
 
-public static class GarbageGroupOrderDtoExtensions
+public static class GarbageOrderDtoExtensions
 {
-    public static GarbageGroupOrderDto MapToGarbageGroupOrderDto(this GarbageOrder garbageOrder)
+    public static GarbageOrderDto MapToGarbageOrderDto(this GarbageOrder garbageOrder)
     {
-        return new GarbageGroupOrderDto
+        return new GarbageOrderDto
         {
             Id = garbageOrder.Id,
             PickupOption = garbageOrder.PickupOption,

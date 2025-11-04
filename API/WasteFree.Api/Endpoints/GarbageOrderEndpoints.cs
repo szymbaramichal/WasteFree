@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using WasteFree.Api.Filters;
 using WasteFree.Application.Abstractions.Messaging;
-using WasteFree.Application.Features.GarbageGroupOrders;
-using WasteFree.Application.Features.GarbageGroupOrders.Dtos;
+using WasteFree.Application.Features.GarbageOrders;
+using WasteFree.Application.Features.GarbageOrders.Dtos;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Enums;
 using WasteFree.Domain.Interfaces;
@@ -11,15 +11,15 @@ using WasteFree.Domain.Models;
 
 namespace WasteFree.Api.Endpoints;
 
-public static class GarbageGroupOrderEndpoints
+public static class GarbageOrderEndpoints
 {
-    public static void MapGarbageGroupOrderEndpoints(this WebApplication app)
+    public static void MapGarbageOrderEndpoints(this WebApplication app)
     {
         app.MapPost("/garbage-group/{groupId:guid}/order", CreateGarbageOrderAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .AddEndpointFilter(new ValidationFilter<GarbageOrderRequest>())
             .WithOpenApi()
-            .Produces<Result<GarbageGroupOrderDto>>()
+            .Produces<Result<GarbageOrderDto>>()
             .Produces<Dictionary<string, string[]>>(422)
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
@@ -38,9 +38,19 @@ public static class GarbageGroupOrderEndpoints
         app.MapPost("/garbage-group/{groupId:guid}/orders/filter", GetGarbageOrdersAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
-            .Produces<Result<ICollection<GarbageGroupOrderDto>>>()
+            .Produces<Result<ICollection<GarbageOrderDto>>>()
             .WithTags("GarbageOrders")
             .WithDescription("Get garbage orders for the group.");
+
+        app.MapPost("/garbage-group/{groupId:guid}/order/{orderId:guid}/payment", PayGarbageOrderAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .AddEndpointFilter(new ValidationFilter<GarbageOrderPaymentRequest>())
+            .WithOpenApi()
+            .Produces<Result<GarbageOrderDto>>()
+            .Produces<Dictionary<string, string[]>>(422)
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Accept payment for a garbage order.");
     }
 
     /// <summary>
@@ -54,7 +64,7 @@ public static class GarbageGroupOrderEndpoints
         IStringLocalizer stringLocalizer,
         CancellationToken cancellationToken)
     {
-        var command = new GarbageGroupOrderCommand(
+        var command = new GarbageOrderCommand(
             groupId,
             currentUserService.UserId,
             request.PickupOption,
@@ -121,7 +131,7 @@ public static class GarbageGroupOrderEndpoints
         IStringLocalizer stringLocalizer,
         CancellationToken cancellationToken)
     {
-        var query = new GetGarbageGroupOrdersQuery(
+        var query = new GetGarbageOrdersQuery(
             groupId,
             currentUserService.UserId,
             request.FromDate,
@@ -129,6 +139,35 @@ public static class GarbageGroupOrderEndpoints
             request.Statuses);
 
         var result = await mediator.SendAsync(query, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Accept payment for the authenticated user for a specific garbage order.
+    /// </summary>
+    private static async Task<IResult> PayGarbageOrderAsync(
+        [FromRoute] Guid groupId,
+        [FromRoute] Guid orderId,
+        [FromBody] GarbageOrderPaymentRequest request,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var command = new GarbageOrderPaymentCommand(
+            groupId,
+            orderId,
+            currentUserService.UserId,
+            request.Amount);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
 
         if (!result.IsValid)
         {
@@ -242,4 +281,15 @@ public record GarbageOrderRequest
     /// User IDs participating in the order.
     /// </summary>
     public ICollection<Guid> UserIds { get; init; } = [];
+}
+
+/// <summary>
+/// Request payload for accepting payment of a garbage order.
+/// </summary>
+public record GarbageOrderPaymentRequest
+{
+    /// <summary>
+    /// Amount to deduct from the authenticated user's wallet.
+    /// </summary>
+    public double Amount { get; init; }
 }
