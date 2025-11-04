@@ -1,6 +1,6 @@
 using WasteFree.Domain.Enums;
 
-namespace WasteFree.Application.Services.GarbageGroupOrders;
+namespace WasteFree.Application.Services.GarbageOrders;
 
 public interface IGarbageOrderCostCalculator
 {

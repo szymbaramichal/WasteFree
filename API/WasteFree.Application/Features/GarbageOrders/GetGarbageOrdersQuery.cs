@@ -1,32 +1,32 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
-using WasteFree.Application.Features.GarbageGroupOrders.Dtos;
+using WasteFree.Application.Features.GarbageOrders.Dtos;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Enums;
 using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
 
-namespace WasteFree.Application.Features.GarbageGroupOrders;
+namespace WasteFree.Application.Features.GarbageOrders;
 
-public record GetGarbageGroupOrdersQuery(
+public record GetGarbageOrdersQuery(
     Guid GarbageGroupId,
     Guid UserId,
     DateTime? FromDate,
     DateTime? ToDate,
-    GarbageOrderStatus[]? Statuses) : IRequest<ICollection<GarbageGroupOrderDto>>;
+    GarbageOrderStatus[]? Statuses) : IRequest<ICollection<GarbageOrderDto>>;
     
     
-public class GetGarbageGroupOrdersQueryHandler(ApplicationDataContext context) 
-    : IRequestHandler<GetGarbageGroupOrdersQuery, ICollection<GarbageGroupOrderDto>>
+public class GetGarbageOrdersQueryHandler(ApplicationDataContext context) 
+    : IRequestHandler<GetGarbageOrdersQuery, ICollection<GarbageOrderDto>>
 {
-    public async Task<Result<ICollection<GarbageGroupOrderDto>>> HandleAsync(GetGarbageGroupOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ICollection<GarbageOrderDto>>> HandleAsync(GetGarbageOrdersQuery request, CancellationToken cancellationToken)
     {
         var userInGroup = await context.UserGarbageGroups
             .AnyAsync(x => x.GarbageGroupId == request.GarbageGroupId && x.UserId == request.UserId, cancellationToken);
         
         if (!userInGroup)
-            return Result<ICollection<GarbageGroupOrderDto>>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.Forbidden);
+            return Result<ICollection<GarbageOrderDto>>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.Forbidden);
         
         var ordersQuery = context.GarbageOrders
             .Where(x => x.GarbageGroupId == request.GarbageGroupId)
@@ -43,9 +43,9 @@ public class GetGarbageGroupOrdersQueryHandler(ApplicationDataContext context)
             ordersQuery = ordersQuery.Where(x => request.Statuses.Contains(x.GarbageOrderStatus));
         
         var orders = await ordersQuery
-            .Select(x => x.MapToGarbageGroupOrderDto())
+            .Select(x => x.MapToGarbageOrderDto())
             .ToListAsync(cancellationToken);
         
-        return Result<ICollection<GarbageGroupOrderDto>>.Success(orders);
+        return Result<ICollection<GarbageOrderDto>>.Success(orders);
     }
 }

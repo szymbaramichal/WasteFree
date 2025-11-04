@@ -1,4 +1,4 @@
-namespace WasteFree.Application.Features.GarbageGroupOrders.Dtos;
+namespace WasteFree.Application.Features.GarbageOrders.Dtos;
 
 public class GarbageOrderCostDto
 {

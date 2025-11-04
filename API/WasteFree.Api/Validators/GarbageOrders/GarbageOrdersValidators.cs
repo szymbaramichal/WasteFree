@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using FluentValidation;
 using Microsoft.Extensions.Localization;
@@ -6,7 +6,7 @@ using WasteFree.Api.Endpoints;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Enums;
 
-namespace WasteFree.Api.Validators.GarbageGroupOrders;
+namespace WasteFree.Api.Validators.GarbageOrders;
 
 public class GarbageOrderRequestValidator : AbstractValidator<GarbageOrderRequest>
 {
