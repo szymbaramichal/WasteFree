@@ -61,13 +61,3 @@ public class GarbageOrderCalculationRequestValidator : AbstractValidator<Garbage
             .WithErrorCode(ValidationErrorCodes.DropOffDateInPast);
     }
 }
-
-public class GarbageOrderPaymentRequestValidator : AbstractValidator<GarbageOrderPaymentRequest>
-{
-    public GarbageOrderPaymentRequestValidator()
-    {
-        RuleFor(x => x.Amount)
-            .GreaterThan(0)
-            .WithErrorCode(ValidationErrorCodes.AmountOutsideRange);
-    }
-}

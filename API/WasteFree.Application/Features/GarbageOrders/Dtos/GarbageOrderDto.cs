@@ -18,6 +18,8 @@ public class GarbageOrderDto
     
     public GarbageOrderStatus GarbageOrderStatus { get; set; }
 
+    public decimal Cost { get; set; }
+
     public Guid GarbageGroupId { get; set; }
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
 }
@@ -36,11 +38,13 @@ public static class GarbageOrderDtoExtensions
             IsHighPriority = garbageOrder.IsHighPriority,
             CollectingService = garbageOrder.CollectingService,
             GarbageOrderStatus = garbageOrder.GarbageOrderStatus,
+            Cost = garbageOrder.Cost,
             GarbageGroupId = garbageOrder.GarbageGroupId,
             Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
             {
                 UserId = x.UserId,
-                HasAcceptedPayment = x.HasAcceptedPayment
+                HasAcceptedPayment = x.HasAcceptedPayment,
+                ShareAmount = x.ShareAmount
             }).ToList()
         };
     }

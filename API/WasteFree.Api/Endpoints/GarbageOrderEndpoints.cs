@@ -44,10 +44,8 @@ public static class GarbageOrderEndpoints
 
         app.MapPost("/garbage-group/{groupId:guid}/order/{orderId:guid}/payment", PayGarbageOrderAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
-            .AddEndpointFilter(new ValidationFilter<GarbageOrderPaymentRequest>())
             .WithOpenApi()
             .Produces<Result<GarbageOrderDto>>()
-            .Produces<Dictionary<string, string[]>>(422)
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
             .WithDescription("Accept payment for a garbage order.");
@@ -155,7 +153,6 @@ public static class GarbageOrderEndpoints
     private static async Task<IResult> PayGarbageOrderAsync(
         [FromRoute] Guid groupId,
         [FromRoute] Guid orderId,
-        [FromBody] GarbageOrderPaymentRequest request,
         ICurrentUserService currentUserService,
         IMediator mediator,
         IStringLocalizer stringLocalizer,
@@ -164,8 +161,7 @@ public static class GarbageOrderEndpoints
         var command = new GarbageOrderPaymentCommand(
             groupId,
             orderId,
-            currentUserService.UserId,
-            request.Amount);
+            currentUserService.UserId);
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
@@ -283,13 +279,3 @@ public record GarbageOrderRequest
     public ICollection<Guid> UserIds { get; init; } = [];
 }
 
-/// <summary>
-/// Request payload for accepting payment of a garbage order.
-/// </summary>
-public record GarbageOrderPaymentRequest
-{
-    /// <summary>
-    /// Amount to deduct from the authenticated user's wallet.
-    /// </summary>
-    public double Amount { get; init; }
-}

@@ -4,4 +4,5 @@ public class GarbageOrderUserDto
 {
     public Guid UserId { get; set; }
     public bool HasAcceptedPayment { get; set; }
+    public decimal ShareAmount { get; set; }
 }
