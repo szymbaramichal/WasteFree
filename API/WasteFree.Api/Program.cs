@@ -43,6 +43,8 @@ app.UseAuthorization();
 app.MapApplicationEndpoints();
 app.MapApplicationHubs(allowLocalFrontendOrigins);
 
+app.UseStaticFiles();
+
 app.UseTickerQ();
 app.UseRateLimiter();
 app.UseOutputCache();
