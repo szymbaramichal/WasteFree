@@ -19,5 +19,6 @@ RUN dotnet publish "WasteFree.Api/WasteFree.Api.csproj" -c Release -o /app/publi
 
 FROM base AS final
 WORKDIR /app
+ENV ASPNETCORE_ENVIRONMENT=Docker
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "WasteFree.Api.dll"]
