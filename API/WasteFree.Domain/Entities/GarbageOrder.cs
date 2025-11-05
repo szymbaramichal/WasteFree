@@ -17,6 +17,8 @@ public class GarbageOrder : DatabaseEntity
     
     public GarbageOrderStatus GarbageOrderStatus { get; set; }
 
+    public decimal Cost { get; set; }
+
     public GarbageGroup GarbageGroup { get; set; } = null!;
     public Guid GarbageGroupId { get; set; }
     

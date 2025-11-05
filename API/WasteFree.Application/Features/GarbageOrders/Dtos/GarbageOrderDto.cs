@@ -1,9 +1,9 @@
-﻿using WasteFree.Domain.Entities;
+using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
 
-namespace WasteFree.Application.Features.GarbageGroupOrders.Dtos;
+namespace WasteFree.Application.Features.GarbageOrders.Dtos;
 
-public class GarbageGroupOrderDto
+public class GarbageOrderDto
 {
     public Guid Id { get; set; }
     public PickupOption PickupOption { get; set; }
@@ -18,15 +18,17 @@ public class GarbageGroupOrderDto
     
     public GarbageOrderStatus GarbageOrderStatus { get; set; }
 
+    public decimal Cost { get; set; }
+
     public Guid GarbageGroupId { get; set; }
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
 }
 
-public static class GarbageGroupOrderDtoExtensions
+public static class GarbageOrderDtoExtensions
 {
-    public static GarbageGroupOrderDto MapToGarbageGroupOrderDto(this GarbageOrder garbageOrder)
+    public static GarbageOrderDto MapToGarbageOrderDto(this GarbageOrder garbageOrder)
     {
-        return new GarbageGroupOrderDto
+        return new GarbageOrderDto
         {
             Id = garbageOrder.Id,
             PickupOption = garbageOrder.PickupOption,
@@ -36,11 +38,13 @@ public static class GarbageGroupOrderDtoExtensions
             IsHighPriority = garbageOrder.IsHighPriority,
             CollectingService = garbageOrder.CollectingService,
             GarbageOrderStatus = garbageOrder.GarbageOrderStatus,
+            Cost = garbageOrder.Cost,
             GarbageGroupId = garbageOrder.GarbageGroupId,
             Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
             {
                 UserId = x.UserId,
-                HasAcceptedPayment = x.HasAcceptedPayment
+                HasAcceptedPayment = x.HasAcceptedPayment,
+                ShareAmount = x.ShareAmount
             }).ToList()
         };
     }

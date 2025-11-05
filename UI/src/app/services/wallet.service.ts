@@ -19,11 +19,13 @@ export class WalletService {
   constructor(private http: HttpClient) {}
 
   // ----------- Public API -----------
-  async ensureInit(): Promise<void> {
-    // Lazy load methods & balance only once
-    if (this._methods$.getValue() === null) {
+  async ensureInit(force = false): Promise<void> {
+    if (force || this._methods$.getValue() === null) {
       await Promise.allSettled([this.refreshMethods(), this.refreshBalance()]);
+      return;
     }
+
+    await this.refreshBalance();
   }
 
   async refreshBalance(): Promise<void> {
@@ -44,6 +46,11 @@ export class WalletService {
       },
       error: () => this._methods$.next([])
     });
+  }
+
+  resetState(): void {
+    this._balance$.next(0);
+    this._methods$.next(null);
   }
 
   get currentBalance(): number { return this._balance$.getValue(); }

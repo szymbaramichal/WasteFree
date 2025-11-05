@@ -8,7 +8,9 @@ public class GarbageOrderUsers : DatabaseEntity
     public GarbageOrder GarbageOrder { get; set; } = null!;
 
     public Guid UserId { get; set; }
-    public User User { get; set; }
+    public User User { get; set; } = null!;
 
     public bool HasAcceptedPayment { get; set; } = false;
+
+    public decimal ShareAmount { get; set; }
 }

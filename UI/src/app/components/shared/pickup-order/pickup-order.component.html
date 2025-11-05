@@ -1,0 +1,97 @@
+
+<div class="pickup-order container-fluid px-3">
+	<div class="card pickup-card border-0 shadow-lg mx-auto">
+		<div class="card-header gradient-groups text-white position-relative overflow-hidden">
+			<div class="pickup-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+				<div class="pickup-header__title d-flex align-items-center gap-3">
+					<div class="pickup-header__icon">
+						<img src="/assets/images/pickup.svg" alt="" aria-hidden="true" />
+					</div>
+					<div class="pickup-header__text">
+						<h5 class="mb-1 fw-bold">{{ 'pickupOrder.title' | translate }}</h5>
+						<small>{{ currentStepConfig().headerLeadKey | translate }}</small>
+					</div>
+				</div>
+			</div>
+			<div class="header-accent"></div>
+		</div>
+		<div class="card-body p-0 pickup-card__body">
+			<div class="pickup-stepper">
+				<div class="step-indicator" role="list">
+					<div
+						*ngFor="let step of steps; index as i"
+						class="step-indicator__item"
+						[class.step-indicator__item--active]="i === currentStep()"
+						[class.step-indicator__item--completed]="i < currentStep()"
+						role="listitem"
+						[attr.aria-current]="i === currentStep() ? 'step' : null"
+					>
+						<span class="step-indicator__number">{{ i + 1 }}</span>
+						<span class="step-indicator__label">{{ step.labelKey | translate }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="pickup-content">
+				<form class="pickup-form" [formGroup]="form" novalidate>
+					<div [ngSwitch]="currentStep()">
+						<ng-container *ngSwitchCase="0">
+							<fieldset class="option-grid"
+								[attr.aria-describedby]="serviceTypeCtrl.invalid && (serviceTypeCtrl.dirty || serviceTypeCtrl.touched) ? 'orderTypeHint' : null"
+							[attr.aria-label]="('pickupOrder.steps.orderType' | translate) || null">
+								<legend class="visually-hidden">{{ 'pickupOrder.steps.orderType' | translate }}</legend>
+								<label
+									class="option-card"
+									*ngFor="let option of serviceOptions; trackBy: trackOptionByValue"
+									[class.option-card--active]="serviceTypeCtrl.value === option.value"
+								>
+									<input
+										type="radio"
+										class="option-card__input"
+										formControlName="serviceType"
+										name="serviceType"
+										[value]="option.value"
+									/>
+									<div class="option-card__icon" aria-hidden="true">
+										<img [src]="option.icon" alt="" class="option-card__image" />
+									</div>
+									<div class="option-card__content">
+										<div class="option-card__title">{{ option.titleKey | translate }}</div>
+										<p class="option-card__description text-muted mb-0">{{ option.descriptionKey | translate }}</p>
+									</div>
+								</label>
+							</fieldset>
+							<div id="orderTypeHint" class="form-text text-danger mt-2" *ngIf="serviceTypeCtrl.invalid && (serviceTypeCtrl.dirty || serviceTypeCtrl.touched)">
+								{{ 'pickupOrder.validation.serviceType' | translate }}
+							</div>
+						</ng-container>
+
+						<ng-container *ngSwitchDefault>
+							<div class="placeholder-step text-center py-5">
+								<h3 class="h5 mb-2" *ngIf="currentStepConfig().placeholderTitleKey as titleKey">{{ titleKey | translate }}</h3>
+								<p class="text-muted mb-3" *ngIf="currentStepConfig().placeholderLeadKey as leadKey">{{ leadKey | translate }}</p>
+								<div class="selected-option" *ngIf="selectedOption() as selected">
+									<span class="badge bg-light text-dark">{{ selected.titleKey | translate }}</span>
+								</div>
+								<p class="text-muted mt-3 mb-0" *ngIf="currentStepConfig().placeholderBodyKey as bodyKey">{{ bodyKey | translate }}</p>
+							</div>
+						</ng-container>
+					</div>
+
+					<div class="pickup-form__actions">
+						<button
+							type="button"
+							class="btn btn-outline-secondary"
+							(click)="onBack()"
+							*ngIf="currentStep() > 0"
+						>
+							{{ 'pickupOrder.actions.back' | translate }}
+						</button>
+						<button type="button" class="btn btn-primary btn-elevated" (click)="onNext()" [disabled]="primaryActionDisabled()">
+							{{ 'pickupOrder.actions.next' | translate }}
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

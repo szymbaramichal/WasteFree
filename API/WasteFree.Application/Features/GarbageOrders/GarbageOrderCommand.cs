@@ -1,11 +1,12 @@
-﻿using System.Net;
+using System.Net;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
-using WasteFree.Application.Features.GarbageGroupOrders.Dtos;
+using WasteFree.Application.Features.GarbageOrders.Dtos;
 using WasteFree.Application.Jobs;
 using WasteFree.Application.Jobs.Dtos;
 using WasteFree.Application.Notifications.Facades;
+using WasteFree.Application.Services.GarbageOrders;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
@@ -14,9 +15,9 @@ using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Hubs;
 
-namespace WasteFree.Application.Features.GarbageGroupOrders;
+namespace WasteFree.Application.Features.GarbageOrders;
 
-public record GarbageGroupOrderCommand (
+public record GarbageOrderCommand(
     Guid GarbageGroupId,
     Guid CurrentUserId,
     PickupOption PickupOption,
@@ -25,16 +26,17 @@ public record GarbageGroupOrderCommand (
     DateTime? DropOffDate,
     DateTime PickupDate,
     bool IsHighPriority,
-    bool CollectingService) : IRequest<GarbageGroupOrderDto>;
+    bool CollectingService) : IRequest<GarbageOrderDto>;
 
-public class GarbageGroupOrderCommandHandler(
+public class GarbageOrderCommandHandler(
     ApplicationDataContext context,
     IHubContext<NotificationHub> hubContext,
     IJobSchedulerFacade jobScheduler,
-    GarbageOrderCreatedNotificationFacade notificationFacade) 
-    : IRequestHandler<GarbageGroupOrderCommand, GarbageGroupOrderDto>
+    GarbageOrderCreatedNotificationFacade notificationFacade,
+    IGarbageOrderCostCalculator costCalculator)
+    : IRequestHandler<GarbageOrderCommand, GarbageOrderDto>
 {
-    public async Task<Result<GarbageGroupOrderDto>> HandleAsync(GarbageGroupOrderCommand request, CancellationToken cancellationToken)
+    public async Task<Result<GarbageOrderDto>> HandleAsync(GarbageOrderCommand request, CancellationToken cancellationToken)
     {
         var userGroup = await context.UserGarbageGroups
             .AsNoTracking()
@@ -43,7 +45,7 @@ public class GarbageGroupOrderCommandHandler(
                 && x.UserId == request.CurrentUserId && x.Role == GarbageGroupRole.Owner, cancellationToken);
         
         if (userGroup is null)
-            return Result<GarbageGroupOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
+            return Result<GarbageOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
         
         var groupUsers = await context.UserGarbageGroups
             .AsNoTracking()
@@ -54,7 +56,27 @@ public class GarbageGroupOrderCommandHandler(
         var groupUserIds = groupUsers.Select(x => x.UserId).ToHashSet();
         
         if (!request.UserIds.All(id => groupUserIds.Contains(id)))
-            return Result<GarbageGroupOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
+            return Result<GarbageOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
+
+        var userIdList = request.UserIds.ToList();
+        var userCount = userIdList.Count;
+
+        var baseCostEstimate = costCalculator.CalculateEstimate(
+            request.PickupOption,
+            request.ContainerSize,
+            request.DropOffDate,
+            request.PickupDate,
+            request.IsHighPriority,
+            request.CollectingService);
+
+        const decimal utilizationFeeMultiplier = 1.25m;
+        var totalCostWithUtilization = baseCostEstimate * utilizationFeeMultiplier; // add 25% prepaid utilization fee
+        var totalCents = userCount == 0
+            ? 0L
+            : (long)decimal.Round(totalCostWithUtilization * 100m, 0, MidpointRounding.AwayFromZero);
+        var baseCents = userCount == 0 ? 0L : totalCents / userCount;
+        var remainderCents = userCount == 0 ? 0L : totalCents % userCount;
+        var orderCost = totalCents / 100m;
 
         var garbageOrderId = Guid.CreateVersion7();
         var garbageOrder = new GarbageOrder
@@ -66,13 +88,14 @@ public class GarbageGroupOrderCommandHandler(
             PickupDate = request.PickupDate,
             IsHighPriority = request.IsHighPriority,
             CollectingService = request.CollectingService,
-            GarbageOrderStatus = GarbageOrderStatus.Created,
-            GarbageGroupId = request.GarbageGroupId
+            GarbageOrderStatus = GarbageOrderStatus.WaitingForPayment,
+            GarbageGroupId = request.GarbageGroupId,
+            Cost = orderCost
         };
         
         var connectionIds = new HashSet<string>();
 
-        var notificationRequests = request.UserIds
+        var notificationRequests = userIdList
             .Select(userId =>
             {
                 var user = groupUsers.First(x => x.UserId == userId);
@@ -90,13 +113,19 @@ public class GarbageGroupOrderCommandHandler(
 
         var notificationsByUserId = notificationContents.ToDictionary(x => x.UserId);
 
-        foreach (var userId in request.UserIds)
+        for (var index = 0; index < userIdList.Count; index++)
         {
+            var userId = userIdList[index];
+            var shareCents = baseCents + (index < remainderCents ? 1 : 0);
+            var shareAmount = shareCents / 100m;
+
             garbageOrder.GarbageOrderUsers.Add(new GarbageOrderUsers
             {
                 Id = Guid.CreateVersion7(),
                 UserId = userId,
                 GarbageOrderId = garbageOrder.Id,
+                ShareAmount = shareAmount,
+                HasAcceptedPayment = shareAmount == 0m
             });
 
             var connectionId = NotificationHub.GetConnectionId(userId);
@@ -146,6 +175,6 @@ public class GarbageGroupOrderCommandHandler(
         context.Add(garbageOrder);
         await context.SaveChangesAsync(cancellationToken);
         
-        return Result<GarbageGroupOrderDto>.Success(garbageOrder.MapToGarbageGroupOrderDto());
+        return Result<GarbageOrderDto>.Success(garbageOrder.MapToGarbageOrderDto());
     }
 }

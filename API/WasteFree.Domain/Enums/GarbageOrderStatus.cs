@@ -7,10 +7,6 @@
 public enum GarbageOrderStatus
 {
     /// <summary>
-    /// The order has been created.
-    /// </summary>
-    Created,
-    /// <summary>
     /// Waiting for payment to be processed.
     /// </summary>
     WaitingForPayment,
@@ -37,5 +33,9 @@ public enum GarbageOrderStatus
     /// <summary>
     /// The complaint or issue has been resolved.
     /// </summary>
-    Resolved
+    Resolved,
+    /// <summary>
+    /// The order has been cancelled because required payments were not completed.
+    /// </summary>
+    Cancelled
 }

@@ -124,6 +124,7 @@ public static class ProgramExtensions
         app.MapConsentsEndpoints();
         app.MapGarbageGroupOrderEndpoints();
         app.MapGroupChatEndpoints();
+    app.MapGarbageOrderEndpoints();
 
         return app;
     }

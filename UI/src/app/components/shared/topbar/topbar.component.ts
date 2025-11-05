@@ -85,6 +85,7 @@ export class TopbarComponent implements OnDestroy {
   logout() {
     localStorage.removeItem('authToken');
     this.currentUser.setUser(null);
+    this.wallet.resetState();
     this.router.navigate(['/']);
   }
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WasteFree.Infrastructure;
 
@@ -10,9 +11,11 @@ using WasteFree.Infrastructure;
 namespace WasteFree.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDataContext))]
-    partial class ApplicationDataContextModelSnapshot : ModelSnapshot
+    [Migration("20251104091333_AddGarbageOrderCost")]
+    partial class AddGarbageOrderCost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");
@@ -246,44 +249,6 @@ namespace WasteFree.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("GarbageGroups");
-                });
-
-            modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroupMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedDateUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("GarbageGroupId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("ModifiedDateUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("GarbageGroupId", "CreatedDateUtc");
-
-                    b.ToTable("GarbageGroupMessages");
                 });
 
             modelBuilder.Entity("WasteFree.Domain.Entities.GarbageOrder", b =>
@@ -689,25 +654,6 @@ namespace WasteFree.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroupMessage", b =>
-                {
-                    b.HasOne("WasteFree.Domain.Entities.GarbageGroup", "GarbageGroup")
-                        .WithMany("Messages")
-                        .HasForeignKey("GarbageGroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WasteFree.Domain.Entities.User", "User")
-                        .WithMany("GarbageGroupMessages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GarbageGroup");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("WasteFree.Domain.Entities.GarbageOrder", b =>
                 {
                     b.HasOne("WasteFree.Domain.Entities.GarbageGroup", "GarbageGroup")
@@ -831,8 +777,6 @@ namespace WasteFree.Infrastructure.Migrations
 
             modelBuilder.Entity("WasteFree.Domain.Entities.GarbageGroup", b =>
                 {
-                    b.Navigation("Messages");
-
                     b.Navigation("UserGarbageGroups");
                 });
 
@@ -843,8 +787,6 @@ namespace WasteFree.Infrastructure.Migrations
 
             modelBuilder.Entity("WasteFree.Domain.Entities.User", b =>
                 {
-                    b.Navigation("GarbageGroupMessages");
-
                     b.Navigation("InboxNotifications");
 
                     b.Navigation("UserGarbageGroups");
