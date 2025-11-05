@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using WasteFree.Domain.Constants;
+using WasteFree.Domain.Enums;
 using WasteFree.Domain.Interfaces;
 using WasteFree.Infrastructure;
 
@@ -23,13 +24,20 @@ public class GroupChatHub(
         }
 
         var cancellationToken = Context.ConnectionAborted;
-        var isMember = await context.UserGarbageGroups
+        var membership = await context.UserGarbageGroups
             .AsNoTracking()
-            .AnyAsync(ug => ug.GarbageGroupId == groupId && ug.UserId == userId && !ug.IsPending, cancellationToken);
+            .Include(ug => ug.User)
+            .FirstOrDefaultAsync(ug => ug.GarbageGroupId == groupId && ug.UserId == userId && !ug.IsPending, cancellationToken);
 
-        if (!isMember)
+        if (membership is null)
         {
             logger.LogWarning("User {UserId} attempted to join group chat {GroupId} without membership", userId, groupId);
+            throw new HubException(ApiErrorCodes.Forbidden);
+        }
+
+        if (membership.User.Role == UserRole.GarbageAdmin)
+        {
+            logger.LogWarning("GarbageAdmin {UserId} attempted to join group chat {GroupId}", userId, groupId);
             throw new HubException(ApiErrorCodes.Forbidden);
         }
 

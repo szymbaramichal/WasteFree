@@ -29,14 +29,7 @@ public class GetGroupChatMessagesQueryHandler(ApplicationDataContext context)
 
         if (membership is null)
         {
-            var groupExists = await context.GarbageGroups
-                .AsNoTracking()
-                .AnyAsync(g => g.Id == request.GroupId, cancellationToken);
-
-            var code = groupExists ? ApiErrorCodes.Forbidden : ApiErrorCodes.NotFound;
-            var status = groupExists ? HttpStatusCode.Forbidden : HttpStatusCode.NotFound;
-
-            return Result<ICollection<GroupChatMessageDto>>.Failure(code, status);
+            return Result<ICollection<GroupChatMessageDto>>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
         }
 
         if (membership.IsPending)
