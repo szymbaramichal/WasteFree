@@ -122,9 +122,8 @@ public static class ProgramExtensions
         app.MapInboxEndpoints();
         app.MapCitiesEndpoints();
         app.MapConsentsEndpoints();
-        app.MapGarbageGroupOrderEndpoints();
         app.MapGroupChatEndpoints();
-    app.MapGarbageOrderEndpoints();
+        app.MapGarbageOrderEndpoints();
 
         return app;
     }
