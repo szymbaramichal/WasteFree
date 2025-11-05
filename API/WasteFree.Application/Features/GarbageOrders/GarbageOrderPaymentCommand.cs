@@ -99,10 +99,6 @@ public class GarbageOrderPaymentCommandHandler(ApplicationDataContext context)
         {
             garbageOrder.GarbageOrderStatus = GarbageOrderStatus.WaitingForAccept;
         }
-        else if (garbageOrder.GarbageOrderStatus == GarbageOrderStatus.Created)
-        {
-            garbageOrder.GarbageOrderStatus = GarbageOrderStatus.WaitingForPayment;
-        }
 
         await context.SaveChangesAsync(cancellationToken);
 

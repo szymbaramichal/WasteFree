@@ -58,13 +58,25 @@ public class GarbageOrderCommandHandler(
         if (!request.UserIds.All(id => groupUserIds.Contains(id)))
             return Result<GarbageOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
 
-        var estimatedCost = costCalculator.CalculateEstimate(
+        var userIdList = request.UserIds.ToList();
+        var userCount = userIdList.Count;
+
+        var baseCostEstimate = costCalculator.CalculateEstimate(
             request.PickupOption,
             request.ContainerSize,
             request.DropOffDate,
             request.PickupDate,
             request.IsHighPriority,
             request.CollectingService);
+
+        const decimal utilizationFeeMultiplier = 1.25m;
+        var totalCostWithUtilization = baseCostEstimate * utilizationFeeMultiplier; // add 25% prepaid utilization fee
+        var totalCents = userCount == 0
+            ? 0L
+            : (long)decimal.Round(totalCostWithUtilization * 100m, 0, MidpointRounding.AwayFromZero);
+        var baseCents = userCount == 0 ? 0L : totalCents / userCount;
+        var remainderCents = userCount == 0 ? 0L : totalCents % userCount;
+        var orderCost = totalCents / 100m;
 
         var garbageOrderId = Guid.CreateVersion7();
         var garbageOrder = new GarbageOrder
@@ -76,21 +88,12 @@ public class GarbageOrderCommandHandler(
             PickupDate = request.PickupDate,
             IsHighPriority = request.IsHighPriority,
             CollectingService = request.CollectingService,
-            GarbageOrderStatus = GarbageOrderStatus.Created,
+            GarbageOrderStatus = GarbageOrderStatus.WaitingForPayment,
             GarbageGroupId = request.GarbageGroupId,
-            Cost = estimatedCost
+            Cost = orderCost
         };
         
         var connectionIds = new HashSet<string>();
-
-        var userIdList = request.UserIds.ToList();
-
-        var userCount = userIdList.Count;
-        var totalCents = userCount == 0
-            ? 0L
-            : (long)decimal.Round(estimatedCost * 100m, 0, MidpointRounding.AwayFromZero);
-        var baseCents = userCount == 0 ? 0L : totalCents / userCount;
-        var remainderCents = userCount == 0 ? 0L : totalCents % userCount;
 
         var notificationRequests = userIdList
             .Select(userId =>

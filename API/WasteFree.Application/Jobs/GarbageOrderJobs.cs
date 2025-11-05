@@ -22,8 +22,7 @@ public class GarbageOrderJobs(ApplicationDataContext context, ILogger<GarbageOrd
         var candidateOrders = await _context.GarbageOrders
             .Include(o => o.GarbageOrderUsers)
             .Where(o => o.CreatedDateUtc <= cutoffUtc)
-            .Where(o => o.GarbageOrderStatus == GarbageOrderStatus.Created
-                        || o.GarbageOrderStatus == GarbageOrderStatus.WaitingForPayment)
+            .Where(o => o.GarbageOrderStatus == GarbageOrderStatus.WaitingForPayment)
             .Where(o => o.GarbageOrderUsers.Any(u => !u.HasAcceptedPayment))
             .ToListAsync(cancellationToken);
 

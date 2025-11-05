@@ -7,10 +7,6 @@
 public enum GarbageOrderStatus
 {
     /// <summary>
-    /// The order has been created and pending initial actions.
-    /// </summary>
-    Created,
-    /// <summary>
     /// Waiting for payment to be processed.
     /// </summary>
     WaitingForPayment,
