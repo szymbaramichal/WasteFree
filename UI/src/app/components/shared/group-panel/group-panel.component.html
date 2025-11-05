@@ -37,149 +37,199 @@
         <div class="small mt-2">{{ 'groups.loading' | translate }}</div>
       </div>
 
-  <div *ngIf="error && !loading" class="alert alert-danger">{{ error }}</div>
+    <div *ngIf="error && !loading" class="alert alert-danger">{{ error }}</div>
 
       <ng-container *ngIf="!loading">
-        <ng-container *ngIf="group; else groupEmpty">
-          <ng-container *ngIf="!editDetails; else editDetailsTpl">
-            <div class="row g-3 align-items-stretch group-panel__details">
-              <div class="col-12 col-xl-6">
-                <div class="panel-compact panel-compact--info h-100">
-                  <div class="panel-title">
-                    <i class="bi bi-info-circle"></i>
-                    <span>{{ 'groups.details.description' | translate }}</span>
-                  </div>
-                  <div class="text-muted">{{ group.description || '-' }}</div>
-                </div>
-              </div>
+        <ul class="nav nav-tabs group-panel__tabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button type="button" class="nav-link" [class.active]="activeTab === 'details'" (click)="selectTab('details')" role="tab" id="group-tab-details" [attr.aria-controls]="'group-tabpanel-details'" [attr.aria-selected]="activeTab === 'details'">
+              <i class="bi bi-card-text"></i>
+              <span>{{ 'groups.tabs.details' | translate }}</span>
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button type="button" class="nav-link" [class.active]="activeTab === 'pickups'" (click)="selectTab('pickups')" role="tab" id="group-tab-pickups" [attr.aria-controls]="'group-tabpanel-pickups'" [attr.aria-selected]="activeTab === 'pickups'">
+              <i class="bi bi-truck"></i>
+              <span>{{ 'groups.tabs.pickups' | translate }}</span>
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button type="button" class="nav-link" [class.active]="activeTab === 'chat'" (click)="selectTab('chat')" role="tab" id="group-tab-chat" [attr.aria-controls]="'group-tabpanel-chat'" [attr.aria-selected]="activeTab === 'chat'">
+              <i class="bi bi-chat-dots"></i>
+              <span>{{ 'groups.tabs.chat' | translate }}</span>
+            </button>
+          </li>
+        </ul>
 
-              <div class="col-12 col-xl-6">
-                <div class="panel-compact panel-compact--pickup h-100">
-                  <div class="panel-title">
-                    <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
-                    <span>{{ 'groups.details.pickupSpot' | translate }}</span>
-                  </div>
-                  <div class="row g-3 mt-1 group-panel__meta">
-                    <div class="col-md-4">
-                      <div class="meta-label">{{ 'groups.details.city' | translate }}</div>
-                      <div class="meta-value">{{ getGroupCity() || '-' }}</div>
+        <div class="tab-content">
+          <div class="tab-pane fade group-panel__tab-pane group-panel__tab-pane--stack" role="tabpanel" id="group-tabpanel-details" [class.show]="activeTab === 'details'" [class.active]="activeTab === 'details'" [attr.aria-labelledby]="'group-tab-details'">
+            <ng-container *ngIf="group; else groupEmpty">
+              <ng-container *ngIf="!editDetails; else editDetailsTpl">
+                <div class="row g-3 align-items-stretch group-panel__details">
+                  <div class="col-12 col-xl-6">
+                    <div class="panel-compact panel-compact--info h-100">
+                      <div class="panel-title">
+                        <i class="bi bi-info-circle"></i>
+                        <span>{{ 'groups.details.description' | translate }}</span>
+                      </div>
+                      <div class="text-muted">{{ group.description || '-' }}</div>
                     </div>
-                    <div class="col-md-4">
-                      <div class="meta-label">{{ 'groups.details.postalCode' | translate }}</div>
-                      <div class="meta-value">{{ getGroupPostalCode() || '-' }}</div>
+                  </div>
+
+                  <div class="col-12 col-xl-6">
+                    <div class="panel-compact panel-compact--pickup h-100">
+                      <div class="panel-title">
+                        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+                        <span>{{ 'groups.details.pickupSpot' | translate }}</span>
+                      </div>
+                      <div class="row g-3 mt-1 group-panel__meta">
+                        <div class="col-md-4">
+                          <div class="meta-label">{{ 'groups.details.city' | translate }}</div>
+                          <div class="meta-value">{{ getGroupCity() || '-' }}</div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="meta-label">{{ 'groups.details.postalCode' | translate }}</div>
+                          <div class="meta-value">{{ getGroupPostalCode() || '-' }}</div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="meta-label">{{ 'groups.details.address' | translate }}</div>
+                          <div class="meta-value">{{ getGroupStreet() || '-' }}</div>
+                        </div>
+                      </div>
                     </div>
-                    <div class="col-md-4">
-                      <div class="meta-label">{{ 'groups.details.address' | translate }}</div>
-                      <div class="meta-value">{{ getGroupStreet() || '-' }}</div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-template #editDetailsTpl>
+                <form [formGroup]="groupForm" (ngSubmit)="saveGroup()" class="panel-compact panel-compact--form group-details-form">
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label class="form-label" for="group-edit-name">{{ 'groups.form.name' | translate }}</label>
+                      <input id="group-edit-name" type="text" class="form-control" formControlName="groupName" [class.is-invalid]="hasControlError('groupName','required') || hasControlError('groupName','maxlength')" [attr.aria-invalid]="hasControlError('groupName','required') || hasControlError('groupName','maxlength')" [attr.maxlength]="100" [placeholder]="'groups.form.placeholder.name' | translate" />
+                      <div class="form-text text-danger" *ngIf="hasControlError('groupName','required')">{{ 'groups.form.errors.name.required' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('groupName','maxlength')">{{ 'groups.form.errors.name.max' | translate }}</div>
+                    </div>
+                    <div class="col-12">
+                      <label class="form-label" for="group-edit-description">{{ 'groups.form.description' | translate }}</label>
+                      <textarea id="group-edit-description" rows="4" class="form-control" formControlName="groupDescription" [class.is-invalid]="hasControlError('groupDescription','required') || hasControlError('groupDescription','maxlength')" [attr.maxlength]="500" [placeholder]="'groups.form.placeholder.description' | translate"></textarea>
+                      <div class="form-text text-danger" *ngIf="hasControlError('groupDescription','required')">{{ 'groups.form.errors.desc.required' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('groupDescription','maxlength')">{{ 'groups.form.errors.desc.max' | translate }}</div>
+                      <div class="form-text text-end small opacity-75 mt-1">{{ groupForm.get('groupDescription')?.value?.length || 0 }}/500</div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <ng-template #editDetailsTpl>
-            <form [formGroup]="groupForm" (ngSubmit)="saveGroup()" class="panel-compact panel-compact--form group-details-form">
-              <div class="row g-3">
-                <div class="col-12">
-                  <label class="form-label" for="group-edit-name">{{ 'groups.form.name' | translate }}</label>
-                  <input id="group-edit-name" type="text" class="form-control" formControlName="groupName" [class.is-invalid]="hasControlError('groupName','required') || hasControlError('groupName','maxlength')" [attr.aria-invalid]="hasControlError('groupName','required') || hasControlError('groupName','maxlength')" [attr.maxlength]="100" [placeholder]="'groups.form.placeholder.name' | translate" />
-                  <div class="form-text text-danger" *ngIf="hasControlError('groupName','required')">{{ 'groups.form.errors.name.required' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('groupName','maxlength')">{{ 'groups.form.errors.name.max' | translate }}</div>
-                </div>
-                <div class="col-12">
-                  <label class="form-label" for="group-edit-description">{{ 'groups.form.description' | translate }}</label>
-                  <textarea id="group-edit-description" rows="4" class="form-control" formControlName="groupDescription" [class.is-invalid]="hasControlError('groupDescription','required') || hasControlError('groupDescription','maxlength')" [attr.maxlength]="500" [placeholder]="'groups.form.placeholder.description' | translate"></textarea>
-                  <div class="form-text text-danger" *ngIf="hasControlError('groupDescription','required')">{{ 'groups.form.errors.desc.required' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('groupDescription','maxlength')">{{ 'groups.form.errors.desc.max' | translate }}</div>
-                  <div class="form-text text-end small opacity-75 mt-1">{{ groupForm.get('groupDescription')?.value?.length || 0 }}/500</div>
-                </div>
-              </div>
 
-              <div class="row g-3 mt-1" formGroupName="address">
-                <div class="col-12 col-md-4">
-                  <label class="form-label" for="group-edit-city">{{ 'groups.form.city' | translate }}</label>
-                  <div class="position-relative">
-                    <select id="group-edit-city" class="form-select" formControlName="city" [class.is-invalid]="hasControlError('address.city','required') || hasControlError('address.city','maxlength')" [disabled]="citiesLoading">
-                      <option value="" disabled>{{ citiesLoading ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
-                      <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
-                    </select>
-                    <span class="spinner-border spinner-border-sm form-spinner" *ngIf="citiesLoading" role="status" aria-hidden="true"></span>
+                  <div class="row g-3 mt-1" formGroupName="address">
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="group-edit-city">{{ 'groups.form.city' | translate }}</label>
+                      <div class="position-relative">
+                        <select id="group-edit-city" class="form-select" formControlName="city" [class.is-invalid]="hasControlError('address.city','required') || hasControlError('address.city','maxlength')" [disabled]="citiesLoading">
+                          <option value="" disabled>{{ citiesLoading ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
+                          <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                        </select>
+                        <span class="spinner-border spinner-border-sm form-spinner" *ngIf="citiesLoading" role="status" aria-hidden="true"></span>
+                      </div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.city','maxlength')">{{ 'groups.form.errors.city.max' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="citiesLoadError">{{ 'profile.cityLoadError' | translate }}</div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="group-edit-postal">{{ 'groups.form.postalCode' | translate }}</label>
+                      <input id="group-edit-postal" type="text" class="form-control" formControlName="postalCode" [class.is-invalid]="hasControlError('address.postalCode','required') || hasControlError('address.postalCode','pattern') || hasControlError('address.postalCode','cityMismatch') || hasControlError('address.postalCode','maxlength')" [placeholder]="'groups.form.placeholder.postalCode' | translate" />
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','required')">{{ 'groups.form.errors.postalCode.required' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','pattern')">{{ 'groups.form.errors.postalCode.pattern' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','cityMismatch')">{{ 'groups.form.errors.postalCode.cityMismatch' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','maxlength')">{{ 'groups.form.errors.postalCode.max' | translate }}</div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <label class="form-label" for="group-edit-street">{{ 'groups.form.address' | translate }}</label>
+                      <input id="group-edit-street" type="text" class="form-control" formControlName="street" [class.is-invalid]="hasControlError('address.street','required') || hasControlError('address.street','pattern') || hasControlError('address.street','maxlength')" [placeholder]="'groups.form.placeholder.address' | translate" />
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.street','required')">{{ 'groups.form.errors.address.required' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.street','pattern')">{{ 'groups.form.errors.address.number' | translate }}</div>
+                      <div class="form-text text-danger" *ngIf="hasControlError('address.street','maxlength')">{{ 'groups.form.errors.address.max' | translate }}</div>
+                    </div>
                   </div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.city','maxlength')">{{ 'groups.form.errors.city.max' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="citiesLoadError">{{ 'profile.cityLoadError' | translate }}</div>
-                </div>
-                <div class="col-12 col-md-4">
-                  <label class="form-label" for="group-edit-postal">{{ 'groups.form.postalCode' | translate }}</label>
-                  <input id="group-edit-postal" type="text" class="form-control" formControlName="postalCode" [class.is-invalid]="hasControlError('address.postalCode','required') || hasControlError('address.postalCode','pattern') || hasControlError('address.postalCode','cityMismatch') || hasControlError('address.postalCode','maxlength')" [placeholder]="'groups.form.placeholder.postalCode' | translate" />
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','required')">{{ 'groups.form.errors.postalCode.required' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','pattern')">{{ 'groups.form.errors.postalCode.pattern' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','cityMismatch')">{{ 'groups.form.errors.postalCode.cityMismatch' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.postalCode','maxlength')">{{ 'groups.form.errors.postalCode.max' | translate }}</div>
-                </div>
-                <div class="col-12 col-md-4">
-                  <label class="form-label" for="group-edit-street">{{ 'groups.form.address' | translate }}</label>
-                  <input id="group-edit-street" type="text" class="form-control" formControlName="street" [class.is-invalid]="hasControlError('address.street','required') || hasControlError('address.street','pattern') || hasControlError('address.street','maxlength')" [placeholder]="'groups.form.placeholder.address' | translate" />
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.street','required')">{{ 'groups.form.errors.address.required' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.street','pattern')">{{ 'groups.form.errors.address.number' | translate }}</div>
-                  <div class="form-text text-danger" *ngIf="hasControlError('address.street','maxlength')">{{ 'groups.form.errors.address.max' | translate }}</div>
-                </div>
-              </div>
-              <div class="d-flex gap-2 flex-wrap mt-3">
-                <button type="submit" class="btn btn-xs btn-success btn-elevated" [disabled]="savingDetails" [attr.aria-busy]="savingDetails">
-                  <span *ngIf="savingDetails" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  <span>{{ 'common.save' | translate }}</span>
-                </button>
-                <button type="button" class="btn btn-xs btn-outline-secondary" (click)="cancelEdit()" [disabled]="savingDetails">{{ 'common.cancel' | translate }}</button>
-              </div>
-            </form>
-          </ng-template>
-
-          <div class="panel-compact panel-compact--accent" *ngIf="isOwner()">
-            <div class="panel-title">
-              <i class="bi bi-person-plus"></i>
-              <span>{{ 'groups.details.invite.title' | translate }}</span>
-            </div>
-            <form class="group-panel__invite" (submit)="invite($event, inviteInput.value)">
-              <input #inviteInput type="text" class="form-control" [placeholder]="'groups.details.invite.placeholder' | translate" [disabled]="actLoading">
-              <button type="submit" class="btn btn-success btn-xs" [disabled]="actLoading">
-                <span *ngIf="!actLoading">{{ 'groups.details.invite.submit' | translate }}</span>
-                <span *ngIf="actLoading" class="spinner-border spinner-border-sm"></span>
-              </button>
-            </form>
-          </div>
-
-          <div class="panel-compact panel-compact--members">
-            <div class="panel-title">
-              <i class="bi bi-people"></i>
-              <span>{{ 'groups.details.members' | translate }}</span>
-            </div>
-            <div class="list-group" *ngIf="group.users?.length; else noMembers">
-              <div class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let u of group.users">
-                <div class="d-flex align-items-center gap-2">
-                  <i class="bi bi-person-circle text-secondary"></i>
-                  <div>
-                    <div class="fw-semibold">{{ u.username }}</div>
-                    <div class="small text-muted" *ngIf="u.isPending">{{ 'groups.details.pending' | translate }}</div>
+                  <div class="d-flex gap-2 flex-wrap mt-3">
+                    <button type="submit" class="btn btn-xs btn-success btn-elevated" [disabled]="savingDetails" [attr.aria-busy]="savingDetails">
+                      <span *ngIf="savingDetails" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      <span>{{ 'common.save' | translate }}</span>
+                    </button>
+                    <button type="button" class="btn btn-xs btn-outline-secondary" (click)="cancelEdit()" [disabled]="savingDetails">{{ 'common.cancel' | translate }}</button>
                   </div>
+                </form>
+              </ng-template>
+
+              <div class="panel-compact panel-compact--accent" *ngIf="isOwner()">
+                <div class="panel-title">
+                  <i class="bi bi-person-plus"></i>
+                  <span>{{ 'groups.details.invite.title' | translate }}</span>
                 </div>
-                <div class="d-flex align-items-center gap-2 flex-wrap">
-                  <span class="badge rounded-pill" [ngClass]="u.garbageGroupRole === GarbageGroupRole.Owner ? 'bg-success' : 'bg-secondary'">
-                    {{ u.garbageGroupRole === GarbageGroupRole.Owner ? ('groups.role.owner' | translate) : ('groups.role.member' | translate) }}
-                  </span>
-                  <button *ngIf="isOwner() && u.garbageGroupRole !== GarbageGroupRole.Owner" class="btn btn-xs btn-outline-danger" (click)="remove(u.id)" [disabled]="actLoading">
-                    {{ 'groups.details.remove' | translate }}
+                <form class="group-panel__invite" (submit)="invite($event, inviteInput.value)">
+                  <input #inviteInput type="text" class="form-control" [placeholder]="'groups.details.invite.placeholder' | translate" [disabled]="actLoading">
+                  <button type="submit" class="btn btn-success btn-xs" [disabled]="actLoading">
+                    <span *ngIf="!actLoading">{{ 'groups.details.invite.submit' | translate }}</span>
+                    <span *ngIf="actLoading" class="spinner-border spinner-border-sm"></span>
                   </button>
-                </div>
+                </form>
               </div>
-            </div>
-            <ng-template #noMembers>
-              <div class="text-muted small">-</div>
-            </ng-template>
+
+              <div class="panel-compact panel-compact--members">
+                <div class="panel-title">
+                  <i class="bi bi-people"></i>
+                  <span>{{ 'groups.details.members' | translate }}</span>
+                </div>
+                <div class="list-group" *ngIf="group.users?.length; else noMembers">
+                  <div class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let u of group.users">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-person-circle text-secondary"></i>
+                      <div>
+                        <div class="fw-semibold">{{ u.username }}</div>
+                        <div class="small text-muted" *ngIf="u.isPending">{{ 'groups.details.pending' | translate }}</div>
+                      </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <span class="badge rounded-pill" [ngClass]="u.garbageGroupRole === GarbageGroupRole.Owner ? 'bg-success' : 'bg-secondary'">
+                        {{ u.garbageGroupRole === GarbageGroupRole.Owner ? ('groups.role.owner' | translate) : ('groups.role.member' | translate) }}
+                      </span>
+                      <button *ngIf="isOwner() && u.garbageGroupRole !== GarbageGroupRole.Owner" class="btn btn-xs btn-outline-danger" (click)="remove(u.id)" [disabled]="actLoading">
+                        {{ 'groups.details.remove' | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #noMembers>
+                  <div class="text-muted small">-</div>
+                </ng-template>
+              </div>
+            </ng-container>
           </div>
-        </ng-container>
+
+          <div class="tab-pane fade group-panel__tab-pane" role="tabpanel" id="group-tabpanel-pickups" [class.show]="activeTab === 'pickups'" [class.active]="activeTab === 'pickups'" [attr.aria-labelledby]="'group-tab-pickups'">
+            <ng-container *ngIf="group; else tabRequiresGroup">
+              <div class="panel-compact panel-compact--pickup">
+                <div class="panel-title">
+                  <i class="bi bi-truck"></i>
+                  <span>{{ 'groups.tabs.pickups.title' | translate }}</span>
+                </div>
+                <p class="text-muted small mb-0">{{ 'groups.tabs.pickups.subtitle' | translate }}</p>
+                <div class="alert alert-info mt-3 mb-0" role="status">{{ 'groups.tabs.pickups.empty' | translate }}</div>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="tab-pane fade group-panel__tab-pane" role="tabpanel" id="group-tabpanel-chat" [class.show]="activeTab === 'chat'" [class.active]="activeTab === 'chat'" [attr.aria-labelledby]="'group-tab-chat'">
+            <ng-container *ngIf="group; else tabRequiresGroup">
+              <div class="panel-compact panel-compact--info group-panel__chat">
+                <app-group-chat [groupId]="group.id" [groupName]="group.name" [active]="activeTab === 'chat'"></app-group-chat>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
         <ng-template #groupEmpty>
           <div class="panel-compact panel-compact--info text-muted">{{ 'groups.details.title' | translate }}</div>
+        </ng-template>
+        <ng-template #tabRequiresGroup>
+          <div class="panel-compact panel-compact--info text-muted">{{ 'groups.tabs.common.groupMissing' | translate }}</div>
         </ng-template>
       </ng-container>
       <div class="group-panel__footer">

@@ -38,6 +38,8 @@
   <data name="ERR_GROUP_POSTAL_CODE_REQUIRED"><value>Postal code is required</value></data>
   <data name="ERR_GROUP_POSTAL_CODE_INVALID"><value>Postal code must follow format 00-000.</value></data>
   <data name="ERR_GROUP_STREET_REQUIRED"><value>Street is required</value></data>
+  <data name="ERR_CHAT_MESSAGE_REQUIRED" xml:space="preserve"><value>Message cannot be empty.</value></data>
+  <data name="ERR_CHAT_MESSAGE_TOO_LONG" xml:space="preserve"><value>Message is too long (max 2000 characters).</value></data>
   <data name="ERR_PICKUP_OPTION_INVALID"><value>Pickup option is invalid</value></data>
   <data name="ERR_CONTAINER_SIZE_REQUIRED"><value>Container size is required when pickup option is container</value></data>
   <data name="ERR_PICKUP_DATE_REQUIRED"><value>Pickup date is required</value></data>

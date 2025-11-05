@@ -122,6 +122,8 @@ public static class ProgramExtensions
         app.MapInboxEndpoints();
         app.MapCitiesEndpoints();
         app.MapConsentsEndpoints();
+        app.MapGarbageGroupOrderEndpoints();
+        app.MapGroupChatEndpoints();
     app.MapGarbageOrderEndpoints();
 
         return app;
@@ -130,6 +132,9 @@ public static class ProgramExtensions
     public static WebApplication MapApplicationHubs(this WebApplication app, string allowLocalFrontendOrigins)
     {
         app.MapHub<NotificationHub>("/notificationHub")
+           .RequireCors(allowLocalFrontendOrigins);
+
+        app.MapHub<GroupChatHub>("/chatHub")
            .RequireCors(allowLocalFrontendOrigins);
 
         return app;

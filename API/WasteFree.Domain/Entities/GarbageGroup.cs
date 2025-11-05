@@ -11,5 +11,6 @@ namespace WasteFree.Domain.Entities
         public bool IsPrivate { get; set; }
 
         public ICollection<UserGarbageGroup> UserGarbageGroups { get; set; } = new List<UserGarbageGroup>();
+        public ICollection<GarbageGroupMessage> Messages { get; set; } = new List<GarbageGroupMessage>();
     }
 }
