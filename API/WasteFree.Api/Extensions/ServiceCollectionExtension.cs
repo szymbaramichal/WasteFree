@@ -40,8 +40,7 @@ public static class ServiceCollectionExtension
                     {
                         var accessToken = context.Request.Query["access_token"];
                         var path = context.HttpContext.Request.Path;
-                        if (!string.IsNullOrEmpty(accessToken) &&
-                            (path.StartsWithSegments("/notificationHub") || path.StartsWithSegments("/chatHub")))
+                        if (!string.IsNullOrEmpty(accessToken) && IsSignalREndpoint(path))
                         {
                             context.Token = accessToken;
                         }
@@ -52,6 +51,11 @@ public static class ServiceCollectionExtension
 
 
         return services;
+    }
+
+    private static bool IsSignalREndpoint(PathString path)
+    {
+        return path.StartsWithSegments("/notificationHub") || path.StartsWithSegments("/chatHub");
     }
 
     public static IServiceCollection RegisterServices(this IServiceCollection services)
