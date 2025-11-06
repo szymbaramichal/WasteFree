@@ -62,7 +62,7 @@
         </ul>
 
         <div class="tab-content">
-          <div class="tab-pane fade group-panel__tab-pane group-panel__tab-pane--stack" role="tabpanel" id="group-tabpanel-details" [class.show]="activeTab === 'details'" [class.active]="activeTab === 'details'" [attr.aria-labelledby]="'group-tab-details'">
+          <div *ngIf="activeTab === 'details'" class="group-panel__tab-pane group-panel__tab-pane--stack" role="tabpanel" id="group-tabpanel-details" [attr.aria-labelledby]="'group-tab-details'">
             <ng-container *ngIf="group; else groupEmpty">
               <ng-container *ngIf="!editDetails; else editDetailsTpl">
                 <div class="row g-3 align-items-stretch group-panel__details">
@@ -203,7 +203,7 @@
             </ng-container>
           </div>
 
-          <div class="tab-pane fade group-panel__tab-pane" role="tabpanel" id="group-tabpanel-pickups" [class.show]="activeTab === 'pickups'" [class.active]="activeTab === 'pickups'" [attr.aria-labelledby]="'group-tab-pickups'">
+          <div *ngIf="activeTab === 'pickups'" class="group-panel__tab-pane" role="tabpanel" id="group-tabpanel-pickups" [attr.aria-labelledby]="'group-tab-pickups'">
             <ng-container *ngIf="group; else tabRequiresGroup">
               <div class="panel-compact panel-compact--pickup">
                 <div class="panel-title">
@@ -216,7 +216,7 @@
             </ng-container>
           </div>
 
-          <div class="tab-pane fade group-panel__tab-pane" role="tabpanel" id="group-tabpanel-chat" [class.show]="activeTab === 'chat'" [class.active]="activeTab === 'chat'" [attr.aria-labelledby]="'group-tab-chat'">
+          <div *ngIf="activeTab === 'chat'" class="group-panel__tab-pane" role="tabpanel" id="group-tabpanel-chat" [attr.aria-labelledby]="'group-tab-chat'">
             <ng-container *ngIf="group; else tabRequiresGroup">
               <div class="panel-compact panel-compact--info group-panel__chat">
                 <app-group-chat [groupId]="group.id" [groupName]="group.name" [active]="activeTab === 'chat'"></app-group-chat>
