@@ -49,6 +49,14 @@ public static class GarbageOrderEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
             .WithDescription("Accept payment for a garbage order.");
+
+        app.MapGet("/garbage-orders/my", GetUserGarbageOrdersAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<ICollection<GarbageOrderDto>>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Get garbage orders for the current user.");
     }
 
     /// <summary>
@@ -135,6 +143,28 @@ public static class GarbageOrderEndpoints
             request.FromDate,
             request.ToDate,
             request.Statuses);
+
+        var result = await mediator.SendAsync(query, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Get garbage orders where the authenticated user participates.
+    /// </summary>
+    private static async Task<IResult> GetUserGarbageOrdersAsync(
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetUserGarbageOrdersQuery(currentUserService.UserId);
 
         var result = await mediator.SendAsync(query, cancellationToken);
 
