@@ -6,12 +6,14 @@ using WasteFree.Domain.Constants;
 using WasteFree.Domain.Enums;
 using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
+using WasteFree.Infrastructure.Extensions;
 
 namespace WasteFree.Application.Features.GarbageOrders;
 
 public record GetGarbageOrdersQuery(
     Guid GarbageGroupId,
     Guid UserId,
+    Pager Pager,
     DateTime? FromDate,
     DateTime? ToDate,
     GarbageOrderStatus[]? Statuses) : IRequest<ICollection<GarbageOrderDto>>;
@@ -30,6 +32,7 @@ public class GetGarbageOrdersQueryHandler(ApplicationDataContext context)
         
         var ordersQuery = context.GarbageOrders
             .Where(x => x.GarbageGroupId == request.GarbageGroupId)
+            .Include(x => x.GarbageGroup)
             .Include(x => x.GarbageOrderUsers)
             .AsQueryable();
         
@@ -42,10 +45,18 @@ public class GetGarbageOrdersQueryHandler(ApplicationDataContext context)
         if (request.Statuses?.Any() == true)
             ordersQuery = ordersQuery.Where(x => request.Statuses.Contains(x.GarbageOrderStatus));
         
-        var orders = await ordersQuery
-            .Select(x => x.MapToGarbageOrderDto())
+        var totalCount = await ordersQuery.CountAsync(cancellationToken);
+
+        var pagedOrders = await ordersQuery
+            .Paginate(request.Pager)
             .ToListAsync(cancellationToken);
+
+        var dtoItems = pagedOrders
+            .Select(x => x.MapToGarbageOrderDto())
+            .ToList();
+
+        var pager = new Pager(request.Pager.PageNumber, request.Pager.PageSize, totalCount);
         
-        return Result<ICollection<GarbageOrderDto>>.Success(orders);
+        return PaginatedResult<ICollection<GarbageOrderDto>>.PaginatedSuccess(dtoItems, pager);
     }
 }

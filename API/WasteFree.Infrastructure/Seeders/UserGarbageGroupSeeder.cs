@@ -12,7 +12,11 @@ public class UserGarbageGroupSeeder(ApplicationDataContext context)
         {
             new { Username = "test1", GroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"), Role = GarbageGroupRole.Owner, IsPending = false },
             new { Username = "test2", GroupId = Guid.Parse("66666666-6666-6666-6666-666666666666"), Role = GarbageGroupRole.Owner, IsPending = false },
-            new { Username = "test5", GroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"), Role = GarbageGroupRole.User, IsPending = false }
+            new { Username = "test5", GroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"), Role = GarbageGroupRole.User, IsPending = false },
+            new { Username = "test2", GroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"), Role = GarbageGroupRole.User, IsPending = false },
+            new { Username = "test5", GroupId = Guid.Parse("66666666-6666-6666-6666-666666666666"), Role = GarbageGroupRole.User, IsPending = false },
+            new { Username = "test3", GroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"), Role = GarbageGroupRole.User, IsPending = false },
+            new { Username = "test4", GroupId = Guid.Parse("66666666-6666-6666-6666-666666666666"), Role = GarbageGroupRole.User, IsPending = false }
         };
 
         var usernames = memberships.Select(m => m.Username).Distinct().ToArray();

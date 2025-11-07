@@ -53,6 +53,20 @@ public static class HostExtensions
                         logger.LogInformation("Executed UserGarbageGroupSeeder.SeedAsync");
                     }
 
+                    var garbageOrderSeeder = services.GetService<GarbageOrderSeeder>();
+                    if (garbageOrderSeeder != null)
+                    {
+                        garbageOrderSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed GarbageOrderSeeder.SeedAsync");
+                    }
+
+                    var garbageOrderUsersSeeder = services.GetService<GarbageOrderUsersSeeder>();
+                    if (garbageOrderUsersSeeder != null)
+                    {
+                        garbageOrderUsersSeeder.SeedAsync().GetAwaiter().GetResult();
+                        logger.LogInformation("Executed GarbageOrderUsersSeeder.SeedAsync");
+                    }
+
                     var walletTransactionSeeder = services.GetService<WalletTransactionSeeder>();
                     if (walletTransactionSeeder != null)
                     {

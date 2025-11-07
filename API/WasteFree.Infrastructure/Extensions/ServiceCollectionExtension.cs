@@ -50,10 +50,10 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IEmailService>(_ =>
             new EmailService(
-                smtpServer: smtpServer,
-                smtpPort: int.Parse(smtpPortStr),
-                smtpUser: smtpUser,
-                smtpPass: smtpPass,
+                smtpServer: smtpServer!,
+                smtpPort: int.Parse(smtpPortStr!),
+                smtpUser: smtpUser!,
+                smtpPass: smtpPass!,
                 from: "wastefreecloud@noreply.com"
             ));
 
@@ -63,13 +63,15 @@ public static class ServiceCollectionExtension
         services.AddScoped<UserSeeder>();
         services.AddScoped<GarbageGroupSeeder>();
         services.AddScoped<UserGarbageGroupSeeder>();
+        services.AddScoped<GarbageOrderSeeder>();
+        services.AddScoped<GarbageOrderUsersSeeder>();
         services.AddScoped<WalletTransactionSeeder>();
         services.AddScoped<InboxNotificationSeeder>();
         services.AddScoped<NotificationTemplateSeeder>();
         services.AddScoped<GarbageAdminConsentSeeder>();
         
         var blobConn = configuration.GetConnectionString("BlobStorage");
-        services.AddSingleton<IBlobStorageService>(_ => new AzureBlobStorageService(blobConn));
+        services.AddSingleton<IBlobStorageService>(_ => new AzureBlobStorageService(blobConn!));
         
         return services;
     }
