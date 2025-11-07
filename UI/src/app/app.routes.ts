@@ -15,6 +15,7 @@ import { GroupPanelComponent } from '@components/shared/group-panel/group-panel.
 import { groupResolver } from '@app/resolvers/group.resolver';
 import { NotFoundComponent } from '@components/shared/not-found/not-found.component';
 import { PickupOrderComponent } from '@components/shared/pickup-order/pickup-order.component';
+import { MyPickupsComponent } from '@components/user/my-pickups/my-pickups.component';
 
 function activateAccountMatcher(segments: UrlSegment[]): UrlMatchResult | null {
     if (!segments || segments.length === 0) return null;
@@ -45,6 +46,7 @@ export const routes: Routes = [
             { path: 'wallet', component: WalletComponent },
             { path: 'inbox', component: InboxComponent },
             { path: 'pickup-order', component: PickupOrderComponent },
+            { path: 'my-pickups', component: MyPickupsComponent },
             { path: 'groups', component: GroupsComponent },
             { path: 'groups/manage', component: GroupsManagementComponent },
             { path: 'groups/:groupId', component: GroupPanelComponent, resolve: { group: groupResolver } },
