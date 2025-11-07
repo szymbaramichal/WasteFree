@@ -21,6 +21,8 @@ public class GarbageOrderDto
     public decimal Cost { get; set; }
 
     public Guid GarbageGroupId { get; set; }
+    public string GarbageGroupName { get; set; } = string.Empty;
+    public bool GarbageGroupIsPrivate { get; set; }
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
 }
 
@@ -40,6 +42,8 @@ public static class GarbageOrderDtoExtensions
             GarbageOrderStatus = garbageOrder.GarbageOrderStatus,
             Cost = garbageOrder.Cost,
             GarbageGroupId = garbageOrder.GarbageGroupId,
+            GarbageGroupName = garbageOrder.GarbageGroup?.Name ?? string.Empty,
+            GarbageGroupIsPrivate = garbageOrder.GarbageGroup?.IsPrivate ?? false,
             Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
             {
                 UserId = x.UserId,
