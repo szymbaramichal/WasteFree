@@ -38,9 +38,9 @@ public static class GarbageOrderEndpoints
         app.MapPost("/garbage-group/{groupId:guid}/orders/filter", GetGarbageOrdersAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
-            .Produces<Result<ICollection<GarbageOrderDto>>>()
+            .Produces<PaginatedResult<ICollection<GarbageOrderDto>>>()
             .WithTags("GarbageOrders")
-            .WithDescription("Get garbage orders for the group.");
+            .WithDescription("Get garbage orders for the group with pagination support.");
 
         app.MapPost("/garbage-group/{groupId:guid}/order/{orderId:guid}/payment", PayGarbageOrderAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
@@ -53,10 +53,10 @@ public static class GarbageOrderEndpoints
         app.MapGet("/garbage-orders/my", GetUserGarbageOrdersAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
-            .Produces<Result<ICollection<GarbageOrderDto>>>()
+            .Produces<PaginatedResult<ICollection<GarbageOrderDto>>>()
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
-            .WithDescription("Get garbage orders for the current user.");
+            .WithDescription("Get garbage orders for the current user with pagination support.");
     }
 
     /// <summary>
@@ -137,9 +137,11 @@ public static class GarbageOrderEndpoints
         IStringLocalizer stringLocalizer,
         CancellationToken cancellationToken)
     {
+        var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
         var query = new GetGarbageOrdersQuery(
             groupId,
             currentUserService.UserId,
+            pager,
             request.FromDate,
             request.ToDate,
             request.Statuses);
@@ -159,12 +161,15 @@ public static class GarbageOrderEndpoints
     /// Get garbage orders where the authenticated user participates.
     /// </summary>
     private static async Task<IResult> GetUserGarbageOrdersAsync(
+        [FromQuery] int pageNumber,
+        [FromQuery] int pageSize,
         ICurrentUserService currentUserService,
         IMediator mediator,
         IStringLocalizer stringLocalizer,
         CancellationToken cancellationToken)
     {
-        var query = new GetUserGarbageOrdersQuery(currentUserService.UserId);
+        var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
+        var query = new GetUserGarbageOrdersQuery(currentUserService.UserId, pager);
 
         var result = await mediator.SendAsync(query, cancellationToken);
 
