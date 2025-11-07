@@ -1,8 +1,11 @@
 export interface Result<T> {
-    resultModel: T;
-    errorCode: string;
-    errorMessage: string;
-    pager?: Pager;
+    resultModel: T | null;
+    errorCode: string | null;
+    errorMessage: string | null;
+}
+
+export interface PaginatedResult<T> extends Result<T> {
+    pager: Pager | null;
 }
 
 export interface Pager {

@@ -1,0 +1,127 @@
+<div class="container-fluid px-3 order-details">
+  <div class="order-details__header">
+    <button
+      type="button"
+      class="btn btn-link order-details__back"
+      (click)="navigateBack()"
+      [attr.aria-label]="'common.back' | translate"
+    >
+      <i class="bi bi-arrow-left" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div *ngIf="loading()" class="order-details__loading">
+    <div class="spinner-border" role="status" aria-hidden="true"></div>
+    <div class="small text-muted">{{ 'myPickups.loading' | translate }}</div>
+  </div>
+
+  <div *ngIf="!loading() && error()" class="alert alert-danger" role="alert">
+    {{ error() }}
+  </div>
+
+  <ng-container *ngIf="!loading() && !error() && order() as detail">
+    <div class="card order-details__card border-0 shadow-lg">
+      <div class="card-body p-4 p-md-5">
+        <header class="order-details__heading">
+          <div>
+            <h1 class="h4 mb-1">{{ 'myPickups.details.title' | translate }} #{{ orderCode(detail) }}</h1>
+            <p class="text-muted small mb-0">{{ 'myPickups.details.subtitle' | translate }}</p>
+          </div>
+          <span
+            *ngIf="detail.garbageOrderStatus !== orderStatus.WaitingForUtilizationFee"
+            [class]="statusClass(detail.garbageOrderStatus)"
+          >
+            {{ statusTranslationKey(detail.garbageOrderStatus) | translate }}
+          </span>
+        </header>
+
+        <section class="order-details__section">
+          <h2 class="h6 text-uppercase fw-semibold small mb-3">{{ 'myPickups.details.summary.title' | translate }}</h2>
+          <dl class="row small mb-0">
+            <div class="col-md-6 mb-3">
+              <dt class="text-muted">{{ 'myPickups.details.summary.pickupDate' | translate }}</dt>
+              <dd class="fw-semibold">{{ detail.pickupDate | date:'fullDate' }} • {{ detail.pickupDate | date:'shortTime' }}</dd>
+            </div>
+            <div class="col-md-6 mb-3">
+              <dt class="text-muted">{{ 'myPickups.details.summary.pickupType' | translate }}</dt>
+              <dd class="fw-semibold">{{ pickupOptionKey(detail.pickupOption) | translate }}</dd>
+            </div>
+            <div class="col-md-6 mb-3">
+              <dt class="text-muted">{{ 'myPickups.details.summary.cost' | translate }}</dt>
+              <dd class="fw-semibold">{{ detail.cost | number:'1.2-2' }} PLN</dd>
+            </div>
+            <div class="col-md-6 mb-3">
+              <dt class="text-muted">{{ 'myPickups.details.summary.group' | translate }}</dt>
+              <dd class="fw-semibold">
+                <a class="group-link" [routerLink]="['/portal/groups', detail.garbageGroupId]">
+                  <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
+                  <span class="group-link__label">{{ detail.garbageGroupName || '—' }}</span>
+                </a>
+              </dd>
+            </div>
+            <div class="col-md-6 mb-3" *ngIf="detail.collectingService">
+              <dt class="text-muted">{{ 'myPickups.details.summary.collectingService' | translate }}</dt>
+              <dd class="fw-semibold">{{ 'common.yes' | translate }}</dd>
+            </div>
+            <div class="col-md-6 mb-3" *ngIf="detail.isHighPriority">
+              <dt class="text-muted">{{ 'myPickups.details.summary.highPriority' | translate }}</dt>
+              <dd class="fw-semibold">{{ 'myPickups.details.summary.priorityLabel' | translate }}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="order-details__section order-details__payment">
+          <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+              <h2 class="h6 text-uppercase fw-semibold small mb-2">{{ 'myPickups.details.payment.title' | translate }}</h2>
+              <p class="small mb-0" *ngIf="!hasAcceptedPayment()">
+                {{ 'myPickups.details.payment.pending' | translate:{ amount: pickupShareAmount() | number:'1.2-2' } }}
+              </p>
+              <p class="small text-success mb-0" *ngIf="hasAcceptedPayment()">
+                {{ 'myPickups.details.payment.accepted' | translate }}
+              </p>
+            </div>
+            <button
+              type="button"
+              class="btn btn-success btn-elevated"
+              (click)="payForOrder()"
+              [disabled]="!canPay() || paying()"
+            >
+              <span *ngIf="paying()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{ 'myPickups.details.payCta' | translate }}</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="order-details__section">
+          <h2 class="h6 text-uppercase fw-semibold small mb-3">{{ 'myPickups.details.participants.title' | translate }}</h2>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'myPickups.details.participants.user' | translate }}</th>
+                  <th scope="col" class="text-end">{{ 'myPickups.details.participants.share' | translate }}</th>
+                  <th scope="col" class="text-end">{{ 'myPickups.details.participants.payment' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="detail.users.length; else noParticipants">
+                <tr *ngFor="let user of detail.users">
+                  <td><span class="fw-semibold">{{ user.userId }}</span></td>
+                  <td class="text-end">{{ user.shareAmount | number:'1.2-2' }} PLN</td>
+                  <td class="text-end">
+                    <span class="badge" [ngClass]="user.hasAcceptedPayment ? 'bg-success' : 'bg-warning text-dark'">
+                      {{ user.hasAcceptedPayment ? ('myPickups.details.participants.paid' | translate) : ('myPickups.details.participants.pending' | translate) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-template #noParticipants>
+            <div class="alert alert-info small mb-0">{{ 'myPickups.details.participants.empty' | translate }}</div>
+          </ng-template>
+        </section>
+      </div>
+    </div>
+  </ng-container>
+</div>

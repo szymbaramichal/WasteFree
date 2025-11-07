@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { environment } from 'environments/environment';
-import { Result } from '@app/_models/result';
+import { PaginatedResult, Result } from '@app/_models/result';
 import { GroupChatConnectionState, GroupChatMessage } from '@app/_models/group-chat';
 
 @Injectable({ providedIn: 'root' })
@@ -24,12 +24,12 @@ export class GroupChatService {
 
   private readonly apiUrl = `${environment.apiUrl}/garbage-groups`;
 
-  fetchMessages(groupId: string, pageNumber: number, pageSize: number): Observable<Result<GroupChatMessage[]>> {
+  fetchMessages(groupId: string, pageNumber: number, pageSize: number): Observable<PaginatedResult<GroupChatMessage[]>> {
     const params = new HttpParams()
       .set('pageNumber', String(Math.max(1, pageNumber)))
       .set('pageSize', String(Math.max(1, pageSize)));
 
-    return this.http.get<Result<GroupChatMessage[]>>(
+  return this.http.get<PaginatedResult<GroupChatMessage[]>>(
       `${this.apiUrl}/${encodeURIComponent(groupId)}/chat/messages`,
       { params }
     );

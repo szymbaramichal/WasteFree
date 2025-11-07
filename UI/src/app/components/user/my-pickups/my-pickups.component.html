@@ -26,6 +26,10 @@
         <div class="small text-muted">{{ 'myPickups.loading' | translate }}</div>
       </div>
 
+      <div class="alert alert-danger m-3" *ngIf="!loading() && error()" role="alert">
+        {{ error() }}
+      </div>
+
       <ng-container *ngIf="!loading()">
         <ng-container *ngIf="pickups().length; else emptyState">
           <div class="my-pickups__filters">
@@ -78,30 +82,30 @@
                 <tbody>
                   <tr *ngFor="let pickup of paginatedPickups(); trackBy: trackByOrder">
                     <td>
-                      <span class="order-number">#{{ pickup.orderNumber }}</span>
+                      <span class="order-number">#{{ orderCode(pickup) }}</span>
                     </td>
                     <td>
-                      <a class="group-link" [routerLink]="['/portal/groups', pickup.groupId]">
+                      <a class="group-link" [routerLink]="['/portal/groups', pickup.garbageGroupId]">
                         <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
-                        <span class="group-link__label">{{ pickup.groupName }}</span>
+                        <span class="group-link__label">{{ pickup.garbageGroupName || '—' }}</span>
                       </a>
                     </td>
                     <td>
-                      <span [class]="statusClass(pickup.status)">
-                        {{ statusTranslationKey(pickup.status) | translate }}
+                      <span [class]="statusClass(pickup.garbageOrderStatus)">
+                        {{ statusTranslationKey(pickup.garbageOrderStatus) | translate }}
                       </span>
                     </td>
                     <td>
-                      <span class="fw-semibold">{{ pickup.serviceCost | number:'1.2-2' }} PLN</span>
+                      <span class="fw-semibold">{{ pickup.cost | number:'1.2-2' }} PLN</span>
                     </td>
                     <td>
-                      {{ pickup.collectDate | date:'yyyy-MM-dd' }} • {{ pickup.collectDate | date:'HH:mm' }}
+                      {{ pickup.pickupDate | date:'yyyy-MM-dd' }} • {{ pickup.pickupDate | date:'HH:mm' }}
                     </td>
                     <td>
                       <span class="option-chip">{{ pickupOptionKey(pickup.pickupOption) | translate }}</span>
                     </td>
                     <td class="text-end">
-                      <button type="button" class="btn pickup-details-btn" disabled>
+                      <button type="button" class="btn pickup-details-btn" (click)="openDetails(pickup)">
                         <span>{{ 'myPickups.actions.viewDetails' | translate }}</span>
                         <i class="bi bi-arrow-right-circle" aria-hidden="true"></i>
                       </button>

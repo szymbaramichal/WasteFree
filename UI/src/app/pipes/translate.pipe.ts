@@ -20,8 +20,16 @@ export class TranslatePipe implements PipeTransform, OnDestroy {
     });
   }
 
-  transform(key: string): string {
-    return this.t.translate(key);
+  transform(key: string, params?: Record<string, unknown>): string {
+    const base = this.t.translate(key);
+    if (!params || typeof base !== 'string') {
+      return base;
+    }
+
+    return base.replace(/\{\s*(\w+)\s*\}/g, (_match, token) => {
+      const value = params[token];
+      return value === undefined || value === null ? '' : String(value);
+    });
   }
 
   ngOnDestroy(): void {

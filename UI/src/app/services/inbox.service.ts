@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Result, Pager } from '../_models/result';
+import { PaginatedResult, Result, Pager } from '../_models/result';
 import { Counter, NotificationItem } from '../_models/inbox';
 
 @Injectable({ providedIn: 'root' })
@@ -48,7 +48,10 @@ export class InboxService {
     }
 
     refreshCounter() {
-        this.http.get<Result<Counter>>(this.apiUrl + '/inbox/counter').subscribe(count => this.setCounter(count.resultModel.unreadMessages));
+        this.http.get<Result<Counter>>(this.apiUrl + '/inbox/counter').subscribe((count) => {
+            const unread = count.resultModel?.unreadMessages ?? 0;
+            this.setCounter(unread);
+        });
     }
 
     fetchNotifications(pageNumber: number = 1, pageSize: number = 10) {
@@ -56,12 +59,14 @@ export class InboxService {
         this._error.set(null);
 
         const params = `?pageNumber=${encodeURIComponent(pageNumber)}&pageSize=${encodeURIComponent(pageSize)}`;
-        this.http.get<Result<NotificationItem[]>>(this.apiUrl + '/inbox/messages' + params)
+        this.http.get<PaginatedResult<NotificationItem[]>>(this.apiUrl + '/inbox/messages' + params)
             .subscribe({
                 next: list => {
-                    this._notifications.set(list.resultModel);
+                    const notifications = list.resultModel ?? [];
+                    this._notifications.set(notifications);
                     this._pager.set(list.pager ?? null);
-                    this.setCounter(list.pager?.totalCount ?? 0);
+                    const total = list.pager?.totalCount ?? notifications.length;
+                    this.setCounter(total);
                     this._loading.set(false);
                 }
             });

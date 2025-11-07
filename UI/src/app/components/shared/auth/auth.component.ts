@@ -105,9 +105,17 @@ export class AuthComponent {
       next: (res) => {
         this.showLoadingText = true;
 
-        this.applyAuthResult(res.resultModel);
+        const applied = this.applyAuthResult(res.resultModel);
+        success = applied;
 
-        success = true;
+        if (!applied) {
+          this.finishLoading(start, success, () => {
+            this.isLoading = false;
+            this.showLoadingText = false;
+          });
+          return;
+        }
+
         this.finishLoading(start, success, () => {
           this.isLoading = false;
           this.showLoadingText = false;
@@ -140,7 +148,7 @@ export class AuthComponent {
         this.showRegisterLoadingText = true;
         this.showActivationSection = true;
         success = true;
-        
+
         this.finishLoading(start, success, () => {
           this.isRegisterLoading = false;
           this.showRegisterLoadingText = false;
@@ -170,7 +178,10 @@ export class AuthComponent {
     setTimeout(done, wait);
   }
 
-  private applyAuthResult(res: User) {
+  private applyAuthResult(res: User | null): boolean {
+    if (!res) {
+      return false;
+    }
     const token = res.token;
 
     if (token) {
@@ -185,8 +196,10 @@ export class AuthComponent {
         acceptedConsents: res.acceptedConsents,
         avatarUrl: res.avatarUrl ?? null
       });
-      return;
+      return true;
     }
+
+    return false;
   }
 
   private mapLangForControl(lang: string | undefined): 'English' | 'Polish' {
