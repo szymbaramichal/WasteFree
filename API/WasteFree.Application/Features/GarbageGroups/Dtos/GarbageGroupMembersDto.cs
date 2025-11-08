@@ -13,6 +13,11 @@ public class GarbageGroupMembersDto
     public Guid GroupId { get; set; }
 
     /// <summary>
+    /// Group id
+    /// </summary>
+    public required string GroupName { get; set; }
+
+    /// <summary>
     /// Garbage group users collection
     /// </summary>
     public required ICollection<GarbageGroupUserDto> GroupUsers { get; set; }
