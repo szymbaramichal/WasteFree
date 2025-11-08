@@ -13,7 +13,7 @@ import { Pager, Result } from '@app/_models/result';
 interface PortalPickupItem {
   id: string;
   orderNumber: string;
-  groupId: string | null;
+  groupId: string;
   groupName: string;
   status: PickupStatusKey;
   cost: number;
@@ -33,7 +33,7 @@ type PickupStatusKey =
   | 'cancelled';
 
 type StatusFilter = PortalPickupItem['status'] | 'all';
-type GroupFilter = NonNullable<PortalPickupItem['groupId']> | 'all';
+type GroupFilter = PortalPickupItem['groupId'] | 'all';
 
 const STATUS_VALUE_TO_KEY: Record<number, PickupStatusKey> = {
   0: 'waitingForPayment',
@@ -78,8 +78,7 @@ export class MyPickupsComponent implements OnInit {
     const groupFilter = this.groupFilter();
     return this.pickups().filter((pickup) => {
       const matchesStatus = statusFilter === 'all' || pickup.status === statusFilter;
-      const matchesGroup =
-        groupFilter === 'all' || (pickup.groupId !== null && pickup.groupId === groupFilter);
+      const matchesGroup = groupFilter === 'all' || pickup.groupId === groupFilter;
       return matchesStatus && matchesGroup;
     });
   });
@@ -239,27 +238,18 @@ export class MyPickupsComponent implements OnInit {
         }),
         finalize(() => this.loading.set(false))
       )
-      .subscribe({
-        next: (payload: { items: MyPickupDto[]; pager?: Pager }) => {
-          const mapped = payload.items.map((item) => this.toPortalPickup(item));
-          this.pickups.set(mapped);
-          this.totalCount.set(payload.pager?.totalCount ?? mapped.length);
-          this.currentPage.set(1);
+      .subscribe((payload: { items: MyPickupDto[]; pager?: Pager }) => {
+        const mapped = payload.items.map((item) => this.toPortalPickup(item));
+        this.pickups.set(mapped);
+        this.totalCount.set(payload.pager?.totalCount ?? mapped.length);
+        this.currentPage.set(1);
 
-          const uniqueStatuses: PickupStatusKey[] = Array.from(
-            new Set(mapped.map((item) => item.status))
-          );
-          this.statusOptions.set(uniqueStatuses);
-          const currentStatus = this.statusFilter();
-          if (currentStatus !== 'all' && !uniqueStatuses.includes(currentStatus)) {
-            this.statusFilter.set('all');
-          }
-        },
-        error: (err) => {
-          console.error('Failed to load pickups', err);
-          this.totalCount.set(0);
-          this.pickups.set([]);
-          this.statusOptions.set([]);
+        const uniqueStatuses: PickupStatusKey[] = Array.from(
+          new Set(mapped.map((item) => item.status))
+        );
+        this.statusOptions.set(uniqueStatuses);
+        const currentStatus = this.statusFilter();
+        if (currentStatus !== 'all' && !uniqueStatuses.includes(currentStatus)) {
           this.statusFilter.set('all');
         }
       });
@@ -268,8 +258,8 @@ export class MyPickupsComponent implements OnInit {
   private toPortalPickup(dto: MyPickupDto): PortalPickupItem {
     const status = STATUS_VALUE_TO_KEY[dto.garbageOrderStatus] ?? 'waitingForPayment';
     const pickupOption = PICKUP_OPTION_VALUE_TO_KEY[dto.pickupOption] ?? 'pickup';
-    const groupName = dto.garbageGroupName?.trim() || UNKNOWN_GROUP_NAME;
-    const groupId = dto.garbageGroupId?.trim() || null;
+  const groupName = dto.garbageGroupName?.trim() || UNKNOWN_GROUP_NAME;
+  const groupId = (dto.garbageGroupId ?? '').trim() || 'unknown-group';
     const pickupDate = dto.pickupDate ?? dto.dropOffDate;
     const cost = typeof dto.cost === 'number' && Number.isFinite(dto.cost) ? dto.cost : 0;
     return {
