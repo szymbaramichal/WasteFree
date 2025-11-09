@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using WasteFree.Domain.Interfaces;
 using WasteFree.Domain.Models;
 using WasteFree.Infrastructure.Options;
@@ -139,6 +140,19 @@ public class NominatimGeocodingService : IGeocodingService
     }
 
     private sealed record NominatimSearchResponse(
-        [property: JsonPropertyName("lat")] string Lat,
-        [property: JsonPropertyName("lon")] string Lon);
+        [property: JsonProperty("place_id")] int PlaceId,
+        [property: JsonProperty("licence")] string Licence,
+        [property: JsonProperty("osm_type")] string OsmType,
+        [property: JsonProperty("osm_id")] int OsmId,
+        [property: JsonProperty("lat")] string Lat,
+        [property: JsonProperty("lon")] string Lon,
+        [property: JsonProperty("class")] string Class,
+        [property: JsonProperty("type")] string Type,
+        [property: JsonProperty("place_rank")] int PlaceRank,
+        [property: JsonProperty("importance")] double Importance,
+        [property: JsonProperty("addresstype")] string Addresstype,
+        [property: JsonProperty("name")] string Name,
+        [property: JsonProperty("display_name")] string DisplayName,
+        [property: JsonProperty("boundingbox")] IReadOnlyList<string> Boundingbox
+    );
 }

@@ -15,7 +15,7 @@ public class UserSeeder(ApplicationDataContext context)
     {
         using var hmac = new HMACSHA512();
         var passwordSalt = hmac.Key;
-        var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Kwakwa5!"));
+        var passwordHash = hmac.ComputeHash("Kwakwa5!"u8.ToArray());
 
         var users = new[]
         {
@@ -162,12 +162,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Id = Guid.CreateVersion7(),
                 Name = $"{existingUser.Username} Private Group",
                 Description = $"Private garbage group for {existingUser.Username}",
-                Address = new Address
-                {
-                    City = existingUser.Address.City,
-                    PostalCode = string.Empty,
-                    Street = string.Empty
-                },
+                Address = existingUser.Address,
                 IsPrivate = true
             };
 
