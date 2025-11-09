@@ -1,12 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Net.Http.Headers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Extensions.Http;
 using TickerQ.Dashboard.DependencyInjection;
 using TickerQ.DependencyInjection;
 using TickerQ.EntityFrameworkCore.DependencyInjection;
 using WasteFree.Infrastructure.Seeders;
 using WasteFree.Infrastructure.Services;
 using WasteFree.Domain.Interfaces;
+using WasteFree.Infrastructure.Options;
 
 namespace WasteFree.Infrastructure.Extensions;
 
@@ -18,6 +23,36 @@ public static class ServiceCollectionExtension
         services.AddDbContext<ApplicationDataContext>(opt => {
             opt.UseSqlite(connectionString);
         });
+
+        services.Configure<NominatimOptions>(configuration.GetSection("Integrations:Nominatim"));
+
+        services.AddHttpClient<IGeocodingService, NominatimGeocodingService>((sp, client) =>
+        {
+            var options = sp.GetRequiredService<IOptions<NominatimOptions>>().Value;
+
+            var baseUrl = string.IsNullOrWhiteSpace(options.BaseUrl)
+                ? "https://nominatim.openstreetmap.org/"
+                : options.BaseUrl;
+
+            baseUrl = baseUrl.EndsWith('/') ? baseUrl : baseUrl + "/";
+
+            client.BaseAddress = new Uri(baseUrl);
+
+            var userAgent = string.IsNullOrWhiteSpace(options.UserAgent)
+                ? "WasteFree/1.0 (+https://wastefreecloud.pl)"
+                : options.UserAgent;
+
+            client.DefaultRequestHeaders.UserAgent.ParseAdd(userAgent);
+
+            if (!string.IsNullOrWhiteSpace(options.ContactEmail))
+            {
+                client.DefaultRequestHeaders.From = options.ContactEmail;
+            }
+
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        })
+        .AddPolicyHandler(CreateGeocodingRetryPolicy());
 
         services.AddTickerQ(opt =>
         {
@@ -76,4 +111,10 @@ public static class ServiceCollectionExtension
         return services;
     }
 
+    private static IAsyncPolicy<HttpResponseMessage> CreateGeocodingRetryPolicy()
+    {
+        return HttpPolicyExtensions
+            .HandleTransientHttpError()
+            .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+    }
 }

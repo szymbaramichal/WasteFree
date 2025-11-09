@@ -18,4 +18,19 @@ public class Address
     /// Street of location
     /// </summary>
     [MaxLength(100)] public string Street { get; set; } = null!;
+
+    /// <summary>
+    /// Latitude coordinate resolved via geocoding service
+    /// </summary>
+    public double? Latitude { get; set; }
+
+    /// <summary>
+    /// Longitude coordinate resolved via geocoding service
+    /// </summary>
+    public double? Longitude { get; set; }
+    
+    public override string ToString()
+    {
+        return $"{Street}, {PostalCode} {City}";
+    }
 }
