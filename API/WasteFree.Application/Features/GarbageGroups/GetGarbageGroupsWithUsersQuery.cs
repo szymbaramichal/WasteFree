@@ -28,7 +28,8 @@ public class GetGarbageGroupsWithUsersQueryHandler(ApplicationDataContext contex
                 GroupId = group.Id,
                 GroupUsers = group.UserGarbageGroups.MapToGarbageGroupUserDto(),
                 IsPrivate = group.IsPrivate,
-                Address = group.Address
+                Address = group.Address,
+                GroupName = group.Name
             })
             .ToList();
 
