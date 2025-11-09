@@ -4,7 +4,9 @@
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
         <div class="card-heading">
           <div class="card-heading__icon card-heading__icon--list">
-            <img src="/assets/images/pickup.svg" alt="" aria-hidden="true" />
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75V3a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 3v.75M4.5 6h15M6 6v14.25A1.5 1.5 0 0 0 7.5 21.75h9a1.5 1.5 0 0 0 1.5-1.5V6M10 10.5v7.5M14 10.5v7.5" />
+            </svg>
           </div>
           <div>
             <h5 class="mb-1 fw-bold">{{ 'myPickups.title' | translate }}</h5>
@@ -14,7 +16,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="me-2 small summary-pill">
             <div class="fw-semibold">{{ 'myPickups.total' | translate }}</div>
-            <div class="fs-5 lh-1">{{ pickups().length }}</div>
+            <div class="fs-5 lh-1">{{ totalCount() }}</div>
           </div>
         </div>
       </div>
@@ -43,7 +45,7 @@
                 [attr.aria-label]="'myPickups.filters.status.label' | translate"
               >
                 <option value="all">{{ 'myPickups.filters.status.all' | translate }}</option>
-                <option *ngFor="let status of statusOptions" [value]="status">
+                <option *ngFor="let status of statusOptions()" [value]="status">
                   {{ statusTranslationKey(status) | translate }}
                 </option>
               </select>
@@ -85,10 +87,18 @@
                       <span class="order-number">#{{ orderCode(pickup) }}</span>
                     </td>
                     <td>
-                      <a class="group-link" [routerLink]="['/portal/groups', pickup.garbageGroupId]">
-                        <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
-                        <span class="group-link__label">{{ pickup.garbageGroupName || '—' }}</span>
-                      </a>
+                      <ng-container *ngIf="pickup.groupId; else groupNameOnly">
+                        <a class="group-link" [routerLink]="['/portal/groups', pickup.groupId]">
+                          <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
+                          <span class="group-link__label">{{ pickup.groupName }}</span>
+                        </a>
+                      </ng-container>
+                      <ng-template #groupNameOnly>
+                        <span class="group-link group-link--static">
+                          <i class="bi bi-people" aria-hidden="true"></i>
+                          <span class="group-link__label">{{ pickup.groupName }}</span>
+                        </span>
+                      </ng-template>
                     </td>
                     <td>
                       <span [class]="statusClass(pickup.garbageOrderStatus)">
@@ -99,7 +109,10 @@
                       <span class="fw-semibold">{{ pickup.cost | number:'1.2-2' }} PLN</span>
                     </td>
                     <td>
-                      {{ pickup.pickupDate | date:'yyyy-MM-dd' }} • {{ pickup.pickupDate | date:'HH:mm' }}
+                      <ng-container *ngIf="pickup.pickupDate; else noPickupDate">
+                        {{ pickup.pickupDate | date:'yyyy-MM-dd' }} • {{ pickup.pickupDate | date:'HH:mm' }}
+                      </ng-container>
+                      <ng-template #noPickupDate>--</ng-template>
                     </td>
                     <td>
                       <span class="option-chip">{{ pickupOptionKey(pickup.pickupOption) | translate }}</span>

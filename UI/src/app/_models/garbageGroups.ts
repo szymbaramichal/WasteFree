@@ -11,7 +11,7 @@ export interface GarbageGroup {
 };
 
 export interface GarbageGroupUser {
-    id: string; 
+    id: string;
     username: string;
     garbageGroupRole: GarbageGroupRole;
     isPending: boolean;
@@ -41,7 +41,15 @@ export interface UpdateGarbageGroupRequest {
 }
 
 export interface GarbageGroupInvitation {
-        groupId: string;
-        groupName: string;
-        invitingUsername: string;
+    groupId: string;
+    groupName: string;
+    invitingUsername: string;
+}
+
+export interface GarbageGroupWithUsers {
+    groupId: string;
+    groupName?: string | null;
+    groupUsers: GarbageGroupUser[];
+    isPrivate: boolean;
+    address: Address;
 }

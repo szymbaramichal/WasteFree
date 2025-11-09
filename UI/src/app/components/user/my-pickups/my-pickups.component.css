@@ -8,6 +8,7 @@
 .my-pickups .card-heading { display:flex; align-items:center; gap:.75rem; }
 .my-pickups .card-heading__icon { width:2.65rem; height:2.65rem; border-radius:.9rem; background:rgba(255,255,255,0.2); display:inline-flex; align-items:center; justify-content:center; font-size:1.35rem; box-shadow:0 8px 18px rgba(0,0,0,0.18); }
 .my-pickups .card-heading__icon img { width:24px; height:24px; filter:brightness(0) invert(1); }
+.my-pickups .card-heading__icon svg { width:24px; height:24px; stroke:#fff; }
 
 .my-pickups .summary-pill { padding:.55rem .85rem; border-radius:1rem; background:rgba(255,255,255,0.16); border:1px solid rgba(255,255,255,0.22); box-shadow:0 8px 20px rgba(0,0,0,0.12); display:flex; flex-direction:column; align-items:center; text-align:center; }
 .my-pickups .summary-pill .fw-semibold { text-transform:uppercase; letter-spacing:.12em; font-size:.68rem; opacity:.82; }
@@ -39,11 +40,17 @@
 .group-link:focus-visible { outline:2px solid rgba(13,110,253,0.35); outline-offset:2px; }
 .group-link .bi { font-size:.85rem; color:#0d6efd; }
 .group-link__label { line-height:1.2; }
+.group-link--static { color:#6c757d; cursor:default; }
+.group-link--static:hover { color:#6c757d; }
+.group-link--static:focus-visible { outline:none; }
+.group-link--static .bi { color:#adb5bd; }
 
 .status-chip { display:inline-flex; align-items:center; gap:.35rem; padding:.25rem .7rem; border-radius:999px; font-size:.78rem; font-weight:600; letter-spacing:.04em; text-transform:uppercase; border:1px solid transparent; }
 .status-pending { background:rgba(255,193,7,0.12); color:#b58107; border-color:rgba(255,193,7,0.35); }
 .status-scheduled { background:rgba(13,110,253,0.12); color:#0c63e4; border-color:rgba(13,110,253,0.28); }
 .status-completed { background:rgba(25,135,84,0.12); color:#198754; border-color:rgba(25,135,84,0.28); }
+.status-complained { background:rgba(220,53,69,0.12); color:#c93847; border-color:rgba(220,53,69,0.3); }
+.status-cancelled { background:rgba(108,117,125,0.12); color:#6c757d; border-color:rgba(108,117,125,0.3); }
 
 .option-chip { display:inline-flex; align-items:center; padding:.25rem .65rem; border-radius:.75rem; font-size:.78rem; font-weight:600; background:transparent; color:#1b2e44; border:none; }
 
