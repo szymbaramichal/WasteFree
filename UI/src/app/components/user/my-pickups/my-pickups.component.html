@@ -28,6 +28,10 @@
         <div class="small text-muted">{{ 'myPickups.loading' | translate }}</div>
       </div>
 
+      <div class="alert alert-danger m-3" *ngIf="!loading() && error()" role="alert">
+        {{ error()! | translate }}
+      </div>
+
       <ng-container *ngIf="!loading()">
         <ng-container *ngIf="pickups().length; else emptyState">
           <div class="my-pickups__filters">
@@ -80,7 +84,7 @@
                 <tbody>
                   <tr *ngFor="let pickup of paginatedPickups(); trackBy: trackByOrder">
                     <td>
-                      <span class="order-number">#{{ pickup.orderNumber }}</span>
+                      <span class="order-number">#{{ orderCode(pickup) }}</span>
                     </td>
                     <td>
                       <ng-container *ngIf="pickup.groupId; else groupNameOnly">
@@ -114,7 +118,7 @@
                       <span class="option-chip">{{ pickupOptionKey(pickup.pickupOption) | translate }}</span>
                     </td>
                     <td class="text-end">
-                      <button type="button" class="btn pickup-details-btn" disabled>
+                      <button type="button" class="btn pickup-details-btn" (click)="openDetails(pickup)">
                         <span>{{ 'myPickups.actions.viewDetails' | translate }}</span>
                         <i class="bi bi-arrow-right-circle" aria-hidden="true"></i>
                       </button>
