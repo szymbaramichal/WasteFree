@@ -29,7 +29,7 @@
       </div>
 
       <div class="alert alert-danger m-3" *ngIf="!loading() && error()" role="alert">
-        {{ error() }}
+        {{ error()! | translate }}
       </div>
 
       <ng-container *ngIf="!loading()">
@@ -101,8 +101,8 @@
                       </ng-template>
                     </td>
                     <td>
-                      <span [class]="statusClass(pickup.garbageOrderStatus)">
-                        {{ statusTranslationKey(pickup.garbageOrderStatus) | translate }}
+                      <span [class]="statusClass(pickup.status)">
+                        {{ statusTranslationKey(pickup.status) | translate }}
                       </span>
                     </td>
                     <td>
