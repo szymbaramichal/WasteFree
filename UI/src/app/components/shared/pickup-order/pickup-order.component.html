@@ -65,6 +65,180 @@
 							</div>
 						</ng-container>
 
+						<ng-container *ngSwitchCase="1">
+							<div class="participants-section">
+								<div class="participants-column">
+									<div class="participants-column__header">
+										<h6 class="mb-1">{{ 'pickupOrder.step.participants.groupsTitle' | translate }}</h6>
+										<p class="text-muted mb-0">{{ 'pickupOrder.step.participants.groupsLead' | translate }}</p>
+									</div>
+									<div
+										class="participants-groups"
+										role="radiogroup"
+										[attr.aria-busy]="loadingGroups()"
+									>
+										<div class="participants-state" *ngIf="loadingGroups()">
+											<div class="spinner-border spinner-border-sm text-success" role="status" aria-hidden="true"></div>
+											<span>{{ 'pickupOrder.step.participants.loading' | translate }}</span>
+										</div>
+										<ng-container *ngIf="!loadingGroups()">
+											<div class="participants-groups__section" *ngIf="individualGroup() as privateGroup">
+												<span class="participants-groups__label">{{ 'pickupOrder.step.participants.section.individual' | translate }}</span>
+												<button
+													type="button"
+													class="participants-group-card participants-group-card--private"
+													[class.participants-group-card--active]="privateGroup.id === selectedGroupId()"
+													(click)="onSelectGroup(privateGroup.id)"
+												>
+													<span class="participants-group-card__name">{{ 'pickupOrder.step.participants.privateGroup' | translate }}</span>
+													<span class="participants-group-card__meta">
+														{{ privateGroup.users.length }}
+														{{ 'pickupOrder.step.participants.membersSuffix' | translate }}
+													</span>
+												</button>
+											</div>
+											<div class="participants-groups__section" *ngIf="groups().length">
+												<span class="participants-groups__label">{{ 'pickupOrder.step.participants.section.groups' | translate }}</span>
+												<button
+													type="button"
+													class="participants-group-card"
+													*ngFor="let groupVm of groups(); trackBy: trackGroupById"
+													[class.participants-group-card--active]="groupVm.id === selectedGroupId()"
+													(click)="onSelectGroup(groupVm.id)"
+												>
+													<span class="participants-group-card__name">
+														{{ groupVm.name || ('pickupOrder.step.participants.unnamedGroup' | translate) }}
+													</span>
+													<span class="participants-group-card__meta">
+														{{ groupVm.users.length }}
+														{{ 'pickupOrder.step.participants.membersSuffix' | translate }}
+													</span>
+												</button>
+											</div>
+											<div class="participants-state participants-state--empty" *ngIf="!individualGroup() && !groups().length">
+												<span>{{ 'pickupOrder.step.participants.empty' | translate }}</span>
+											</div>
+										</ng-container>
+									</div>
+									<div class="form-text text-danger mt-2" *ngIf="groupIdCtrl.invalid && (groupIdCtrl.dirty || groupIdCtrl.touched)">
+										{{ 'pickupOrder.validation.group' | translate }}
+									</div>
+								</div>
+
+								<div class="participants-column">
+									<div class="participants-column__header">
+										<h6 class="mb-1">{{ 'pickupOrder.step.participants.usersTitle' | translate }}</h6>
+										<p class="text-muted mb-0">{{ 'pickupOrder.step.participants.usersLead' | translate }}</p>
+									</div>
+									<div class="participants-users" [attr.aria-live]="selectedGroupId() ? 'polite' : 'off'">
+										<div class="participants-state participants-state--hint" *ngIf="!selectedGroupId() && groups().length">
+											<span>{{ 'pickupOrder.step.participants.noGroupSelected' | translate }}</span>
+										</div>
+										<div class="participants-state participants-state--empty" *ngIf="selectedGroupId() && !selectedGroupUsers().length">
+											<span>{{ 'pickupOrder.step.participants.noUsers' | translate }}</span>
+										</div>
+										<ul class="participants-users__list" *ngIf="selectedGroupId() && selectedGroupUsers().length">
+											<li
+												class="participants-users__item"
+												*ngFor="let user of selectedGroupUsers(); trackBy: trackUserById"
+											>
+												<label class="participants-users__label" [class.participants-users__label--disabled]="user.disabled">
+													<input
+														type="checkbox"
+														class="form-check-input"
+														[disabled]="user.disabled"
+														[checked]="participantIdsCtrl.value?.includes(user.id)"
+														(change)="onToggleParticipant(user.id, $any($event.target).checked)"
+													/>
+													<div class="participants-users__details">
+														<span class="participants-users__name">{{ user.username }}</span>
+														<small class="text-muted">{{ groupRoleKey(user.role) | translate }}</small>
+													</div>
+													<span class="participants-users__badge" *ngIf="user.disabled">{{ 'pickupOrder.step.participants.pending' | translate }}</span>
+												</label>
+											</li>
+										</ul>
+										<div class="participants-state participants-state--hint" *ngIf="selectedGroupId() && selectedGroupUsers().length && !hasSelectableParticipants()">
+											<span>{{ 'pickupOrder.step.participants.allPending' | translate }}</span>
+										</div>
+									</div>
+									<div class="form-text text-danger mt-2" *ngIf="participantIdsCtrl.invalid && (participantIdsCtrl.dirty || participantIdsCtrl.touched)">
+										{{ 'pickupOrder.validation.participants' | translate }}
+									</div>
+								</div>
+							</div>
+						</ng-container>
+
+						<ng-container *ngSwitchCase="2">
+							<div class="row g-4 address-step">
+								<div class="col-lg-5">
+									<div class="address-card h-100">
+										<h6 class="mb-1">{{ 'pickupOrder.step.address.selectedGroupTitle' | translate }}</h6>
+										<p class="text-muted mb-3">{{ 'pickupOrder.step.address.selectedGroupLead' | translate }}</p>
+										<ng-container *ngIf="selectedGroup() as group; else noGroupAddress">
+											<div class="address-card__group-name">
+												{{ group.isPrivate ? ('pickupOrder.step.participants.privateGroup' | translate) : (group.name || ('pickupOrder.step.participants.unnamedGroup' | translate)) }}
+											</div>
+											<div class="address-card__address">
+												<span>{{ group.address.street }}</span>
+												<span>{{ group.address.postalCode }} {{ group.address.city }}</span>
+											</div>
+										</ng-container>
+										<ng-template #noGroupAddress>
+											<div class="address-card__empty">
+												{{ 'pickupOrder.step.address.noGroup' | translate }}
+											</div>
+										</ng-template>
+									</div>
+								</div>
+								<div class="col-lg-7">
+									<div class="address-card h-100">
+										<h6 class="mb-1">{{ 'pickupOrder.step.address.scheduleTitle' | translate }}</h6>
+										<p class="text-muted mb-3">{{ 'pickupOrder.step.address.scheduleLead' | translate }}</p>
+										<div class="row g-3">
+											<div class="col-md-6">
+												<label class="form-label" for="pickupDate">{{ 'pickupOrder.step.address.dateLabel' | translate }}</label>
+												<input
+													type="date"
+													id="pickupDate"
+													class="form-control"
+													formControlName="pickupDate"
+													[min]="minPickupDate"
+												/>
+												<div
+													class="form-text text-danger"
+													*ngIf="pickupDateCtrl.invalid && (pickupDateCtrl.dirty || pickupDateCtrl.touched)"
+												>
+													{{ 'pickupOrder.validation.date' | translate }}
+												</div>
+												<small class="text-muted d-block mt-1">
+													{{ 'pickupOrder.step.address.dateHint' | translate }}
+												</small>
+											</div>
+											<div class="col-md-6">
+												<label class="form-label" for="pickupTime">{{ 'pickupOrder.step.address.timeLabel' | translate }}</label>
+												<input
+													type="time"
+													id="pickupTime"
+													class="form-control"
+													formControlName="pickupTime"
+												/>
+												<div
+													class="form-text text-danger"
+													*ngIf="pickupTimeCtrl.invalid && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)"
+												>
+													{{ 'pickupOrder.validation.time' | translate }}
+												</div>
+												<small class="text-muted d-block mt-1">
+													{{ 'pickupOrder.step.address.timeHint' | translate }}
+												</small>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</ng-container>
+
 						<ng-container *ngSwitchDefault>
 							<div class="placeholder-step text-center py-5">
 								<h3 class="h5 mb-2" *ngIf="currentStepConfig().placeholderTitleKey as titleKey">{{ titleKey | translate }}</h3>
