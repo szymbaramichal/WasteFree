@@ -1,9 +1,12 @@
 import { CommonModule, SlicePipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { GarbageGroup, GarbageGroupInfo, GarbageGroupRole, UpdateGarbageGroupRequest } from '@app/_models/garbageGroups';
+import { GarbageOrderDto, GarbageOrderStatus } from '@app/_models/garbage-orders';
+import { PaginatedResult, Pager } from '@app/_models/result';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
+import { GarbageOrderService } from '@app/services/garbage-order.service';
 import { TranslationService } from '@app/services/translation.service';
 import { ToastrService } from 'ngx-toastr';
 import { CurrentUserService } from '@app/services/current-user.service';
@@ -15,6 +18,39 @@ import { GroupChatComponent } from './group-chat/group-chat.component';
 
 type GroupPanelTab = 'details' | 'pickups' | 'chat';
 
+interface GroupPickupRow {
+  id: string;
+  orderNumber: string;
+  pickupDate: string | null;
+  status: GarbageOrderStatus;
+}
+
+const GROUP_PICKUPS_PAGE_SIZE = 30;
+
+const GROUP_PICKUP_STATUS_TO_KEY: Record<GarbageOrderStatus, string> = {
+  [GarbageOrderStatus.WaitingForPayment]: 'myPickups.status.waitingForPayment',
+  [GarbageOrderStatus.WaitingForAccept]: 'myPickups.status.waitingForAccept',
+  [GarbageOrderStatus.WaitingForPickup]: 'myPickups.status.waitingForPickup',
+  [GarbageOrderStatus.WaitingForUtilizationFee]: 'myPickups.status.waitingForUtilizationFee',
+  [GarbageOrderStatus.Completed]: 'myPickups.status.completed',
+  [GarbageOrderStatus.Complained]: 'myPickups.status.complained',
+  [GarbageOrderStatus.Resolved]: 'myPickups.status.resolved',
+  [GarbageOrderStatus.Cancelled]: 'myPickups.status.cancelled'
+};
+
+const GROUP_PICKUP_STATUS_TO_CLASS: Record<GarbageOrderStatus, string> = {
+  [GarbageOrderStatus.Completed]: 'status-chip status-completed',
+  [GarbageOrderStatus.WaitingForPickup]: 'status-chip status-scheduled',
+  [GarbageOrderStatus.WaitingForAccept]: 'status-chip status-scheduled',
+  [GarbageOrderStatus.WaitingForPayment]: 'status-chip status-scheduled',
+  [GarbageOrderStatus.WaitingForUtilizationFee]: 'status-chip status-scheduled',
+  [GarbageOrderStatus.Resolved]: 'status-chip status-scheduled',
+  [GarbageOrderStatus.Complained]: 'status-chip status-complained',
+  [GarbageOrderStatus.Cancelled]: 'status-chip status-cancelled'
+};
+
+const ORDER_NUMBER_SANITIZE_REGEX = /[^a-zA-Z0-9]/g;
+
 @Component({
   selector: 'app-group-panel',
   standalone: true,
@@ -24,7 +60,9 @@ type GroupPanelTab = 'details' | 'pickups' | 'chat';
 })
 export class GroupPanelComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private groupService = inject(GarbageGroupService);
+  private garbageOrderService = inject(GarbageOrderService);
   private t = inject(TranslationService);
   private toastr = inject(ToastrService);
   private currentUser = inject(CurrentUserService);
@@ -43,6 +81,15 @@ export class GroupPanelComponent implements OnInit {
   citiesLoading = false;
   citiesLoadError = false;
   activeTab: GroupPanelTab = 'details';
+  private currentGroupId: string | null = null;
+
+  readonly groupOrdersPageSize = GROUP_PICKUPS_PAGE_SIZE;
+  groupOrdersLoading = false;
+  groupOrdersError: string | null = null;
+  groupOrdersLoaded = false;
+  groupOrders: GarbageOrderDto[] = [];
+  groupPickups: GroupPickupRow[] = [];
+  groupOrdersPager: Pager | null = null;
 
   private addressGroup: FormGroup = buildAddressFormGroup(this.fb);
   groupForm: FormGroup = this.fb.group({
@@ -74,6 +121,7 @@ export class GroupPanelComponent implements OnInit {
         this.group = resolved;
         this.error = null;
         this.loading = false;
+        this.onGroupChanged(resolved);
         this.syncFormWithGroup(resolved, true);
         return;
       }
@@ -89,6 +137,7 @@ export class GroupPanelComponent implements OnInit {
           users: [],
           address: { city: '', postalCode: '', street: '' }
         } as GarbageGroup;
+        this.onGroupChanged(this.group);
         this.syncFormWithGroup(this.group, true);
       }
       if (!id) {
@@ -108,6 +157,10 @@ export class GroupPanelComponent implements OnInit {
       next: (res: { resultModel: GarbageGroup | null }) => {
         this.group = res.resultModel ?? null;
         this.loading = false;
+        this.onGroupChanged(this.group);
+        if (this.activeTab === 'pickups' && this.groupOrdersLoaded) {
+          this.loadGroupOrders(true);
+        }
         this.syncFormWithGroup(this.group);
       },
       error: (err: any) => {
@@ -135,6 +188,9 @@ export class GroupPanelComponent implements OnInit {
 
   selectTab(tab: GroupPanelTab): void {
     this.activeTab = tab;
+    if (tab === 'pickups') {
+      this.loadGroupOrders();
+    }
   }
 
   isOwner(): boolean {
@@ -182,14 +238,121 @@ export class GroupPanelComponent implements OnInit {
     if (!id) { this.actLoading = false; return; }
     this.groupService.details(id).subscribe({
       next: (res: { resultModel: GarbageGroup | null }) => {
-        this.group = res.resultModel ?? this.group;
+        const nextGroup = res.resultModel ?? this.group;
+        this.group = nextGroup;
         this.actLoading = false;
+        this.onGroupChanged(nextGroup ?? null);
+        if (this.activeTab === 'pickups' && this.groupOrdersLoaded && nextGroup?.id) {
+          this.loadGroupOrders(true);
+        }
         this.syncFormWithGroup(this.group, syncForm);
       },
       error: () => {
         this.actLoading = false;
       }
     });
+  }
+
+  refreshGroupOrders(): void {
+    if (!this.group || !this.group.id) return;
+    this.loadGroupOrders(true);
+  }
+
+  openPickupDetails(orderId: string): void {
+    if (!orderId) return;
+    this.router.navigate(['/portal/my-pickups', orderId]);
+  }
+
+  trackPickupById(_index: number, pickup: GroupPickupRow): string {
+    return pickup.id;
+  }
+
+  statusTranslationKey(status: GarbageOrderStatus): string {
+    return GROUP_PICKUP_STATUS_TO_KEY[status] ?? GROUP_PICKUP_STATUS_TO_KEY[GarbageOrderStatus.WaitingForPayment];
+  }
+
+  statusClass(status: GarbageOrderStatus): string {
+    return GROUP_PICKUP_STATUS_TO_CLASS[status] ?? 'status-chip status-pending';
+  }
+
+  private onGroupChanged(group: GarbageGroup | null): void {
+    const nextId = group?.id ?? null;
+    const idChanged = nextId !== this.currentGroupId;
+
+    if (idChanged) {
+      this.currentGroupId = nextId;
+      this.resetGroupOrders();
+    }
+
+    if (!nextId) {
+      return;
+    }
+
+    if (this.activeTab === 'pickups') {
+      if (idChanged) {
+        this.loadGroupOrders(true);
+      } else if (!this.groupOrdersLoaded) {
+        this.loadGroupOrders();
+      }
+    }
+  }
+
+  private resetGroupOrders(): void {
+    this.groupOrders = [];
+    this.groupPickups = [];
+    this.groupOrdersPager = null;
+    this.groupOrdersLoaded = false;
+    this.groupOrdersError = null;
+  }
+
+  private loadGroupOrders(force = false): void {
+    if (!this.group || !this.group.id) return;
+    if (this.groupOrdersLoading) return;
+    if (!force && this.groupOrdersLoaded) return;
+
+    const groupId = this.group.id;
+    this.groupOrdersLoading = true;
+    this.groupOrdersError = null;
+
+    this.garbageOrderService
+      .getGroupOrders(groupId, 1, this.groupOrdersPageSize)
+      .subscribe({
+        next: (res: PaginatedResult<GarbageOrderDto[]>) => {
+          const items = Array.isArray(res?.resultModel) ? res.resultModel : [];
+          this.groupOrders = items;
+          this.groupPickups = items.map(order => this.toGroupPickupRow(order));
+          this.groupOrdersPager = res.pager ?? null;
+          this.groupOrdersLoaded = true;
+          this.groupOrdersLoading = false;
+        },
+        error: (err) => {
+          this.groupOrdersLoading = false;
+          this.groupOrdersLoaded = false;
+          this.groupOrdersError = err?.error?.errorMessage || this.t.translate('groups.pickups.loadError');
+          try { console.error('Group pickups load failed', { groupId, err }); } catch {}
+        }
+      });
+  }
+
+  private toGroupPickupRow(order: GarbageOrderDto): GroupPickupRow {
+    const pickupDate = order.pickupDate ?? order.dropOffDate ?? null;
+    return {
+      id: order.id,
+      orderNumber: this.formatOrderNumber(order.id),
+      pickupDate,
+      status: order.garbageOrderStatus,
+      // keep potential future use of cost or priority in details view only
+    };
+  }
+
+  private formatOrderNumber(id: string): string {
+    const cleaned = id?.replace(ORDER_NUMBER_SANITIZE_REGEX, '').toUpperCase();
+
+    if (!cleaned) {
+      return 'N/A';
+    }
+
+    return cleaned.length <= 8 ? cleaned : `${cleaned.slice(0, 4)}-${cleaned.slice(-4)}`;
   }
 
   getGroupCity(): string {

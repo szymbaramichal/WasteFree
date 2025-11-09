@@ -1,10 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { PaginatedResult, Pager, Result } from '@app/_models/result';
-import { GarbageOrderDto } from '@app/_models/garbage-orders';
+import { GarbageOrderDto, GarbageOrderFilterRequest } from '@app/_models/garbage-orders';
 
 export const USER_ORDERS_PAGE_SIZE = 200;
 
@@ -77,5 +77,31 @@ export class GarbageOrderService {
       copy[index] = order;
       return copy;
     });
+  }
+
+  getGroupOrders(
+    groupId: string,
+    pageNumber: number,
+    pageSize: number,
+    filter?: GarbageOrderFilterRequest
+  ): Observable<PaginatedResult<GarbageOrderDto[]>> {
+    const params = new HttpParams()
+      .set('pageNumber', String(pageNumber))
+      .set('pageSize', String(pageSize));
+
+    const payload = {
+      fromDate: filter?.fromDate ?? null,
+      toDate: filter?.toDate ?? null,
+      pickupOption: filter?.pickupOption ?? null,
+      statuses: filter?.statuses ?? []
+    };
+
+    const encodedGroupId = encodeURIComponent(groupId);
+
+    return this.http.post<PaginatedResult<GarbageOrderDto[]>>(
+      `${this.apiUrl}/garbage-group/${encodedGroupId}/orders/filter`,
+      payload,
+      { params }
+    );
   }
 }
