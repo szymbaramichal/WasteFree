@@ -1,12 +1,29 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 using TickerQ.EntityFrameworkCore.Configurations;
 using WasteFree.Domain.Entities;
 using WasteFree.Domain.Interfaces;
 using WasteFree.Domain.Models;
 
 namespace WasteFree.Infrastructure;
-public class ApplicationDataContext(DbContextOptions options, ICurrentUserService currentUserService) : DbContext(options)
+public class ApplicationDataContext : DbContext
 {
+    private readonly ICurrentUserService currentUserService;
+    private readonly IGeocodingService geocodingService;
+    private readonly ILogger<ApplicationDataContext> logger;
+
+    public ApplicationDataContext(
+        DbContextOptions options,
+        ICurrentUserService currentUserService,
+        IGeocodingService geocodingService,
+        ILogger<ApplicationDataContext> logger) : base(options)
+    {
+        this.currentUserService = currentUserService;
+        this.geocodingService = geocodingService;
+        this.logger = logger;
+    }
+
     public DbSet<User> Users { get; set; }
     public DbSet<GarbageGroup> GarbageGroups { get; set; }
     public DbSet<UserGarbageGroup> UserGarbageGroups { get; set; }
@@ -73,12 +90,14 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
     public override int SaveChanges()
     {
         UpdateAuditFields();
+        GeocodeAddressesAsync(CancellationToken.None).GetAwaiter().GetResult();
         return base.SaveChanges();
     }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         UpdateAuditFields();
+        await GeocodeAddressesAsync(cancellationToken);
         return await base.SaveChangesAsync(cancellationToken);
     }
 
@@ -101,5 +120,72 @@ public class ApplicationDataContext(DbContextOptions options, ICurrentUserServic
                 entity.ModifiedBy = currentUserService.UserId;   
             }
         }
+    }
+
+    private async Task GeocodeAddressesAsync(CancellationToken cancellationToken)
+    {
+        var addressEntries = ChangeTracker.Entries<Address>()
+            .Where(e => e.State is EntityState.Added or EntityState.Modified);
+
+        foreach (var entry in addressEntries)
+        {
+            if (!ShouldGeocode(entry) || !HasRequiredAddressData(entry.Entity))
+            {
+                continue;
+            }
+
+            try
+            {
+                var coordinates = await geocodingService.TryGetCoordinatesAsync(entry.Entity, cancellationToken);
+                if (!coordinates.HasValue)
+                {
+                    continue;
+                }
+
+                entry.Entity.Latitude = coordinates.Value.Latitude;
+                entry.Entity.Longitude = coordinates.Value.Longitude;
+
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property(nameof(Address.Latitude)).IsModified = true;
+                    entry.Property(nameof(Address.Longitude)).IsModified = true;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Failed to resolve coordinates for address {Street}, {PostalCode}, {City}",
+                    entry.Entity.Street,
+                    entry.Entity.PostalCode,
+                    entry.Entity.City);
+            }
+        }
+    }
+
+    private static bool HasRequiredAddressData(Address address)
+    {
+        return !string.IsNullOrWhiteSpace(address.Street) &&
+               !string.IsNullOrWhiteSpace(address.PostalCode) &&
+               !string.IsNullOrWhiteSpace(address.City);
+    }
+
+    private static bool ShouldGeocode(EntityEntry<Address> entry)
+    {
+        if (entry.State == EntityState.Added)
+        {
+            return true;
+        }
+
+        if (!entry.Entity.Latitude.HasValue || !entry.Entity.Longitude.HasValue)
+        {
+            return true;
+        }
+
+        return entry.Property(nameof(Address.City)).IsModified ||
+               entry.Property(nameof(Address.PostalCode)).IsModified ||
+               entry.Property(nameof(Address.Street)).IsModified;
     }
 }
