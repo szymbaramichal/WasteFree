@@ -229,15 +229,15 @@
 															<div class="summary-schedule__row" *ngIf="summaryDropOffDate() as dropOff">
 																<span class="summary-schedule__label">{{ 'pickupOrder.summary.dropOff' | translate }}</span>
 																<div class="summary-schedule__value">
-																	<span class="d-block fw-semibold">{{ dropOff | date:'fullDate' }}</span>
-																	<small class="text-muted d-block">{{ dropOff | date:'shortTime' }}</small>
+																	<span class="d-block fw-semibold">{{ dropOff | date:'dd.MM.yyyy' }}</span>
+																	<small class="text-muted d-block">{{ dropOff | date:'HH:mm' }}</small>
 																</div>
 															</div>
 															<div class="summary-schedule__row" *ngIf="summaryPickupDate() as pickup">
 																<span class="summary-schedule__label">{{ 'pickupOrder.summary.pickup' | translate }}</span>
 																<div class="summary-schedule__value">
-																	<span class="d-block fw-semibold">{{ pickup | date:'fullDate' }}</span>
-																	<small class="text-muted d-block">{{ pickup | date:'shortTime' }}</small>
+																	<span class="d-block fw-semibold">{{ pickup | date:'dd.MM.yyyy' }}</span>
+																	<small class="text-muted d-block">{{ pickup | date:'HH:mm' }}</small>
 																</div>
 															</div>
 														</div>
@@ -245,8 +245,8 @@
 												</ng-container>
 												<ng-template #singleSchedule>
 													<ng-container *ngIf="summaryPickupDate() as scheduled; else summaryNoSchedule">
-														<span class="d-block fw-semibold">{{ scheduled | date:'fullDate' }}</span>
-														<small class="text-muted d-block">{{ scheduled | date:'shortTime' }}</small>
+														<span class="d-block fw-semibold">{{ scheduled | date:'dd.MM.yyyy' }}</span>
+														<small class="text-muted d-block">{{ scheduled | date:'HH:mm' }}</small>
 													</ng-container>
 												</ng-template>
 											</div>
@@ -255,7 +255,8 @@
 											</ng-template>
 										</div>
 									</div>
-									<div class="summary-section">
+									<div class="summary-lower">
+										<div class="summary-section summary-lower__participants">
 										<div class="summary-section__header">
 											<h6 class="mb-0">{{ 'pickupOrder.summary.participants' | translate }}</h6>
 											<span class="badge bg-light text-dark">{{ selectedParticipants().length }}</span>
@@ -269,6 +270,39 @@
 										<ng-template #summaryNoParticipants>
 											<p class="text-muted mb-0">{{ 'pickupOrder.summary.noParticipants' | translate }}</p>
 										</ng-template>
+									</div>
+										<div class="summary-cost summary-lower__cost" [attr.aria-live]="currentStep() === summaryStepIndex ? 'polite' : 'off'">
+											<div class="summary-cost__header">
+												<div class="summary-cost__title">
+													<span class="summary-cost__icon" aria-hidden="true"></span>
+													<h6 class="summary-cost__heading mb-0">{{ 'pickupOrder.summary.cost.title' | translate }}</h6>
+												</div>
+											</div>
+											<div class="summary-cost__body">
+												<div class="summary-cost__loading" *ngIf="costLoading(); else costContent">
+													<div class="spinner-border spinner-border-sm text-success" role="status" aria-hidden="true"></div>
+													<span>{{ 'pickupOrder.summary.cost.loading' | translate }}</span>
+												</div>
+											</div>
+											<small class="summary-cost__note">{{ 'pickupOrder.summary.cost.note' | translate }}</small>
+											<ng-template #costContent>
+												<ng-container *ngIf="estimatedCost() !== null; else costMessages">
+													<span class="summary-cost__amount">{{ estimatedCost() | currency:'PLN':'symbol':'1.2-2' }}</span>
+												</ng-container>
+											</ng-template>
+											<ng-template #costMessages>
+												<ng-container *ngIf="costMessage() as messageKey; else costUnavailable">
+													<div class="summary-cost__alert" [ngClass]="costMessageType() === 'error' ? 'summary-cost__alert--error' : 'summary-cost__alert--info'" role="status">
+														{{ messageKey | translate }}
+													</div>
+												</ng-container>
+											</ng-template>
+											<ng-template #costUnavailable>
+												<div class="summary-cost__alert summary-cost__alert--info" role="status">
+													{{ 'pickupOrder.summary.cost.unavailable' | translate }}
+												</div>
+											</ng-template>
+										</div>
 									</div>
 									<div class="summary-messages">
 										<div class="alert alert-success" *ngIf="submittedOrder() as created">

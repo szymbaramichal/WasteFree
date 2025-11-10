@@ -4,7 +4,13 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { PaginatedResult, Pager, Result } from '@app/_models/result';
-import { CreateGarbageOrderRequest, GarbageOrderDto, GarbageOrderFilterRequest } from '@app/_models/garbage-orders';
+import {
+  CalculateGarbageOrderRequest,
+  CreateGarbageOrderRequest,
+  GarbageOrderCostDto,
+  GarbageOrderDto,
+  GarbageOrderFilterRequest
+} from '@app/_models/garbage-orders';
 
 export const USER_ORDERS_PAGE_SIZE = 200;
 
@@ -113,6 +119,17 @@ export class GarbageOrderService {
       `${this.apiUrl}/garbage-group/${encodedGroupId}/orders/filter`,
       payload,
       { params }
+    );
+  }
+
+  calculateOrderCost(
+    groupId: string,
+    payload: CalculateGarbageOrderRequest
+  ): Observable<Result<GarbageOrderCostDto>> {
+    const encodedGroupId = encodeURIComponent(groupId);
+    return this.http.post<Result<GarbageOrderCostDto>>(
+      `${this.apiUrl}/garbage-group/${encodedGroupId}/order/calculate`,
+      payload
     );
   }
 }
