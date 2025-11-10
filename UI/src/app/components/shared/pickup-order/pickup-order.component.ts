@@ -4,13 +4,16 @@ import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { GarbageGroupWithUsers, GarbageGroupRole } from '@app/_models/garbageGroups';
+import { ContainerSize, CreateGarbageOrderRequest, GarbageOrderDto, PickupOption } from '@app/_models/garbage-orders';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 import { Result } from '@app/_models/result';
+import { GarbageOrderService } from '@app/services/garbage-order.service';
+import { Router } from '@angular/router';
 
 type ServiceOption = {
-  value: number;
+  value: PickupOption;
   titleKey: string;
   descriptionKey: string;
   icon: string;
@@ -39,6 +42,11 @@ type GroupUserViewModel = {
   role: GarbageGroupRole;
 };
 
+type PickupSchedule = {
+  isoString: string;
+  displayDate: Date;
+};
+
 @Component({
   selector: 'app-pickup-order',
   standalone: true,
@@ -49,32 +57,50 @@ type GroupUserViewModel = {
 export class PickupOrderComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly groupService = inject(GarbageGroupService);
+  private readonly garbageOrderService = inject(GarbageOrderService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private lastSelectedContainerSize: ContainerSize = ContainerSize.ContainerSmall;
 
   readonly serviceOptions: ServiceOption[] = [
     {
-      value: 0,
+      value: PickupOption.SmallPickup,
       titleKey: 'pickupOrder.options.small.title',
       descriptionKey: 'pickupOrder.options.small.description',
       icon: '/assets/images/pickup-small.svg'
     },
     {
-      value: 1,
+      value: PickupOption.Pickup,
       titleKey: 'pickupOrder.options.regular.title',
       descriptionKey: 'pickupOrder.options.regular.description',
       icon: '/assets/images/pickup-regular.svg'
     },
     {
-      value: 2,
+      value: PickupOption.Container,
       titleKey: 'pickupOrder.options.container.title',
       descriptionKey: 'pickupOrder.options.container.description',
       icon: '/assets/images/pickup-container.svg'
     },
     {
-      value: 3,
+      value: PickupOption.SpecialOrder,
       titleKey: 'pickupOrder.options.special.title',
       descriptionKey: 'pickupOrder.options.special.description',
       icon: '/assets/images/pickup-special.svg'
+    }
+  ];
+
+  readonly containerSizeOptions: Array<{ value: ContainerSize; labelKey: string }> = [
+    {
+      value: ContainerSize.ContainerSmall,
+      labelKey: 'pickupOrder.step.details.container.size.small'
+    },
+    {
+      value: ContainerSize.ContainerMedium,
+      labelKey: 'pickupOrder.step.details.container.size.medium'
+    },
+    {
+      value: ContainerSize.ContainerLarge,
+      labelKey: 'pickupOrder.step.details.container.size.large'
     }
   ];
 
@@ -113,18 +139,61 @@ export class PickupOrderComponent implements OnInit {
     }
   ];
 
+  readonly summaryStepIndex = this.steps.length - 1;
+
   readonly currentStepConfig = computed<StepConfig>(() => this.steps[this.currentStep()] ?? this.steps[0]);
 
   readonly form = this.fb.group({
-    serviceType: this.fb.control<number | null>(null, { validators: Validators.required }),
+    serviceType: this.fb.control<PickupOption | null>(null, { validators: Validators.required }),
     groupId: this.fb.control<string | null>(null, { validators: Validators.required }),
     participantIds: this.fb.control<string[]>([], { validators: Validators.required }),
     pickupDate: this.fb.control<string | null>(null, { validators: Validators.required }),
-    pickupTime: this.fb.control<string | null>(null, { validators: Validators.required })
+    pickupTime: this.fb.control<string | null>(null, { validators: Validators.required }),
+    dropOffDate: this.fb.control<string | null>(null),
+    dropOffTime: this.fb.control<string | null>(null),
+    isHighPriority: this.fb.control<boolean>(false),
+    collectingService: this.fb.control<boolean>(false),
+    containerSize: this.fb.control<ContainerSize | null>(null)
   });
 
   private readonly groupIdValue = toSignal(this.groupIdCtrl.valueChanges, {
     initialValue: this.groupIdCtrl.value
+  });
+
+  private readonly participantIdsValue = toSignal(this.participantIdsCtrl.valueChanges, {
+    initialValue: this.participantIdsCtrl.value ?? []
+  });
+
+  private readonly serviceTypeValue = toSignal(this.serviceTypeCtrl.valueChanges, {
+    initialValue: this.serviceTypeCtrl.value
+  });
+
+  private readonly pickupDateValue = toSignal(this.pickupDateCtrl.valueChanges, {
+    initialValue: this.pickupDateCtrl.value
+  });
+
+  private readonly pickupTimeValue = toSignal(this.pickupTimeCtrl.valueChanges, {
+    initialValue: this.pickupTimeCtrl.value
+  });
+
+  private readonly dropOffDateValue = toSignal(this.dropOffDateCtrl.valueChanges, {
+    initialValue: this.dropOffDateCtrl.value
+  });
+
+  private readonly dropOffTimeValue = toSignal(this.dropOffTimeCtrl.valueChanges, {
+    initialValue: this.dropOffTimeCtrl.value
+  });
+
+  private readonly isHighPriorityValue = toSignal(this.isHighPriorityCtrl.valueChanges, {
+    initialValue: this.isHighPriorityCtrl.value ?? false
+  });
+
+  private readonly collectingServiceValue = toSignal(this.collectingServiceCtrl.valueChanges, {
+    initialValue: this.collectingServiceCtrl.value ?? false
+  });
+
+  private readonly containerSizeValue = toSignal(this.containerSizeCtrl.valueChanges, {
+    initialValue: this.containerSizeCtrl.value
   });
 
   readonly currentStep = signal(0);
@@ -154,14 +223,82 @@ export class PickupOrderComponent implements OnInit {
   readonly hasSelectableParticipants = computed(() => this.selectedGroupUsers().some(user => !user.disabled));
 
   readonly selectedOption = computed(() => {
-    const current = this.serviceTypeCtrl.value;
+    const current = this.serviceTypeValue();
     return this.serviceOptions.find(option => option.value === current) ?? null;
   });
+
+  readonly selectedParticipants = computed<GroupUserViewModel[]>(() => {
+    const ids = new Set(this.participantIdsValue() ?? []);
+    return this.selectedGroupUsers().filter(user => ids.has(user.id));
+  });
+
+  readonly pickupDateTime = computed(() => this.combineDateTime(this.pickupDateValue(), this.pickupTimeValue()));
+  readonly dropOffDateTime = computed(() => this.combineDateTime(this.dropOffDateValue(), this.dropOffTimeValue()));
+
+  readonly summaryRequest = computed<CreateGarbageOrderRequest | null>(() => {
+    const currentOption = this.serviceTypeValue();
+    const selectedGroupId = this.selectedGroupId();
+    const participants = this.participantIdsValue() ?? [];
+    const pickupSchedule = this.pickupDateTime();
+    const requiresDropOff = currentOption === PickupOption.Container;
+    const dropOffSchedule = requiresDropOff ? this.dropOffDateTime() : null;
+    if (currentOption === null || !selectedGroupId || !pickupSchedule || !participants.length) {
+      return null;
+    }
+
+    if (requiresDropOff && !dropOffSchedule) {
+      return null;
+    }
+
+    const containerSize = currentOption === PickupOption.Container ? this.containerSizeValue() ?? null : null;
+    const isHighPriority = !!this.isHighPriorityValue();
+    const collectingService = !!this.collectingServiceValue();
+
+    return {
+      pickupOption: currentOption,
+      containerSize,
+      dropOffDate: dropOffSchedule ? dropOffSchedule.isoString : null,
+      pickupDate: pickupSchedule.isoString,
+      isHighPriority,
+      collectingService,
+      userIds: participants
+    };
+  });
+
+  readonly summaryReady = computed(() => this.summaryRequest() !== null);
+
+  readonly selectedContainerSizeOption = computed(() => {
+    const value = this.containerSizeValue();
+    if (value === null) {
+      return null;
+    }
+    return this.containerSizeOptions.find(option => option.value === value) ?? null;
+  });
+
+  readonly summaryPickupDate = computed(() => this.pickupDateTime()?.displayDate ?? null);
+  readonly summaryDropOffDate = computed(() => this.dropOffDateTime()?.displayDate ?? null);
+
+  readonly submitting = signal(false);
+  readonly submitError = signal<string | null>(null);
+  readonly submittedOrder = signal<GarbageOrderDto | null>(null);
+
+  readonly pickupOptionEnum = PickupOption;
 
   readonly minPickupDate = this.todayIsoDate();
 
   ngOnInit(): void {
     this.loadGroupsWithUsers();
+    this.serviceTypeCtrl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(serviceType => this.handleServiceTypeChange(serviceType));
+    this.containerSizeCtrl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(size => {
+        if (size !== null) {
+          this.lastSelectedContainerSize = size;
+        }
+      });
+    this.handleServiceTypeChange(this.serviceTypeCtrl.value);
   }
 
   get serviceTypeCtrl() {
@@ -184,6 +321,26 @@ export class PickupOrderComponent implements OnInit {
     return this.form.controls.pickupTime;
   }
 
+  get dropOffDateCtrl() {
+    return this.form.controls.dropOffDate;
+  }
+
+  get dropOffTimeCtrl() {
+    return this.form.controls.dropOffTime;
+  }
+
+  get containerSizeCtrl() {
+    return this.form.controls.containerSize;
+  }
+
+  get isHighPriorityCtrl() {
+    return this.form.controls.isHighPriority;
+  }
+
+  get collectingServiceCtrl() {
+    return this.form.controls.collectingService;
+  }
+
   primaryActionDisabled(): boolean {
     const step = this.currentStep();
     if (step === 0) {
@@ -193,13 +350,36 @@ export class PickupOrderComponent implements OnInit {
       return this.groupIdCtrl.invalid || this.participantIdsCtrl.invalid;
     }
     if (step === 2) {
+      const requiresDropOff = this.serviceTypeCtrl.value === PickupOption.Container;
+      if (requiresDropOff) {
+        return (
+          this.dropOffDateCtrl.invalid ||
+          this.dropOffTimeCtrl.invalid ||
+          this.pickupDateCtrl.invalid ||
+          this.pickupTimeCtrl.invalid
+        );
+      }
       return this.pickupDateCtrl.invalid || this.pickupTimeCtrl.invalid;
     }
-    return step >= this.steps.length - 1;
+    if (step === 3) {
+      const requiresContainerSize = this.serviceTypeCtrl.value === PickupOption.Container;
+      if (requiresContainerSize) {
+        return this.containerSizeCtrl.invalid;
+      }
+    }
+    if (step === this.summaryStepIndex) {
+      return this.submitting() || !this.summaryReady();
+    }
+    return false;
   }
 
   onNext() {
     const step = this.currentStep();
+    if (step === this.summaryStepIndex) {
+      this.submitOrder();
+      return;
+    }
+
     if (step === 0) {
       this.serviceTypeCtrl.markAsTouched();
       this.serviceTypeCtrl.markAsDirty();
@@ -223,8 +403,30 @@ export class PickupOrderComponent implements OnInit {
       this.pickupDateCtrl.markAsDirty();
       this.pickupTimeCtrl.markAsTouched();
       this.pickupTimeCtrl.markAsDirty();
-      if (this.pickupDateCtrl.invalid || this.pickupTimeCtrl.invalid) {
+      const requiresDropOff = this.serviceTypeCtrl.value === PickupOption.Container;
+      if (requiresDropOff) {
+        this.dropOffDateCtrl.markAsTouched();
+        this.dropOffDateCtrl.markAsDirty();
+        this.dropOffTimeCtrl.markAsTouched();
+        this.dropOffTimeCtrl.markAsDirty();
+      }
+      if (
+        this.pickupDateCtrl.invalid ||
+        this.pickupTimeCtrl.invalid ||
+        (requiresDropOff && (this.dropOffDateCtrl.invalid || this.dropOffTimeCtrl.invalid))
+      ) {
         return;
+      }
+    }
+
+    if (step === 3) {
+      const requiresContainerSize = this.serviceTypeCtrl.value === PickupOption.Container;
+      if (requiresContainerSize) {
+        this.containerSizeCtrl.markAsTouched();
+        this.containerSizeCtrl.markAsDirty();
+        if (this.containerSizeCtrl.invalid) {
+          return;
+        }
       }
     }
 
@@ -349,11 +551,128 @@ export class PickupOrderComponent implements OnInit {
     this.participantIdsCtrl.updateValueAndValidity();
   }
 
+  private combineDateTime(date: string | null, time: string | null): PickupSchedule | null {
+    if (!date || !time) {
+      return null;
+    }
+
+    const normalizedTime = time.length === 5 ? `${time}:00` : time;
+    const isoString = `${date}T${normalizedTime}`;
+    const displayDate = new Date(isoString);
+
+    if (Number.isNaN(displayDate.getTime())) {
+      return null;
+    }
+
+    return {
+      isoString,
+      displayDate
+    };
+  }
+
+  private submitOrder(): void {
+    if (this.submitting()) {
+      return;
+    }
+
+    const payload = this.summaryRequest();
+    const groupId = this.selectedGroupId();
+
+    if (!payload || !groupId) {
+      this.submitError.set('pickupOrder.summary.incomplete');
+      return;
+    }
+
+    this.submitting.set(true);
+    this.submitError.set(null);
+    this.submittedOrder.set(null);
+
+    this.garbageOrderService
+      .createOrder(groupId, payload)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.submitting.set(false))
+      )
+      .subscribe({
+        next: (res) => {
+          if (res.errorMessage || !res.resultModel) {
+            this.submitError.set(res.errorMessage ?? 'pickupOrder.summary.submitError');
+            this.submittedOrder.set(null);
+            return;
+          }
+
+          this.submitError.set(null);
+          this.submittedOrder.set(res.resultModel);
+          this.goToCreatedOrder(res.resultModel);
+        },
+        error: () => {
+          this.submitError.set('pickupOrder.summary.submitError');
+          this.submittedOrder.set(null);
+        }
+      });
+  }
+
+  private goToCreatedOrder(order?: GarbageOrderDto): void {
+    const targetOrder = order ?? this.submittedOrder();
+    const orderId = targetOrder?.id;
+    if (!orderId) {
+      return;
+    }
+    this.router.navigate(['/portal/my-pickups', orderId]);
+  }
+
   private todayIsoDate(): string {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  orderCode(model: { id: string }): string {
+    const cleaned = model?.id?.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    if (!cleaned) {
+      return 'N/A';
+    }
+    return cleaned.length <= 8 ? cleaned : `${cleaned.slice(0, 4)}-${cleaned.slice(-4)}`;
+  }
+
+  private handleServiceTypeChange(serviceType: PickupOption | null): void {
+    const isContainer = serviceType === PickupOption.Container;
+
+    if (isContainer) {
+      this.containerSizeCtrl.setValidators([Validators.required]);
+      if (this.containerSizeCtrl.value === null) {
+        this.containerSizeCtrl.setValue(this.lastSelectedContainerSize);
+        this.containerSizeCtrl.markAsPristine();
+        this.containerSizeCtrl.markAsUntouched();
+      }
+      this.dropOffDateCtrl.setValidators([Validators.required]);
+      this.dropOffTimeCtrl.setValidators([Validators.required]);
+    } else {
+      this.containerSizeCtrl.clearValidators();
+      if (this.containerSizeCtrl.value !== null) {
+        this.containerSizeCtrl.setValue(null, { emitEvent: false });
+      }
+      this.containerSizeCtrl.markAsPristine();
+      this.containerSizeCtrl.markAsUntouched();
+
+      this.dropOffDateCtrl.clearValidators();
+      this.dropOffTimeCtrl.clearValidators();
+      if (this.dropOffDateCtrl.value !== null) {
+        this.dropOffDateCtrl.setValue(null);
+      }
+      if (this.dropOffTimeCtrl.value !== null) {
+        this.dropOffTimeCtrl.setValue(null);
+      }
+      this.dropOffDateCtrl.markAsPristine();
+      this.dropOffDateCtrl.markAsUntouched();
+      this.dropOffTimeCtrl.markAsPristine();
+      this.dropOffTimeCtrl.markAsUntouched();
+    }
+
+    this.containerSizeCtrl.updateValueAndValidity({ emitEvent: false });
+    this.dropOffDateCtrl.updateValueAndValidity({ emitEvent: false });
+    this.dropOffTimeCtrl.updateValueAndValidity({ emitEvent: false });
   }
 }

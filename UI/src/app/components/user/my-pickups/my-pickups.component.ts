@@ -23,11 +23,18 @@ interface PortalPickupItem {
   orderNumber: string;
   groupId: string | null;
   groupName: string;
+  isPrivateGroup: boolean;
   status: PickupStatusKey;
   cost: number;
   pickupDate: string | null;
   pickupOption: PickupOptionKey;
   isHighPriority: boolean;
+}
+
+interface GroupOption {
+  id: string;
+  name: string;
+  isPrivate: boolean;
 }
 
 type PickupStatusKey =
@@ -127,16 +134,16 @@ export class MyPickupsComponent implements OnInit {
     });
   });
 
-  readonly groupOptions = computed(() => {
-    const groups = new Map<string, string>();
+  readonly groupOptions = computed<GroupOption[]>(() => {
+    const groups = new Map<string, { name: string; isPrivate: boolean }>();
 
     for (const pickup of this.pickups()) {
       if (pickup.groupId && !groups.has(pickup.groupId)) {
-        groups.set(pickup.groupId, pickup.groupName);
+        groups.set(pickup.groupId, { name: pickup.groupName, isPrivate: pickup.isPrivateGroup });
       }
     }
 
-    return Array.from(groups.entries()).map(([id, name]) => ({ id, name }));
+    return Array.from(groups.entries()).map(([id, value]) => ({ id, name: value.name, isPrivate: value.isPrivate }));
   });
 
   readonly totalPages = computed(() => {
@@ -359,6 +366,7 @@ export class MyPickupsComponent implements OnInit {
       orderNumber: this.formatOrderNumber(dto.id),
       groupId,
       groupName,
+      isPrivateGroup: dto.garbageGroupIsPrivate,
       status,
       cost,
       pickupDate,

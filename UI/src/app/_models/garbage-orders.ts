@@ -43,3 +43,13 @@ export interface GarbageOrderDto {
   garbageGroupIsPrivate: boolean;
   users: GarbageOrderUserDto[];
 }
+
+export interface CreateGarbageOrderRequest {
+  pickupOption: PickupOption;
+  containerSize: ContainerSize | null;
+  dropOffDate: string | null;
+  pickupDate: string;
+  isHighPriority: boolean;
+  collectingService: boolean;
+  userIds: string[];
+}

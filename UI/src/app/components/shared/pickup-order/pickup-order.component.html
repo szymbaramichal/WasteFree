@@ -169,12 +169,130 @@
 							</div>
 						</ng-container>
 
+						<ng-container *ngSwitchCase="summaryStepIndex">
+							<div class="summary-step">
+								<div class="summary-step__intro">
+									<h6 class="mb-1">{{ 'pickupOrder.step.summary.title' | translate }}</h6>
+									<p class="text-muted mb-0">{{ 'pickupOrder.step.summary.lead' | translate }}</p>
+								</div>
+								<ng-container *ngIf="summaryRequest() as summary; else summaryMissing">
+									<div class="summary-grid">
+										<div class="summary-card">
+											<span class="summary-card__label">{{ 'pickupOrder.summary.group' | translate }}</span>
+											<div class="summary-card__value">
+												<ng-container *ngIf="selectedGroup() as group; else summaryNoGroup">
+													<span class="d-block fw-semibold">
+														{{ group.isPrivate ? ('pickupOrder.step.participants.privateGroup' | translate) : (group.name || ('pickupOrder.step.participants.unnamedGroup' | translate)) }}
+													</span>
+													<small class="text-muted d-block" *ngIf="group.address">
+														{{ group.address.street }}
+														<br />
+														{{ group.address.postalCode }} {{ group.address.city }}
+													</small>
+												</ng-container>
+											</div>
+											<ng-template #summaryNoGroup>
+												<span class="text-muted">{{ 'pickupOrder.summary.noGroup' | translate }}</span>
+											</ng-template>
+										</div>
+										<div class="summary-card">
+											<span class="summary-card__label">{{ 'pickupOrder.summary.pickupDetails' | translate }}</span>
+											<ul class="summary-list">
+												<li class="summary-list__item">
+													<span>{{ 'pickupOrder.summary.pickupType' | translate }}</span>
+													<span class="fw-semibold">{{ (selectedOption()?.titleKey ?? '') | translate }}</span>
+												</li>
+												<li class="summary-list__item" *ngIf="selectedOption()?.value === pickupOptionEnum.Container">
+													<span>{{ 'pickupOrder.summary.containerSize' | translate }}</span>
+													<span class="fw-semibold">{{ (selectedContainerSizeOption()?.labelKey ?? '') | translate }}</span>
+												</li>
+												<li class="summary-list__item">
+													<span>{{ 'pickupOrder.summary.priority' | translate }}</span>
+													<span class="badge summary-chip" [class.summary-chip--yes]="summary.isHighPriority">
+														{{ (summary.isHighPriority ? 'common.yes' : 'common.no') | translate }}
+													</span>
+												</li>
+												<li class="summary-list__item">
+													<span>{{ 'pickupOrder.summary.collectingService' | translate }}</span>
+													<span class="badge summary-chip" [class.summary-chip--yes]="summary.collectingService">
+														{{ (summary.collectingService ? 'common.yes' : 'common.no') | translate }}
+													</span>
+												</li>
+											</ul>
+										</div>
+										<div class="summary-card">
+											<span class="summary-card__label">{{ 'pickupOrder.summary.schedule' | translate }}</span>
+											<div class="summary-card__value">
+												<ng-container *ngIf="selectedOption()?.value === pickupOptionEnum.Container; else singleSchedule">
+													<ng-container *ngIf="summaryDropOffDate() || summaryPickupDate(); else summaryNoSchedule">
+														<div class="summary-schedule">
+															<div class="summary-schedule__row" *ngIf="summaryDropOffDate() as dropOff">
+																<span class="summary-schedule__label">{{ 'pickupOrder.summary.dropOff' | translate }}</span>
+																<div class="summary-schedule__value">
+																	<span class="d-block fw-semibold">{{ dropOff | date:'fullDate' }}</span>
+																	<small class="text-muted d-block">{{ dropOff | date:'shortTime' }}</small>
+																</div>
+															</div>
+															<div class="summary-schedule__row" *ngIf="summaryPickupDate() as pickup">
+																<span class="summary-schedule__label">{{ 'pickupOrder.summary.pickup' | translate }}</span>
+																<div class="summary-schedule__value">
+																	<span class="d-block fw-semibold">{{ pickup | date:'fullDate' }}</span>
+																	<small class="text-muted d-block">{{ pickup | date:'shortTime' }}</small>
+																</div>
+															</div>
+														</div>
+													</ng-container>
+												</ng-container>
+												<ng-template #singleSchedule>
+													<ng-container *ngIf="summaryPickupDate() as scheduled; else summaryNoSchedule">
+														<span class="d-block fw-semibold">{{ scheduled | date:'fullDate' }}</span>
+														<small class="text-muted d-block">{{ scheduled | date:'shortTime' }}</small>
+													</ng-container>
+												</ng-template>
+											</div>
+											<ng-template #summaryNoSchedule>
+												<div class="summary-card__value text-muted">{{ 'pickupOrder.summary.noSchedule' | translate }}</div>
+											</ng-template>
+										</div>
+									</div>
+									<div class="summary-section">
+										<div class="summary-section__header">
+											<h6 class="mb-0">{{ 'pickupOrder.summary.participants' | translate }}</h6>
+											<span class="badge bg-light text-dark">{{ selectedParticipants().length }}</span>
+										</div>
+										<ul class="summary-participants__list" *ngIf="selectedParticipants().length; else summaryNoParticipants">
+											<li class="summary-participants__item" *ngFor="let user of selectedParticipants(); trackBy: trackUserById">
+												<span class="summary-participants__name">{{ user.username }}</span>
+												<small class="text-muted">{{ groupRoleKey(user.role) | translate }}</small>
+											</li>
+										</ul>
+										<ng-template #summaryNoParticipants>
+											<p class="text-muted mb-0">{{ 'pickupOrder.summary.noParticipants' | translate }}</p>
+										</ng-template>
+									</div>
+									<div class="summary-messages">
+										<div class="alert alert-success" *ngIf="submittedOrder() as created">
+											{{ 'pickupOrder.summary.success' | translate:{ code: orderCode(created) } }}
+										</div>
+										<div class="alert alert-danger" *ngIf="submitError() as errorKey">
+											{{ errorKey | translate }}
+										</div>
+									</div>
+								</ng-container>
+								<ng-template #summaryMissing>
+									<div class="summary-empty text-center text-muted">
+										<p class="mb-0">{{ 'pickupOrder.summary.incompleteHint' | translate }}</p>
+									</div>
+								</ng-template>
+							</div>
+						</ng-container>
+
 						<ng-container *ngSwitchCase="2">
 							<div class="row g-4 address-step">
 								<div class="col-lg-5">
 									<div class="address-card h-100">
 										<h6 class="mb-1">{{ 'pickupOrder.step.address.selectedGroupTitle' | translate }}</h6>
-										<p class="text-muted mb-3">{{ 'pickupOrder.step.address.selectedGroupLead' | translate }}</p>
+										<p class="text-muted mb-2">{{ 'pickupOrder.step.address.selectedGroupLead' | translate }}</p>
 										<ng-container *ngIf="selectedGroup() as group; else noGroupAddress">
 											<div class="address-card__group-name">
 												{{ group.isPrivate ? ('pickupOrder.step.participants.privateGroup' | translate) : (group.name || ('pickupOrder.step.participants.unnamedGroup' | translate)) }}
@@ -194,8 +312,46 @@
 								<div class="col-lg-7">
 									<div class="address-card h-100">
 										<h6 class="mb-1">{{ 'pickupOrder.step.address.scheduleTitle' | translate }}</h6>
-										<p class="text-muted mb-3">{{ 'pickupOrder.step.address.scheduleLead' | translate }}</p>
 										<div class="row g-3">
+											<ng-container *ngIf="serviceTypeCtrl.value === pickupOptionEnum.Container">
+												<div class="col-12">
+													<span class="schedule-section__label">{{ 'pickupOrder.step.address.dropOffSection' | translate }}</span>
+												</div>
+												<div class="col-md-6">
+													<label class="form-label" for="dropOffDate">{{ 'pickupOrder.step.address.dropOffDateLabel' | translate }}</label>
+													<input
+														type="date"
+														id="dropOffDate"
+														class="form-control"
+														formControlName="dropOffDate"
+														[min]="minPickupDate"
+													/>
+													<div class="form-text text-danger" *ngIf="dropOffDateCtrl.invalid && (dropOffDateCtrl.dirty || dropOffDateCtrl.touched)">
+														{{ 'pickupOrder.validation.dropOffDate' | translate }}
+													</div>
+													<small class="text-muted d-block mt-1">
+														{{ 'pickupOrder.step.address.dropOffDateHint' | translate }}
+													</small>
+												</div>
+												<div class="col-md-6">
+													<label class="form-label" for="dropOffTime">{{ 'pickupOrder.step.address.dropOffTimeLabel' | translate }}</label>
+													<input
+														type="time"
+														id="dropOffTime"
+														class="form-control"
+														formControlName="dropOffTime"
+													/>
+													<div class="form-text text-danger" *ngIf="dropOffTimeCtrl.invalid && (dropOffTimeCtrl.dirty || dropOffTimeCtrl.touched)">
+														{{ 'pickupOrder.validation.dropOffTime' | translate }}
+													</div>
+													<small class="text-muted d-block mt-1">
+														{{ 'pickupOrder.step.address.dropOffTimeHint' | translate }}
+													</small>
+												</div>
+												<div class="col-12">
+													<span class="schedule-section__label">{{ 'pickupOrder.step.address.pickupSection' | translate }}</span>
+												</div>
+											</ng-container>
 											<div class="col-md-6">
 												<label class="form-label" for="pickupDate">{{ 'pickupOrder.step.address.dateLabel' | translate }}</label>
 												<input
@@ -239,6 +395,85 @@
 							</div>
 						</ng-container>
 
+						<ng-container *ngSwitchCase="3">
+							<div class="details-step">
+								<div class="details-step__intro">
+									<h6 class="mb-1">{{ 'pickupOrder.step.details.title' | translate }}</h6>
+									<p class="text-muted mb-0">{{ 'pickupOrder.step.details.lead' | translate }}</p>
+								</div>
+								<div class="details-step__options">
+									<div class="details-option" *ngIf="serviceTypeCtrl.value === pickupOptionEnum.Container">
+										<div class="details-option__header">
+											<label class="form-label fw-semibold mb-0" for="containerSize">
+												{{ 'pickupOrder.step.details.container.label' | translate }}
+											</label>
+											<span class="details-option__badge details-option__badge--required">
+												{{ 'pickupOrder.step.details.requiredBadge' | translate }}
+											</span>
+										</div>
+										<p class="details-option__description text-muted mb-0">
+											{{ 'pickupOrder.step.details.container.description' | translate }}
+										</p>
+										<select
+											id="containerSize"
+											class="form-select"
+											formControlName="containerSize"
+											[attr.aria-describedby]="containerSizeCtrl.invalid && (containerSizeCtrl.dirty || containerSizeCtrl.touched) ? 'containerSizeHint' : null"
+										>
+											<option *ngFor="let option of containerSizeOptions" [ngValue]="option.value">
+												{{ option.labelKey | translate }}
+											</option>
+										</select>
+										<div
+											id="containerSizeHint"
+											class="form-text text-danger"
+											*ngIf="containerSizeCtrl.invalid && (containerSizeCtrl.dirty || containerSizeCtrl.touched)"
+										>
+											{{ 'pickupOrder.validation.containerSize' | translate }}
+										</div>
+									</div>
+									<div class="details-option">
+										<div class="details-option__header">
+											<div class="form-check form-switch">
+												<input
+													type="checkbox"
+													id="pickupPriority"
+													class="form-check-input"
+													formControlName="isHighPriority"
+												/>
+												<label class="form-check-label fw-semibold" for="pickupPriority">
+													{{ 'pickupOrder.step.details.priority.label' | translate }}
+												</label>
+											</div>
+											<span class="details-option__badge">{{ 'pickupOrder.step.details.optionalBadge' | translate }}</span>
+										</div>
+										<p class="details-option__description text-muted mb-0">
+											{{ 'pickupOrder.step.details.priority.description' | translate }}
+										</p>
+									</div>
+									<div class="details-option">
+										<div class="details-option__header">
+											<div class="form-check form-switch">
+												<input
+													type="checkbox"
+													id="pickupCollecting"
+													class="form-check-input"
+													formControlName="collectingService"
+												/>
+												<label class="form-check-label fw-semibold" for="pickupCollecting">
+													{{ 'pickupOrder.step.details.collecting.label' | translate }}
+												</label>
+											</div>
+											<span class="details-option__badge">{{ 'pickupOrder.step.details.optionalBadge' | translate }}</span>
+										</div>
+										<p class="details-option__description text-muted mb-0">
+											{{ 'pickupOrder.step.details.collecting.description' | translate }}
+										</p>
+									</div>
+								</div>
+							</div>
+						</ng-container>
+
 						<ng-container *ngSwitchDefault>
 							<div class="placeholder-step text-center py-5">
 								<h3 class="h5 mb-2" *ngIf="currentStepConfig().placeholderTitleKey as titleKey">{{ titleKey | translate }}</h3>
@@ -256,12 +491,23 @@
 							type="button"
 							class="btn btn-outline-secondary"
 							(click)="onBack()"
+							[disabled]="submitting()"
 							*ngIf="currentStep() > 0"
 						>
 							{{ 'pickupOrder.actions.back' | translate }}
 						</button>
 						<button type="button" class="btn btn-primary btn-elevated" (click)="onNext()" [disabled]="primaryActionDisabled()">
-							{{ 'pickupOrder.actions.next' | translate }}
+							<span
+								class="spinner-border spinner-border-sm me-2"
+								role="status"
+								aria-hidden="true"
+								*ngIf="currentStep() === summaryStepIndex && submitting()"
+							></span>
+							<span>
+								{{ currentStep() === summaryStepIndex
+									? ('pickupOrder.actions.submit' | translate)
+									: ('pickupOrder.actions.next' | translate) }}
+							</span>
 						</button>
 					</div>
 				</form>
