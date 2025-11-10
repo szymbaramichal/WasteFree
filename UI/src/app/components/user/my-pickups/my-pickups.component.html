@@ -61,7 +61,7 @@
               >
                 <option value="all">{{ 'myPickups.filters.group.all' | translate }}</option>
                 <option *ngFor="let group of groupOptions()" [value]="group.id">
-                  {{ group.name }}
+                  {{ group.isPrivate ? ('pickupOrder.step.participants.privateGroup' | translate) : group.name }}
                 </option>
               </select>
             </div>
@@ -90,13 +90,17 @@
                       <ng-container *ngIf="pickup.groupId; else groupNameOnly">
                         <a class="group-link" [routerLink]="['/portal/groups', pickup.groupId]">
                           <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
-                          <span class="group-link__label">{{ pickup.groupName }}</span>
+                          <span class="group-link__label">
+                            {{ pickup.isPrivateGroup ? ('pickupOrder.step.participants.privateGroup' | translate) : pickup.groupName }}
+                          </span>
                         </a>
                       </ng-container>
                       <ng-template #groupNameOnly>
                         <span class="group-link group-link--static">
                           <i class="bi bi-people" aria-hidden="true"></i>
-                          <span class="group-link__label">{{ pickup.groupName }}</span>
+                          <span class="group-link__label">
+                            {{ pickup.isPrivateGroup ? ('pickupOrder.step.participants.privateGroup' | translate) : pickup.groupName }}
+                          </span>
                         </span>
                       </ng-template>
                     </td>
