@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { PaginatedResult, Pager, Result } from '@app/_models/result';
-import { CreateGarbageOrderRequest, GarbageOrderDto } from '@app/_models/garbage-orders';
+import { CreateGarbageOrderRequest, GarbageOrderDto, GarbageOrderFilterRequest } from '@app/_models/garbage-orders';
 
 export const USER_ORDERS_PAGE_SIZE = 200;
 
