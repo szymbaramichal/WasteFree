@@ -205,16 +205,80 @@
 
           <div *ngIf="activeTab === 'pickups'" class="group-panel__tab-pane" role="tabpanel" id="group-tabpanel-pickups" [attr.aria-labelledby]="'group-tab-pickups'">
             <ng-container *ngIf="group; else tabRequiresGroup">
-              <div class="panel-compact panel-compact--pickup">
+              <div class="panel-compact panel-compact--pickup group-pickups">
                 <div class="panel-title">
                   <i class="bi bi-truck"></i>
                   <span>{{ 'groups.tabs.pickups.title' | translate }}</span>
                 </div>
-                <p class="text-muted small mb-0">{{ 'groups.tabs.pickups.subtitle' | translate }}</p>
-                <div class="alert alert-info mt-3 mb-0" role="status">{{ 'groups.tabs.pickups.empty' | translate }}</div>
+
+                <div class="group-pickups__header">
+                  <p class="text-muted small mb-0">{{ 'groups.tabs.pickups.subtitle' | translate }}</p>
+                  <button type="button" class="btn btn-xs btn-outline-success group-pickups__refresh" (click)="refreshGroupOrders()" [disabled]="groupOrdersLoading">
+                    <span *ngIf="!groupOrdersLoading">{{ 'groups.pickups.refresh' | translate }}</span>
+                    <span *ngIf="groupOrdersLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                  </button>
+                </div>
+
+                <div *ngIf="groupOrdersLoading" class="group-pickups__loading" role="status">
+                  <div class="spinner-border" aria-hidden="true"></div>
+                  <div class="small text-muted">{{ 'groups.pickups.loading' | translate }}</div>
+                </div>
+
+                <div class="alert alert-danger mb-0" *ngIf="!groupOrdersLoading && groupOrdersError" role="alert">
+                  {{ groupOrdersError }}
+                </div>
+
+                <ng-container *ngIf="!groupOrdersLoading && !groupOrdersError">
+                  <div *ngIf="groupPickups.length; else groupPickupsEmpty" class="table-responsive group-pickups__table-wrapper">
+                    <table class="table align-middle mb-0">
+                      <thead>
+                        <tr>
+                          <th scope="col">{{ 'groups.pickups.table.orderNumber' | translate }}</th>
+                          <th scope="col">{{ 'groups.pickups.table.status' | translate }}</th>
+                          <th scope="col">{{ 'groups.pickups.table.pickupDate' | translate }}</th>
+                          <th scope="col" class="text-end">{{ 'groups.pickups.table.actions' | translate }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let pickup of groupPickups; trackBy: trackPickupById">
+                          <td>
+                            <span class="order-number">#{{ pickup.orderNumber }}</span>
+                          </td>
+                          <td>
+                            <span [class]="statusClass(pickup.status)">
+                              {{ statusTranslationKey(pickup.status) | translate }}
+                            </span>
+                          </td>
+                          <td>
+                            <ng-container *ngIf="pickup.pickupDate; else noPickupDate">
+                              {{ pickup.pickupDate | date:'yyyy-MM-dd' }} • {{ pickup.pickupDate | date:'HH:mm' }}
+                            </ng-container>
+                            <ng-template #noPickupDate>--</ng-template>
+                          </td>
+                          <td class="text-end">
+                            <button type="button" class="btn group-pickups__details-btn" (click)="openPickupDetails(pickup.id)">
+                              <span>{{ 'myPickups.actions.viewDetails' | translate }}</span>
+                              <i class="bi bi-arrow-right-circle" aria-hidden="true"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </ng-container>
               </div>
             </ng-container>
           </div>
+
+          <ng-template #groupPickupsEmpty>
+            <div class="group-pickups__empty text-center text-muted">
+              <div class="empty-visual">
+                <i class="bi bi-truck"></i>
+              </div>
+              <p class="fw-semibold mb-1">{{ 'groups.tabs.pickups.empty' | translate }}</p>
+              <small class="opacity-75">{{ 'groups.tabs.pickups.emptyHint' | translate }}</small>
+            </div>
+          </ng-template>
 
           <div *ngIf="activeTab === 'chat'" class="group-panel__tab-pane" role="tabpanel" id="group-tabpanel-chat" [attr.aria-labelledby]="'group-tab-chat'">
             <ng-container *ngIf="group; else tabRequiresGroup">
