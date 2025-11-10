@@ -22,6 +22,13 @@ export enum ContainerSize {
   ContainerLarge = 2
 }
 
+export interface GarbageOrderFilterRequest {
+  fromDate?: string | null;
+  toDate?: string | null;
+  pickupOption?: PickupOption | null;
+  statuses?: GarbageOrderStatus[] | null;
+}
+
 export interface GarbageOrderUserDto {
   userId: string;
   hasAcceptedPayment: boolean;
