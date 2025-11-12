@@ -7,6 +7,7 @@ import { GarbageOrderDto, GarbageOrderStatus, PickupOption } from '@app/_models/
 import { GarbageOrderService, USER_ORDERS_PAGE_SIZE } from '@app/services/garbage-order.service';
 import { TranslationService } from '@app/services/translation.service';
 import { CurrentUserService } from '@app/services/current-user.service';
+import { WalletService } from '@app/services/wallet.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs/operators';
 
@@ -23,6 +24,7 @@ export class OrderDetailsComponent {
   private orderService = inject(GarbageOrderService);
   private translation = inject(TranslationService);
   private currentUser = inject(CurrentUserService).user;
+  private wallet = inject(WalletService);
   private toastr = inject(ToastrService);
   private destroyRef = inject(DestroyRef);
 
@@ -141,6 +143,8 @@ export class OrderDetailsComponent {
     }
 
     this.paying.set(true);
+    const shareAmount = entry.shareAmount;
+
     this.orderService.payForOrder(detail.garbageGroupId, detail.id)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -151,6 +155,10 @@ export class OrderDetailsComponent {
         if (updated) {
           this.order.set(updated);
         }
+        if (shareAmount > 0) {
+          this.wallet.adjustBalance(-shareAmount);
+        }
+        void this.wallet.refreshBalance();
         this.toastr.success(this.translation.translate('myPickups.details.paySuccess'));
       });
   }

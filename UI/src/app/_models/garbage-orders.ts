@@ -44,6 +44,7 @@ export interface CalculateGarbageOrderRequest {
 
 export interface GarbageOrderUserDto {
   userId: string;
+  username: string;
   hasAcceptedPayment: boolean;
   shareAmount: number;
 }
