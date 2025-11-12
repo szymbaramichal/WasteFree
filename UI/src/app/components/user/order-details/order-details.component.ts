@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
@@ -7,6 +7,7 @@ import { GarbageOrderDto, GarbageOrderStatus, PickupOption } from '@app/_models/
 import { GarbageOrderService, USER_ORDERS_PAGE_SIZE } from '@app/services/garbage-order.service';
 import { TranslationService } from '@app/services/translation.service';
 import { CurrentUserService } from '@app/services/current-user.service';
+import { WalletService } from '@app/services/wallet.service';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs/operators';
 
@@ -23,7 +24,9 @@ export class OrderDetailsComponent {
   private orderService = inject(GarbageOrderService);
   private translation = inject(TranslationService);
   private currentUser = inject(CurrentUserService).user;
+  private wallet = inject(WalletService);
   private toastr = inject(ToastrService);
+  private destroyRef = inject(DestroyRef);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -33,7 +36,7 @@ export class OrderDetailsComponent {
 
   constructor() {
     this.route.paramMap
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         const orderId = params.get('orderId');
         if (!orderId) {
@@ -140,9 +143,11 @@ export class OrderDetailsComponent {
     }
 
     this.paying.set(true);
+    const shareAmount = entry.shareAmount;
+
     this.orderService.payForOrder(detail.garbageGroupId, detail.id)
       .pipe(
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         finalize(() => this.paying.set(false))
       )
       .subscribe((res) => {
@@ -150,6 +155,10 @@ export class OrderDetailsComponent {
         if (updated) {
           this.order.set(updated);
         }
+        if (shareAmount > 0) {
+          this.wallet.adjustBalance(-shareAmount);
+        }
+        void this.wallet.refreshBalance();
         this.toastr.success(this.translation.translate('myPickups.details.paySuccess'));
       });
   }
@@ -169,7 +178,7 @@ export class OrderDetailsComponent {
 
     this.orderService.getMyOrders(1, USER_ORDERS_PAGE_SIZE)
       .pipe(
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         finalize(() => this.loading.set(false))
       )
       .subscribe((res) => {

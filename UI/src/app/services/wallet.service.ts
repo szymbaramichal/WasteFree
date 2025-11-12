@@ -56,6 +56,13 @@ export class WalletService {
   get currentBalance(): number { return this._balance$.getValue(); }
   get currentMethods(): WalletMethodDto[] { return this._methods$.getValue() || []; }
 
+  adjustBalance(delta: number): void {
+    if (typeof delta !== 'number' || Number.isNaN(delta) || delta === 0) {
+      return;
+    }
+    this._balance$.next(this._balance$.getValue() + delta);
+  }
+
   // Creates a transaction (top up or withdraw) depending on code and amount sign
   createTransaction(req: WalletTransactionRequest) {
     return this.http.post<Result<WalletTransactionResponse>>(`${this.api}/transaction`, req).pipe(

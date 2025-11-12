@@ -34,6 +34,7 @@ public class GetGarbageOrdersQueryHandler(ApplicationDataContext context)
             .Where(x => x.GarbageGroupId == request.GarbageGroupId)
             .Include(x => x.GarbageGroup)
             .Include(x => x.GarbageOrderUsers)
+                .ThenInclude(u => u.User)
             .AsQueryable();
         
         if (request.FromDate.HasValue)

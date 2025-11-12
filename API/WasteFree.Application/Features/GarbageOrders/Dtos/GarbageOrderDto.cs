@@ -47,6 +47,7 @@ public static class GarbageOrderDtoExtensions
             Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
             {
                 UserId = x.UserId,
+                Username = x.User?.Username ?? string.Empty,
                 HasAcceptedPayment = x.HasAcceptedPayment,
                 ShareAmount = x.ShareAmount
             }).ToList()
