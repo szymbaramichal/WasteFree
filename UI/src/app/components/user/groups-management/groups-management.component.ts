@@ -96,10 +96,6 @@ export class GroupsManagementComponent implements OnInit {
           }
           this.resetFormDefaults();
           this.fetchPendingInvitations();
-        },
-        error: (err) => {
-          const message = err?.error?.errorMessage || this.translationService.translate('error.generic');
-          this.toastr.error(message);
         }
       });
   }
