@@ -11,6 +11,7 @@ import { TranslationService } from '@app/services/translation.service';
 import { CityService } from '@app/services/city.service';
 import { buildAddressFormGroup } from '@app/forms/address-form';
 import { Address } from '@app/_models/address';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-groups-management',
@@ -25,6 +26,7 @@ export class GroupsManagementComponent implements OnInit {
   private toastr = inject(ToastrService);
   private translationService = inject(TranslationService);
   private cityService = inject(CityService);
+  private router = inject(Router);
 
   groups: GarbageGroupInfo[] = [];
   loading = false;
@@ -85,8 +87,13 @@ export class GroupsManagementComponent implements OnInit {
     this.groupService.register(payload)
       .pipe(finalize(() => this.submitting = false))
       .subscribe({
-        next: () => {
+        next: (res) => {
+          const newGroupId = res?.resultModel?.id;
           this.toastr.success(this.translationService.translate('success.update'));
+          if (newGroupId) {
+            this.router.navigate(['portal', 'groups', newGroupId]);
+            return;
+          }
           this.resetFormDefaults();
           this.fetchPendingInvitations();
         }
