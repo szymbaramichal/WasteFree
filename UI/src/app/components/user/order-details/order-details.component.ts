@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
@@ -24,6 +24,7 @@ export class OrderDetailsComponent {
   private translation = inject(TranslationService);
   private currentUser = inject(CurrentUserService).user;
   private toastr = inject(ToastrService);
+  private destroyRef = inject(DestroyRef);
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
@@ -33,7 +34,7 @@ export class OrderDetailsComponent {
 
   constructor() {
     this.route.paramMap
-      .pipe(takeUntilDestroyed())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
         const orderId = params.get('orderId');
         if (!orderId) {
@@ -142,7 +143,7 @@ export class OrderDetailsComponent {
     this.paying.set(true);
     this.orderService.payForOrder(detail.garbageGroupId, detail.id)
       .pipe(
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         finalize(() => this.paying.set(false))
       )
       .subscribe((res) => {
@@ -169,7 +170,7 @@ export class OrderDetailsComponent {
 
     this.orderService.getMyOrders(1, USER_ORDERS_PAGE_SIZE)
       .pipe(
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef),
         finalize(() => this.loading.set(false))
       )
       .subscribe((res) => {
