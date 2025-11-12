@@ -29,6 +29,19 @@ export interface GarbageOrderFilterRequest {
   statuses?: GarbageOrderStatus[] | null;
 }
 
+export interface GarbageOrderCostDto {
+  estimatedCost: number | null;
+}
+
+export interface CalculateGarbageOrderRequest {
+  pickupOption: PickupOption;
+  containerSize: ContainerSize | null;
+  dropOffDate: string | null;
+  pickupDate: string;
+  isHighPriority: boolean;
+  collectingService: boolean;
+}
+
 export interface GarbageOrderUserDto {
   userId: string;
   hasAcceptedPayment: boolean;

@@ -1,10 +1,16 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { GarbageGroupWithUsers, GarbageGroupRole } from '@app/_models/garbageGroups';
-import { ContainerSize, CreateGarbageOrderRequest, GarbageOrderDto, PickupOption } from '@app/_models/garbage-orders';
+import {
+  CalculateGarbageOrderRequest,
+  ContainerSize,
+  CreateGarbageOrderRequest,
+  GarbageOrderDto,
+  PickupOption
+} from '@app/_models/garbage-orders';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { finalize } from 'rxjs/operators';
@@ -267,6 +273,37 @@ export class PickupOrderComponent implements OnInit {
 
   readonly summaryReady = computed(() => this.summaryRequest() !== null);
 
+  readonly costRequest = computed<CalculateGarbageOrderRequest | null>(() => {
+    const pickupOption = this.serviceTypeValue();
+    const pickupSchedule = this.pickupDateTime();
+
+    if (pickupOption === null || pickupOption === PickupOption.SpecialOrder || !pickupSchedule) {
+      return null;
+    }
+
+    const requiresContainer = pickupOption === PickupOption.Container;
+    const containerSize = requiresContainer ? this.containerSizeValue() ?? null : null;
+    const dropOffSchedule = requiresContainer ? this.dropOffDateTime() : null;
+
+    if (requiresContainer && (containerSize === null || !dropOffSchedule)) {
+      return null;
+    }
+
+    return {
+      pickupOption,
+      containerSize,
+      dropOffDate: dropOffSchedule ? dropOffSchedule.isoString : null,
+      pickupDate: pickupSchedule.isoString,
+      isHighPriority: !!this.isHighPriorityValue(),
+      collectingService: !!this.collectingServiceValue()
+    };
+  });
+
+  readonly costLoading = signal(false);
+  readonly estimatedCost = signal<number | null>(null);
+  readonly costMessage = signal<string | null>(null);
+  readonly costMessageType = signal<'info' | 'error'>('info');
+
   readonly selectedContainerSizeOption = computed(() => {
     const value = this.containerSizeValue();
     if (value === null) {
@@ -285,6 +322,60 @@ export class PickupOrderComponent implements OnInit {
   readonly pickupOptionEnum = PickupOption;
 
   readonly minPickupDate = this.todayIsoDate();
+
+  private readonly costCalculationEffect = effect((onCleanup) => {
+    const step = this.currentStep();
+    const groupId = this.selectedGroupId();
+    const payload = this.costRequest();
+    const pickupOption = this.serviceTypeValue();
+
+    if (step !== this.summaryStepIndex) {
+      this.resetCostState(true);
+      return;
+    }
+
+    if (pickupOption === PickupOption.SpecialOrder) {
+      this.resetCostState(false);
+      this.setCostMessage('pickupOrder.summary.cost.specialOrder', 'info');
+      return;
+    }
+
+    if (!groupId || !payload) {
+      this.resetCostState(false);
+      this.setCostMessage('pickupOrder.summary.cost.missing', 'info');
+      return;
+    }
+
+    this.costLoading.set(true);
+    this.estimatedCost.set(null);
+    this.setCostMessage(null);
+
+    const subscription = this.garbageOrderService
+      .calculateOrderCost(groupId, payload)
+      .pipe(finalize(() => this.costLoading.set(false)))
+      .subscribe({
+        next: (res) => {
+          if (res.errorMessage || !res.resultModel) {
+            this.estimatedCost.set(null);
+            this.setCostMessage(res.errorMessage ?? 'pickupOrder.summary.cost.error', 'error');
+            return;
+          }
+
+          this.estimatedCost.set(res.resultModel.estimatedCost ?? null);
+          if (res.resultModel.estimatedCost === null || res.resultModel.estimatedCost === undefined) {
+            this.setCostMessage('pickupOrder.summary.cost.unavailable', 'info');
+          } else {
+            this.setCostMessage(null);
+          }
+        },
+        error: () => {
+          this.estimatedCost.set(null);
+          this.setCostMessage('pickupOrder.summary.cost.error', 'error');
+        }
+      });
+
+    onCleanup(() => subscription.unsubscribe());
+  }, { allowSignalWrites: true });
 
   ngOnInit(): void {
     this.loadGroupsWithUsers();
@@ -568,6 +659,19 @@ export class PickupOrderComponent implements OnInit {
       isoString,
       displayDate
     };
+  }
+
+  private resetCostState(clearMessage: boolean): void {
+    this.costLoading.set(false);
+    this.estimatedCost.set(null);
+    if (clearMessage) {
+      this.setCostMessage(null);
+    }
+  }
+
+  private setCostMessage(messageKey: string | null, type: 'info' | 'error' = 'info'): void {
+    this.costMessage.set(messageKey);
+    this.costMessageType.set(messageKey === null ? 'info' : type);
   }
 
   private submitOrder(): void {
