@@ -57,6 +57,8 @@
   "auth.login.loading": "Trwa logowanie...",
   "auth.register.btn": "Zarejestruj",
   "auth.register.loading": "Trwa rejestracja...",
+  "auth.register.next": "Dalej",
+  "auth.register.back": "Wstecz",
   "auth.languagePreference": "Język powiadomień",
   "auth.address.city": "Miasto",
   "auth.address.city.placeholder": "Wybierz miasto",
@@ -520,5 +522,6 @@
   "consents.modal.acceptSuccess": "Zgoda została zaakceptowana.",
   "consents.modal.acceptError": "Nie udało się zaakceptować zgody.",
   "consents.modal.reject": "Odrzuć",
-  "consents.modal.rejectInfo": "Zaloguj się ponownie, gdy będziesz gotowy zaakceptować zgodę."
+  "consents.modal.rejectInfo": "Zaloguj się ponownie, gdy będziesz gotowy zaakceptować zgodę.",
+  "signalR.newNotification" : "Otrzymałeś nowe powiadomienie!"
 }

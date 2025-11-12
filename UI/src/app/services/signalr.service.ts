@@ -2,6 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { environment } from 'environments/environment';
 import { InboxService } from './inbox.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslationService } from './translation.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +11,8 @@ import { InboxService } from './inbox.service';
 export class SignalRService {
   private hubConnection!: signalR.HubConnection;
   private inboxService = inject(InboxService);
+  private toastrService = inject(ToastrService);
+  private translationService = inject(TranslationService);
   notifications: string[] = [];
   private readonly hubUrl = this.resolveHubUrl();
 
@@ -28,6 +32,8 @@ export class SignalRService {
       } else {
         console.warn('Invalid counter value from SignalR:', message);
       }
+
+      this.toastrService.info(this.translationService.translate("signalR.newNotification"));
       this.notifications.push(message);
     });
 

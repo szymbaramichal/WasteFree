@@ -57,6 +57,8 @@
   "auth.login.loading": "Signing in...",
   "auth.register.btn": "Register",
   "auth.register.loading": "Registering...",
+  "auth.register.next": "Next",
+  "auth.register.back": "Back",
   "auth.languagePreference": "Notification language",
   "auth.address.city": "City",
   "auth.address.city.placeholder": "Select a city",
@@ -519,5 +521,6 @@
   "consents.modal.acceptSuccess": "Consent accepted.",
   "consents.modal.acceptError": "We could not accept the consent.",
   "consents.modal.reject": "Reject",
-  "consents.modal.rejectInfo": "Sign in again when you are ready to accept the consent."
+  "consents.modal.rejectInfo": "Sign in again when you are ready to accept the consent.",
+  "signalR.newNotification" : "You have received new notification!"
 }

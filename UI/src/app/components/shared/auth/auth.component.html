@@ -20,85 +20,108 @@
       </button>
     </form>
 
-    <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegister()">
-
-      <label for="username">{{ 'auth.username' | translate }}</label>
-      <input id="username" formControlName="username" type="text" />
-
-      <label for="email">{{ 'auth.email' | translate }}</label>
-      <input id="email" formControlName="email" type="email" />
-
-      <label for="password">{{ 'auth.password' | translate }}</label>
-      <input id="password" formControlName="password" type="password" />
-
-      <label>{{ 'auth.role' | translate }}</label>
-      <div class="role-tiles">
-        <label class="role-tile" [class.selected]="registerForm.get('role')?.value === 'User'">
-          <input type="radio" formControlName="role" value="User" />
-          <span class="role-title">{{ 'auth.role.user' | translate }}</span>
-          <span class="role-desc">{{ 'auth.role.user.desc' | translate }}</span>
-        </label>
-        <label class="role-tile" [class.selected]="registerForm.get('role')?.value === 'GarbageAdmin'">
-          <input type="radio" formControlName="role" value="GarbageAdmin" />
-          <span class="role-title">{{ 'auth.role.garbageAdmin' | translate }}</span>
-          <span class="role-desc">{{ 'auth.role.garbageAdmin.desc' | translate }}</span>
-        </label>
+    <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
+      <div class="step-indicator" role="group" [attr.aria-label]="'auth.register' | translate">
+        <div class="step-circle" [class.active]="registerStep === 1" [class.completed]="registerStep > 1">1</div>
+        <div class="step-bar" [class.completed]="registerStep > 1"></div>
+        <div class="step-circle" [class.active]="registerStep === 2" [class.completed]="registerStep === 2">2</div>
       </div>
 
-      <label for="reg-language">{{ 'auth.languagePreference' | translate }}</label>
-      <div class="language-select">
-  <select id="reg-language" formControlName="languagePreference" [attr.aria-label]="'auth.languagePreference' | translate">
-          <option value="English">{{ 'language.english' | translate }} 🇬🇧</option>
-          <option value="Polish">{{ 'language.polish' | translate }} 🇵🇱</option>
-        </select>
-        <div class="language-flag">
-          <img [src]="(registerForm.get('languagePreference')?.value === 'Polish') ? 'assets/images/flag-pl.svg' : 'assets/images/flag-en.svg'" alt="flag" />
-        </div>
+      <ng-container [ngSwitch]="registerStep">
+        <ng-container *ngSwitchCase="1">
+          <div class="step-panel">
+            <label for="username">{{ 'auth.username' | translate }}</label>
+            <input id="username" formControlName="username" type="text" />
+
+            <label for="email">{{ 'auth.email' | translate }}</label>
+            <input id="email" formControlName="email" type="email" />
+
+            <label for="password">{{ 'auth.password' | translate }}</label>
+            <input id="password" formControlName="password" type="password" />
+
+            <label>{{ 'auth.role' | translate }}</label>
+            <div class="role-tiles">
+              <label class="role-tile" [class.selected]="registerForm.get('role')?.value === 'User'">
+                <input type="radio" formControlName="role" value="User" />
+                <span class="role-title">{{ 'auth.role.user' | translate }}</span>
+                <span class="role-desc">{{ 'auth.role.user.desc' | translate }}</span>
+              </label>
+              <label class="role-tile" [class.selected]="registerForm.get('role')?.value === 'GarbageAdmin'">
+                <input type="radio" formControlName="role" value="GarbageAdmin" />
+                <span class="role-title">{{ 'auth.role.garbageAdmin' | translate }}</span>
+                <span class="role-desc">{{ 'auth.role.garbageAdmin.desc' | translate }}</span>
+              </label>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="2">
+          <div class="step-panel">
+            <label for="reg-language">{{ 'auth.languagePreference' | translate }}</label>
+            <div class="language-select">
+              <select id="reg-language" formControlName="languagePreference" [attr.aria-label]="'auth.languagePreference' | translate">
+                <option value="English">{{ 'language.english' | translate }} 🇬🇧</option>
+                <option value="Polish">{{ 'language.polish' | translate }} 🇵🇱</option>
+              </select>
+              <div class="language-flag">
+                <img [src]="(registerForm.get('languagePreference')?.value === 'Polish') ? 'assets/images/flag-pl.svg' : 'assets/images/flag-en.svg'" alt="flag" />
+              </div>
+            </div>
+
+            <div formGroupName="address" class="address-section">
+              <label for="reg-city">{{ 'auth.address.city' | translate }}</label>
+              <div class="city-select" [attr.aria-busy]="isLoadingCities">
+                <select id="reg-city" formControlName="city" [disabled]="isLoadingCities || cityLoadError || !cities.length">
+                  <option value="" disabled>{{ isLoadingCities ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
+                  <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                </select>
+                <span *ngIf="isLoadingCities" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              </div>
+              <div *ngIf="cityLoadError" class="form-helper error-text">{{ 'auth.address.cityLoadError' | translate }}</div>
+
+              <label for="reg-postal">{{ 'auth.address.postalCode' | translate }}</label>
+              <input id="reg-postal" formControlName="postalCode" type="text" [class.is-invalid]="registerForm.get('address.postalCode')?.touched && (registerForm.get('address.postalCode')?.hasError('required') || registerForm.get('address.postalCode')?.hasError('pattern') || registerForm.get('address.postalCode')?.hasError('cityMismatch'))" />
+              <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('required')" class="form-helper error-text">
+                {{ 'auth.address.postalCodeRequired' | translate }}
+              </div>
+              <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('pattern')" class="form-helper error-text">
+                {{ 'auth.address.postalCodeInvalid' | translate }}
+              </div>
+              <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('cityMismatch')" class="form-helper error-text">
+                {{ 'auth.address.postalCodeCityMismatch' | translate }}
+              </div>
+
+              <label for="reg-street">{{ 'auth.address.street' | translate }}</label>
+              <input id="reg-street" formControlName="street" type="text" [class.is-invalid]="registerForm.get('address.street')?.touched && (registerForm.get('address.street')?.hasError('required') || registerForm.get('address.street')?.hasError('pattern'))" />
+              <div *ngIf="registerForm.get('address.street')?.touched && registerForm.get('address.street')?.hasError('required')" class="form-helper error-text">
+                {{ 'auth.address.streetRequired' | translate }}
+              </div>
+              <div *ngIf="registerForm.get('address.street')?.touched && registerForm.get('address.street')?.hasError('pattern')" class="form-helper error-text">
+                {{ 'auth.address.streetNumberRequired' | translate }}
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <div class="step-actions">
+        <button type="button" class="step-btn secondary" *ngIf="!isRegisterFirstStep" (click)="goToPreviousRegisterStep()" [disabled]="isRegisterLoading">
+          {{ 'auth.register.back' | translate }}
+        </button>
+        <button type="button" class="step-btn primary" *ngIf="!isRegisterLastStep" (click)="onRegister()" [disabled]="!isCurrentRegisterStepValid || isRegisterLoading">
+          {{ 'auth.register.next' | translate }}
+        </button>
+        <button type="submit" class="step-btn primary" *ngIf="isRegisterLastStep" [disabled]="registerForm.invalid || isRegisterLoading">
+          <span *ngIf="!isRegisterLoading">{{ 'auth.register.btn' | translate }}</span>
+          <span *ngIf="isRegisterLoading" class="d-flex align-items-center" style="gap:8px;">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span *ngIf="showRegisterLoadingText">{{ 'auth.register.loading' | translate }}</span>
+          </span>
+        </button>
       </div>
-
-      <div formGroupName="address" class="address-section">
-        <label for="reg-city">{{ 'auth.address.city' | translate }}</label>
-        <div class="city-select" [attr.aria-busy]="isLoadingCities">
-          <select id="reg-city" formControlName="city" [disabled]="isLoadingCities || cityLoadError || !cities.length">
-            <option value="" disabled>{{ isLoadingCities ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
-            <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
-          </select>
-          <span *ngIf="isLoadingCities" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-        </div>
-        <div *ngIf="cityLoadError" class="form-helper error-text">{{ 'auth.address.cityLoadError' | translate }}</div>
-
-        <label for="reg-postal">{{ 'auth.address.postalCode' | translate }}</label>
-        <input id="reg-postal" formControlName="postalCode" type="text" [class.is-invalid]="registerForm.get('address.postalCode')?.touched && (registerForm.get('address.postalCode')?.hasError('required') || registerForm.get('address.postalCode')?.hasError('pattern') || registerForm.get('address.postalCode')?.hasError('cityMismatch'))" />
-        <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('required')" class="form-helper error-text">
-          {{ 'auth.address.postalCodeRequired' | translate }}
-        </div>
-        <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('pattern')" class="form-helper error-text">
-          {{ 'auth.address.postalCodeInvalid' | translate }}
-        </div>
-        <div *ngIf="registerForm.get('address.postalCode')?.touched && registerForm.get('address.postalCode')?.hasError('cityMismatch')" class="form-helper error-text">
-          {{ 'auth.address.postalCodeCityMismatch' | translate }}
-        </div>
-
-        <label for="reg-street">{{ 'auth.address.street' | translate }}</label>
-        <input id="reg-street" formControlName="street" type="text" [class.is-invalid]="registerForm.get('address.street')?.touched && (registerForm.get('address.street')?.hasError('required') || registerForm.get('address.street')?.hasError('pattern'))" />
-        <div *ngIf="registerForm.get('address.street')?.touched && registerForm.get('address.street')?.hasError('required')" class="form-helper error-text">
-          {{ 'auth.address.streetRequired' | translate }}
-        </div>
-        <div *ngIf="registerForm.get('address.street')?.touched && registerForm.get('address.street')?.hasError('pattern')" class="form-helper error-text">
-          {{ 'auth.address.streetNumberRequired' | translate }}
-        </div>
-      </div>
-
-      <button type="submit" [disabled]="registerForm.invalid || isRegisterLoading">
-        <span *ngIf="!isRegisterLoading">{{ 'auth.register.btn' | translate }}</span>
-        <span *ngIf="isRegisterLoading" class="d-flex align-items-center" style="gap:8px;">
-          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          <span *ngIf="showRegisterLoadingText">{{ 'auth.register.loading' | translate }}</span>
-        </span>
-      </button>
     </form>
 
-    <p>
+    <p class="mode-toggle">
       <a href="#" (click)="toggleMode($event)">
         {{ isLoginMode ? ('auth.toggle.noAccount' | translate) : ('auth.toggle.haveAccount' | translate) }}
       </a>
