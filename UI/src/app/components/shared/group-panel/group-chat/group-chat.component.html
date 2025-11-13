@@ -49,11 +49,11 @@
     </div>
 
     <form class="group-chat__composer" [formGroup]="messageForm" (ngSubmit)="send()" novalidate>
-      <div class="input-group flex-column flex-md-row">
+      <div class="group-chat__composer-row">
         <textarea class="form-control group-chat__textarea" rows="2" formControlName="message"
           [placeholder]="'groups.chat.placeholder' | translate"
           [disabled]="sending"></textarea>
-        <button class="btn btn-success btn-elevated mt-2 mt-md-0 ms-md-2" type="submit"
+        <button class="btn btn-success btn-elevated group-chat__send-btn" type="submit"
           [disabled]="sending || messageForm.invalid">
           <span *ngIf="!sending" class="d-inline-flex align-items-center gap-2">
             <i class="bi bi-send"></i>
