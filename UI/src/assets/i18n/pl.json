@@ -274,6 +274,7 @@
   "pickupOrder.summary.noParticipants": "Nie wybrano uczestników.",
   "pickupOrder.summary.incompleteHint": "Uzupełnij poprzednie kroki, aby zobaczyć podsumowanie.",
   "pickupOrder.summary.success": "Zamówienie wysłane! Kod potwierdzenia: {{code}}",
+  "pickupOrder.summary.successToast": "Zamówienie wysłane!",
   "pickupOrder.summary.incomplete": "Uzupełnij wszystkie kroki przed wysłaniem zamówienia.",
   "pickupOrder.summary.genericError": "Nie udało się wysłać zamówienia. Spróbuj ponownie za chwilę.",
   "pickupOrder.summary.submitError": "Nie udało się wysłać zamówienia. Spróbuj ponownie za chwilę.",
