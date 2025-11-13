@@ -21,6 +21,9 @@ public class GarbageOrder : DatabaseEntity
 
     public GarbageGroup GarbageGroup { get; set; } = null!;
     public Guid GarbageGroupId { get; set; }
+
+    public Guid? AssignedGarbageAdminId { get; set; }
+    public User? AssignedGarbageAdmin { get; set; }
     
     public ICollection<GarbageOrderUsers> GarbageOrderUsers { get; set; } = [];
 }

@@ -64,6 +64,12 @@ public class ApplicationDataContext : DbContext
         modelBuilder.Entity<GarbageGroup>()
             .OwnsOne(u => u.Address);
 
+        modelBuilder.Entity<GarbageOrder>()
+            .HasOne(o => o.AssignedGarbageAdmin)
+            .WithMany()
+            .HasForeignKey(o => o.AssignedGarbageAdminId)
+            .OnDelete(DeleteBehavior.SetNull);
+
         modelBuilder.Entity<GarbageGroupMessage>()
             .Property(m => m.Content)
             .HasMaxLength(2000)

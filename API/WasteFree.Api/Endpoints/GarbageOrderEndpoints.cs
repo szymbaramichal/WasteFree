@@ -34,6 +34,30 @@ public static class GarbageOrderEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
             .WithDescription("Calculate estimated cost for a garbage order.");
+
+        app.MapGet("/garbage-admin/orders", GetWaitingForAcceptOrdersByCityAsync)
+            .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
+            .WithOpenApi()
+            .Produces<PaginatedResult<ICollection<GarbageOrderDto>>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Get waiting-for-accept garbage orders for a city with pagination.");
+
+        app.MapPost("/garbage-admin/orders/{orderId:guid}/accept", AcceptGarbageOrderAsync)
+            .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
+            .WithOpenApi()
+            .Produces<Result<GarbageOrderDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Accept a waiting-for-accept garbage order.");
+
+        app.MapGet("/garbage-admin/orders/current", GetGarbageAdminActiveOrdersAsync)
+            .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
+            .WithOpenApi()
+            .Produces<PaginatedResult<ICollection<GarbageOrderDto>>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Get current garbage admin orders awaiting pickup or utilization fee.");
         
         app.MapPost("/garbage-group/{groupId:guid}/orders/filter", GetGarbageOrdersAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
@@ -112,6 +136,79 @@ public static class GarbageOrderEndpoints
             request.PickupDate,
             request.IsHighPriority,
             request.CollectingService);
+
+        var result = await mediator.SendAsync(query, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Get waiting-for-accept garbage orders scoped by city for garbage administrators.
+    /// </summary>
+    private static async Task<IResult> GetWaitingForAcceptOrdersByCityAsync(
+        [FromQuery] int pageNumber,
+        [FromQuery] int pageSize,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
+        var query = new GetWaitingForAcceptOrdersByCityQuery(currentUserService.UserId, pager);
+
+        var result = await mediator.SendAsync(query, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Accept and assign a garbage order to the authenticated garbage admin.
+    /// </summary>
+    private static async Task<IResult> AcceptGarbageOrderAsync(
+        [FromRoute] Guid orderId,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var command = new AcceptGarbageOrderCommand(orderId, currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Get current garbage orders assigned to the authenticated garbage admin (waiting for pickup or utilization fee).
+    /// </summary>
+    private static async Task<IResult> GetGarbageAdminActiveOrdersAsync(
+        [FromQuery] int pageNumber,
+        [FromQuery] int pageSize,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
+        var query = new GetGarbageAdminActiveOrdersQuery(currentUserService.UserId, pager);
 
         var result = await mediator.SendAsync(query, cancellationToken);
 
