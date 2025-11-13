@@ -7,6 +7,7 @@
       [attr.aria-label]="'common.back' | translate"
     >
       <i class="bi bi-arrow-left" aria-hidden="true"></i>
+      <span class="order-details__back-label">{{ 'common.back' | translate }}</span>
     </button>
   </div>
 
@@ -54,7 +55,6 @@
               <dt class="text-muted">{{ 'myPickups.details.summary.group' | translate }}</dt>
               <dd class="fw-semibold">
                 <a class="group-link" [routerLink]="['/portal/groups', detail.garbageGroupId]">
-                  <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
                   <span class="group-link__label">{{ detail.garbageGroupName || '—' }}</span>
                 </a>
               </dd>
@@ -93,7 +93,7 @@
           </div>
         </section>
 
-        <section class="order-details__section">
+        <section class="order-details__section order-details__section--participants">
           <h2 class="h6 text-uppercase fw-semibold small mb-3">{{ 'myPickups.details.participants.title' | translate }}</h2>
           <div class="table-responsive">
             <table class="table table-sm align-middle mb-0">
