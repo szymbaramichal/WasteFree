@@ -146,7 +146,7 @@ public class ApplicationDataContext : DbContext
                 var coordinates = await geocodingService.TryGetCoordinatesAsync(entry.Entity, cancellationToken);
                 if (!coordinates.HasValue)
                 {
-                    continue;
+                    throw new GeocodingException(CloneAddress(entry.Entity), null);
                 }
 
                 entry.Entity.Latitude = coordinates.Value.Latitude;
