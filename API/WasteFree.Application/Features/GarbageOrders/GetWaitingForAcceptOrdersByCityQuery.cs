@@ -11,10 +11,8 @@ using WasteFree.Infrastructure.Extensions;
 namespace WasteFree.Application.Features.GarbageOrders;
 
 public sealed record GetWaitingForAcceptOrdersByCityQuery(
-    string City,
-    Pager Pager,
-    double? ReferenceLatitude = null,
-    double? ReferenceLongitude = null) : IRequest<ICollection<GarbageOrderDto>>;
+    Guid GarbageAdminId,
+    Pager Pager) : IRequest<ICollection<GarbageOrderDto>>;
 
 public sealed class GetWaitingForAcceptOrdersByCityQueryHandler(ApplicationDataContext context)
     : IRequestHandler<GetWaitingForAcceptOrdersByCityQuery, ICollection<GarbageOrderDto>>
@@ -23,14 +21,33 @@ public sealed class GetWaitingForAcceptOrdersByCityQueryHandler(ApplicationDataC
         GetWaitingForAcceptOrdersByCityQuery request,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.City))
+        var adminAddress = await context.Users
+            .AsNoTracking()
+            .Where(user => user.Id == request.GarbageAdminId)
+            .Select(user => new
+            {
+                user.Id,
+                user.Address.City,
+                user.Address.Latitude,
+                user.Address.Longitude
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (adminAddress is null)
+        {
+            return PaginatedResult<ICollection<GarbageOrderDto>>.Failure(
+                ApiErrorCodes.InvalidUser,
+                HttpStatusCode.BadRequest);
+        }
+
+        if (string.IsNullOrWhiteSpace(adminAddress.City))
         {
             return PaginatedResult<ICollection<GarbageOrderDto>>.Failure(
                 ValidationErrorCodes.GroupCityRequired,
                 HttpStatusCode.BadRequest);
         }
 
-        var normalizedCity = request.City.Trim();
+        var normalizedCity = adminAddress.City.Trim();
         var normalizedCityUpper = normalizedCity.ToUpper();
 
         var ordersQuery = context.GarbageOrders
@@ -43,7 +60,7 @@ public sealed class GetWaitingForAcceptOrdersByCityQueryHandler(ApplicationDataC
             .Where(order => order.GarbageGroup.Address.City != null &&
                             order.GarbageGroup.Address.City.ToUpper() == normalizedCityUpper);
 
-        var referencePoint = (Latitude: request.ReferenceLatitude, Longitude: request.ReferenceLongitude);
+        var referencePoint = (Latitude: adminAddress.Latitude, Longitude: adminAddress.Longitude);
 
         var totalCount = await ordersQuery.CountAsync(cancellationToken);
 

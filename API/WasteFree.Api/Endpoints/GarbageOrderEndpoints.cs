@@ -152,17 +152,15 @@ public static class GarbageOrderEndpoints
     /// Get waiting-for-accept garbage orders scoped by city for garbage administrators.
     /// </summary>
     private static async Task<IResult> GetWaitingForAcceptOrdersByCityAsync(
-        [FromQuery] string city,
         [FromQuery] int pageNumber,
         [FromQuery] int pageSize,
-        [FromQuery] double? latitude,
-        [FromQuery] double? longitude,
+        ICurrentUserService currentUserService,
         IMediator mediator,
         IStringLocalizer stringLocalizer,
         CancellationToken cancellationToken)
     {
         var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
-        var query = new GetWaitingForAcceptOrdersByCityQuery(city, pager, latitude, longitude);
+        var query = new GetWaitingForAcceptOrdersByCityQuery(currentUserService.UserId, pager);
 
         var result = await mediator.SendAsync(query, cancellationToken);
 
