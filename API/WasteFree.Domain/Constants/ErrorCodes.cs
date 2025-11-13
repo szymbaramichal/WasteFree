@@ -23,6 +23,7 @@ public static class ApiErrorCodes
     public const string AlreadyInGroup = "ALREADY_IN_GROUP";
     public const string ConsentNotFound = "CONSENT_NOT_FOUND";
 	public const string ConsentContentRequired = "CONSENT_CONTENT_REQUIRED";
+    public const string GeocodingFailed = "GEOCODING_FAILED";
 }
 
 public static class ValidationErrorCodes

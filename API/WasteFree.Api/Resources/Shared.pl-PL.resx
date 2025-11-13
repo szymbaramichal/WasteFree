@@ -27,6 +27,7 @@
   <data name="EMAIL_TAKEN" xml:space="preserve"><value>Adres e-mail jest już zajęty</value></data>
   <data name="LOGIN_FAILED" xml:space="preserve"><value>Login lub hasło są nieprawidłowe</value></data>
   <data name="CONSENT_CONTENT_REQUIRED" xml:space="preserve"><value>Treść zgody jest wymagana.</value></data>
+  <data name="GEOCODING_FAILED" xml:space="preserve"><value>Nie udało się ustalić współrzędnych dla wskazanego adresu.</value></data>
   <data name="ERR_EMAIL_REQUIRED"><value>Adres e-mail jest wymagany</value></data>
   <data name="ERR_EMAIL_INVALID"><value>Adres e-mail jest nieprawidłowy</value></data>
   <data name="ERR_USERNAME_REQUIRED"><value>Nazwa użytkownika jest wymagana</value></data>
