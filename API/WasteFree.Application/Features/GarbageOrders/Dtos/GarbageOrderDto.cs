@@ -26,12 +26,14 @@ public class GarbageOrderDto
 
     public Guid? AssignedGarbageAdminId { get; set; }
     public string? AssignedGarbageAdminUsername { get; set; }
+    public string? AssignedGarbageAdminAvatarName { get; set; }
+    public double? DistanceInKilometers { get; set; }
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
 }
 
 public static class GarbageOrderDtoExtensions
 {
-    public static GarbageOrderDto MapToGarbageOrderDto(this GarbageOrder garbageOrder)
+    public static GarbageOrderDto MapToGarbageOrderDto(this GarbageOrder garbageOrder, double? distanceInKilometers = null)
     {
         return new GarbageOrderDto
         {
@@ -49,6 +51,8 @@ public static class GarbageOrderDtoExtensions
             GarbageGroupIsPrivate = garbageOrder.GarbageGroup?.IsPrivate ?? false,
             AssignedGarbageAdminId = garbageOrder.AssignedGarbageAdminId,
             AssignedGarbageAdminUsername = garbageOrder.AssignedGarbageAdmin?.Username,
+            AssignedGarbageAdminAvatarName = garbageOrder.AssignedGarbageAdmin?.AvatarName,
+            DistanceInKilometers = distanceInKilometers,
             Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
             {
                 UserId = x.UserId,

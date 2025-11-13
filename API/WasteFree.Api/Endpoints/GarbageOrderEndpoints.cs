@@ -155,12 +155,14 @@ public static class GarbageOrderEndpoints
         [FromQuery] string city,
         [FromQuery] int pageNumber,
         [FromQuery] int pageSize,
+        [FromQuery] double? latitude,
+        [FromQuery] double? longitude,
         IMediator mediator,
         IStringLocalizer stringLocalizer,
         CancellationToken cancellationToken)
     {
         var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
-        var query = new GetWaitingForAcceptOrdersByCityQuery(city, pager);
+        var query = new GetWaitingForAcceptOrdersByCityQuery(city, pager, latitude, longitude);
 
         var result = await mediator.SendAsync(query, cancellationToken);
 
