@@ -51,6 +51,7 @@
     <form class="group-chat__composer" [formGroup]="messageForm" (ngSubmit)="send()" novalidate>
       <div class="group-chat__composer-row">
         <textarea class="form-control group-chat__textarea" rows="2" formControlName="message"
+          (keydown.enter)="onComposerEnter($event)"
           [placeholder]="'groups.chat.placeholder' | translate"
           [disabled]="sending"></textarea>
         <button class="btn btn-success btn-elevated group-chat__send-btn" type="submit"
