@@ -33,6 +33,7 @@ public class GetGarbageOrdersQueryHandler(ApplicationDataContext context)
         var ordersQuery = context.GarbageOrders
             .Where(x => x.GarbageGroupId == request.GarbageGroupId)
             .Include(x => x.GarbageGroup)
+            .Include(x => x.AssignedGarbageAdmin)
             .Include(x => x.GarbageOrderUsers)
                 .ThenInclude(u => u.User)
             .AsQueryable();

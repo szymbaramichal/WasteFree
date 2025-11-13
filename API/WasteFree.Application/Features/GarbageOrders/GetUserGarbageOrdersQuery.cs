@@ -19,6 +19,7 @@ public class GetUserGarbageOrdersQueryHandler(ApplicationDataContext context)
         var ordersQuery = context.GarbageOrders
             .Where(order => order.GarbageOrderUsers.Any(user => user.UserId == request.UserId))
             .Include(order => order.GarbageGroup)
+            .Include(order => order.AssignedGarbageAdmin)
             .Include(order => order.GarbageOrderUsers)
                 .ThenInclude(user => user.User)
             .OrderByDescending(order => order.PickupDate);

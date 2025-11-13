@@ -23,6 +23,7 @@ public class GarbageOrderPaymentCommandHandler(ApplicationDataContext context)
         CancellationToken cancellationToken)
     {
         var garbageOrder = await context.GarbageOrders
+            .Include(x => x.AssignedGarbageAdmin)
             .Include(x => x.GarbageOrderUsers)
                 .ThenInclude(u => u.User)
             .FirstOrDefaultAsync(
