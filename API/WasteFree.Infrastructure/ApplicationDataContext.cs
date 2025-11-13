@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 using TickerQ.EntityFrameworkCore.Configurations;
 using WasteFree.Domain.Entities;
+using WasteFree.Domain.Exceptions;
 using WasteFree.Domain.Interfaces;
 using WasteFree.Domain.Models;
 
@@ -167,7 +168,39 @@ public class ApplicationDataContext : DbContext
                     entry.Entity.Street,
                     entry.Entity.PostalCode,
                     entry.Entity.City);
+
+                DetachAddressEntry(entry);
+
+                throw new GeocodingException(CloneAddress(entry.Entity), ex);
             }
+        }
+    }
+
+    private static Address CloneAddress(Address source)
+    {
+        return new Address
+        {
+            City = source.City,
+            PostalCode = source.PostalCode,
+            Street = source.Street,
+            Latitude = source.Latitude,
+            Longitude = source.Longitude
+        };
+    }
+
+    private void DetachAddressEntry(EntityEntry<Address> entry)
+    {
+        try
+        {
+            if (entry.State != EntityState.Detached)
+            {
+                entry.State = EntityState.Detached;
+            }
+        }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogDebug(ex, "Unable to detach address entity; marking as unchanged instead.");
+            entry.State = EntityState.Unchanged;
         }
     }
 

@@ -2,6 +2,7 @@ using System.Reflection;
 using FluentValidation;
 using TickerQ.DependencyInjection;
 using WasteFree.Api.Extensions;
+using WasteFree.Api.Middlewares;
 using WasteFree.Infrastructure;
 
 const string allowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
@@ -32,6 +33,7 @@ var app = builder.Build();
 app.UseSwaggerAndOpenApi(builder.Configuration);
 
 app.UseRequestLocalizationSetup();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MigrateDatabase<ApplicationDataContext>();
 
