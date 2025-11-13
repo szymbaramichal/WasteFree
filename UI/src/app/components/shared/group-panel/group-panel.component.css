@@ -118,8 +118,8 @@
 
 .form-spinner{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);color:var(--primary-green-dark,#1f8b56)}
 
-.group-panel__chat{padding:0;background:transparent;border:0;box-shadow:none}
-.group-panel__chat app-group-chat{display:block}
+.group-panel__chat{padding:0;background:transparent;border:0;box-shadow:none;gap:0;min-height:clamp(320px,65vh,640px);min-width:0;width:100%}
+.group-panel__chat app-group-chat{display:block;width:100%;height:100%;min-height:0;min-width:0}
 
 @media (max-width:991.98px){
 	.group-pickups__table-wrapper{overflow-x:auto}
@@ -127,10 +127,31 @@
 }
 
 @media (max-width:767.98px){
-	.group-panel__actions{justify-content:flex-start}
+	.group-panel .card-header{padding:1.2rem}
+	.group-panel .card-heading{flex-direction:column;align-items:flex-start;width:100%;gap:.65rem}
+	.group-panel .card-heading>div:last-child{width:100%}
+	.group-panel__actions{justify-content:flex-start;width:100%;flex-direction:column;align-items:stretch;gap:.6rem}
+	.group-panel__actions .btn,.group-panel__actions .summary-pill{width:100%}
+	.group-panel__actions .btn{justify-content:center}
+	.group-panel__actions .summary-pill{align-items:flex-start;text-align:left;padding:.6rem .95rem}
+	.summary-pill__value{font-size:1.2rem}
 	.group-panel .card-body--compact{padding:1.25rem}
 	.group-panel .panel-compact{padding:.9rem 1rem}
+	.group-panel__tabs{margin-left:-1rem;margin-right:-1rem;padding-left:1rem;padding-right:1rem;overflow-x:auto;flex-wrap:nowrap;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+	.group-panel__tabs::-webkit-scrollbar{display:none}
+	.group-panel__tabs .nav-link{flex:1 0 auto;white-space:nowrap;scroll-snap-align:start}
 	.group-panel__footer{justify-content:center}
+	.group-panel__tab-pane{padding-top:.9rem}
+	.group-panel__tab-pane--stack{gap:1rem}
 	.group-pickups__header{flex-direction:column;align-items:flex-start}
 	.group-pickups__refresh{width:100%;justify-content:center}
+}
+
+@media (max-width:575.98px){
+	.group-panel{padding-left:1rem;padding-right:1rem}
+	.group-panel .card-body--compact{padding:1rem}
+	.group-panel .panel-compact{padding:.85rem}
+	.group-panel__tabs{gap:.25rem}
+	.group-panel__tabs .nav-link{padding:.6rem .85rem}
+	.group-panel__chat{min-height:clamp(300px,75vh,520px)}
 }

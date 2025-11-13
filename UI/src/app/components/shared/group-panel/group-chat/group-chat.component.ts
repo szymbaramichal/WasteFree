@@ -141,6 +141,21 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
     }
   }
 
+  onComposerEnter(event: Event): void {
+    const keyboardEvent = event as KeyboardEvent;
+
+    if (keyboardEvent.defaultPrevented || keyboardEvent.shiftKey || keyboardEvent.altKey || keyboardEvent.ctrlKey || keyboardEvent.metaKey || (keyboardEvent as any).isComposing) {
+      return;
+    }
+
+    if (keyboardEvent.key !== 'Enter') {
+      return;
+    }
+
+    keyboardEvent.preventDefault();
+    void this.send();
+  }
+
   isMine(message: GroupChatMessage): boolean {
     return !!this.currentUserId && message.userId === this.currentUserId;
   }
@@ -244,16 +259,18 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
       new Date(a.sentAtUtc).getTime() - new Date(b.sentAtUtc).getTime()
     );
 
-    for (const message of sorted) {
-      if (this.messageIds.has(message.id)) {
+    for (const incoming of sorted) {
+      if (this.messageIds.has(incoming.id)) {
         continue;
       }
 
-      this.messageIds.add(message.id);
+      const normalized = this.normalizeMessage(incoming);
+
+      this.messageIds.add(normalized.id);
       if (prepend) {
-        this.messages.unshift(message);
+        this.messages.unshift(normalized);
       } else {
-        this.messages.push(message);
+        this.messages.push(normalized);
       }
     }
 
@@ -274,8 +291,10 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
         return;
       }
 
-      this.messageIds.add(message.id);
-      this.messages.push(message);
+      const normalized = this.normalizeMessage(message);
+
+      this.messageIds.add(normalized.id);
+      this.messages.push(normalized);
       this.messages.sort((a, b) => new Date(a.sentAtUtc).getTime() - new Date(b.sentAtUtc).getTime());
       this.scrollToBottomDeferred();
     });
@@ -321,5 +340,38 @@ export class GroupChatComponent implements OnChanges, OnDestroy {
 
       container.scrollTop = container.scrollHeight;
     }, 120);
+  }
+
+  private normalizeMessage(message: GroupChatMessage): GroupChatMessage {
+    const sentAtUtc = this.normalizeUtcTimestamp(message.sentAtUtc);
+    if (sentAtUtc === message.sentAtUtc) {
+      return message;
+    }
+
+    return {
+      ...message,
+      sentAtUtc
+    };
+  }
+
+  private normalizeUtcTimestamp(input: string): string {
+    const raw = input?.trim();
+    if (!raw) {
+      return input;
+    }
+
+    if (/[+-]\d{2}:\d{2}$|Z$/i.test(raw)) {
+      const parsed = Date.parse(raw);
+      return Number.isNaN(parsed) ? raw : new Date(parsed).toISOString();
+    }
+
+    const appended = `${raw}Z`;
+    const parsedAppended = Date.parse(appended);
+    if (!Number.isNaN(parsedAppended)) {
+      return new Date(parsedAppended).toISOString();
+    }
+
+    const fallback = Date.parse(raw);
+    return Number.isNaN(fallback) ? raw : new Date(fallback).toISOString();
   }
 }
