@@ -74,6 +74,8 @@ public class NominatimGeocodingService : IGeocodingService
                 address.Street,
                 address.PostalCode,
                 address.City);
+            await Task.Delay(1_000, cancellationToken);
+            response = await httpClient.GetAsync($"search?{query}", cancellationToken);
             return null;
         }
 
@@ -129,12 +131,12 @@ public class NominatimGeocodingService : IGeocodingService
 
     private static string BuildQuery(Address address)
     {
-        var addressText = Uri.EscapeDataString($"{address}");
+        var addressText = address.ToString();
         var parameters = new Dictionary<string, string>
         {
             ["q"] = addressText,
             ["format"] = "json",
-        };  
+        };
 
         return string.Join('&', parameters.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
     }
