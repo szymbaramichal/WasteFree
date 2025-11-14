@@ -6,7 +6,6 @@
       (click)="navigateBack()"
       [attr.aria-label]="'common.back' | translate"
     >
-      <i class="bi bi-arrow-left" aria-hidden="true"></i>
       <span class="order-details__back-label">{{ 'common.back' | translate }}</span>
     </button>
   </div>
@@ -22,11 +21,19 @@
 
   <ng-container *ngIf="!loading() && !error() && order() as detail">
     <div class="card order-details__card border-0 shadow-lg">
-      <div class="card-body p-4 p-md-5">
-        <header class="order-details__heading">
-          <div>
-            <h1 class="h4 mb-1">{{ 'myPickups.details.title' | translate }} #{{ orderCode(detail) }}</h1>
-            <p class="text-muted small mb-0">{{ 'myPickups.details.subtitle' | translate }}</p>
+      <div class="order-details__hero gradient-groups text-white position-relative overflow-hidden">
+        <div class="order-details__hero-content d-flex align-items-start justify-content-between flex-wrap gap-3">
+          <div class="order-details__hero-heading d-flex align-items-center gap-3 flex-wrap">
+            <div class="order-details__hero-icon d-inline-flex align-items-center justify-content-center">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75V3a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 3v.75M4.5 6h15M6 6v14.25A1.5 1.5 0 0 0 7.5 21.75h9a1.5 1.5 0 0 0 1.5-1.5V6M10 10.5v7.5M14 10.5v7.5" />
+              </svg>
+            </div>
+            <div>
+              <p class="order-details__hero-label text-uppercase small fw-semibold mb-1">{{ 'myPickups.details.title' | translate }}</p>
+              <h1 class="order-details__hero-title mb-1">#{{ orderCode(detail) }}</h1>
+              <small class="opacity-75">{{ 'myPickups.details.subtitle' | translate }}</small>
+            </div>
           </div>
           <span
             *ngIf="detail.garbageOrderStatus !== orderStatus.WaitingForUtilizationFee"
@@ -34,6 +41,20 @@
           >
             {{ statusTranslationKey(detail.garbageOrderStatus) | translate }}
           </span>
+        </div>
+        <div class="header-accent"></div>
+      </div>
+      <div class="card-body">
+        <header class="order-details__heading">
+          <div class="order-details__status">
+            <span class="order-details__status-label text-uppercase small fw-semibold">{{ 'myPickups.table.status' | translate }}</span>
+            <span
+              class="order-details__status-chip"
+              [ngClass]="statusClass(detail.garbageOrderStatus)"
+            >
+              {{ statusTranslationKey(detail.garbageOrderStatus) | translate }}
+            </span>
+          </div>
         </header>
 
         <section class="order-details__section">
@@ -71,25 +92,42 @@
         </section>
 
         <section class="order-details__section order-details__payment">
-          <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-            <div>
-              <h2 class="h6 text-uppercase fw-semibold small mb-2">{{ 'myPickups.details.payment.title' | translate }}</h2>
-              <p class="small mb-0" *ngIf="!hasAcceptedPayment()">
-                {{ 'myPickups.details.payment.pending' | translate:{ amount: pickupShareAmount() | number:'1.2-2' } }}
-              </p>
-              <p class="small text-success mb-0" *ngIf="hasAcceptedPayment()">
-                {{ 'myPickups.details.payment.accepted' | translate }}
-              </p>
+          <div class="order-details__payment-grid">
+            <div class="order-details__payment-summary">
+              <div class="order-details__payment-label d-inline-flex align-items-center gap-2 mb-3">
+                <span class="badge rounded-pill order-details__payment-indicator" [class.order-details__payment-indicator--paid]="hasAcceptedPayment()"></span>
+                <h2 class="h6 text-uppercase fw-semibold small mb-0">{{ 'myPickups.details.payment.title' | translate }}</h2>
+              </div>
+              <dl class="order-details__payment-details">
+                <div class="order-details__payment-row">
+                  <dt>{{ 'myPickups.details.summary.cost' | translate }}</dt>
+                  <dd>{{ detail.cost | number:'1.2-2' }} PLN</dd>
+                </div>
+                <div class="order-details__payment-row">
+                  <dt>{{ 'myPickups.details.participants.share' | translate }}</dt>
+                  <dd>{{ pickupShareAmount() | number:'1.2-2' }} PLN</dd>
+                </div>
+                <div class="order-details__payment-row">
+                  <dt>{{ 'myPickups.details.payment.title' | translate }}</dt>
+                  <dd>
+                    <span class="order-details__payment-status" [ngClass]="hasAcceptedPayment() ? 'is-paid' : 'is-pending'">
+                      {{ hasAcceptedPayment() ? ('myPickups.details.payment.accepted' | translate) : ('myPickups.details.payment.pending' | translate:{ amount: pickupShareAmount() | number:'1.2-2' }) }}
+                    </span>
+                  </dd>
+                </div>
+              </dl>
             </div>
-            <button
-              type="button"
-              class="btn btn-success btn-elevated"
-              (click)="payForOrder()"
-              [disabled]="!canPay() || paying()"
-            >
-              <span *ngIf="paying()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{ 'myPickups.details.payCta' | translate }}</span>
-            </button>
+            <div class="order-details__payment-cta">
+              <button
+                type="button"
+                class="btn btn-success btn-elevated w-100"
+                (click)="payForOrder()"
+                [disabled]="!canPay() || paying()"
+              >
+                <span *ngIf="paying()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{ 'myPickups.details.payCta' | translate }}</span>
+              </button>
+            </div>
           </div>
         </section>
 
