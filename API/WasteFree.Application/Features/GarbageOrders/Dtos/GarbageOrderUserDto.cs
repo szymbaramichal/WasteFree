@@ -6,4 +6,5 @@ public class GarbageOrderUserDto
     public required string Username { get; set; }
     public bool HasAcceptedPayment { get; set; }
     public decimal ShareAmount { get; set; }
+    public decimal AdditionalUtilizationFeeShareAmount { get; set; }
 }

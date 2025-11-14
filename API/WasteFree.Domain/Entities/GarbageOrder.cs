@@ -24,6 +24,11 @@ public class GarbageOrder : DatabaseEntity
 
     public Guid? AssignedGarbageAdminId { get; set; }
     public User? AssignedGarbageAdmin { get; set; }
+
+    public decimal? UtilizationFeeAmount { get; set; }
+    public decimal? AdditionalUtilizationFeeAmount { get; set; }
+    public string? UtilizationProofBlobName { get; set; }
+    public DateTime? UtilizationFeeSubmittedDateUtc { get; set; }
     
     public ICollection<GarbageOrderUsers> GarbageOrderUsers { get; set; } = [];
 }
