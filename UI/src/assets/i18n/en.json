@@ -273,6 +273,7 @@
   "pickupOrder.summary.noParticipants": "No participants selected.",
   "pickupOrder.summary.incompleteHint": "Complete all previous steps to view the summary.",
   "pickupOrder.summary.success": "Order sent! Confirmation code: {{code}}",
+  "pickupOrder.summary.successToast": "Order sent!",
   "pickupOrder.summary.incomplete": "Complete all steps before submitting the order.",
   "pickupOrder.summary.genericError": "We could not submit the order. Try again in a moment.",
   "pickupOrder.summary.submitError": "We could not submit the order. Try again in a moment.",

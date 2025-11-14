@@ -17,6 +17,9 @@ import { finalize } from 'rxjs/operators';
 import { Result } from '@app/_models/result';
 import { GarbageOrderService } from '@app/services/garbage-order.service';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { TranslationService } from '@app/services/translation.service';
+import { timer } from 'rxjs';
 
 type ServiceOption = {
   value: PickupOption;
@@ -66,7 +69,10 @@ export class PickupOrderComponent implements OnInit {
   private readonly garbageOrderService = inject(GarbageOrderService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly toastr = inject(ToastrService);
+  private readonly translation = inject(TranslationService);
   private lastSelectedContainerSize: ContainerSize = ContainerSize.ContainerSmall;
+  private readonly navigationDelayMs = 250;
 
   readonly serviceOptions: ServiceOption[] = [
     {
@@ -707,7 +713,8 @@ export class PickupOrderComponent implements OnInit {
 
           this.submitError.set(null);
           this.submittedOrder.set(res.resultModel);
-          this.goToCreatedOrder(res.resultModel);
+          this.showSuccessToast();
+          this.scheduleNavigation(res.resultModel);
         },
         error: () => {
           this.submitError.set('pickupOrder.summary.submitError');
@@ -725,20 +732,26 @@ export class PickupOrderComponent implements OnInit {
     this.router.navigate(['/portal/my-pickups', orderId]);
   }
 
+  private showSuccessToast(): void {
+    const key = 'pickupOrder.summary.successToast';
+    const translated = this.translation.translate(key);
+    const fallback = this.translation.translate('success.update');
+    const message = typeof translated === 'string' && translated !== key ? translated : fallback;
+    this.toastr.success(message);
+  }
+
+  private scheduleNavigation(order: GarbageOrderDto): void {
+    timer(this.navigationDelayMs)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.goToCreatedOrder(order));
+  }
+
   private todayIsoDate(): string {
     const today = new Date();
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
-
-  orderCode(model: { id: string }): string {
-    const cleaned = model?.id?.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    if (!cleaned) {
-      return 'N/A';
-    }
-    return cleaned.length <= 8 ? cleaned : `${cleaned.slice(0, 4)}-${cleaned.slice(-4)}`;
   }
 
   private handleServiceTypeChange(serviceType: PickupOption | null): void {

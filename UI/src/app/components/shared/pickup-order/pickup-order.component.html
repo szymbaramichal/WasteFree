@@ -305,8 +305,8 @@
 										</div>
 									</div>
 									<div class="summary-messages">
-										<div class="alert alert-success" *ngIf="submittedOrder() as created">
-											{{ 'pickupOrder.summary.success' | translate:{ code: orderCode(created) } }}
+										<div class="alert alert-success" *ngIf="submittedOrder()">
+											{{ 'pickupOrder.summary.success' | translate }}
 										</div>
 										<div class="alert alert-danger" *ngIf="submitError() as errorKey">
 											{{ errorKey | translate }}
