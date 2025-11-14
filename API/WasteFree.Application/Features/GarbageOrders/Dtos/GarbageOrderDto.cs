@@ -27,6 +27,10 @@ public class GarbageOrderDto
     public Guid? AssignedGarbageAdminId { get; set; }
     public string? AssignedGarbageAdminUsername { get; set; }
     public string? AssignedGarbageAdminAvatarName { get; set; }
+    public decimal? UtilizationFeeAmount { get; set; }
+    public decimal? AdditionalUtilizationFeeAmount { get; set; }
+    public string? UtilizationProofBlobName { get; set; }
+    public DateTime? UtilizationFeeSubmittedDateUtc { get; set; }
     public double? DistanceInKilometers { get; set; }
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
 }
@@ -52,13 +56,18 @@ public static class GarbageOrderDtoExtensions
             AssignedGarbageAdminId = garbageOrder.AssignedGarbageAdminId,
             AssignedGarbageAdminUsername = garbageOrder.AssignedGarbageAdmin?.Username,
             AssignedGarbageAdminAvatarName = garbageOrder.AssignedGarbageAdmin?.AvatarName,
+            UtilizationFeeAmount = garbageOrder.UtilizationFeeAmount,
+            AdditionalUtilizationFeeAmount = garbageOrder.AdditionalUtilizationFeeAmount,
+            UtilizationProofBlobName = garbageOrder.UtilizationProofBlobName,
+            UtilizationFeeSubmittedDateUtc = garbageOrder.UtilizationFeeSubmittedDateUtc,
             DistanceInKilometers = distanceInKilometers,
             Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
             {
                 UserId = x.UserId,
                 Username = x.User?.Username ?? string.Empty,
                 HasAcceptedPayment = x.HasAcceptedPayment,
-                ShareAmount = x.ShareAmount
+                ShareAmount = x.ShareAmount,
+                AdditionalUtilizationFeeShareAmount = x.AdditionalUtilizationFeeShareAmount
             }).ToList()
         };
     }

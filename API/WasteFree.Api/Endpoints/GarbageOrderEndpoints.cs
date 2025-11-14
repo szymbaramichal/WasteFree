@@ -89,6 +89,15 @@ public static class GarbageOrderEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
             .WithDescription("Get temporary avatar URL for the garbage admin assigned to the order.");
+
+        app.MapPost("/garbage-admin/orders/{orderId:guid}/utilization-fee", SubmitUtilizationFeeAsync)
+            .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
+            .Accepts<SubmitUtilizationFeeRequest>("multipart/form-data")
+            .WithOpenApi()
+            .Produces<Result<GarbageOrderDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Submit actual utilization fee amount and proof for an order.");
     }
 
     /// <summary>
@@ -311,6 +320,34 @@ public static class GarbageOrderEndpoints
     }
 
     /// <summary>
+    /// Submit utilization fee data and proof for an order assigned to the authenticated garbage admin.
+    /// </summary>
+    private static async Task<IResult> SubmitUtilizationFeeAsync(
+        [FromRoute] Guid orderId,
+        [FromForm] SubmitUtilizationFeeRequest request,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var command = new SubmitGarbageOrderUtilizationFeeCommand(
+            orderId,
+            currentUserService.UserId,
+            request.UtilizationFeeAmount,
+            request.UtilizationProof);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
     /// Accept payment for the authenticated user for a specific garbage order.
     /// </summary>
     private static async Task<IResult> PayGarbageOrderAsync(
@@ -399,6 +436,22 @@ public record GarbageOrderCalculationRequest
     /// Collecting service.
     /// </summary>
     public bool CollectingService { get; init; }
+}
+
+/// <summary>
+/// Multipart/form-data payload used by garbage admins to submit utilization fee details.
+/// </summary>
+public class SubmitUtilizationFeeRequest
+{
+    /// <summary>
+    /// Actual utilization fee amount charged by the processing facility.
+    /// </summary>
+    public decimal UtilizationFeeAmount { get; init; }
+
+    /// <summary>
+    /// Photo or scan confirming the utilization fee.
+    /// </summary>
+    public IFormFile UtilizationProof { get; init; } = default!;
 }
 
 /// <summary>

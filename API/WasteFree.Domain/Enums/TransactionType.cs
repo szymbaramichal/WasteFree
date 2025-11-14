@@ -23,5 +23,10 @@ public enum TransactionType
     /// <summary>
     /// Refund transaction returning funds to the user.
     /// </summary>
-    Refund = 3
+    Refund = 3,
+
+    /// <summary>
+    /// Income received by a garbage admin after completing an order.
+    /// </summary>
+    GarbageIncome = 4
 }

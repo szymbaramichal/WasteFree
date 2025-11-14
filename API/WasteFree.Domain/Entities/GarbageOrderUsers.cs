@@ -13,4 +13,5 @@ public class GarbageOrderUsers : DatabaseEntity
     public bool HasAcceptedPayment { get; set; } = false;
 
     public decimal ShareAmount { get; set; }
+    public decimal AdditionalUtilizationFeeShareAmount { get; set; }
 }
