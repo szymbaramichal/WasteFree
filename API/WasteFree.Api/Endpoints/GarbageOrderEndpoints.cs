@@ -82,7 +82,7 @@ public static class GarbageOrderEndpoints
             .WithTags("GarbageOrders")
             .WithDescription("Get garbage orders for the current user with pagination support.");
 
-        app.MapGet("/garbage-orders/{orderId:guid}/assigned-admin/avatar", GetAssignedGarbageAdminAvatarUrlAsync)
+        app.MapGet("/garbage-orders/{orderId:guid}/assigned-garbage-admin/avatar", GetAssignedGarbageAdminAvatarUrlAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<Result<GarbageAdminAvatarUrlDto>>()
