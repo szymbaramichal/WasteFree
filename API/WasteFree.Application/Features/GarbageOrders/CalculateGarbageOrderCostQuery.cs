@@ -42,7 +42,7 @@ public class CalculateGarbageOrderCostQueryHandler(
             return Result<GarbageOrderCostDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
         }
 
-        var estimatedCost = costCalculator.CalculateEstimate(
+        var costBreakdown = costCalculator.CalculateEstimate(
             request.PickupOption,
             request.ContainerSize,
             request.DropOffDate,
@@ -52,7 +52,9 @@ public class CalculateGarbageOrderCostQueryHandler(
 
         return Result<GarbageOrderCostDto>.Success(new GarbageOrderCostDto
         {
-            EstimatedCost = estimatedCost
+            EstimatedCost = costBreakdown.BaseCost,
+            PrepaidUtilizationFee = costBreakdown.PrepaidUtilizationFee,
+            EstimatedTotalCost = costBreakdown.TotalCost
         });
     }
 }

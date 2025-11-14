@@ -4,7 +4,7 @@ namespace WasteFree.Application.Services.GarbageOrders;
 
 public interface IGarbageOrderCostCalculator
 {
-    decimal CalculateEstimate(
+    GarbageOrderCostBreakdown CalculateEstimate(
         PickupOption pickupOption,
         ContainerSize? containerSize,
         DateTime? dropOffDate,
@@ -22,8 +22,9 @@ public class GarbageOrderCostCalculator : IGarbageOrderCostCalculator
     private const decimal CollectingServiceFee = 35m;
     private const decimal HighPriorityMultiplier = 1.25m;
     private const decimal ContainerDailyRate = 15m;
+    private const decimal UtilizationFeeMultiplier = 1.25m;
 
-    public decimal CalculateEstimate(
+    public GarbageOrderCostBreakdown CalculateEstimate(
         PickupOption pickupOption,
         ContainerSize? containerSize,
         DateTime? dropOffDate,
@@ -56,7 +57,17 @@ public class GarbageOrderCostCalculator : IGarbageOrderCostCalculator
             estimate *= HighPriorityMultiplier;
         }
 
-        return Math.Round(estimate, 2, MidpointRounding.AwayFromZero);
+        var roundedBaseEstimate = decimal.Round(estimate, 2, MidpointRounding.AwayFromZero);
+        var totalWithUtilization = decimal.Round(
+            roundedBaseEstimate * UtilizationFeeMultiplier,
+            2,
+            MidpointRounding.AwayFromZero);
+        var prepaidUtilizationFee = totalWithUtilization - roundedBaseEstimate;
+
+        return new GarbageOrderCostBreakdown(
+            roundedBaseEstimate,
+            prepaidUtilizationFee,
+            totalWithUtilization);
     }
 
     private static decimal ResolveContainerSizeFee(ContainerSize? containerSize) => containerSize switch
@@ -78,3 +89,8 @@ public class GarbageOrderCostCalculator : IGarbageOrderCostCalculator
         return Math.Max(duration, 0);
     }
 }
+
+public record GarbageOrderCostBreakdown(
+    decimal BaseCost,
+    decimal PrepaidUtilizationFee,
+    decimal TotalCost);

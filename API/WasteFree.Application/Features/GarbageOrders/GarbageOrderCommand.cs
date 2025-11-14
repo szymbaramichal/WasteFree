@@ -61,16 +61,14 @@ public class GarbageOrderCommandHandler(
         var userIdList = request.UserIds.ToList();
         var userCount = userIdList.Count;
 
-        var baseCostEstimate = costCalculator.CalculateEstimate(
+        var costBreakdown = costCalculator.CalculateEstimate(
             request.PickupOption,
             request.ContainerSize,
             request.DropOffDate,
             request.PickupDate,
             request.IsHighPriority,
             request.CollectingService);
-
-        const decimal utilizationFeeMultiplier = 1.25m;
-        var totalCostWithUtilization = baseCostEstimate * utilizationFeeMultiplier; // add 25% prepaid utilization fee
+        var totalCostWithUtilization = costBreakdown.TotalCost; // includes 25% prepaid utilization fee
         var totalCents = userCount == 0
             ? 0L
             : (long)decimal.Round(totalCostWithUtilization * 100m, 0, MidpointRounding.AwayFromZero);
