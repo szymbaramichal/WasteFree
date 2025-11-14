@@ -81,6 +81,14 @@ public static class GarbageOrderEndpoints
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
             .WithDescription("Get garbage orders for the current user with pagination support.");
+
+        app.MapGet("/garbage-orders/{orderId:guid}/assigned-garbage-admin/avatar", GetAssignedGarbageAdminAvatarUrlAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<GarbageAdminAvatarUrlDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Get temporary avatar URL for the garbage admin assigned to the order.");
     }
 
     /// <summary>
@@ -267,6 +275,29 @@ public static class GarbageOrderEndpoints
     {
         var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
         var query = new GetUserGarbageOrdersQuery(currentUserService.UserId, pager);
+
+        var result = await mediator.SendAsync(query, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Get blob storage URL for the avatar of the garbage admin assigned to a specific order.
+    /// </summary>
+    private static async Task<IResult> GetAssignedGarbageAdminAvatarUrlAsync(
+        [FromRoute] Guid orderId,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetAssignedGarbageAdminAvatarUrlQuery(orderId, currentUserService.UserId);
 
         var result = await mediator.SendAsync(query, cancellationToken);
 
