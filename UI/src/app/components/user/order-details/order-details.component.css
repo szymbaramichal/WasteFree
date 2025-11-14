@@ -24,7 +24,10 @@
 .order-details::before {
   content:"";
   position:absolute;
-  inset:-12% -6% -15% -6%;
+  top:calc(-1 * min(12%, 120px));
+  right:0;
+  bottom:calc(-1 * min(15%, 160px));
+  left:0;
   background:
     radial-gradient(circle at 20% 20%, rgba(13,110,253,0.18), transparent 60%),
     radial-gradient(circle at 82% 25%, rgba(32,201,151,0.18), transparent 62%),
