@@ -126,6 +126,7 @@
   "wallet.alert.infoTitle": "Informacja",
   "menu.dashboard": "Panel",
   "menu.wallet": "Portfel",
+  "menu.garbageAdminOrders": "Zlecenia wywozu",
   "menu.myPickups": "Moje wywozy",
   "menu.pickupOrder": "Zamów wywóz",
   "menu.groups": "Grupy wywozowe",
@@ -175,6 +176,97 @@
   "portal.home.stats.wasteReduced": "Zredukowane odpady",
   "portal.home.stats.collections": "Zgłoszone wywozy",
   "portal.home.stats.community": "Twoje grupy",
+  "garbageAdminOrders": {
+    "title": "Panel dyspozytora",
+    "lead": "Przeglądaj i zarządzaj zleceniami oczekującymi na Twoją decyzję.",
+    "actions": {
+      "refresh": "Odśwież wszystko",
+      "retry": "Spróbuj ponownie"
+    },
+    "loading": "Ładuję zlecenia...",
+    "waiting": {
+      "title": "Oczekujące na przyjęcie",
+      "lead": "Nowe zgłoszenia z Twojego miasta gotowe do przyjęcia.",
+      "loadError": "Nie udało się pobrać oczekujących zleceń.",
+      "empty": {
+        "title": "Brak oczekujących zleceń",
+        "lead": "Gdy użytkownicy złożą zamówienie w Twoim mieście, pojawi się ono tutaj."
+      }
+    },
+    "current": {
+      "title": "Przydzielone zlecenia",
+      "lead": "Zlecenia przypisane do Ciebie, które czekają na odbiór lub rozliczenie.",
+      "loadError": "Nie udało się pobrać przydzielonych zleceń.",
+      "empty": {
+        "title": "Brak aktywnych zleceń",
+        "lead": "Przyjęte zlecenia będą widoczne do czasu zakończenia."
+      }
+    },
+    "accept": {
+      "cta": "Przyjmij zlecenie",
+      "success": "Zlecenie zostało przypisane do Ciebie.",
+      "error": "Nie udało się przyjąć zlecenia. Spróbuj ponownie."
+    },
+    "status": {
+      "waitingForPayment": "Oczekuje na płatność",
+      "waitingForAccept": "Oczekuje na przyjęcie",
+      "waitingForPickup": "Oczekuje na odbiór",
+      "waitingForUtilizationFee": "Oczekuje na opłatę utylizacyjną",
+      "completed": "Zakończone",
+      "complained": "Zareklamowane",
+      "resolved": "Rozwiązane",
+      "cancelled": "Anulowane",
+      "unknown": "Nieznany status"
+    },
+    "pickupOption": {
+      "smallPickup": "Mały wywóz",
+      "pickup": "Wywóz",
+      "container": "Kontener",
+      "specialOrder": "Zamówienie specjalne",
+      "unknown": "Nieznany rodzaj wywozu"
+    },
+    "containerSize": {
+      "small": "Mały kontener",
+      "medium": "Średni kontener",
+      "large": "Duży kontener"
+    },
+    "badges": {
+      "highPriority": "Priorytet",
+      "collectingService": "Usługa wyniesienia",
+      "utilizationFeePending": "Oczekuje na opłatę utylizacyjną"
+    },
+    "group": {
+      "unknown": "Nieznana grupa",
+      "private": "Zamówienie indywidualne"
+    },
+    "summary": {
+      "pickupOption": "Rodzaj wywozu",
+      "schedule": "Termin",
+      "containerSize": "Kontener",
+      "cost": "Koszt zlecenia",
+      "distance": "Dystans"
+    },
+    "schedule": {
+      "pickup": "Odbiór",
+      "dropOff": "Podstawienie",
+      "none": "Brak terminu",
+      "missing": "Nie podano terminu"
+    },
+    "participants": {
+      "title": "Uczestnicy ({{count}})",
+      "unknown": "Nieznany użytkownik",
+      "acceptedPayment": "Płatność zaakceptowana",
+      "pendingPayment": "Płatność oczekuje",
+      "shareAmount": "Udział",
+      "utilizationShareAmount": "Udział w opłacie utylizacyjnej"
+    },
+    "pagination": {
+      "label": "{{start}}-{{end}} z {{total}} zleceń",
+      "previous": "Poprzednia strona",
+      "next": "Następna strona",
+      "page": "Strona {{current}} z {{total}}"
+    }
+  },
   "pickupOrder.title": "Zamów wywóz odpadów",
   "pickupOrder.subtitle": "Wybierz usługę pasującą do Twojego wywozu.",
   "pickupOrder.steps.orderType": "Rodzaj wywozu",

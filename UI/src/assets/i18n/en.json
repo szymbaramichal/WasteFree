@@ -125,6 +125,7 @@
   "wallet.alert.infoTitle": "Info",
   "menu.dashboard": "Dashboard",
   "menu.wallet": "Wallet",
+  "menu.garbageAdminOrders": "Garbage orders",
   "menu.myPickups": "My pickups",
   "menu.pickupOrder": "Order pickup",
   "menu.groups": "Garbage groups",
@@ -174,6 +175,97 @@
   "portal.home.stats.wasteReduced": "Waste reduced",
   "portal.home.stats.collections": "Collections reported",
   "portal.home.stats.community": "Your groups",
+  "garbageAdminOrders": {
+    "title": "Dispatch board",
+    "lead": "Review and manage garbage orders awaiting your action.",
+    "actions": {
+      "refresh": "Refresh all",
+      "retry": "Retry"
+    },
+    "loading": "Loading orders...",
+    "waiting": {
+      "title": "Waiting for acceptance",
+      "lead": "New orders from your city ready to be accepted.",
+      "loadError": "We could not load waiting orders.",
+      "empty": {
+        "title": "No orders waiting",
+        "lead": "Orders awaiting acceptance will appear here once users submit them."
+      }
+    },
+    "current": {
+      "title": "Assigned orders",
+      "lead": "Orders already assigned to you that still need pickup or utilization fee.",
+      "loadError": "We could not load assigned orders.",
+      "empty": {
+        "title": "No ongoing orders",
+        "lead": "Accepted orders will stay here until they are finished."
+      }
+    },
+    "accept": {
+      "cta": "Accept order",
+      "success": "Order assigned to you.",
+      "error": "We could not accept this order. Try again."
+    },
+    "status": {
+      "waitingForPayment": "Waiting for payment",
+      "waitingForAccept": "Waiting for acceptance",
+      "waitingForPickup": "Waiting for pickup",
+      "waitingForUtilizationFee": "Waiting for utilization fee",
+      "completed": "Completed",
+      "complained": "Complained",
+      "resolved": "Resolved",
+      "cancelled": "Cancelled",
+      "unknown": "Unknown status"
+    },
+    "pickupOption": {
+      "smallPickup": "Small pickup",
+      "pickup": "Pickup",
+      "container": "Container service",
+      "specialOrder": "Special order",
+      "unknown": "Unknown pickup option"
+    },
+    "containerSize": {
+      "small": "Small container",
+      "medium": "Medium container",
+      "large": "Large container"
+    },
+    "badges": {
+      "highPriority": "High priority",
+      "collectingService": "Collecting service requested",
+      "utilizationFeePending": "Utilization fee pending"
+    },
+    "group": {
+      "unknown": "Unknown group",
+      "private": "Private order"
+    },
+    "summary": {
+      "pickupOption": "Pickup option",
+      "schedule": "Schedule",
+      "containerSize": "Container size",
+      "cost": "Order cost",
+      "distance": "Distance"
+    },
+    "schedule": {
+      "pickup": "Pickup",
+      "dropOff": "Drop-off",
+      "none": "No schedule",
+      "missing": "Schedule not provided"
+    },
+    "participants": {
+      "title": "Participants ({{count}})",
+      "unknown": "Unknown user",
+      "acceptedPayment": "Payment accepted",
+      "pendingPayment": "Payment pending",
+      "shareAmount": "Share",
+      "utilizationShareAmount": "Utilization fee share"
+    },
+    "pagination": {
+      "label": "{{start}}-{{end}} of {{total}} orders",
+      "previous": "Previous page",
+      "next": "Next page",
+      "page": "Page {{current}} of {{total}}"
+    }
+  },
   "pickupOrder.title": "Order a waste pickup",
   "pickupOrder.subtitle": "Choose the service that best fits your pickup.",
   "pickupOrder.steps.orderType": "Pickup type",
