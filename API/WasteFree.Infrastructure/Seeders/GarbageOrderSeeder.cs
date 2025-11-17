@@ -23,7 +23,8 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 IsHighPriority = true,
                 CollectingService = true,
                 GarbageOrderStatus = GarbageOrderStatus.WaitingForPickup,
-                Cost = 450m
+                Cost = 450m,
+                PrepaidUtilizationFeeAmount = 90m
             },
             new()
             {
@@ -36,7 +37,8 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 IsHighPriority = false,
                 CollectingService = true,
                 GarbageOrderStatus = GarbageOrderStatus.WaitingForPayment,
-                Cost = 180m
+                Cost = 180m,
+                PrepaidUtilizationFeeAmount = 36m
             },
             new()
             {
@@ -49,7 +51,8 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 IsHighPriority = true,
                 CollectingService = true,
                 GarbageOrderStatus = GarbageOrderStatus.WaitingForUtilizationFee,
-                Cost = 620m
+                Cost = 620m,
+                PrepaidUtilizationFeeAmount = 124m
             },
             new()
             {
@@ -62,7 +65,8 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 IsHighPriority = false,
                 CollectingService = false,
                 GarbageOrderStatus = GarbageOrderStatus.Completed,
-                Cost = 95m
+                Cost = 95m,
+                PrepaidUtilizationFeeAmount = 19m
             },
             new()
             {
@@ -75,7 +79,50 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 IsHighPriority = false,
                 CollectingService = true,
                 GarbageOrderStatus = GarbageOrderStatus.WaitingForAccept,
-                Cost = 310m
+                Cost = 310m,
+                PrepaidUtilizationFeeAmount = 62m
+            },
+            new()
+            {
+                Id = Guid.Parse("33333333-3333-3333-3333-333333333331"),
+                GarbageGroupId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                PickupOption = PickupOption.Container,
+                ContainerSize = ContainerSize.ContainerSmall,
+                DropOffDate = DateTime.UtcNow.Date.AddDays(2),
+                PickupDate = DateTime.UtcNow.Date.AddDays(7),
+                IsHighPriority = false,
+                CollectingService = true,
+                GarbageOrderStatus = GarbageOrderStatus.WaitingForAccept,
+                Cost = 300m,
+                PrepaidUtilizationFeeAmount = 60m
+            },
+            new()
+            {
+                Id = Guid.Parse("33333333-3333-3333-3333-333333333332"),
+                GarbageGroupId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
+                PickupOption = PickupOption.Pickup,
+                ContainerSize = null,
+                DropOffDate = null,
+                PickupDate = DateTime.UtcNow.Date.AddDays(6),
+                IsHighPriority = true,
+                CollectingService = false,
+                GarbageOrderStatus = GarbageOrderStatus.WaitingForAccept,
+                Cost = 240m,
+                PrepaidUtilizationFeeAmount = 48m
+            },
+            new()
+            {
+                Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                GarbageGroupId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
+                PickupOption = PickupOption.SpecialOrder,
+                ContainerSize = null,
+                DropOffDate = null,
+                PickupDate = DateTime.UtcNow.Date.AddDays(12),
+                IsHighPriority = true,
+                CollectingService = true,
+                GarbageOrderStatus = GarbageOrderStatus.WaitingForAccept,
+                Cost = 420m,
+                PrepaidUtilizationFeeAmount = 84m
             }
         };
 

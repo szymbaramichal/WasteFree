@@ -17,7 +17,7 @@
   <data name="AMOUNT_OUTSIDE_RANGE" xml:space="preserve"><value>Amount must be between 1 and 10 000PLN.</value></data>
   <data name="INVALID_TOPUP_CODE" xml:space="preserve"><value>Invalid top up code.</value></data>
   <data name="MISSING_ACCOUNT_NUMBER" xml:space="preserve"><value>Before your withdrawal, fill up account number in profile.</value></data>
-  <data name="NOT_ENOUGH_FUNDS" xml:space="preserve"><value>Not enough funds to withdraw</value></data>
+  <data name="NOT_ENOUGH_FUNDS" xml:space="preserve"><value>Not enough funds</value></data>
   <data name="PAYMENT_ALREADY_COMPLETED" xml:space="preserve"><value>Payment for this order has already been completed.</value></data>
   <data name="PAYMENT_PROPERTY_REQUIRED" xml:space="preserve"><value>Payment property is required</value></data>
   <data name="PAYMENT_CODE_REQUIRED" xml:space="preserve"><value>Payment method code is required</value></data>

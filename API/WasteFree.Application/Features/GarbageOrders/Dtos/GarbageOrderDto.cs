@@ -19,6 +19,7 @@ public class GarbageOrderDto
     public GarbageOrderStatus GarbageOrderStatus { get; set; }
 
     public decimal Cost { get; set; }
+    public decimal PrepaidUtilizationFeeAmount { get; set; }
 
     public Guid GarbageGroupId { get; set; }
     public string GarbageGroupName { get; set; } = string.Empty;
@@ -50,6 +51,7 @@ public static class GarbageOrderDtoExtensions
             CollectingService = garbageOrder.CollectingService,
             GarbageOrderStatus = garbageOrder.GarbageOrderStatus,
             Cost = garbageOrder.Cost,
+            PrepaidUtilizationFeeAmount = garbageOrder.PrepaidUtilizationFeeAmount,
             GarbageGroupId = garbageOrder.GarbageGroupId,
             GarbageGroupName = garbageOrder.GarbageGroup?.Name ?? string.Empty,
             GarbageGroupIsPrivate = garbageOrder.GarbageGroup?.IsPrivate ?? false,
