@@ -109,10 +109,22 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
 
         var totalCost = garbageOrder.Cost;
 
-        var baseCost = totalCost <= 0m
+        var computedBaseCost = totalCost <= 0m
             ? 0m
             : decimal.Round(totalCost / UtilizationFeeMultiplier, 2, MidpointRounding.AwayFromZero);
-        var prepaidUtilizationFee = decimal.Round(totalCost - baseCost, 2, MidpointRounding.AwayFromZero);
+        var computedPrepaidFee = decimal.Round(totalCost - computedBaseCost, 2, MidpointRounding.AwayFromZero);
+
+        var prepaidUtilizationFee = garbageOrder.PrepaidUtilizationFeeAmount > 0m
+            ? decimal.Round(garbageOrder.PrepaidUtilizationFeeAmount, 2, MidpointRounding.AwayFromZero)
+            : computedPrepaidFee;
+        var baseCost = garbageOrder.PrepaidUtilizationFeeAmount > 0m
+            ? decimal.Round(totalCost - prepaidUtilizationFee, 2, MidpointRounding.AwayFromZero)
+            : computedBaseCost;
+
+        if (baseCost < 0m)
+        {
+            baseCost = 0m;
+        }
 
         garbageOrder.UtilizationFeeAmount = normalizedUtilizationFee;
         garbageOrder.UtilizationProofBlobName = blobName;

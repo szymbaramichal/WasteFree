@@ -17,7 +17,7 @@
   <data name="INVALID_PAYMENT_CODE" xml:space="preserve"><value>Niepoprawny kod płatności</value></data>
   <data name="INVALID_TOPUP_CODE" xml:space="preserve"><value>Niepoprawny kod doładowania.</value></data>
   <data name="MISSING_ACCOUNT_NUMBER" xml:space="preserve"><value>Przed wypłatą musisz uzupełnić numer konta na swoim profilu.</value></data>
-  <data name="NOT_ENOUGH_FUNDS" xml:space="preserve"><value>Nie wystarczająca ilość do wypłaty</value></data>
+  <data name="NOT_ENOUGH_FUNDS" xml:space="preserve"><value>Nie wystarczająca ilość środków.</value></data>
   <data name="PAYMENT_ALREADY_COMPLETED" xml:space="preserve"><value>Płatność dla tego zamówienia została już zakończona.</value></data>
   <data name="AMOUNT_OUTSIDE_RANGE" xml:space="preserve"><value>Kwota płatności musi być w zakresie od 1 do 10 000PLN</value></data>
   <data name="PAYMENT_PROPERTY_REQUIRED" xml:space="preserve"><value>Właściwość płatności jest wymagana</value></data>

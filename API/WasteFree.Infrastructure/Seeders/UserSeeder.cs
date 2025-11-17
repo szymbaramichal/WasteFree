@@ -106,7 +106,7 @@ public class UserSeeder(ApplicationDataContext context)
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
                 ConsentsAgreed = false,
-                Address = new Address { City = "Kraków", PostalCode = "31-014", Street = "Długa 2" }
+                Address = new Address { City = "Kraków", PostalCode = "31-872", Street = "Os. Dywizjonu 303 20A" }
             },
             new User
             {

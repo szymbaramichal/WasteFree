@@ -88,7 +88,8 @@ public class GarbageOrderCommandHandler(
             CollectingService = request.CollectingService,
             GarbageOrderStatus = GarbageOrderStatus.WaitingForPayment,
             GarbageGroupId = request.GarbageGroupId,
-            Cost = orderCost
+            Cost = orderCost,
+            PrepaidUtilizationFeeAmount = costBreakdown.PrepaidUtilizationFee
         };
         
         var connectionIds = new HashSet<string>();

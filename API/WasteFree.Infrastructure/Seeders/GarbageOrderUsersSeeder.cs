@@ -24,7 +24,16 @@ public class GarbageOrderUsersSeeder(ApplicationDataContext context)
             (Guid.Parse("22222222-2222-2222-2222-222222222224"), "test4", true, 95m),
 
             (Guid.Parse("22222222-2222-2222-2222-222222222225"), "test3", true, 155m),
-            (Guid.Parse("22222222-2222-2222-2222-222222222225"), "test5", true, 155m)
+            (Guid.Parse("22222222-2222-2222-2222-222222222225"), "test5", true, 155m),
+
+            (Guid.Parse("33333333-3333-3333-3333-333333333331"), "test1", true, 150m),
+            (Guid.Parse("33333333-3333-3333-3333-333333333331"), "test3", true, 150m),
+
+            (Guid.Parse("33333333-3333-3333-3333-333333333332"), "test2", true, 120m),
+            (Guid.Parse("33333333-3333-3333-3333-333333333332"), "test4", true, 120m),
+
+            (Guid.Parse("33333333-3333-3333-3333-333333333333"), "test2", true, 210m),
+            (Guid.Parse("33333333-3333-3333-3333-333333333333"), "test5", true, 210m)
         };
 
         var orderIds = participants.Select(p => p.OrderId).Distinct().ToArray();
