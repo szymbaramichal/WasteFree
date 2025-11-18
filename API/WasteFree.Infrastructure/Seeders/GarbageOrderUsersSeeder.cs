@@ -76,7 +76,9 @@ public class GarbageOrderUsersSeeder(ApplicationDataContext context)
                 GarbageOrderId = participant.OrderId,
                 UserId = userId,
                 HasAcceptedPayment = participant.HasAcceptedPayment,
-                ShareAmount = participant.ShareAmount
+                ShareAmount = participant.ShareAmount,
+                AdditionalUtilizationFeeShareAmount = 0m,
+                HasPaidAdditionalUtilizationFee = true
             });
             changesMade = true;
         }

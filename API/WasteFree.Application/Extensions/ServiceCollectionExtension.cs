@@ -23,6 +23,8 @@ public static class ServiceCollectionExtension
         services.AddScoped<RegisterUserNotificationFacade>();
         services.AddScoped<GarbageGroupInvitationNotificationFacade>();
         services.AddScoped<GarbageOrderCreatedNotificationFacade>();
+        services.AddScoped<UtilizationFeePendingNotificationFacade>();
+        services.AddScoped<UtilizationFeeCompletionNotificationFacade>();
         services.AddScoped<IGarbageOrderCostCalculator, GarbageOrderCostCalculator>();
         services.AddScoped<OneTimeJobs>();
         services.AddScoped<GarbageOrderJobs>();

@@ -71,6 +71,10 @@ public class ApplicationDataContext : DbContext
             .HasForeignKey(o => o.AssignedGarbageAdminId)
             .OnDelete(DeleteBehavior.SetNull);
 
+        modelBuilder.Entity<GarbageOrderUsers>()
+            .Property(user => user.HasPaidAdditionalUtilizationFee)
+            .HasDefaultValue(true);
+
         modelBuilder.Entity<GarbageGroupMessage>()
             .Property(m => m.Content)
             .HasMaxLength(2000)

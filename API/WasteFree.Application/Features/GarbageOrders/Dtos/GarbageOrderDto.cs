@@ -69,7 +69,8 @@ public static class GarbageOrderDtoExtensions
                 Username = x.User?.Username ?? string.Empty,
                 HasAcceptedPayment = x.HasAcceptedPayment,
                 ShareAmount = x.ShareAmount,
-                AdditionalUtilizationFeeShareAmount = x.AdditionalUtilizationFeeShareAmount
+                AdditionalUtilizationFeeShareAmount = x.AdditionalUtilizationFeeShareAmount,
+                HasPaidAdditionalUtilizationFee = x.HasPaidAdditionalUtilizationFee
             }).ToList()
         };
     }
