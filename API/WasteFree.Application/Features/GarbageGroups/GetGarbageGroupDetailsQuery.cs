@@ -2,16 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.GarbageGroups.Dtos;
+using WasteFree.Domain.Constants;
+using WasteFree.Domain.Interfaces;
+using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
 using WasteFree.Infrastructure.Extensions;
-using WasteFree.Domain.Constants;
-using WasteFree.Domain.Models;
 
 namespace WasteFree.Application.Features.GarbageGroups;
 
 public record GetGarbageGroupDetailsQuery(Guid UserId, Guid GarbageGroupId) : IRequest<GarbageGroupDto>;
 
-public class GetGarbageGroupDetailsQueryHandler(ApplicationDataContext context) 
+public class GetGarbageGroupDetailsQueryHandler(ApplicationDataContext context, IBlobStorageService blobStorageService) 
     : IRequestHandler<GetGarbageGroupDetailsQuery, GarbageGroupDto>
 {
     public async Task<Result<GarbageGroupDto>> HandleAsync(GetGarbageGroupDetailsQuery request, 
@@ -32,6 +33,10 @@ public class GetGarbageGroupDetailsQueryHandler(ApplicationDataContext context)
         if (!isMember)
             return Result<GarbageGroupDto>.Failure(ApiErrorCodes.Forbidden, HttpStatusCode.Forbidden);
 
-        return Result<GarbageGroupDto>.Success(group.MapToGarbageGroupDto(group.UserGarbageGroups));
+        var avatarLookup = await group.UserGarbageGroups
+            .BuildAvatarUrlLookupAsync(blobStorageService, cancellationToken);
+
+        return Result<GarbageGroupDto>.Success(
+            group.MapToGarbageGroupDto(group.UserGarbageGroups, avatarLookup));
     }
 }
