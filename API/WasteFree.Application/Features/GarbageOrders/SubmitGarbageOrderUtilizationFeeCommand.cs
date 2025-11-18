@@ -1,9 +1,11 @@
-using System.Globalization;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.GarbageOrders.Dtos;
+using WasteFree.Application.Jobs;
+using WasteFree.Application.Jobs.Dtos;
+using WasteFree.Application.Notifications.Facades;
 using WasteFree.Domain.Constants;
 using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
@@ -21,7 +23,10 @@ public sealed record SubmitGarbageOrderUtilizationFeeCommand(
 
 public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
     ApplicationDataContext context,
-    IBlobStorageService blobStorageService)
+    IBlobStorageService blobStorageService,
+    IJobSchedulerFacade jobScheduler,
+    UtilizationFeePendingNotificationFacade pendingNotificationFacade,
+    UtilizationFeeCompletionNotificationFacade completionNotificationFacade)
     : IRequestHandler<SubmitGarbageOrderUtilizationFeeCommand, GarbageOrderDto>
 {
     private const long MaxProofBytes = 10 * 1024 * 1024; // 10 MB
@@ -203,10 +208,17 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
             foreach (var participant in garbageOrder.GarbageOrderUsers)
             {
                 participant.AdditionalUtilizationFeeShareAmount = 0m;
+                participant.HasPaidAdditionalUtilizationFee = true;
             }
 
             garbageOrder.AdditionalUtilizationFeeAmount = 0m;
             garbageOrder.GarbageOrderStatus = GarbageOrderStatus.Completed;
+
+            await SendCompletionNotificationsAsync(
+                garbageOrder,
+                completionNotificationFacade,
+                jobScheduler,
+                cancellationToken);
         }
         else
         {
@@ -215,35 +227,160 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
 
             var outstandingDistribution = AllocateAmountByShareInCents(garbageOrder.GarbageOrderUsers, outstandingAmount);
 
+            var pendingRequests = new List<UtilizationFeePendingNotificationRequest>();
+
             foreach (var participant in garbageOrder.GarbageOrderUsers)
             {
                 outstandingDistribution.TryGetValue(participant.UserId, out var shareCents);
                 var shareAmount = shareCents / 100m;
                 participant.AdditionalUtilizationFeeShareAmount = shareAmount;
+                participant.HasPaidAdditionalUtilizationFee = false;
 
-                var outstandingMessage = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "Additional utilization fee of {0:F2} is required for order {1}. Your share is {2:F2}.",
-                    outstandingAmount,
-                    garbageOrder.Id,
-                    shareAmount);
-
-                // TODO: Trigger additional payment workflow once the flow is designed.
-                context.InboxNotifications.Add(new InboxNotification
+                if (participant.User is { } user)
                 {
-                    Id = Guid.CreateVersion7(),
-                    UserId = participant.UserId,
-                    Title = "Utilization fee pending",
-                    Message = outstandingMessage,
-                    ActionType = InboxActionType.MakePayment,
-                    RelatedEntityId = garbageOrder.Id
-                });
+                    pendingRequests.Add(new UtilizationFeePendingNotificationRequest(
+                        participant.UserId,
+                        user.LanguagePreference,
+                        user.Username,
+                        garbageOrder.GarbageGroup?.Name ?? string.Empty,
+                        garbageOrder.Id,
+                        outstandingAmount,
+                        shareAmount));
+                }
             }
+
+            await SendPendingNotificationsAsync(
+                garbageOrder,
+                pendingRequests,
+                pendingNotificationFacade,
+                jobScheduler,
+                cancellationToken);
         }
 
         await context.SaveChangesAsync(cancellationToken);
 
         return Result<GarbageOrderDto>.Success(garbageOrder.MapToGarbageOrderDto());
+    }
+
+    private async Task SendPendingNotificationsAsync(
+        GarbageOrder garbageOrder,
+        IReadOnlyCollection<UtilizationFeePendingNotificationRequest> notificationRequests,
+        UtilizationFeePendingNotificationFacade notificationFacade,
+        IJobSchedulerFacade scheduler,
+        CancellationToken cancellationToken)
+    {
+        if (notificationRequests.Count == 0)
+        {
+            return;
+        }
+
+        var notificationContents = await notificationFacade.CreateAsync(notificationRequests, cancellationToken);
+        var contentsByUser = notificationContents.ToDictionary(x => x.UserId);
+
+        foreach (var participant in garbageOrder.GarbageOrderUsers)
+        {
+            if (participant.User is null || !contentsByUser.TryGetValue(participant.UserId, out var content))
+            {
+                continue;
+            }
+
+            await DispatchNotificationAsync(participant.User, content, InboxActionType.MakePayment, garbageOrder.Id, scheduler, cancellationToken);
+        }
+    }
+
+    private async Task SendCompletionNotificationsAsync(
+        GarbageOrder garbageOrder,
+        UtilizationFeeCompletionNotificationFacade notificationFacade,
+        IJobSchedulerFacade scheduler,
+        CancellationToken cancellationToken)
+    {
+        var requests = new List<UtilizationFeeCompletionNotificationRequest>();
+
+        foreach (var participant in garbageOrder.GarbageOrderUsers)
+        {
+            if (participant.User is null)
+            {
+                continue;
+            }
+
+            requests.Add(new UtilizationFeeCompletionNotificationRequest(
+                participant.UserId,
+                participant.User.LanguagePreference,
+                participant.User.Username,
+                garbageOrder.GarbageGroup?.Name ?? string.Empty,
+                garbageOrder.Id,
+                NotificationType.UtilizationFeeCompletedParticipant));
+        }
+
+        if (garbageOrder.AssignedGarbageAdmin is { } adminUser)
+        {
+            requests.Add(new UtilizationFeeCompletionNotificationRequest(
+                adminUser.Id,
+                adminUser.LanguagePreference,
+                adminUser.Username,
+                garbageOrder.GarbageGroup?.Name ?? string.Empty,
+                garbageOrder.Id,
+                NotificationType.UtilizationFeeCompletedAdmin));
+        }
+
+        if (requests.Count == 0)
+        {
+            return;
+        }
+
+        var notificationContents = await notificationFacade.CreateAsync(requests, cancellationToken);
+        var contentsByUser = notificationContents.ToDictionary(x => x.UserId);
+
+        foreach (var participant in garbageOrder.GarbageOrderUsers)
+        {
+            if (participant.User is null || !contentsByUser.TryGetValue(participant.UserId, out var content))
+            {
+                continue;
+            }
+
+            await DispatchNotificationAsync(participant.User, content, InboxActionType.None, garbageOrder.Id, scheduler, cancellationToken);
+        }
+
+        if (garbageOrder.AssignedGarbageAdmin is { } admin && contentsByUser.TryGetValue(admin.Id, out var adminContent))
+        {
+            await DispatchNotificationAsync(admin, adminContent, InboxActionType.None, garbageOrder.Id, scheduler, cancellationToken);
+        }
+    }
+
+    private async Task DispatchNotificationAsync(
+        User user,
+        UtilizationFeeNotificationContent notificationContent,
+        InboxActionType actionType,
+        Guid garbageOrderId,
+        IJobSchedulerFacade scheduler,
+        CancellationToken cancellationToken)
+    {
+        if (notificationContent.Email is not null)
+        {
+            await scheduler.ScheduleOneTimeJobAsync(
+                nameof(OneTimeJobs.SendEmailJob),
+                new SendEmailDto
+                {
+                    Email = user.Email,
+                    Subject = notificationContent.Email.Subject,
+                    Body = notificationContent.Email.Body
+                },
+                "Utilization fee notification",
+                cancellationToken);
+        }
+
+        if (notificationContent.Inbox is not null)
+        {
+            context.InboxNotifications.Add(new InboxNotification
+            {
+                Id = Guid.CreateVersion7(),
+                UserId = user.Id,
+                Title = notificationContent.Inbox.Subject,
+                Message = notificationContent.Inbox.Body,
+                ActionType = actionType,
+                RelatedEntityId = garbageOrderId
+            });
+        }
     }
 
     private static IReadOnlyDictionary<Guid, long> AllocateAmountByShareInCents(

@@ -74,6 +74,14 @@ public static class GarbageOrderEndpoints
             .WithTags("GarbageOrders")
             .WithDescription("Accept payment for a garbage order.");
 
+        app.MapPost("/garbage-group/{groupId:guid}/order/{orderId:guid}/utilization-fee/payment", PayAdditionalUtilizationFeeAsync)
+            .RequireAuthorization(PolicyNames.UserPolicy)
+            .WithOpenApi()
+            .Produces<Result<GarbageOrderDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("GarbageOrders")
+            .WithDescription("Pay outstanding utilization fee share to the assigned garbage admin.");
+
         app.MapGet("/garbage-orders/my", GetUserGarbageOrdersAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
@@ -359,6 +367,33 @@ public static class GarbageOrderEndpoints
         CancellationToken cancellationToken)
     {
         var command = new GarbageOrderPaymentCommand(
+            groupId,
+            orderId,
+            currentUserService.UserId);
+
+        var result = await mediator.SendAsync(command, cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = stringLocalizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Pay outstanding utilization fee share for the authenticated user.
+    /// </summary>
+    private static async Task<IResult> PayAdditionalUtilizationFeeAsync(
+        [FromRoute] Guid groupId,
+        [FromRoute] Guid orderId,
+        ICurrentUserService currentUserService,
+        IMediator mediator,
+        IStringLocalizer stringLocalizer,
+        CancellationToken cancellationToken)
+    {
+        var command = new PayAdditionalUtilizationFeeCommand(
             groupId,
             orderId,
             currentUserService.UserId);

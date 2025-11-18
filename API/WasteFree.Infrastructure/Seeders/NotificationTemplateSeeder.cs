@@ -219,5 +219,133 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
             });
             await context.SaveChangesAsync();
         }
+
+        await SeedUtilizationFeeTemplatesAsync();
+    }
+
+    private async Task SeedUtilizationFeeTemplatesAsync()
+    {
+        var templates = new (Guid Id, string Subject, string Body, NotificationChannel Channel, NotificationType Type, LanguagePreference Language)[]
+        {
+            (
+                Guid.Parse("99999999-9999-9999-9999-999999999901"),
+                "Additional utilization fee required for {{GroupName}}",
+                @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f4f6f8;padding:20px;'>
+                        <div style='max-width:560px;margin:auto;background:#ffffff;border-radius:10px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,0.08);'>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hi {{Username}},</p>
+                          <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Order <strong>{{OrderId}}</strong> for group <strong>{{GroupName}}</strong> incurred additional utilization costs.</p>
+                          <p style='font-size:14px;color:#475569;margin:0 0 16px;'>Outstanding amount: <strong>{{OutstandingAmount}} PLN</strong><br/>Your share: <strong>{{UserShare}} PLN</strong>.</p>
+                          <p style='font-size:14px;color:#475569;margin:0;'>Please settle the fee in the app to help close the order.</p>
+                        </div>
+                      </body>
+                    </html>",
+                NotificationChannel.Inbox,
+                NotificationType.UtilizationFeePending,
+                LanguagePreference.English
+            ),
+            (
+                Guid.Parse("99999999-9999-9999-9999-999999999902"),
+                "Dodatkowa oplata utylizacyjna dla {{GroupName}}",
+                @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f4f6f8;padding:20px;'>
+                        <div style='max-width:560px;margin:auto;background:#ffffff;border-radius:10px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,0.08);'>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć {{Username}},</p>
+                          <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Zamówienie <strong>{{OrderId}}</strong> dla grupy <strong>{{GroupName}}</strong> wygenerowało dodatkowe koszty utylizacji.</p>
+                          <p style='font-size:14px;color:#475569;margin:0 0 16px;'>Do zapłaty: <strong>{{OutstandingAmount}} PLN</strong><br/>Twoja część: <strong>{{UserShare}} PLN</strong>.</p>
+                          <p style='font-size:14px;color:#475569;margin:0;'>Ureguluj opłatę w aplikacji, aby zamknąć zamówienie.</p>
+                        </div>
+                      </body>
+                    </html>",
+                NotificationChannel.Inbox,
+                NotificationType.UtilizationFeePending,
+                LanguagePreference.Polish
+            ),
+            (
+                Guid.Parse("99999999-9999-9999-9999-999999999903"),
+                "Settlement complete for {{GroupName}}",
+                @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f6f6f6;padding:20px;'>
+                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 6px 20px rgba(15,23,42,0.1);'>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hi {{Username}},</p>
+                          <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Order <strong>{{OrderId}}</strong> for <strong>{{GroupName}}</strong> has been fully settled.</p>
+                          <p style='font-size:14px;color:#475569;margin:0;'>Thank you for completing all payments.</p>
+                        </div>
+                      </body>
+                    </html>",
+                NotificationChannel.Inbox,
+                NotificationType.UtilizationFeeCompletedParticipant,
+                LanguagePreference.English
+            ),
+            (
+                Guid.Parse("99999999-9999-9999-9999-999999999904"),
+                "Rozliczenie zamówienia {{GroupName}} zakończone",
+                @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f6f6f6;padding:20px;'>
+                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 6px 20px rgba(15,23,42,0.1);'>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć {{Username}},</p>
+                          <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Zamówienie <strong>{{OrderId}}</strong> dla grupy <strong>{{GroupName}}</strong> zostało w pełni rozliczone.</p>
+                          <p style='font-size:14px;color:#475569;margin:0;'>Dziękujemy za terminową płatność.</p>
+                        </div>
+                      </body>
+                    </html>",
+                NotificationChannel.Inbox,
+                NotificationType.UtilizationFeeCompletedParticipant,
+                LanguagePreference.Polish
+            ),
+            (
+                Guid.Parse("99999999-9999-9999-9999-999999999905"),
+                "Participants settled utilization fee for {{GroupName}}",
+                @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f1f5f9;padding:20px;'>
+                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 8px 24px rgba(15,23,42,0.12);'>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hello {{Username}},</p>
+                          <p style='font-size:15px;color:#334155;margin:0 0 12px;'>All participants paid the outstanding utilization fee for order <strong>{{OrderId}}</strong> in group <strong>{{GroupName}}</strong>.</p>
+                          <p style='font-size:14px;color:#475569;margin:0;'>You can proceed with closing the process.</p>
+                        </div>
+                      </body>
+                    </html>",
+                NotificationChannel.Inbox,
+                NotificationType.UtilizationFeeCompletedAdmin,
+                LanguagePreference.English
+            ),
+            (
+                Guid.Parse("99999999-9999-9999-9999-999999999906"),
+                "Uczestnicy opłacili dodatkową opłatę dla {{GroupName}}",
+                @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f1f5f9;padding:20px;'>
+                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 8px 24px rgba(15,23,42,0.12);'>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć {{Username}},</p>
+                          <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Wszyscy uczestnicy opłacili dodatkową opłatę utylizacyjną dla zamówienia <strong>{{OrderId}}</strong> w grupie <strong>{{GroupName}}</strong>.</p>
+                          <p style='font-size:14px;color:#475569;margin:0;'>Możesz zakończyć proces.</p>
+                        </div>
+                      </body>
+                    </html>",
+                NotificationChannel.Inbox,
+                NotificationType.UtilizationFeeCompletedAdmin,
+                LanguagePreference.Polish
+            )
+        };
+
+        foreach (var template in templates)
+        {
+            if (await context.NotificationTemplates.AnyAsync(t => t.Id == template.Id))
+            {
+                continue;
+            }
+
+            context.NotificationTemplates.Add(new NotificationTemplate
+            {
+                Id = template.Id,
+                Subject = template.Subject,
+                Body = template.Body,
+                Channel = template.Channel,
+                Type = template.Type,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                LanguagePreference = template.Language
+            });
+            await context.SaveChangesAsync();
+        }
     }
 }

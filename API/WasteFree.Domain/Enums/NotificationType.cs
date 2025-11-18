@@ -24,4 +24,19 @@ public enum NotificationType
     /// Garbage order created.
     /// </summary>
     GarbageOrderCreated = 3,
+
+    /// <summary>
+    /// Additional utilization fee is pending from participants.
+    /// </summary>
+    UtilizationFeePending = 4,
+
+    /// <summary>
+    /// Utilization fee has been fully settled for participants.
+    /// </summary>
+    UtilizationFeeCompletedParticipant = 5,
+
+    /// <summary>
+    /// Utilization fee has been fully settled and admin payout is available.
+    /// </summary>
+    UtilizationFeeCompletedAdmin = 6
 }
