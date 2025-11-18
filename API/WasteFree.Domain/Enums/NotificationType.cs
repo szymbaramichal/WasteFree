@@ -38,5 +38,10 @@ public enum NotificationType
     /// <summary>
     /// Utilization fee has been fully settled and admin payout is available.
     /// </summary>
-    UtilizationFeeCompletedAdmin = 6
+    UtilizationFeeCompletedAdmin = 6,
+
+    /// <summary>
+    /// Garbage order accepted by an administrator.
+    /// </summary>
+    GarbageOrderAccepted = 7
 }
