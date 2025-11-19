@@ -4,9 +4,8 @@
       <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
         <div class="card-heading">
           <div class="card-heading__icon card-heading__icon--list">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-              <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           </div>
           <div>
@@ -111,36 +110,6 @@
                 </li>
                 <li *ngIf="item.raw.utilizationFeeAmount !== null" class="order-card__flag order-card__flag--fee">
                   {{ 'garbageAdminOrders.badges.utilizationFeePending' | translate }}
-                </li>
-              </ul>
-            </div>
-
-            <div class="order-card__participants" *ngIf="item.raw?.users">
-              <h3 class="h6 mb-2">{{ 'garbageAdminOrders.participants.title' | translate:{ count: (item.raw?.users?.length || 0) } }}</h3>
-              <ul>
-                <li *ngFor="let user of (item.raw?.users || [])">
-                  <div class="participant__name">
-                    {{ user.username || ('garbageAdminOrders.participants.unknown' | translate) }}
-                  </div>
-                  <div class="participant__meta">
-                    <span
-                      class="participant__status"
-                      [class.participant__status--accepted]="user.hasAcceptedPayment"
-                      [class.participant__status--pending]="!user.hasAcceptedPayment"
-                    >
-                      {{ user.hasAcceptedPayment
-                        ? ('garbageAdminOrders.participants.acceptedPayment' | translate)
-                        : ('garbageAdminOrders.participants.pendingPayment' | translate) }}
-                    </span>
-                    <span class="participant__share">
-                      {{ 'garbageAdminOrders.participants.shareAmount' | translate }}:
-                      <strong>{{ user.shareAmount | number:'1.2-2' }} PLN</strong>
-                    </span>
-                    <span *ngIf="user.additionalUtilizationFeeShareAmount !== null" class="participant__share">
-                      {{ 'garbageAdminOrders.participants.utilizationShareAmount' | translate }}:
-                      <strong>{{ user.additionalUtilizationFeeShareAmount | number:'1.2-2' }} PLN</strong>
-                    </span>
-                  </div>
                 </li>
               </ul>
             </div>
