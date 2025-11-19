@@ -91,6 +91,37 @@ public class UserSeeder(ApplicationDataContext context)
                 IsActive = true,
                 Address = new Address { City = "Warszawa", PostalCode = "00-325", Street = "Krakowskie Przedmieście 20" }
             },
+            // System administrators
+            new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "admin1",
+                Email = "admin1@wastefreecloud.pl",
+                Description = "Seeded system admin 1",
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                Role = UserRole.Admin,
+                LanguagePreference = LanguagePreference.Polish,
+                IsActive = true,
+                Address = new Address { City = "Kraków", PostalCode = "31-042", Street = "Rynek Główny 3" }
+            },
+            new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "admin2",
+                Email = "admin2@wastefreecloud.pl",
+                Description = "Seeded system admin 2",
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                Role = UserRole.Admin,
+                LanguagePreference = LanguagePreference.Polish,
+                IsActive = true,
+                Address = new Address { City = "Kraków", PostalCode = "31-007", Street = "ul. Szewska 12" }
+            },
             // Garbage administrators
             new User
             {
