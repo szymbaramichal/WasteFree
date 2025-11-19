@@ -223,6 +223,7 @@
   "garbageAdminOrders.summary.containerSize": "Container size",
   "garbageAdminOrders.summary.cost": "Order cost",
   "garbageAdminOrders.summary.distance": "Distance",
+  "garbageAdminOrders.summary.address": "Address",
   "garbageAdminOrders.schedule.pickup": "Pickup",
   "garbageAdminOrders.schedule.dropOff": "Drop-off",
   "garbageAdminOrders.schedule.none": "No schedule",

@@ -99,6 +99,10 @@
                   <span class="order-card__label">{{ 'garbageAdminOrders.summary.distance' | translate }}</span>
                   <span class="order-card__value">{{ item.distance | number:'1.1-1' }} km</span>
                 </div>
+                <div class="order-card__row" *ngIf="item.addressLine">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.address' | translate }}</span>
+                  <span class="order-card__value">{{ item.addressLine }}</span>
+                </div>
               </div>
 
               <ul class="order-card__flags">

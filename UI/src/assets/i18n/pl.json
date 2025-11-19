@@ -224,6 +224,7 @@
   "garbageAdminOrders.summary.containerSize": "Kontener",
   "garbageAdminOrders.summary.cost": "Koszt zlecenia",
   "garbageAdminOrders.summary.distance": "Dystans",
+  "garbageAdminOrders.summary.address": "Adres",
   "garbageAdminOrders.schedule.pickup": "Odbiór",
   "garbageAdminOrders.schedule.dropOff": "Podstawienie",
   "garbageAdminOrders.schedule.none": "Brak terminu",

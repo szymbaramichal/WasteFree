@@ -12,6 +12,7 @@ import { TranslatePipe } from '@app/pipes/translate.pipe';
 import {
   GarbageAdminOrderDto
 } from '@app/_models/garbage-orders';
+import { Address } from '@app/_models/address';
 import { Pager, PaginatedResult } from '@app/_models/result';
 import { GarbageAdminOrdersService } from '@app/services/garbage-admin-orders.service';
 import { finalize } from 'rxjs/operators';
@@ -228,7 +229,8 @@ export class GarbageAdminOrdersWaitingComponent implements OnInit {
       groupName: dto.garbageGroupName?.trim() || null,
       isPrivateGroup: dto.garbageGroupIsPrivate,
       cost: dto.cost,
-      distance: dto.distanceInKilometers
+      distance: dto.distanceInKilometers,
+      addressLine: this.formatAddress(dto.garbageGroupAddress)
     };
   }
 
@@ -240,5 +242,22 @@ export class GarbageAdminOrdersWaitingComponent implements OnInit {
     }
 
     return cleaned.length <= 8 ? cleaned : `${cleaned.slice(0, 4)}-${cleaned.slice(-4)}`;
+  }
+
+  private formatAddress(address: Address | null | undefined): string | null {
+    if (!address) {
+      return null;
+    }
+
+    const street = address.street?.trim() ?? '';
+    const cityLine = [address.postalCode, address.city]
+      .map((part) => part?.trim())
+      .filter((part) => !!part)
+      .join(' ');
+
+    const parts = [street, cityLine].filter((part) => !!part);
+    const formatted = parts.join(', ');
+
+    return formatted || null;
   }
 }

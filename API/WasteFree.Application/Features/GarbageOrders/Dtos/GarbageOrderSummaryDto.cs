@@ -1,5 +1,6 @@
 using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
 namespace WasteFree.Application.Features.GarbageOrders.Dtos;
 
@@ -20,6 +21,7 @@ public class GarbageOrderSummaryDto
     public Guid? AssignedGarbageAdminId { get; set; }
     public string? AssignedGarbageAdminUsername { get; set; }
     public double? DistanceInKilometers { get; set; }
+    public Address GarbageGroupAddress { get; set; }
 }
 
 public static class GarbageOrderSummaryDtoExtensions
@@ -45,7 +47,8 @@ public static class GarbageOrderSummaryDtoExtensions
             GarbageGroupIsPrivate = garbageOrder.GarbageGroup?.IsPrivate ?? false,
             AssignedGarbageAdminId = garbageOrder.AssignedGarbageAdminId,
             AssignedGarbageAdminUsername = garbageOrder.AssignedGarbageAdmin?.Username,
-            DistanceInKilometers = distanceInKilometers
+            DistanceInKilometers = distanceInKilometers,
+            GarbageGroupAddress = garbageOrder.GarbageGroup?.Address ?? new Address()
         };
     }
 }

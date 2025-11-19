@@ -1,3 +1,5 @@
+import { Address } from "./address";
+
 export enum GarbageOrderStatus {
   WaitingForPayment = 0,
   WaitingForAccept = 1,
@@ -105,4 +107,5 @@ export interface GarbageAdminOrderDto {
   utilizationFeeSubmittedDateUtc: string | null;
   distanceInKilometers: number | null;
   users: GarbageAdminOrderUserDto[];
+  garbageGroupAddress: Address;
 }

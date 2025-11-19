@@ -16,6 +16,7 @@ export interface GarbageAdminOrderItem {
   isPrivateGroup: boolean;
   cost: number;
   distance: number | null;
+  addressLine: string | null;
 }
 
 export interface PageMeta {
