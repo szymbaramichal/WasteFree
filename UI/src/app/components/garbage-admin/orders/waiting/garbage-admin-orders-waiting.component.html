@@ -99,10 +99,10 @@
           </ul>
         </div>
 
-        <div class="order-card__participants">
-          <h3 class="h6 mb-2">{{ 'garbageAdminOrders.participants.title' | translate:{ count: item.raw.users.length } }}</h3>
+        <div class="order-card__participants" *ngIf="item.raw?.users">
+          <h3 class="h6 mb-2">{{ 'garbageAdminOrders.participants.title' | translate:{ count: (item.raw?.users?.length || 0) } }}</h3>
           <ul>
-            <li *ngFor="let user of item.raw.users">
+            <li *ngFor="let user of (item.raw?.users || [])">
               <div class="participant__name">
                 {{ user.username || ('garbageAdminOrders.participants.unknown' | translate) }}
               </div>
