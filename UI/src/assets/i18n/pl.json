@@ -176,97 +176,68 @@
   "portal.home.stats.wasteReduced": "Zredukowane odpady",
   "portal.home.stats.collections": "Zgłoszone wywozy",
   "portal.home.stats.community": "Twoje grupy",
-  "garbageAdminOrders": {
-    "title": "Panel dyspozytora",
-    "lead": "Przeglądaj i zarządzaj zleceniami oczekującymi na Twoją decyzję.",
-    "actions": {
-      "refresh": "Odśwież wszystko",
-      "retry": "Spróbuj ponownie"
-    },
-    "loading": "Ładuję zlecenia...",
-    "waiting": {
-      "title": "Oczekujące na przyjęcie",
-      "lead": "Nowe zgłoszenia z Twojego miasta gotowe do przyjęcia.",
-      "loadError": "Nie udało się pobrać oczekujących zleceń.",
-      "empty": {
-        "title": "Brak oczekujących zleceń",
-        "lead": "Gdy użytkownicy złożą zamówienie w Twoim mieście, pojawi się ono tutaj."
-      }
-    },
-    "current": {
-      "title": "Przydzielone zlecenia",
-      "lead": "Zlecenia przypisane do Ciebie, które czekają na odbiór lub rozliczenie.",
-      "loadError": "Nie udało się pobrać przydzielonych zleceń.",
-      "empty": {
-        "title": "Brak aktywnych zleceń",
-        "lead": "Przyjęte zlecenia będą widoczne do czasu zakończenia."
-      }
-    },
-    "accept": {
-      "cta": "Przyjmij zlecenie",
-      "success": "Zlecenie zostało przypisane do Ciebie.",
-      "error": "Nie udało się przyjąć zlecenia. Spróbuj ponownie."
-    },
-    "status": {
-      "waitingForPayment": "Oczekuje na płatność",
-      "waitingForAccept": "Oczekuje na przyjęcie",
-      "waitingForPickup": "Oczekuje na odbiór",
-      "waitingForUtilizationFee": "Oczekuje na opłatę utylizacyjną",
-      "completed": "Zakończone",
-      "complained": "Zareklamowane",
-      "resolved": "Rozwiązane",
-      "cancelled": "Anulowane",
-      "unknown": "Nieznany status"
-    },
-    "pickupOption": {
-      "smallPickup": "Mały wywóz",
-      "pickup": "Wywóz",
-      "container": "Kontener",
-      "specialOrder": "Zamówienie specjalne",
-      "unknown": "Nieznany rodzaj wywozu"
-    },
-    "containerSize": {
-      "small": "Mały kontener",
-      "medium": "Średni kontener",
-      "large": "Duży kontener"
-    },
-    "badges": {
-      "highPriority": "Priorytet",
-      "collectingService": "Usługa wyniesienia",
-      "utilizationFeePending": "Oczekuje na opłatę utylizacyjną"
-    },
-    "group": {
-      "unknown": "Nieznana grupa",
-      "private": "Zamówienie indywidualne"
-    },
-    "summary": {
-      "pickupOption": "Rodzaj wywozu",
-      "schedule": "Termin",
-      "containerSize": "Kontener",
-      "cost": "Koszt zlecenia",
-      "distance": "Dystans"
-    },
-    "schedule": {
-      "pickup": "Odbiór",
-      "dropOff": "Podstawienie",
-      "none": "Brak terminu",
-      "missing": "Nie podano terminu"
-    },
-    "participants": {
-      "title": "Uczestnicy ({{count}})",
-      "unknown": "Nieznany użytkownik",
-      "acceptedPayment": "Płatność zaakceptowana",
-      "pendingPayment": "Płatność oczekuje",
-      "shareAmount": "Udział",
-      "utilizationShareAmount": "Udział w opłacie utylizacyjnej"
-    },
-    "pagination": {
-      "label": "{{start}}-{{end}} z {{total}} zleceń",
-      "previous": "Poprzednia strona",
-      "next": "Następna strona",
-      "page": "Strona {{current}} z {{total}}"
-    }
-  },
+  "garbageAdminOrders.title": "Panel dyspozytora",
+  "garbageAdminOrders.lead": "Przeglądaj i zarządzaj zleceniami oczekującymi na Twoją decyzję.",
+  "garbageAdminOrders.actions.refresh": "Odśwież wszystko",
+  "garbageAdminOrders.actions.retry": "Spróbuj ponownie",
+  "garbageAdminOrders.loading": "Ładuję zlecenia...",
+  "garbageAdminOrders.waiting.title": "Oczekujące na przyjęcie",
+  "garbageAdminOrders.waiting.lead": "Nowe zgłoszenia z Twojego miasta gotowe do przyjęcia.",
+  "garbageAdminOrders.waiting.loadError": "Nie udało się pobrać oczekujących zleceń.",
+  "garbageAdminOrders.waiting.empty.title": "Brak oczekujących zleceń",
+  "garbageAdminOrders.waiting.empty.lead": "Gdy użytkownicy złożą zamówienie w Twoim mieście, pojawi się ono tutaj.",
+  "garbageAdminOrders.current.title": "Przydzielone zlecenia",
+  "garbageAdminOrders.current.lead": "Zlecenia przypisane do Ciebie, które czekają na odbiór lub rozliczenie.",
+  "garbageAdminOrders.current.loadError": "Nie udało się pobrać przydzielonych zleceń.",
+  "garbageAdminOrders.current.empty.title": "Brak aktywnych zleceń",
+  "garbageAdminOrders.current.empty.lead": "Przyjęte zlecenia będą widoczne do czasu zakończenia.",
+  "garbageAdminOrders.accept.cta": "Przyjmij zlecenie",
+  "acceptOrderCta": "Przyjmij zlecenie",
+  "paginationPrevious": "Poprzednia strona",
+  "paginationNext": "Następna strona",
+  "garbageAdminOrders.accept.success": "Zlecenie zostało przypisane do Ciebie.",
+  "garbageAdminOrders.accept.error": "Nie udało się przyjąć zlecenia. Spróbuj ponownie.",
+  "garbageAdminOrders.status.waitingForPayment": "Oczekuje na płatność",
+  "garbageAdminOrders.status.waitingForAccept": "Oczekuje na przyjęcie",
+  "garbageAdminOrders.status.waitingForPickup": "Oczekuje na odbiór",
+  "garbageAdminOrders.status.waitingForUtilizationFee": "Oczekuje na opłatę utylizacyjną",
+  "garbageAdminOrders.status.completed": "Zakończone",
+  "garbageAdminOrders.status.complained": "Zareklamowane",
+  "garbageAdminOrders.status.resolved": "Rozwiązane",
+  "garbageAdminOrders.status.cancelled": "Anulowane",
+  "garbageAdminOrders.status.unknown": "Nieznany status",
+  "garbageAdminOrders.pickupOption.smallPickup": "Mały wywóz",
+  "garbageAdminOrders.pickupOption.pickup": "Wywóz",
+  "garbageAdminOrders.pickupOption.container": "Kontener",
+  "garbageAdminOrders.pickupOption.specialOrder": "Zamówienie specjalne",
+  "garbageAdminOrders.pickupOption.unknown": "Nieznany rodzaj wywozu",
+  "garbageAdminOrders.containerSize.small": "Mały kontener",
+  "garbageAdminOrders.containerSize.medium": "Średni kontener",
+  "garbageAdminOrders.containerSize.large": "Duży kontener",
+  "garbageAdminOrders.badges.highPriority": "Priorytet",
+  "garbageAdminOrders.badges.collectingService": "Usługa wyniesienia",
+  "garbageAdminOrders.badges.utilizationFeePending": "Oczekuje na opłatę utylizacyjną",
+  "garbageAdminOrders.group.unknown": "Nieznana grupa",
+  "garbageAdminOrders.group.private": "Zamówienie indywidualne",
+  "garbageAdminOrders.summary.pickupOption": "Rodzaj wywozu",
+  "garbageAdminOrders.summary.schedule": "Termin",
+  "garbageAdminOrders.summary.containerSize": "Kontener",
+  "garbageAdminOrders.summary.cost": "Koszt zlecenia",
+  "garbageAdminOrders.summary.distance": "Dystans",
+  "garbageAdminOrders.schedule.pickup": "Odbiór",
+  "garbageAdminOrders.schedule.dropOff": "Podstawienie",
+  "garbageAdminOrders.schedule.none": "Brak terminu",
+  "garbageAdminOrders.schedule.missing": "Nie podano terminu",
+  "garbageAdminOrders.participants.title": "Uczestnicy ({{count}})",
+  "garbageAdminOrders.participants.unknown": "Nieznany użytkownik",
+  "garbageAdminOrders.participants.acceptedPayment": "Płatność zaakceptowana",
+  "garbageAdminOrders.participants.pendingPayment": "Płatność oczekuje",
+  "garbageAdminOrders.participants.shareAmount": "Udział",
+  "garbageAdminOrders.participants.utilizationShareAmount": "Udział w opłacie utylizacyjnej",
+  "garbageAdminOrders.pagination.label": "{{start}}-{{end}} z {{total}} zleceń",
+  "garbageAdminOrders.pagination.previous": "Poprzednia strona",
+  "garbageAdminOrders.pagination.next": "Następna strona",
+  "garbageAdminOrders.pagination.page": "Strona {{current}} z {{total}}",
   "pickupOrder.title": "Zamów wywóz odpadów",
   "pickupOrder.subtitle": "Wybierz usługę pasującą do Twojego wywozu.",
   "pickupOrder.steps.orderType": "Rodzaj wywozu",

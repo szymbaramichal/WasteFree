@@ -16,16 +16,6 @@
   max-width: 640px;
 }
 
-.refresh-icon {
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  display: inline-block;
-  animation: spin 1.2s linear infinite;
-}
-
 .orders-section {
   background-color: #ffffff;
   border: 1px solid rgba(15, 32, 62, 0.08);
