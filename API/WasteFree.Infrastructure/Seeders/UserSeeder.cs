@@ -120,7 +120,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.Admin,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Kraków", PostalCode = "31-007", Street = "ul. Szewska 12" }
+                Address = new Address { City = "Kraków", PostalCode = "31-007", Street = "Szewska 12" }
             },
             // Garbage administrators
             new User
