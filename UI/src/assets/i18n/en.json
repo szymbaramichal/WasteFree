@@ -177,7 +177,7 @@
   "portal.home.stats.community": "Your groups",
   "garbageAdminOrders.title": "Dispatch board",
   "garbageAdminOrders.lead": "Review and manage garbage orders awaiting your action.",
-  "garbageAdminOrders.actions.refresh": "Refresh all",
+  "garbageAdminOrders.actions.refresh": "Refresh",
   "garbageAdminOrders.actions.retry": "Retry",
   "garbageAdminOrders.loading": "Loading orders...",
   "garbageAdminOrders.waiting.title": "Waiting for acceptance",
