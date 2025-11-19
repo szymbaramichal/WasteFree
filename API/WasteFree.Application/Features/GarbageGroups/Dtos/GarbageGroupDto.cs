@@ -38,9 +38,10 @@ public class GarbageGroupDto
 public static class GarbageGroupDtoExtensions
 {
     public static GarbageGroupDto MapToGarbageGroupDto(this GarbageGroup garbageGroup,
-        ICollection<UserGarbageGroup> users)
+        ICollection<UserGarbageGroup> users,
+        IReadOnlyDictionary<Guid, string?>? avatarUrls = null)
     {
-        var garbageGroupUsers = users.MapToGarbageGroupUserDto();
+        var garbageGroupUsers = users.MapToGarbageGroupUserDto(avatarUrls);
 
         return new GarbageGroupDto
         {

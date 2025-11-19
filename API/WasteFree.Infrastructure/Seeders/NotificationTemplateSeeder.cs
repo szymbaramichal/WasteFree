@@ -220,6 +220,108 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
             await context.SaveChangesAsync();
         }
 
+        var orderAcceptedEmailEnId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        if (!await context.NotificationTemplates.AnyAsync(t => t.Id == orderAcceptedEmailEnId))
+        {
+            context.NotificationTemplates.Add(new NotificationTemplate
+            {
+                Id = orderAcceptedEmailEnId,
+                Subject = "Garbage order for {{GroupName}} accepted",
+                Body = @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:32px;'>
+                        <div style='max-width:640px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:28px;'>
+                          <h2 style='color:#2e7d32;margin-bottom:16px;'>Order accepted</h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi {{Username}},</p>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Administrator <strong>{{GarbageAdminName}}</strong> accepted the garbage order for group <strong>{{GroupName}}</strong>.</p>
+                          <p style='font-size:14px;color:#555;margin:0;'>Pickup is scheduled for <strong>{{PickupDate}}</strong>. You will receive updates once the collection is completed.</p>
+                        </div>
+                      </body>
+                    </html>",
+                Channel = NotificationChannel.Email,
+                Type = NotificationType.GarbageOrderAccepted,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                LanguagePreference = LanguagePreference.English
+            });
+            await context.SaveChangesAsync();
+        }
+
+        var orderAcceptedEmailPlId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+        if (!await context.NotificationTemplates.AnyAsync(t => t.Id == orderAcceptedEmailPlId))
+        {
+            context.NotificationTemplates.Add(new NotificationTemplate
+            {
+                Id = orderAcceptedEmailPlId,
+                Subject = "Zamówienie dla {{GroupName}} zaakceptowane",
+                Body = @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:32px;'>
+                        <div style='max-width:640px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:28px;'>
+                          <h2 style='color:#2e7d32;margin-bottom:16px;'>Zamówienie zaakceptowane</h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć {{Username}},</p>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Administrator <strong>{{GarbageAdminName}}</strong> zaakceptował zamówienie na wywóz dla grupy <strong>{{GroupName}}</strong>.</p>
+                          <p style='font-size:14px;color:#555;margin:0;'>Odbiór zaplanowany jest na <strong>{{PickupDate}}</strong>. Poinformujemy Cię po zakończeniu wywozu.</p>
+                        </div>
+                      </body>
+                    </html>",
+                Channel = NotificationChannel.Email,
+                Type = NotificationType.GarbageOrderAccepted,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                LanguagePreference = LanguagePreference.Polish
+            });
+            await context.SaveChangesAsync();
+        }
+
+        var orderAcceptedInboxEnId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc");
+        if (!await context.NotificationTemplates.AnyAsync(t => t.Id == orderAcceptedInboxEnId))
+        {
+            context.NotificationTemplates.Add(new NotificationTemplate
+            {
+                Id = orderAcceptedInboxEnId,
+                Subject = "Garbage order accepted",
+                Body = @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
+                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi {{Username}},</p>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{GarbageAdminName}} accepted the garbage order for <strong>{{GroupName}}</strong> scheduled on <strong>{{PickupDate}}</strong>.</p>
+                          <p style='font-size:14px;color:#555;margin:0;'>Track the order status in the app.</p>
+                        </div>
+                      </body>
+                    </html>",
+                Channel = NotificationChannel.Inbox,
+                Type = NotificationType.GarbageOrderAccepted,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                LanguagePreference = LanguagePreference.English
+            });
+            await context.SaveChangesAsync();
+        }
+
+        var orderAcceptedInboxPlId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd");
+        if (!await context.NotificationTemplates.AnyAsync(t => t.Id == orderAcceptedInboxPlId))
+        {
+            context.NotificationTemplates.Add(new NotificationTemplate
+            {
+                Id = orderAcceptedInboxPlId,
+                Subject = "Zamówienie zaakceptowane",
+                Body = @"<html>
+                      <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
+                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć {{Username}},</p>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{GarbageAdminName}} zaakceptował zamówienie dla <strong>{{GroupName}}</strong> zaplanowane na <strong>{{PickupDate}}</strong>.</p>
+                          <p style='font-size:14px;color:#555;margin:0;'>Śledź status zamówienia w aplikacji.</p>
+                        </div>
+                      </body>
+                    </html>",
+                Channel = NotificationChannel.Inbox,
+                Type = NotificationType.GarbageOrderAccepted,
+                CreatedDateUtc = DateTime.UtcNow,
+                CreatedBy = Guid.Empty,
+                LanguagePreference = LanguagePreference.Polish
+            });
+            await context.SaveChangesAsync();
+        }
+
         await SeedUtilizationFeeTemplatesAsync();
     }
 
