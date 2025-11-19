@@ -26,7 +26,8 @@ export class TranslatePipe implements PipeTransform, OnDestroy {
       return base;
     }
 
-    return base.replace(/\{\s*(\w+)\s*\}/g, (_match, token) => {
+    return base.replace(/\{\{\s*(\w+)\s*\}\}|\{\s*(\w+)\s*\}/g, (_match, token1, token2) => {
+      const token = token1 || token2;
       const value = params[token];
       return value === undefined || value === null ? '' : String(value);
     });

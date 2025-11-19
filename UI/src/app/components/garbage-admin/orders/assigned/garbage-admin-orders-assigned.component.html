@@ -1,161 +1,145 @@
-<div class="dispatch-view">
-  <div class="dispatch-header">
-    <div class="dispatch-header__text">
-      <h1 class="h3 mb-1">{{ 'garbageAdminOrders.current.title' | translate }}</h1>
-      <p class="text-muted mb-0">{{ 'garbageAdminOrders.current.lead' | translate }}</p>
-    </div>
-
-    <button
-      type="button"
-      class="btn btn-outline-primary d-flex align-items-center gap-2"
-      (click)="refresh()"
-      [disabled]="loading()"
-    >
-      <span *ngIf="loading()" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      <svg *ngIf="!loading()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-        <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-      </svg>
-      <span>{{ 'garbageAdminOrders.actions.refresh' | translate }}</span>
-    </button>
-  </div>
-
-  <section class="orders-section">
-    <div *ngIf="loading()" class="orders-state orders-state--loading">
-      <div class="spinner-border" role="status" aria-hidden="true"></div>
-      <small class="text-muted">{{ 'garbageAdminOrders.loading' | translate }}</small>
-    </div>
-
-    <div *ngIf="!loading() && error()" class="orders-state orders-state--error">
-      <p class="mb-2">{{ (error() ?? 'garbageAdminOrders.current.loadError') | translate }}</p>
-      <button type="button" class="btn btn-sm btn-primary" (click)="retry()">
-        {{ 'garbageAdminOrders.actions.retry' | translate }}
-      </button>
-    </div>
-
-    <div *ngIf="!loading() && !error() && items().length === 0" class="orders-state orders-state--empty">
-      <div class="orders-state__icon" aria-hidden="true">&#128666;</div>
-      <h3 class="h6 mb-1">{{ 'garbageAdminOrders.current.empty.title' | translate }}</h3>
-      <p class="text-muted mb-0">{{ 'garbageAdminOrders.current.empty.lead' | translate }}</p>
-    </div>
-
-    <div *ngIf="!loading() && !error() && items().length" class="orders-list">
-      <article
-        class="order-card order-card--current"
-        *ngFor="let item of items(); trackBy: trackById"
-        [class.order-card--priority]="item.isHighPriority"
-      >
-        <header class="order-card__header">
+<div class="container-fluid px-3 orders-list-container">
+  <div class="card fancy-card h-100 border-0 shadow-lg mx-auto">
+    <div class="card-header gradient-groups text-white py-3 position-relative overflow-hidden">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="card-heading">
+          <div class="card-heading__icon card-heading__icon--list">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" focusable="false">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+          </div>
           <div>
-            <span class="order-card__code">{{ item.orderNumber }}</span>
-            <div class="order-card__group">
-              <span class="order-card__group-name">
-                {{ item.groupName || ('garbageAdminOrders.group.unknown' | translate) }}
-              </span>
-              <span *ngIf="item.isPrivateGroup" class="order-card__group-tag">
-                {{ 'garbageAdminOrders.group.private' | translate }}
-              </span>
-            </div>
+            <h5 class="mb-1 fw-bold">{{ 'garbageAdminOrders.current.title' | translate }}</h5>
+            <small class="opacity-75">{{ 'garbageAdminOrders.current.lead' | translate }}</small>
           </div>
-          <span class="badge text-uppercase" [ngClass]="item.statusClass">{{ item.statusKey | translate }}</span>
-        </header>
-
-        <div class="order-card__body">
-          <div class="order-card__summary">
-            <div class="order-card__row">
-              <span class="order-card__label">{{ 'garbageAdminOrders.summary.pickupOption' | translate }}</span>
-              <span class="order-card__value">{{ item.pickupOptionKey | translate }}</span>
-            </div>
-            <div class="order-card__row">
-              <span class="order-card__label">{{ 'garbageAdminOrders.summary.schedule' | translate }}</span>
-              <span class="order-card__value">
-                <ng-container *ngIf="item.schedule; else currentNoSchedule">
-                  <span class="me-2 text-uppercase small fw-semibold">{{ scheduleKey(item) | translate }}</span>
-                  <time>{{ item.schedule | date:'medium' }}</time>
-                </ng-container>
-              </span>
-            </div>
-            <div class="order-card__row" *ngIf="item.containerSizeKey">
-              <span class="order-card__label">{{ 'garbageAdminOrders.summary.containerSize' | translate }}</span>
-              <span class="order-card__value">{{ item.containerSizeKey | translate }}</span>
-            </div>
-            <div class="order-card__row">
-              <span class="order-card__label">{{ 'garbageAdminOrders.summary.cost' | translate }}</span>
-              <span class="order-card__value">{{ item.cost | currency:'PLN':'symbol':'1.2-2' }}</span>
-            </div>
-            <div class="order-card__row" *ngIf="item.distance !== null">
-              <span class="order-card__label">{{ 'garbageAdminOrders.summary.distance' | translate }}</span>
-              <span class="order-card__value">{{ item.distance | number:'1.1-1' }} km</span>
-            </div>
-          </div>
-
-          <ul class="order-card__flags">
-            <li *ngIf="item.isHighPriority" class="order-card__flag order-card__flag--priority">
-              {{ 'garbageAdminOrders.badges.highPriority' | translate }}
-            </li>
-            <li *ngIf="item.collectingService" class="order-card__flag">
-              {{ 'garbageAdminOrders.badges.collectingService' | translate }}
-            </li>
-            <li *ngIf="item.raw.utilizationFeeAmount !== null" class="order-card__flag order-card__flag--fee">
-              {{ 'garbageAdminOrders.badges.utilizationFeePending' | translate }}
-            </li>
-          </ul>
         </div>
-
-        <div class="order-card__participants">
-          <h3 class="h6 mb-2">{{ 'garbageAdminOrders.participants.title' | translate:{ count: item.raw.users.length } }}</h3>
-          <ul>
-            <li *ngFor="let user of item.raw.users">
-              <div class="participant__name">
-                {{ user.username || ('garbageAdminOrders.participants.unknown' | translate) }}
-              </div>
-              <div class="participant__meta">
-                <span
-                  class="participant__status"
-                  [class.participant__status--accepted]="user.hasAcceptedPayment"
-                  [class.participant__status--pending]="!user.hasAcceptedPayment"
-                >
-                  {{ user.hasAcceptedPayment
-                    ? ('garbageAdminOrders.participants.acceptedPayment' | translate)
-                    : ('garbageAdminOrders.participants.pendingPayment' | translate) }}
-                </span>
-                <span class="participant__share">
-                  {{ 'garbageAdminOrders.participants.shareAmount' | translate }}:
-                  <strong>{{ user.shareAmount | number:'1.2-2' }} PLN</strong>
-                </span>
-                <span *ngIf="user.additionalUtilizationFeeShareAmount !== null" class="participant__share">
-                  {{ 'garbageAdminOrders.participants.utilizationShareAmount' | translate }}:
-                  <strong>{{ user.additionalUtilizationFeeShareAmount | number:'1.2-2' }} PLN</strong>
-                </span>
-              </div>
-            </li>
-          </ul>
+        <div class="d-flex align-items-center gap-2">
+          <button
+            type="button"
+            class="btn btn-xs btn-outline-light refresh-btn"
+            (click)="refresh()"
+            [disabled]="loading()"
+          >
+            <span *ngIf="loading()" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span *ngIf="!loading()" class="d-inline-flex align-items-center gap-1">
+              <i class="bi bi-arrow-clockwise"></i>
+              <span class="refresh-label">{{ 'garbageAdminOrders.actions.refresh' | translate }}</span>
+            </span>
+          </button>
         </div>
-      </article>
+      </div>
+      <div class="header-accent"></div>
     </div>
 
-    <ng-template #currentNoSchedule>
-      <span class="text-muted">{{ 'garbageAdminOrders.schedule.missing' | translate }}</span>
-    </ng-template>
+    <div class="card-body p-0 d-flex flex-column bg-light">
+      <section class="orders-section p-3">
+        <div *ngIf="loading()" class="orders-state orders-state--loading">
+          <div class="spinner-border" role="status" aria-hidden="true"></div>
+          <small class="text-muted">{{ 'garbageAdminOrders.loading' | translate }}</small>
+        </div>
 
-    <div
-      *ngIf="!loading() && !error() && pageMeta().totalCount > 0"
-      class="orders-pagination"
-    >
-      <div class="orders-pagination__info">
-        {{ 'garbageAdminOrders.pagination.label' | translate:{ start: pageMeta().start, end: pageMeta().end, total: pageMeta().totalCount } }}
-      </div>
-      <div class="orders-pagination__controls">
-        <button type="button" class="page-btn" (click)="previousPage()" [disabled]="!pageMeta().hasPrevious">
-          {{ 'paginationPrevious' | translate }}
-        </button>
-        <span class="orders-pagination__page">
-          {{ 'garbageAdminOrders.pagination.page' | translate:{ current: pageMeta().currentPage || 1, total: pageMeta().totalPages || 1 } }}
-        </span>
-        <button type="button" class="page-btn" (click)="nextPage()" [disabled]="!pageMeta().hasNext">
-          {{ 'paginationNext' | translate }}
-        </button>
-      </div>
+        <div *ngIf="!loading() && error()" class="orders-state orders-state--error">
+          <p class="mb-2">{{ (error() ?? 'garbageAdminOrders.current.loadError') | translate }}</p>
+          <button type="button" class="btn btn-sm btn-primary" (click)="retry()">
+            {{ 'garbageAdminOrders.actions.retry' | translate }}
+          </button>
+        </div>
+
+        <div *ngIf="!loading() && !error() && items().length === 0" class="orders-state orders-state--empty">
+          <div class="orders-state__icon" aria-hidden="true">&#128666;</div>
+          <h3 class="h6 mb-1">{{ 'garbageAdminOrders.current.empty.title' | translate }}</h3>
+          <p class="text-muted mb-0">{{ 'garbageAdminOrders.current.empty.lead' | translate }}</p>
+        </div>
+
+        <div *ngIf="!loading() && !error() && items().length" class="orders-list">
+          <article
+            class="order-card order-card--current"
+            *ngFor="let item of items(); trackBy: trackById"
+            [class.order-card--priority]="item.isHighPriority"
+          >
+            <header class="order-card__header">
+              <div>
+                <span class="order-card__code">{{ item.orderNumber }}</span>
+                <div class="order-card__group">
+                  <span class="order-card__group-name">
+                    {{ item.groupName || ('garbageAdminOrders.group.unknown' | translate) }}
+                  </span>
+                  <span *ngIf="item.isPrivateGroup" class="order-card__group-tag">
+                    {{ 'garbageAdminOrders.group.private' | translate }}
+                  </span>
+                </div>
+              </div>
+              <span class="badge text-uppercase" [ngClass]="item.statusClass">{{ item.statusKey | translate }}</span>
+            </header>
+
+            <div class="order-card__body">
+              <div class="order-card__summary">
+                <div class="order-card__row">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.pickupOption' | translate }}</span>
+                  <span class="order-card__value">{{ item.pickupOptionKey | translate }}</span>
+                </div>
+                <div class="order-card__row">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.schedule' | translate }}</span>
+                  <span class="order-card__value">
+                    <ng-container *ngIf="item.schedule; else currentNoSchedule">
+                      <span class="me-2 text-uppercase small fw-semibold">{{ scheduleKey(item) | translate }}</span>
+                      <time>{{ item.schedule | date:'medium' }}</time>
+                    </ng-container>
+                  </span>
+                </div>
+                <div class="order-card__row" *ngIf="item.containerSizeKey">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.containerSize' | translate }}</span>
+                  <span class="order-card__value">{{ item.containerSizeKey | translate }}</span>
+                </div>
+                <div class="order-card__row">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.cost' | translate }}</span>
+                  <span class="order-card__value">{{ item.cost | currency:'PLN':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="order-card__row" *ngIf="item.distance !== null">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.distance' | translate }}</span>
+                  <span class="order-card__value">{{ item.distance | number:'1.1-1' }} km</span>
+                </div>
+              </div>
+
+              <ul class="order-card__flags">
+                <li *ngIf="item.isHighPriority" class="order-card__flag order-card__flag--priority">
+                  {{ 'garbageAdminOrders.badges.highPriority' | translate }}
+                </li>
+                <li *ngIf="item.collectingService" class="order-card__flag">
+                  {{ 'garbageAdminOrders.badges.collectingService' | translate }}
+                </li>
+                <li *ngIf="item.raw.utilizationFeeAmount !== null" class="order-card__flag order-card__flag--fee">
+                  {{ 'garbageAdminOrders.badges.utilizationFeePending' | translate }}
+                </li>
+              </ul>
+            </div>
+          </article>
+        </div>
+
+        <ng-template #currentNoSchedule>
+          <span class="text-muted">{{ 'garbageAdminOrders.schedule.missing' | translate }}</span>
+        </ng-template>
+
+        <div
+          *ngIf="!loading() && !error() && pageMeta().totalCount > 0"
+          class="orders-pagination"
+        >
+          <div class="orders-pagination__info">
+            {{ 'garbageAdminOrders.pagination.label' | translate:{ start: pageMeta().start, end: pageMeta().end, total: pageMeta().totalCount } }}
+          </div>
+          <div class="orders-pagination__controls">
+            <button type="button" class="page-btn" (click)="previousPage()" [disabled]="!pageMeta().hasPrevious">
+              {{ 'paginationPrevious' | translate }}
+            </button>
+            <span class="orders-pagination__page">
+              {{ 'garbageAdminOrders.pagination.page' | translate:{ current: pageMeta().currentPage || 1, total: pageMeta().totalPages || 1 } }}
+            </span>
+            <button type="button" class="page-btn" (click)="nextPage()" [disabled]="!pageMeta().hasNext">
+              {{ 'paginationNext' | translate }}
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
-  </section>
+  </div>
 </div>

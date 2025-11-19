@@ -178,7 +178,7 @@
   "portal.home.stats.community": "Twoje grupy",
   "garbageAdminOrders.title": "Panel dyspozytora",
   "garbageAdminOrders.lead": "Przeglądaj i zarządzaj zleceniami oczekującymi na Twoją decyzję.",
-  "garbageAdminOrders.actions.refresh": "Odśwież wszystko",
+  "garbageAdminOrders.actions.refresh": "Odśwież",
   "garbageAdminOrders.actions.retry": "Spróbuj ponownie",
   "garbageAdminOrders.loading": "Ładuję zlecenia...",
   "garbageAdminOrders.waiting.title": "Oczekujące na przyjęcie",
