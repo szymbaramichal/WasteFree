@@ -17,11 +17,20 @@
 		</li>
 
 		<li class="nav-item" *appShowForRoles="userRole.GarbageAdmin">
-			<a class="nav-link" routerLink="/portal/garbage-admin/orders" routerLinkActive="active">
+			<a class="nav-link" routerLink="/portal/garbage-admin/orders/waiting" routerLinkActive="active">
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="nav-icon" aria-hidden="true" focusable="false">
-					<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 5.25h15M4.5 9.75h15m-10.5 4.5H9a2.25 2.25 0 0 0 0 4.5h6a2.25 2.25 0 0 0 0-4.5h-1.5" />
+					<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
 				</svg>
-				<span class="nav-text">{{ 'menu.garbageAdminOrders' | translate }}</span>
+				<span class="nav-text">{{ 'garbageAdminOrders.waiting.title' | translate }}</span>
+			</a>
+		</li>
+
+		<li class="nav-item" *appShowForRoles="userRole.GarbageAdmin">
+			<a class="nav-link" routerLink="/portal/garbage-admin/orders/assigned" routerLinkActive="active">
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="nav-icon" aria-hidden="true" focusable="false">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+				</svg>
+				<span class="nav-text">{{ 'garbageAdminOrders.current.title' | translate }}</span>
 			</a>
 		</li>
 
