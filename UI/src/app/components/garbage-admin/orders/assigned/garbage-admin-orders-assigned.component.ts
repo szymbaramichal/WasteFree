@@ -7,7 +7,7 @@ import {
   inject,
   signal
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import {
   GarbageAdminOrderDto
@@ -15,6 +15,7 @@ import {
 import { Address } from '@app/_models/address';
 import { Pager, PaginatedResult } from '@app/_models/result';
 import { GarbageAdminOrdersService } from '@app/services/garbage-admin-orders.service';
+import { TranslationService } from '@app/services/translation.service';
 import { finalize } from 'rxjs/operators';
 import {
   GarbageAdminOrderItem,
@@ -36,6 +37,9 @@ import {
 export class GarbageAdminOrdersAssignedComponent implements OnInit {
   private readonly ordersService = inject(GarbageAdminOrdersService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translation = inject(TranslationService);
+
+  readonly currentLang = toSignal(this.translation.onLangChange, { initialValue: this.translation.currentLang });
 
   private readonly pageSize = PAGE_SIZE;
 
