@@ -7,7 +7,7 @@ import {
   inject,
   signal
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import {
   GarbageAdminOrderDto
@@ -40,6 +40,8 @@ export class GarbageAdminOrdersWaitingComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly toastr = inject(ToastrService);
   private readonly translation = inject(TranslationService);
+
+  readonly currentLang = toSignal(this.translation.onLangChange, { initialValue: this.translation.currentLang });
 
   private readonly pageSize = PAGE_SIZE;
 

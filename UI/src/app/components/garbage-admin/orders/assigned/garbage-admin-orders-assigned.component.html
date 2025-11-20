@@ -82,8 +82,7 @@
                   <span class="order-card__label">{{ 'garbageAdminOrders.summary.schedule' | translate }}</span>
                   <span class="order-card__value">
                     <ng-container *ngIf="item.schedule; else currentNoSchedule">
-                      <span class="me-2 text-uppercase small fw-semibold">{{ scheduleKey(item) | translate }}</span>
-                      <time>{{ item.schedule | date:'medium' }}</time>
+                      <time>{{ item.schedule | date:'medium':'':currentLang() }}</time>
                     </ng-container>
                   </span>
                 </div>
