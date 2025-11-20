@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using System.Collections.Concurrent;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using WasteFree.Domain.Interfaces;
@@ -8,6 +9,8 @@ namespace WasteFree.Infrastructure.Services;
 public class AzureBlobStorageService : IBlobStorageService
 {
     private readonly BlobServiceClient? _blobServiceClient;
+    private readonly ConcurrentDictionary<string, CacheEntry> _avatarCache = new();
+    private static readonly TimeSpan CacheSafetyMargin = TimeSpan.FromSeconds(5);
 
     public AzureBlobStorageService(string connectionString)
     {
@@ -39,6 +42,8 @@ public class AzureBlobStorageService : IBlobStorageService
         await blobClient.UploadAsync(content, options, cancellationToken);
         var sasUri = blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.AddMinutes(5));
 
+        InvalidateCache(containerName, blobName);
+
         return sasUri.ToString();
     }
 
@@ -46,6 +51,12 @@ public class AzureBlobStorageService : IBlobStorageService
     {
         if (string.IsNullOrWhiteSpace(containerName)) throw new ArgumentException("Container name must be provided.", nameof(containerName));
         if (string.IsNullOrWhiteSpace(blobName)) return string.Empty;
+
+        var cacheKey = BuildCacheKey(containerName, blobName);
+        if (_avatarCache.TryGetValue(cacheKey, out var entry) && entry.ExpiresAtUtc > DateTimeOffset.UtcNow)
+        {
+            return entry.Url;
+        }
 
         var containerClient = _blobServiceClient!.GetBlobContainerClient(containerName);
         var blobClient = containerClient.GetBlobClient(blobName);
@@ -61,7 +72,24 @@ public class AzureBlobStorageService : IBlobStorageService
             return null;
         }
 
-        var sasUri = blobClient.GenerateSasUri(BlobSasPermissions.Read, DateTimeOffset.UtcNow.Add(ttl));
-        return sasUri.ToString();
+        var expiresAtUtc = DateTimeOffset.UtcNow.Add(ttl);
+        var sasUri = blobClient.GenerateSasUri(BlobSasPermissions.Read, expiresAtUtc);
+        var sasUrl = sasUri.ToString();
+
+        // subtract safety margin so cached entries expire a bit earlier than SAS token
+        var cacheEntry = new CacheEntry(sasUrl, expiresAtUtc - CacheSafetyMargin);
+        _avatarCache[cacheKey] = cacheEntry;
+
+        return sasUrl;
     }
+
+    private static string BuildCacheKey(string containerName, string blobName) => $"{containerName}::{blobName}";
+
+    private void InvalidateCache(string containerName, string blobName)
+    {
+        var cacheKey = BuildCacheKey(containerName, blobName);
+        _avatarCache.TryRemove(cacheKey, out _);
+    }
+
+    private sealed record CacheEntry(string Url, DateTimeOffset ExpiresAtUtc);
 }

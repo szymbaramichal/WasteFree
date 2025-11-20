@@ -2,7 +2,7 @@ import { CommonModule, SlicePipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
-import { GarbageGroup, GarbageGroupInfo, GarbageGroupRole, UpdateGarbageGroupRequest } from '@app/_models/garbageGroups';
+import { GarbageGroup, GarbageGroupInfo, GarbageGroupRole, UpdateGarbageGroupRequest, GarbageGroupUser } from '@app/_models/garbageGroups';
 import { GarbageOrderDto, GarbageOrderStatus } from '@app/_models/garbage-orders';
 import { PaginatedResult, Pager } from '@app/_models/result';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
@@ -231,6 +231,14 @@ export class GroupPanelComponent implements OnInit {
         this.refreshDetails();
       }
     });
+  }
+
+  handleAvatarError(user: GarbageGroupUser | null | undefined): void {
+    if (!user) {
+      return;
+    }
+
+    user.avatarUrl = null;
   }
 
   private refreshDetails(syncForm = false) {

@@ -15,6 +15,7 @@ export interface GarbageGroupUser {
     username: string;
     garbageGroupRole: GarbageGroupRole;
     isPending: boolean;
+    avatarUrl?: string | null;
 };
 
 export interface GarbageGroupInfo {
