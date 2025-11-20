@@ -180,7 +180,19 @@
                 <div class="list-group" *ngIf="group.users?.length; else noMembers">
                   <div class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let u of group.users">
                     <div class="d-flex align-items-center gap-2">
-                      <i class="bi bi-person-circle text-secondary"></i>
+                        <div class="member-avatar" [attr.data-initial]="(u.username | slice:0:1 | uppercase) || '?'">
+                          <img
+                            *ngIf="u.avatarUrl"
+                            [src]="u.avatarUrl"
+                            [alt]="u.username"
+                            class="member-avatar__image"
+                            loading="lazy"
+                            (error)="handleAvatarError(u)"
+                          />
+                          <span *ngIf="!u.avatarUrl" class="member-avatar__initial">
+                            {{ (u.username | slice:0:1 | uppercase) || '?' }}
+                          </span>
+                        </div>
                       <div>
                         <div class="fw-semibold">{{ u.username }}</div>
                         <div class="small text-muted" *ngIf="u.isPending">{{ 'groups.details.pending' | translate }}</div>
