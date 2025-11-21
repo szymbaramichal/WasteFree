@@ -1,4 +1,4 @@
-<nav *ngIf="visible" class="topbar navbar navbar-expand-lg" [ngClass]="currentUser.user()?.role == userRole.GarbageAdmin ? 'role-garbadmin' : 'role-user'">
+<nav *ngIf="visible" class="topbar navbar navbar-expand-lg" [ngClass]="topbarClass">
   <div class="container-fluid topbar-inner">
     <a class="navbar-brand brand text-white" routerLink="/portal">{{ 'topbar.portalTitle' | translate }}</a>
     <button class="navbar-toggler" type="button" (click)="navOpen = !navOpen" [attr.aria-expanded]="navOpen" aria-label="Toggle navigation">

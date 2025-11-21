@@ -34,6 +34,17 @@ export class TopbarComponent implements OnDestroy {
   };
   avatarFailed = false;
 
+  get topbarClass(): string {
+    const role = this.currentUser.user()?.role;
+    if (role === UserRole.GarbageAdmin) {
+      return 'role-garbadmin';
+    }
+    if (role === UserRole.Admin) {
+      return 'role-admin';
+    }
+    return 'role-user';
+  }
+
   private inboxAnimationTimer: ReturnType<typeof setTimeout> | null = null;
   private inboxPulseEffect: EffectRef;
   private avatarResetEffect: EffectRef;

@@ -48,6 +48,7 @@
 /* role colors */
 .role-user { background: linear-gradient(90deg,var(--primary-green),var(--primary-green-dark)); }
 .role-garbadmin { background: linear-gradient(90deg,var(--primary-green-dark),#3ea8a8); }
+.role-admin { background: linear-gradient(95deg,#3caa77,#3f7fb1); }
 
 .logged { font-size:0.95rem; }
 .link { color: #fff; text-decoration: none; }
