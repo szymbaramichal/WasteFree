@@ -66,6 +66,26 @@
 	background-color: #3296a6;
 }
 
+.portal-sidebar.portal-sidebar--admin .nav-link {
+	color: #5c1f28;
+	border-radius: 10px;
+	margin: 4px 12px;
+}
+
+.portal-sidebar.portal-sidebar--admin .nav-link:hover {
+	background-color: rgba(227, 93, 106, 0.18);
+	color: #42141c;
+}
+
+.portal-sidebar.portal-sidebar--admin .nav-link.active {
+	background-color: rgba(227, 93, 106, 0.85);
+	color: #fff;
+}
+
+.portal-sidebar.portal-sidebar--admin .nav-link.active:hover {
+	background-color: rgba(217, 77, 92, 0.92);
+}
+
 
 /* Sidebar nav uses flex so the last item (profile) can sit at bottom via mt-auto */
 .portal-sidebar .nav { display:flex; flex-direction: column; flex:1 1 auto; overflow: hidden; }

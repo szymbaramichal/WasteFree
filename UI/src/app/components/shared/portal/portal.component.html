@@ -79,12 +79,34 @@
 	</ul>
 </ng-template>
 
+<ng-template #portalSidebarAdmin>
+	<ul class="nav nav-pills flex-column p-2">
+		<li class="nav-item">
+			<a class="nav-link" routerLink="/portal" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">
+				<img src="/assets/images/home.svg" alt="" class="nav-icon" aria-hidden="true" />
+				<span class="nav-text">{{ 'menu.dashboard' | translate }}</span>
+			</a>
+		</li>
+
+		<li class="nav-item mt-auto">
+			<a class="nav-link" routerLink="/portal/profile" routerLinkActive="active">
+				<img src="/assets/images/user.svg" alt="" class="nav-icon" aria-hidden="true" />
+				<span class="nav-text">{{ 'menu.profile' | translate }}</span>
+			</a>
+		</li>
+	</ul>
+</ng-template>
+
 <div class="d-flex portal-layout">
 	<aside class="portal-sidebar bg-light border-end portal-sidebar--garbageadmin" *appShowForRoles="userRole.GarbageAdmin">
 		<ng-container *ngTemplateOutlet="portalSidebarNav"></ng-container>
 	</aside>
 
-	<aside class="portal-sidebar bg-light border-end" *ngIf="currentUser.user()?.role !== userRole.GarbageAdmin">
+	<aside class="portal-sidebar bg-light border-end portal-sidebar--admin" *appShowForRoles="userRole.Admin">
+		<ng-container *ngTemplateOutlet="portalSidebarAdmin"></ng-container>
+	</aside>
+
+	<aside class="portal-sidebar bg-light border-end" *appShowForRoles="[userRole.User]">
 		<ng-container *ngTemplateOutlet="portalSidebarNav"></ng-container>
 	</aside>
 
