@@ -167,14 +167,27 @@ public class UserSeeder(ApplicationDataContext context)
                 await context.Users.AddAsync(existingUser);
             }
 
-            if (!await context.Wallets.AnyAsync(w => w.UserId == existingUser.Id))
+            var wallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == existingUser.Id);
+            var initialFunds = existingUser.Role switch
             {
-                await context.Wallets.AddAsync(new Wallet
+                UserRole.User => 500d,
+                UserRole.GarbageAdmin => 200d,
+                _ => 0d
+            };
+
+            if (wallet is null)
+            {
+                wallet = new Wallet
                 {
                     Id = Guid.CreateVersion7(),
                     UserId = existingUser.Id,
-                    Funds = 0
-                });
+                    Funds = initialFunds
+                };
+                await context.Wallets.AddAsync(wallet);
+            }
+            else
+            {
+                wallet.Funds = initialFunds;
             }
 
             var hasPrivateGroup = await context.UserGarbageGroups

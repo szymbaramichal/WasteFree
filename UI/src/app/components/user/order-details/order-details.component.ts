@@ -3,7 +3,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
-import { GarbageOrderDto, GarbageOrderStatus, PickupOption } from '@app/_models/garbage-orders';
+import { GarbageOrderDto, GarbageOrderStatus, GarbageOrderUserDto, PickupOption } from '@app/_models/garbage-orders';
 import { GarbageOrderService, USER_ORDERS_PAGE_SIZE } from '@app/services/garbage-order.service';
 import { TranslationService } from '@app/services/translation.service';
 import { CurrentUserService } from '@app/services/current-user.service';
@@ -31,6 +31,7 @@ export class OrderDetailsComponent {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
   readonly paying = signal(false);
+  readonly utilizationPaying = signal(false);
   readonly order = signal<GarbageOrderDto | null>(null);
   readonly orderStatus = GarbageOrderStatus;
 
@@ -112,7 +113,7 @@ export class OrderDetailsComponent {
     if (!detail) {
       return false;
     }
-  if (detail.garbageOrderStatus !== GarbageOrderStatus.WaitingForPayment) {
+    if (detail.garbageOrderStatus !== GarbageOrderStatus.WaitingForPayment) {
       return false;
     }
     const entry = this.currentUserEntry(detail);
@@ -131,6 +132,92 @@ export class OrderDetailsComponent {
     return entry?.shareAmount ?? 0;
   }
 
+  utilizationOutstandingAmount(): number {
+    const detail = this.order();
+    return detail?.additionalUtilizationFeeAmount ?? 0;
+  }
+
+  utilizationShareAmount(): number {
+    const detail = this.order();
+    const entry = detail ? this.currentUserEntry(detail) : null;
+    return entry?.additionalUtilizationFeeShareAmount ?? 0;
+  }
+
+  hasPaidUtilizationFee(): boolean {
+    const detail = this.order();
+    const entry = detail ? this.currentUserEntry(detail) : null;
+    return entry?.hasPaidAdditionalUtilizationFee ?? false;
+  }
+
+  hasUtilizationFeeShares(detail: GarbageOrderDto | null = null): boolean {
+    const pickup = detail ?? this.order();
+    if (!pickup) {
+      return false;
+    }
+    if ((pickup.additionalUtilizationFeeAmount ?? 0) > 0) {
+      return true;
+    }
+    return pickup.users.some(user => (user.additionalUtilizationFeeShareAmount ?? 0) > 0);
+  }
+
+  userHasUtilizationFeeShare(user: GarbageOrderUserDto): boolean {
+    return (user.additionalUtilizationFeeShareAmount ?? 0) > 0;
+  }
+
+  canPayUtilizationFee(): boolean {
+    const detail = this.order();
+    if (!detail || detail.garbageOrderStatus !== GarbageOrderStatus.WaitingForUtilizationFee) {
+      return false;
+    }
+    const entry = this.currentUserEntry(detail);
+    if (!entry) {
+      return false;
+    }
+
+    const share = entry.additionalUtilizationFeeShareAmount ?? 0;
+    return share > 0 && !entry.hasPaidAdditionalUtilizationFee;
+  }
+
+  payForUtilizationFee(): void {
+    const detail = this.order();
+    if (!detail || this.utilizationPaying()) {
+      return;
+    }
+
+    const entry = this.currentUserEntry(detail);
+    if (!entry) {
+      this.toastr.error(this.translation.translate('myPickups.details.utilization.shareError'));
+      return;
+    }
+
+    const shareAmount = entry.additionalUtilizationFeeShareAmount ?? 0;
+    if (shareAmount <= 0) {
+      this.toastr.info(this.translation.translate('myPickups.details.utilization.noShare'));
+      return;
+    }
+
+    this.utilizationPaying.set(true);
+
+    this.orderService.payAdditionalUtilizationFee(detail.garbageGroupId, detail.id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.utilizationPaying.set(false))
+      )
+      .subscribe({
+        next: (res) => {
+          const updated = res.resultModel ?? null;
+          if (!updated) {
+            return;
+          }
+
+          this.order.set(updated);
+          this.wallet.adjustBalance(-shareAmount);
+          void this.wallet.refreshBalance();
+          this.toastr.success(this.translation.translate('myPickups.details.utilization.paySuccess'));
+        }
+      });
+  }
+
   payForOrder(): void {
     const detail = this.order();
     if (!detail || this.paying()) {
@@ -138,7 +225,6 @@ export class OrderDetailsComponent {
     }
     const entry = this.currentUserEntry(detail);
     if (!entry) {
-      this.toastr.error(this.translation.translate('myPickups.details.payShareError'));
       return;
     }
 
@@ -195,12 +281,11 @@ export class OrderDetailsComponent {
       });
   }
 
-  private currentUserEntry(pickup: GarbageOrderDto): { hasAcceptedPayment: boolean; shareAmount: number } | null {
+  private currentUserEntry(pickup: GarbageOrderDto): GarbageOrderUserDto | null {
     const me = this.currentUser();
     if (!me) {
       return null;
     }
-    const entry = pickup.users.find((user) => user.userId === me.id);
-    return entry ? { hasAcceptedPayment: entry.hasAcceptedPayment, shareAmount: entry.shareAmount } : null;
+    return pickup.users.find((user) => user.userId === me.id) ?? null;
   }
 }

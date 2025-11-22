@@ -91,7 +91,57 @@
           </dl>
         </section>
 
-        <section class="order-details__section order-details__payment">
+        <section
+          class="order-details__section order-details__utilization"
+          *ngIf="detail.garbageOrderStatus === orderStatus.WaitingForUtilizationFee"
+        >
+          <div class="order-details__utilization-header">
+            <div>
+              <p class="text-uppercase small fw-semibold mb-1">{{ 'myPickups.details.utilization.title' | translate }}</p>
+              <p class="mb-0 text-muted small">{{ 'myPickups.details.utilization.description' | translate }}</p>
+            </div>
+            <span class="badge" [ngClass]="hasPaidUtilizationFee() ? 'bg-success' : 'bg-warning text-dark'">
+              {{ hasPaidUtilizationFee() ? ('myPickups.details.utilization.paid' | translate) : ('myPickups.details.utilization.pending' | translate) }}
+            </span>
+          </div>
+          <div class="order-details__utilization-grid">
+            <dl class="order-details__utilization-metrics">
+              <div>
+                <dt>{{ 'myPickups.details.utilization.outstanding' | translate }}</dt>
+                <dd>{{ utilizationOutstandingAmount() | number:'1.2-2' }} PLN</dd>
+              </div>
+              <div>
+                <dt>{{ 'myPickups.details.utilization.share' | translate }}</dt>
+                <dd>{{ utilizationShareAmount() | number:'1.2-2' }} PLN</dd>
+              </div>
+            </dl>
+            <div class="order-details__utilization-action">
+              <button
+                type="button"
+                class="btn btn-primary w-100"
+                (click)="payForUtilizationFee()"
+                [disabled]="!canPayUtilizationFee() || utilizationPaying()"
+              >
+                <span *ngIf="utilizationPaying()" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>{{ 'myPickups.details.utilization.payCta' | translate }}</span>
+              </button>
+              <small class="text-muted d-block mt-2" *ngIf="!canPayUtilizationFee()">
+                {{
+                  hasPaidUtilizationFee()
+                    ? ('myPickups.details.utilization.paidHint' | translate)
+                    : (utilizationShareAmount() > 0
+                      ? ('myPickups.details.utilization.processingHint' | translate)
+                      : ('myPickups.details.utilization.noShareHint' | translate))
+                }}
+              </small>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="order-details__section order-details__payment"
+          *ngIf="detail.garbageOrderStatus === orderStatus.WaitingForPayment"
+        >
           <div class="order-details__payment-grid">
             <div class="order-details__payment-summary">
               <div class="order-details__payment-label d-inline-flex align-items-center gap-2 mb-3">
@@ -140,6 +190,20 @@
                   <th scope="col">{{ 'myPickups.details.participants.user' | translate }}</th>
                   <th scope="col" class="text-end">{{ 'myPickups.details.participants.share' | translate }}</th>
                   <th scope="col" class="text-end">{{ 'myPickups.details.participants.payment' | translate }}</th>
+                  <th
+                    scope="col"
+                    class="text-end"
+                    *ngIf="hasUtilizationFeeShares(detail)"
+                  >
+                    {{ 'myPickups.details.participants.utilizationShare' | translate }}
+                  </th>
+                  <th
+                    scope="col"
+                    class="text-end"
+                    *ngIf="hasUtilizationFeeShares(detail)"
+                  >
+                    {{ 'myPickups.details.participants.utilizationPayment' | translate }}
+                  </th>
                 </tr>
               </thead>
               <tbody *ngIf="detail.users.length; else noParticipants">
@@ -155,10 +219,24 @@
                       {{ user.hasAcceptedPayment ? ('myPickups.details.participants.paid' | translate) : ('myPickups.details.participants.pending' | translate) }}
                     </span>
                   </td>
+                  <td class="text-end" *ngIf="hasUtilizationFeeShares(detail)">
+                    <ng-container *ngIf="userHasUtilizationFeeShare(user); else noUtilShare">
+                      {{ user.additionalUtilizationFeeShareAmount | number:'1.2-2' }} PLN
+                    </ng-container>
+                  </td>
+                  <td class="text-end" *ngIf="hasUtilizationFeeShares(detail)">
+                    <ng-container *ngIf="userHasUtilizationFeeShare(user); else noUtilStatus">
+                      <span class="badge" [ngClass]="user.hasPaidAdditionalUtilizationFee ? 'bg-success' : 'bg-warning text-dark'">
+                        {{ user.hasPaidAdditionalUtilizationFee ? ('myPickups.details.utilization.paid' | translate) : ('myPickups.details.utilization.pending' | translate) }}
+                      </span>
+                    </ng-container>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
+          <ng-template #noUtilShare>—</ng-template>
+          <ng-template #noUtilStatus>—</ng-template>
           <ng-template #noParticipants>
             <div class="alert alert-info small mb-0">{{ 'myPickups.details.participants.empty' | translate }}</div>
           </ng-template>
