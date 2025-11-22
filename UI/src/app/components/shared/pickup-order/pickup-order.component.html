@@ -386,9 +386,6 @@
 													</mat-error>
 												</mat-form-field>
 											</div>
-											<div class="col-12 text-center text-muted small mt-4">
-												{{ 'pickupOrder.step.address.timeDisclaimer' | translate }}
-											</div>
 												<div class="col-12">
 													<span class="schedule-section__label">{{ 'pickupOrder.step.address.pickupSection' | translate }}</span>
 												</div>
@@ -428,9 +425,9 @@
 													</mat-error>
 												</mat-form-field>
 											</div>
-											<div class="col-12 text-center text-muted small mt-4">
-												{{ 'pickupOrder.step.address.timeDisclaimer' | translate }}
-											</div>
+										<div class="col-12 text-center text-muted small mt-4">
+											{{ 'pickupOrder.step.address.timeDisclaimer' | translate }}
+										</div>
 										</div>
 									</div>
 								</div>
@@ -444,7 +441,7 @@
 									<p class="text-muted mb-0">{{ 'pickupOrder.step.details.lead' | translate }}</p>
 								</div>
 								<div class="details-step__options">
-									<div class="details-option" *ngIf="serviceTypeCtrl.value === pickupOptionEnum.Container">
+									<div class="details-option details-option--container" *ngIf="serviceTypeCtrl.value === pickupOptionEnum.Container">
 										<div class="details-option__header">
 											<label class="form-label fw-semibold mb-0" for="containerSize">
 												{{ 'pickupOrder.step.details.container.label' | translate }}
@@ -472,6 +469,12 @@
 											*ngIf="containerSizeCtrl.invalid && (containerSizeCtrl.dirty || containerSizeCtrl.touched)"
 										>
 											{{ 'pickupOrder.validation.containerSize' | translate }}
+										</div>
+										<div class="container-size-info mt-3" role="list">
+											<div class="container-size-info__item mb-2" role="listitem" *ngFor="let option of containerSizeOptions">
+												<strong class="d-block">{{ option.labelKey | translate }}</strong>
+												<small class="text-muted">{{ option.descriptionKey | translate }}</small>
+											</div>
 										</div>
 									</div>
 									<div class="details-option">

@@ -68,6 +68,12 @@ type TimeOption = {
   label: string;
 };
 
+type ContainerSizeOption = {
+  value: ContainerSize;
+  labelKey: string;
+  descriptionKey: string;
+};
+
 @Component({
   selector: 'app-pickup-order',
   standalone: true,
@@ -124,18 +130,21 @@ export class PickupOrderComponent implements OnInit {
     }
   ];
 
-  readonly containerSizeOptions: Array<{ value: ContainerSize; labelKey: string }> = [
+  readonly containerSizeOptions: ContainerSizeOption[] = [
     {
       value: ContainerSize.ContainerSmall,
-      labelKey: 'pickupOrder.step.details.container.size.small'
+      labelKey: 'pickupOrder.step.details.container.size.small',
+      descriptionKey: 'pickupOrder.step.details.container.size.small.description'
     },
     {
       value: ContainerSize.ContainerMedium,
-      labelKey: 'pickupOrder.step.details.container.size.medium'
+      labelKey: 'pickupOrder.step.details.container.size.medium',
+      descriptionKey: 'pickupOrder.step.details.container.size.medium.description'
     },
     {
       value: ContainerSize.ContainerLarge,
-      labelKey: 'pickupOrder.step.details.container.size.large'
+      labelKey: 'pickupOrder.step.details.container.size.large',
+      descriptionKey: 'pickupOrder.step.details.container.size.large.description'
     }
   ];
 
