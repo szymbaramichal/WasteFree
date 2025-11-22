@@ -34,7 +34,7 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
 
     private static readonly HashSet<string> AllowedContentTypes = new(StringComparer.OrdinalIgnoreCase)
     {
-        "image/jpeg", "image/png", "image/webp", "image/gif"
+        "image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"
     };
 
     public async Task<Result<GarbageOrderDto>> HandleAsync(
@@ -82,7 +82,7 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
 
         if (garbageOrder.GarbageOrderStatus is not GarbageOrderStatus.WaitingForPickup)
         {
-            return Result<GarbageOrderDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
+            return Result<GarbageOrderDto>.Failure(ApiErrorCodes.InvalidOrderStatus, HttpStatusCode.BadRequest);
         }
 
         var proofExtension = Path.GetExtension(request.UtilizationProof.FileName);
@@ -94,6 +94,7 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
                 "image/png" => ".png",
                 "image/webp" => ".webp",
                 "image/gif" => ".gif",
+                "application/pdf" => ".pdf",
                 _ => ".bin"
             };
         }
