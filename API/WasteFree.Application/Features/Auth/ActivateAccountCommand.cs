@@ -47,7 +47,7 @@ public class ActivateAccountCommandHandler(ApplicationDataContext context, IConf
             var privateGroup = new GarbageGroup
             {
                 Id = Guid.CreateVersion7(),
-                Name = $"{user.Username} Private Group",
+                Name = $"{user.Username}",
                 Description = $"Private garbage group for {user.Username}",
                 Address = user.Address,
                 IsPrivate = true
