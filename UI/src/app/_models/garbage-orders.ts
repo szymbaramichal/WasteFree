@@ -74,6 +74,7 @@ export interface GarbageOrderDto {
   utilizationFeeAmount: number | null;
   additionalUtilizationFeeAmount: number | null;
   utilizationProofBlobName: string | null;
+  utilizationProofUrl: string | null;
   utilizationFeeSubmittedDateUtc: string | null;
   distanceInKilometers: number | null;
   users: GarbageOrderUserDto[];
