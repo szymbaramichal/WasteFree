@@ -6,7 +6,6 @@ using WasteFree.Domain.Constants;
 using WasteFree.Domain.Enums;
 using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
-using WasteFree.Infrastructure.Extensions;
 
 namespace WasteFree.Application.Features.GarbageOrders;
 
@@ -21,41 +20,42 @@ public sealed class GetWaitingForAcceptOrdersByCityQueryHandler(ApplicationDataC
         GetWaitingForAcceptOrdersByCityQuery request,
         CancellationToken cancellationToken)
     {
-        var adminAddress = await context.Users
+        var admin = await context.Users
             .AsNoTracking()
-            .Where(user => user.Id == request.GarbageAdminId)
-            .Select(user => new
-            {
-                user.Id,
-                user.Address.City,
-                user.Address.Latitude,
-                user.Address.Longitude
-            })
-            .FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(user => user.Id == request.GarbageAdminId, cancellationToken);
 
-        if (adminAddress is null)
+        if (admin is null)
         {
             return PaginatedResult<ICollection<GarbageOrderSummaryDto>>.Failure(
                 ApiErrorCodes.InvalidUser,
                 HttpStatusCode.BadRequest);
         }
 
-        if (string.IsNullOrWhiteSpace(adminAddress.City))
+        if (string.IsNullOrWhiteSpace(admin.Address.City))
         {
             return PaginatedResult<ICollection<GarbageOrderSummaryDto>>.Failure(
                 ValidationErrorCodes.GroupCityRequired,
                 HttpStatusCode.BadRequest);
         }
 
-        var referencePoint = (Latitude: adminAddress.Latitude, Longitude: adminAddress.Longitude);
-        var normalizedCity = adminAddress.City.ToLower();
+        var adminPickupOptions = admin.PickupOptionsList ?? [];
+        if (adminPickupOptions.Length == 0)
+        {
+            var emptyPager = new Pager(request.Pager.PageNumber, request.Pager.PageSize, 0);
+            return PaginatedResult<ICollection<GarbageOrderSummaryDto>>.PaginatedSuccess([], emptyPager);
+        }
+
+        var referencePoint = (Latitude: admin.Address.Latitude, Longitude: admin.Address.Longitude);
+        var normalizedCity = admin.Address.City.ToLower();
+        var pickupOptionsFilter = adminPickupOptions;
 
         var ordersQuery = context.GarbageOrders
             .AsNoTracking()
             .Include(order => order.AssignedGarbageAdmin)
             .Include(order => order.GarbageGroup)
             .Where(order => order.GarbageOrderStatus == GarbageOrderStatus.WaitingForAccept
-                            && order.GarbageGroup.Address.City.ToLower() == normalizedCity);
+                            && order.GarbageGroup.Address.City.ToLower() == normalizedCity
+                            && pickupOptionsFilter.Contains(order.PickupOption));
         
         var totalCount = await ordersQuery.CountAsync(cancellationToken);
 
