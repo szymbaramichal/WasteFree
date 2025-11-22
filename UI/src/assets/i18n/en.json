@@ -598,6 +598,7 @@
   "myPickups.details.payShareError": "We could not identify your payment share for this order.",
   "myPickups.details.utilization.title": "Utilization fee",
   "myPickups.details.utilization.description": "The final utilization fee is ready. Pay your share to finish the order.",
+  "myPickups.details.utilization.proof": "Utilization proof",
   "myPickups.details.utilization.outstanding": "Outstanding amount",
   "myPickups.details.utilization.share": "Your share",
   "myPickups.details.utilization.paid": "Utilization fee paid",

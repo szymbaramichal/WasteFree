@@ -22,7 +22,8 @@ public sealed record PayAdditionalUtilizationFeeCommand(
 public sealed class PayAdditionalUtilizationFeeCommandHandler(
     ApplicationDataContext context,
     IJobSchedulerFacade jobScheduler,
-    UtilizationFeeCompletionNotificationFacade completionNotificationFacade)
+    UtilizationFeeCompletionNotificationFacade completionNotificationFacade,
+    IBlobStorageService blobStorageService)
     : IRequestHandler<PayAdditionalUtilizationFeeCommand, GarbageOrderDto>
 {
     public async Task<Result<GarbageOrderDto>> HandleAsync(
@@ -144,7 +145,17 @@ public sealed class PayAdditionalUtilizationFeeCommandHandler(
 
         await context.SaveChangesAsync(cancellationToken);
 
-        return Result<GarbageOrderDto>.Success(garbageOrder.MapToGarbageOrderDto());
+        var dto = garbageOrder.MapToGarbageOrderDto();
+        if (!string.IsNullOrEmpty(dto.UtilizationProofBlobName))
+        {
+            dto.UtilizationProofUrl = await blobStorageService.GetReadSasUrlAsync(
+                BlobContainerNames.UtilizationProofs,
+                dto.UtilizationProofBlobName,
+                TimeSpan.FromMinutes(60),
+                cancellationToken);
+        }
+
+        return Result<GarbageOrderDto>.Success(dto);
     }
 
     private async Task SendCompletionNotificationsAsync(

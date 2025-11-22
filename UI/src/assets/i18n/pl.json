@@ -588,6 +588,7 @@
     "myPickups.details.payShareError": "Nie udało się ustalić Twojego udziału w płatności dla tego zlecenia.",
     "myPickups.details.utilization.title": "Opłata utylizacyjna",
     "myPickups.details.utilization.description": "Ostateczna opłata utylizacyjna jest dostępna. Opłać swój udział, aby zakończyć zlecenie.",
+    "myPickups.details.utilization.proof": "Dowód utylizacji",
     "myPickups.details.utilization.outstanding": "Kwota do dopłaty",
     "myPickups.details.utilization.share": "Twój udział",
     "myPickups.details.utilization.paid": "Opłata utylizacyjna rozliczona",

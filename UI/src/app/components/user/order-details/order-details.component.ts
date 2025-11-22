@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
@@ -52,10 +52,6 @@ export class OrderDetailsComponent {
         this.resolveOrder(orderId);
       });
 
-    effect(() => {
-      const current = this.order();
-      this.handleOrderChange(current);
-    });
   }
 
   navigateBack(): void {
@@ -220,7 +216,7 @@ export class OrderDetailsComponent {
             return;
           }
 
-          this.order.set(updated);
+          this.setOrderDetail(updated, true);
           this.wallet.adjustBalance(-shareAmount);
           void this.wallet.refreshBalance();
           this.toastr.success(this.translation.translate('myPickups.details.utilization.paySuccess'));
@@ -249,7 +245,7 @@ export class OrderDetailsComponent {
       .subscribe((res) => {
         const updated = res.resultModel ?? null;
         if (updated) {
-          this.order.set(updated);
+          this.setOrderDetail(updated, true);
         }
         if (shareAmount > 0) {
           this.wallet.adjustBalance(-shareAmount);
@@ -267,9 +263,9 @@ export class OrderDetailsComponent {
     this.loading.set(showLoader);
 
     if (cached) {
-      this.order.set(cached);
+      this.setOrderDetail(cached, true);
     } else {
-      this.order.set(null);
+      this.setOrderDetail(null, true);
     }
 
     this.orderService.getMyOrders(1, USER_ORDERS_PAGE_SIZE)
@@ -283,26 +279,26 @@ export class OrderDetailsComponent {
               if (!cached) {
                 const message = res.errorMessage || this.translation.translate('myPickups.details.loadError');
                 this.error.set(message);
-                this.order.set(null);
+                this.setOrderDetail(null, true);
               }
               return;
             }
 
             const refreshed = this.orderService.findOrderById(orderId);
             if (refreshed) {
-              this.order.set(refreshed);
+              this.setOrderDetail(refreshed, true);
               return;
             }
 
             const message = this.translation.translate('myPickups.details.notFound');
             this.error.set(message);
-            this.order.set(null);
+            this.setOrderDetail(null, true);
           },
           error: () => {
             if (!cached) {
               const message = this.translation.translate('myPickups.details.loadError');
               this.error.set(message);
-              this.order.set(null);
+              this.setOrderDetail(null, true);
             }
           }
         });
@@ -342,10 +338,6 @@ export class OrderDetailsComponent {
     const template = this.translation.translate('myPickups.details.assignedAdmin.avatarAlt');
     const username = this.assignedAdminDisplayName(detail);
     return template.replace(/\{\{\s*username\s*\}\}|\{\s*username\s*\}/g, username);
-  }
-
-  private handleOrderChange(detail: GarbageOrderDto | null): void {
-    this.loadAssignedGarbageAdminAvatar(detail);
   }
 
   private loadAssignedGarbageAdminAvatar(detail: GarbageOrderDto | null, forceRefresh = false): void {
@@ -394,8 +386,9 @@ export class OrderDetailsComponent {
           const rawModel = res.resultModel ?? (res as any)?.resultModel ?? null;
           const rawUrl = rawModel?.avatarUrl ?? rawModel?.AvatarUrl ?? rawModel ?? null;
           const url = this.normalizeAvatar(rawUrl);
-          this.assignedAdminAvatar.set(url);
-          this.lastAssignedAdminAvatarKey = url ? key : null;
+          const finalUrl = url ? this.applyAvatarCacheBuster(url) : null;
+          this.assignedAdminAvatar.set(finalUrl);
+          this.lastAssignedAdminAvatarKey = finalUrl ? key : null;
         },
         error: () => {
           this.assignedAdminAvatar.set(null);
@@ -430,6 +423,23 @@ export class OrderDetailsComponent {
 
     const trimmed = resolved.trim().replace(/^"+|"+$/g, '');
     return trimmed.length > 0 ? trimmed : null;
+  }
+
+  private applyAvatarCacheBuster(url: string): string {
+    try {
+      const parsed = new URL(url);
+      parsed.searchParams.delete('v');
+      parsed.searchParams.set('v', Date.now().toString());
+      return parsed.toString();
+    } catch {
+      const separator = url.includes('?') ? '&' : '?';
+      return `${url}${separator}v=${Date.now()}`;
+    }
+  }
+
+  private setOrderDetail(detail: GarbageOrderDto | null, forceAvatarRefresh = false): void {
+    this.order.set(detail);
+    this.loadAssignedGarbageAdminAvatar(detail, forceAvatarRefresh);
   }
 
   private currentUserEntry(pickup: GarbageOrderDto): GarbageOrderUserDto | null {
