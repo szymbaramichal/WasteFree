@@ -201,7 +201,7 @@ public class UserSeeder(ApplicationDataContext context)
             var privateGroup = new GarbageGroup
             {
                 Id = Guid.CreateVersion7(),
-                Name = $"{existingUser.Username} Private Group",
+                Name = $"{existingUser.Username}",
                 Description = $"Private garbage group for {existingUser.Username}",
                 Address = existingUser.Address,
                 IsPrivate = true
