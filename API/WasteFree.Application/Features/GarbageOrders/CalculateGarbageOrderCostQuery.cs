@@ -33,8 +33,7 @@ public class CalculateGarbageOrderCostQueryHandler(
             .AsNoTracking()
             .AnyAsync(
                 x => x.GarbageGroupId == request.GarbageGroupId
-                     && x.UserId == request.CurrentUserId
-                     && x.Role == GarbageGroupRole.Owner,
+                     && x.UserId == request.CurrentUserId,
                 cancellationToken);
 
         if (!isOwner)

@@ -45,7 +45,7 @@
               </div>
               <div class="wallet-form__actions">
                 <button type="submit" class="btn btn-success btn-elevated" [disabled]="topUpLoading || topUpForm.invalid">
-                  <span *ngIf="!topUpLoading" class="d-inline-flex align-items-center gap-2">
+                  <span *ngIf="!topUpLoading" class="d-inline-flex align-items-center">
                     <i class="bi bi-check2-circle"></i>
                     {{ 'wallet.topup.submit' | translate }}
                   </span>
@@ -83,7 +83,7 @@
               </div>
               <div class="wallet-form__actions">
                 <button type="submit" class="btn btn-danger btn-elevated" [disabled]="withdrawLoading || withdrawForm.invalid">
-                  <span *ngIf="!withdrawLoading" class="d-inline-flex align-items-center gap-2">
+                  <span *ngIf="!withdrawLoading" class="d-inline-flex align-items-center">
                     <i class="bi bi-arrow-return-left"></i>
                     {{ 'wallet.withdraw.submit' | translate }}
                   </span>
