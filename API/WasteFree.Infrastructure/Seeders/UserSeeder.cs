@@ -29,7 +29,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Kraków", PostalCode = "31-019", Street = "Floriańska 1" }
+                Address = new Address { City = "Cracow", PostalCode = "31-019", Street = "Floriańska 1" }
             },
             new User
             {
@@ -44,7 +44,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Kraków", PostalCode = "31-044", Street = "Grodzka 46" }
+                Address = new Address { City = "Cracow", PostalCode = "31-044", Street = "Grodzka 46" }
             },
             new User
             {
@@ -59,7 +59,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Kraków", PostalCode = "31-101", Street = "Straszewskiego 5" }
+                Address = new Address { City = "Cracow", PostalCode = "31-101", Street = "Straszewskiego 5" }
             },
             new User
             {
@@ -105,7 +105,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.Admin,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Kraków", PostalCode = "31-042", Street = "Rynek Główny 3" }
+                Address = new Address { City = "Cracow", PostalCode = "31-042", Street = "Rynek Główny 3" }
             },
             new User
             {
@@ -120,7 +120,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.Admin,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Kraków", PostalCode = "31-007", Street = "Szewska 12" }
+                Address = new Address { City = "Cracow", PostalCode = "31-007", Street = "Szewska 12" }
             },
             // Garbage administrators
             new User
@@ -137,7 +137,7 @@ public class UserSeeder(ApplicationDataContext context)
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
                 ConsentsAgreed = false,
-                Address = new Address { City = "Kraków", PostalCode = "31-872", Street = "Os. Dywizjonu 303 20A" }
+                Address = new Address { City = "Cracow", PostalCode = "31-872", Street = "Os. Dywizjonu 303 20A" }
             },
             new User
             {
