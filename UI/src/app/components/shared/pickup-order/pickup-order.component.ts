@@ -2,6 +2,13 @@ import { Component, OnInit, computed, effect, inject, signal } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { GarbageGroupWithUsers, GarbageGroupRole } from '@app/_models/garbageGroups';
 import {
@@ -56,10 +63,26 @@ type PickupSchedule = {
   displayDate: Date;
 };
 
+type TimeOption = {
+  value: string;
+  label: string;
+};
+
 @Component({
   selector: 'app-pickup-order',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    TranslatePipe,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSelectModule
+  ],
   templateUrl: './pickup-order.component.html',
   styleUrls: ['./pickup-order.component.css']
 })
@@ -153,16 +176,18 @@ export class PickupOrderComponent implements OnInit {
 
   readonly summaryStepIndex = this.steps.length - 1;
 
+  readonly timeOptions: TimeOption[] = this.generateTimeOptions();
+
   readonly currentStepConfig = computed<StepConfig>(() => this.steps[this.currentStep()] ?? this.steps[0]);
 
   readonly form = this.fb.group({
     serviceType: this.fb.control<PickupOption | null>(null, { validators: Validators.required }),
     groupId: this.fb.control<string | null>(null, { validators: Validators.required }),
     participantIds: this.fb.control<string[]>([], { validators: Validators.required }),
-    pickupDate: this.fb.control<string | null>(null, { validators: Validators.required }),
-    pickupTime: this.fb.control<string | null>(null, { validators: Validators.required }),
-    dropOffDate: this.fb.control<string | null>(null),
-    dropOffTime: this.fb.control<string | null>(null),
+    pickupDate: this.fb.control<Date | null>(null, { validators: Validators.required }),
+    pickupTime: this.fb.control<string | Date | null>(null, { validators: Validators.required }),
+    dropOffDate: this.fb.control<Date | null>(null),
+    dropOffTime: this.fb.control<string | Date | null>(null),
     isHighPriority: this.fb.control<boolean>(false),
     collectingService: this.fb.control<boolean>(false),
     containerSize: this.fb.control<ContainerSize | null>(null)
@@ -327,7 +352,7 @@ export class PickupOrderComponent implements OnInit {
 
   readonly pickupOptionEnum = PickupOption;
 
-  readonly minPickupDate = this.todayIsoDate();
+  readonly minPickupDate = this.todayDate();
 
   private readonly costCalculationEffect = effect((onCleanup) => {
     const step = this.currentStep();
@@ -648,13 +673,15 @@ export class PickupOrderComponent implements OnInit {
     this.participantIdsCtrl.updateValueAndValidity();
   }
 
-  private combineDateTime(date: string | null, time: string | null): PickupSchedule | null {
-    if (!date || !time) {
+  private combineDateTime(date: string | Date | null, time: string | Date | null): PickupSchedule | null {
+    const normalizedDate = this.normalizeDateInput(date);
+    const normalizedTime = this.normalizeTimeInput(time);
+
+    if (!normalizedDate || !normalizedTime) {
       return null;
     }
 
-    const normalizedTime = time.length === 5 ? `${time}:00` : time;
-    const isoString = `${date}T${normalizedTime}`;
+    const isoString = `${normalizedDate}T${normalizedTime}`;
     const displayDate = new Date(isoString);
 
     if (Number.isNaN(displayDate.getTime())) {
@@ -746,12 +773,55 @@ export class PickupOrderComponent implements OnInit {
       .subscribe(() => this.goToCreatedOrder(order));
   }
 
-  private todayIsoDate(): string {
+  private todayDate(): Date {
     const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    today.setHours(0, 0, 0, 0);
+    return today;
+  }
+
+  private normalizeDateInput(value: string | Date | null): string | null {
+    if (!value) {
+      return null;
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private normalizeTimeInput(value: string | Date | null): string | null {
+    if (!value) {
+      return null;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return null;
+      }
+      return trimmed.length === 5 ? `${trimmed}:00` : trimmed;
+    }
+
+    const hours = String(value.getHours()).padStart(2, '0');
+    const minutes = String(value.getMinutes()).padStart(2, '0');
+    const seconds = String(value.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+  }
+
+  private generateTimeOptions(): TimeOption[] {
+    const options: TimeOption[] = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute = 0; minute < 60; minute += 30) {
+        const value = `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        options.push({ value, label: value });
+      }
+    }
+    return options;
   }
 
   private handleServiceTypeChange(serviceType: PickupOption | null): void {

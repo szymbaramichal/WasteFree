@@ -282,6 +282,7 @@
   "pickupOrder.step.address.dateHint": "Choose a day that works for your group.",
   "pickupOrder.step.address.timeLabel": "Pickup time",
   "pickupOrder.step.address.timeHint": "Select the hour we should arrive.",
+  "pickupOrder.step.address.timeDisclaimer": "The scheduled time is approximate—the waste manager may arrive slightly earlier or later.",
   "pickupOrder.options.small.title": "Small pickup",
   "pickupOrder.options.small.description": "Ideal for a few bags or light waste. Quick visit with a small truck.",
   "pickupOrder.options.regular.title": "Regular pickup",

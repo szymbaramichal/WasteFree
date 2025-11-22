@@ -280,6 +280,7 @@
   "pickupOrder.step.address.dropOffTimeHint": "Podaj godzinę podstawienia kontenera.",
   "pickupOrder.step.address.pickupSection": "Odbiór kontenera",
   "pickupOrder.step.address.dateLabel": "Data wywozu",
+    "pickupOrder.step.address.timeDisclaimer": "Godzina jest orientacyjna – zarządca odpadów może przyjechać chwilę wcześniej albo później.",
   "pickupOrder.step.address.dateHint": "Wybierz dogodny dzień dla grupy.",
   "pickupOrder.step.address.timeLabel": "Godzina wywozu",
   "pickupOrder.step.address.timeHint": "Podaj godzinę, o której mamy się pojawić.",
