@@ -92,6 +92,45 @@
         </section>
 
         <section
+          class="order-details__section order-details__admin"
+          *ngIf="detail.assignedGarbageAdminId"
+        >
+          <div class="order-details__admin-content">
+            <div class="order-details__admin-avatar">
+              <ng-container *ngIf="assignedAdminAvatar(); else adminAvatarFallback">
+                <img
+                  [src]="assignedAdminAvatar()!"
+                  [attr.alt]="assignedAdminAvatarAlt(detail)"
+                  class="order-details__admin-avatar-img"
+                />
+              </ng-container>
+              <ng-template #adminAvatarFallback>
+                <span
+                  *ngIf="assignedAdminAvatarLoading(); else adminInitials"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                <ng-template #adminInitials>
+                  <span>{{ assignedAdminInitials(detail) }}</span>
+                </ng-template>
+              </ng-template>
+            </div>
+            <div class="order-details__admin-info">
+              <h2 class="h6 text-uppercase fw-semibold small mb-1">
+                {{ 'myPickups.details.assignedAdmin.title' | translate }}
+              </h2>
+              <p class="mb-1 text-muted small">
+                {{ 'myPickups.details.assignedAdmin.lead' | translate }}
+              </p>
+              <div class="order-details__admin-name fw-semibold">
+                {{ assignedAdminDisplayName(detail) }}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
           class="order-details__section order-details__utilization"
           *ngIf="detail.garbageOrderStatus === orderStatus.WaitingForUtilizationFee"
         >

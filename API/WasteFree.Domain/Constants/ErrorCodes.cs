@@ -24,6 +24,7 @@ public static class ApiErrorCodes
     public const string ConsentNotFound = "CONSENT_NOT_FOUND";
 	public const string ConsentContentRequired = "CONSENT_CONTENT_REQUIRED";
     public const string GeocodingFailed = "GEOCODING_FAILED";
+    public const string InvalidOrderStatus = "INVALID_ORDER_STATUS";
 }
 
 public static class ValidationErrorCodes

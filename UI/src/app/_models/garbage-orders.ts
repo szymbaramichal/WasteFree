@@ -33,6 +33,7 @@ export interface GarbageOrderFilterRequest {
 
 export interface GarbageOrderCostDto {
   estimatedCost: number | null;
+  prepaidUtilizationFee: number | null;
 }
 
 export interface CalculateGarbageOrderRequest {
@@ -51,6 +52,10 @@ export interface GarbageOrderUserDto {
   shareAmount: number;
   additionalUtilizationFeeShareAmount: number | null;
   hasPaidAdditionalUtilizationFee: boolean;
+}
+
+export interface GarbageAdminAvatarUrlDto {
+  avatarUrl: string | null;
 }
 
 export interface GarbageOrderDto {
