@@ -37,7 +37,7 @@ public sealed class GetGarbageAdminActiveOrdersQueryHandler(ApplicationDataConte
             .Where(order => order.AssignedGarbageAdminId == request.GarbageAdminId)
             .Where(order => 
                 order.GarbageOrderStatus == GarbageOrderStatus.WaitingForUtilizationFee
-                || order.GarbageOrderStatus == GarbageOrderStatus.WaitingForUtilizationFee)
+                || order.GarbageOrderStatus == GarbageOrderStatus.WaitingForPickup)
             .OrderBy(order => order.PickupDate)
             .ThenBy(order => order.CreatedDateUtc);
 
