@@ -60,14 +60,6 @@
             <header class="order-card__header">
               <div>
                 <span class="order-card__code">{{ item.orderNumber }}</span>
-                <div class="order-card__group">
-                  <span class="order-card__group-name">
-                    {{ item.groupName || ('garbageAdminOrders.group.unknown' | translate) }}
-                  </span>
-                  <span *ngIf="item.isPrivateGroup" class="order-card__group-tag">
-                    {{ 'garbageAdminOrders.group.private' | translate }}
-                  </span>
-                </div>
               </div>
               <span class="badge text-uppercase" [ngClass]="item.statusClass">{{ item.statusKey | translate }}</span>
             </header>
