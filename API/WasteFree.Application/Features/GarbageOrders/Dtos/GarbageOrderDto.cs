@@ -31,6 +31,7 @@ public class GarbageOrderDto
     public decimal? UtilizationFeeAmount { get; set; }
     public decimal? AdditionalUtilizationFeeAmount { get; set; }
     public string? UtilizationProofBlobName { get; set; }
+    public string? UtilizationProofUrl { get; set; }
     public DateTime? UtilizationFeeSubmittedDateUtc { get; set; }
     public double? DistanceInKilometers { get; set; }
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
