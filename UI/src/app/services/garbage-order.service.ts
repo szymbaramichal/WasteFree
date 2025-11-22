@@ -51,6 +51,18 @@ export class GarbageOrderService {
       }));
   }
 
+  payAdditionalUtilizationFee(groupId: string, orderId: string): Observable<Result<GarbageOrderDto>> {
+    const g = encodeURIComponent(groupId);
+    const o = encodeURIComponent(orderId);
+    return this.http
+      .post<Result<GarbageOrderDto>>(`${this.apiUrl}/garbage-group/${g}/order/${o}/utilization-fee/payment`, {})
+      .pipe(tap((res) => {
+        if (res.resultModel) {
+          this.upsertOrder(res.resultModel);
+        }
+      }));
+  }
+
   createOrder(groupId: string, payload: CreateGarbageOrderRequest): Observable<Result<GarbageOrderDto>> {
     const g = encodeURIComponent(groupId);
     return this.http

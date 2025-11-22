@@ -50,6 +50,8 @@ export interface GarbageOrderUserDto {
   username: string;
   hasAcceptedPayment: boolean;
   shareAmount: number;
+  additionalUtilizationFeeShareAmount: number | null;
+  hasPaidAdditionalUtilizationFee: boolean;
 }
 
 export interface GarbageOrderDto {
@@ -62,9 +64,18 @@ export interface GarbageOrderDto {
   collectingService: boolean;
   garbageOrderStatus: GarbageOrderStatus;
   cost: number;
+  prepaidUtilizationFeeAmount: number;
   garbageGroupId: string;
   garbageGroupName: string;
   garbageGroupIsPrivate: boolean;
+  assignedGarbageAdminId: string | null;
+  assignedGarbageAdminUsername: string | null;
+  assignedGarbageAdminAvatarName: string | null;
+  utilizationFeeAmount: number | null;
+  additionalUtilizationFeeAmount: number | null;
+  utilizationProofBlobName: string | null;
+  utilizationFeeSubmittedDateUtc: string | null;
+  distanceInKilometers: number | null;
   users: GarbageOrderUserDto[];
 }
 

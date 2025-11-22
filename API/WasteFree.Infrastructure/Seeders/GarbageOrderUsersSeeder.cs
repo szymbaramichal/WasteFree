@@ -10,30 +10,34 @@ public class GarbageOrderUsersSeeder(ApplicationDataContext context)
 {
     public async Task SeedAsync()
     {
-        var participants = new List<(Guid OrderId, string Username, bool HasAcceptedPayment, decimal ShareAmount)>
+        var participants = new List<ParticipantSeed>
         {
-            (Guid.Parse("22222222-2222-2222-2222-222222222221"), "test1", true, 225m),
-            (Guid.Parse("22222222-2222-2222-2222-222222222221"), "test5", true, 225m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222221"), "test1", true, 225m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222221"), "test5", true, 225m),
 
-            (Guid.Parse("22222222-2222-2222-2222-222222222222"), "test2", false, 90m),
-            (Guid.Parse("22222222-2222-2222-2222-222222222222"), "test5", false, 90m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222222"), "test2", false, 90m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222222"), "test5", false, 90m),
 
-            (Guid.Parse("22222222-2222-2222-2222-222222222223"), "test1", true, 310m),
-            (Guid.Parse("22222222-2222-2222-2222-222222222223"), "test2", true, 310m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222223"), "test1", true, 310m, 30m, false),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222223"), "test2", true, 310m, 30m, false),
 
-            (Guid.Parse("22222222-2222-2222-2222-222222222224"), "test4", true, 95m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222224"), "test4", true, 95m),
 
-            (Guid.Parse("22222222-2222-2222-2222-222222222225"), "test3", true, 155m),
-            (Guid.Parse("22222222-2222-2222-2222-222222222225"), "test5", true, 155m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222225"), "test3", true, 155m),
+            new(Guid.Parse("22222222-2222-2222-2222-222222222225"), "test5", true, 155m),
 
-            (Guid.Parse("33333333-3333-3333-3333-333333333331"), "test1", true, 150m),
-            (Guid.Parse("33333333-3333-3333-3333-333333333331"), "test3", true, 150m),
+            new(Guid.Parse("33333333-3333-3333-3333-333333333331"), "test1", true, 150m),
+            new(Guid.Parse("33333333-3333-3333-3333-333333333331"), "test3", true, 150m),
 
-            (Guid.Parse("33333333-3333-3333-3333-333333333332"), "test2", true, 120m),
-            (Guid.Parse("33333333-3333-3333-3333-333333333332"), "test4", true, 120m),
+            new(Guid.Parse("33333333-3333-3333-3333-333333333332"), "test2", true, 120m),
+            new(Guid.Parse("33333333-3333-3333-3333-333333333332"), "test4", true, 120m),
 
-            (Guid.Parse("33333333-3333-3333-3333-333333333333"), "test2", true, 210m),
-            (Guid.Parse("33333333-3333-3333-3333-333333333333"), "test5", true, 210m)
+            new(Guid.Parse("33333333-3333-3333-3333-333333333333"), "test2", true, 210m),
+            new(Guid.Parse("33333333-3333-3333-3333-333333333333"), "test5", true, 210m),
+
+            new(Guid.Parse("44444444-4444-4444-4444-444444444441"), "test2", true, 180m, 20m, true),
+            new(Guid.Parse("44444444-4444-4444-4444-444444444441"), "test4", true, 90m, 14m, false),
+            new(Guid.Parse("44444444-4444-4444-4444-444444444441"), "test5", true, 90m, 14m, false)
         };
 
         var orderIds = participants.Select(p => p.OrderId).Distinct().ToArray();
@@ -77,8 +81,8 @@ public class GarbageOrderUsersSeeder(ApplicationDataContext context)
                 UserId = userId,
                 HasAcceptedPayment = participant.HasAcceptedPayment,
                 ShareAmount = participant.ShareAmount,
-                AdditionalUtilizationFeeShareAmount = 0m,
-                HasPaidAdditionalUtilizationFee = true
+                AdditionalUtilizationFeeShareAmount = participant.AdditionalShareAmount,
+                HasPaidAdditionalUtilizationFee = participant.HasPaidAdditionalUtilizationFee
             });
             changesMade = true;
         }
@@ -88,4 +92,12 @@ public class GarbageOrderUsersSeeder(ApplicationDataContext context)
             await context.SaveChangesAsync();
         }
     }
+
+    private sealed record ParticipantSeed(
+        Guid OrderId,
+        string Username,
+        bool HasAcceptedPayment,
+        decimal ShareAmount,
+        decimal AdditionalShareAmount = 0m,
+        bool HasPaidAdditionalUtilizationFee = true);
 }
