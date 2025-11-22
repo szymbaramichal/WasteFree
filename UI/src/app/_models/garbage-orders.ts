@@ -54,6 +54,10 @@ export interface GarbageOrderUserDto {
   hasPaidAdditionalUtilizationFee: boolean;
 }
 
+export interface GarbageAdminAvatarUrlDto {
+  avatarUrl: string | null;
+}
+
 export interface GarbageOrderDto {
   id: string;
   pickupOption: PickupOption;
