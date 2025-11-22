@@ -42,7 +42,7 @@ public class GarbageOrderCommandHandler(
             .AsNoTracking()
             .Include(x => x.GarbageGroup)
             .FirstOrDefaultAsync(x => x.GarbageGroupId == request.GarbageGroupId
-                && x.UserId == request.CurrentUserId && x.Role == GarbageGroupRole.Owner, cancellationToken);
+                && x.UserId == request.CurrentUserId, cancellationToken);
         
         if (userGroup is null)
             return Result<GarbageOrderDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.BadRequest);
