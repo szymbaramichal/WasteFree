@@ -100,6 +100,7 @@ public static class GarbageOrderEndpoints
 
         app.MapPost("/garbage-admin/orders/{orderId:guid}/utilization-fee", SubmitUtilizationFeeAsync)
             .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
+            .DisableAntiforgery()
             .Accepts<SubmitUtilizationFeeRequest>("multipart/form-data")
             .WithOpenApi()
             .Produces<Result<GarbageOrderDto>>()

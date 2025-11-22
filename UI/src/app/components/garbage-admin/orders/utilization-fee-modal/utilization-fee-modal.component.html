@@ -1,0 +1,33 @@
+<div *ngIf="visible" class="modal-root">
+  <div class="modal-backdrop fade show"></div>
+  <div class="modal fade show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{ 'garbageAdminOrders.utilizationFee.title' | translate }}</h5>
+          <button type="button" class="btn-close" (click)="onCancel()"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="error" class="alert alert-danger">{{ error | translate }}</div>
+          
+          <div class="mb-3">
+            <label for="feeAmount" class="form-label">{{ 'garbageAdminOrders.utilizationFee.amount' | translate }}</label>
+            <input type="number" class="form-control" id="feeAmount" [(ngModel)]="amount" [disabled]="loading">
+          </div>
+          
+          <div class="mb-3">
+            <label for="feeProof" class="form-label">{{ 'garbageAdminOrders.utilizationFee.proof' | translate }}</label>
+            <input type="file" class="form-control" id="feeProof" (change)="onFileChange($event)" [disabled]="loading" accept="image/*,application/pdf">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="loading">{{ 'actions.cancel' | translate }}</button>
+          <button type="button" class="btn btn-primary" (click)="onSubmit()" [disabled]="loading || !amount || !proof">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            {{ 'actions.submit' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
