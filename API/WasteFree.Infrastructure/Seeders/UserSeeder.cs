@@ -74,7 +74,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Warszawa", PostalCode = "00-029", Street = "Nowy Świat 15" }
+                Address = new Address { City = "Warsaw", PostalCode = "00-029", Street = "Nowy Świat 15" }
             },
             new User
             {
@@ -89,7 +89,7 @@ public class UserSeeder(ApplicationDataContext context)
                 Role = UserRole.User,
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
-                Address = new Address { City = "Warszawa", PostalCode = "00-325", Street = "Krakowskie Przedmieście 20" }
+                Address = new Address { City = "Warsaw", PostalCode = "00-325", Street = "Krakowskie Przedmieście 20" }
             },
             // System administrators
             new User
@@ -137,7 +137,7 @@ public class UserSeeder(ApplicationDataContext context)
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
                 ConsentsAgreed = false,
-                Address = new Address { City = "Cracow", PostalCode = "31-872", Street = "Os. Dywizjonu 303 20A" }
+                Address = new Address { City = "Cracow", PostalCode = "31-872", Street = "Szewska 7" }
             },
             new User
             {
@@ -153,7 +153,7 @@ public class UserSeeder(ApplicationDataContext context)
                 LanguagePreference = LanguagePreference.Polish,
                 IsActive = true,
                 ConsentsAgreed = false,
-                Address = new Address { City = "Warszawa", PostalCode = "02-715", Street = "Puławska 145" }
+                Address = new Address { City = "Warsaw", PostalCode = "02-715", Street = "Puławska 145" }
             }
         };
 
