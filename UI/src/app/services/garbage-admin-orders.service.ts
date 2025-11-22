@@ -30,4 +30,13 @@ export class GarbageAdminOrdersService {
     const encoded = encodeURIComponent(orderId);
     return this.http.post<Result<GarbageAdminOrderDto>>(`${this.baseUrl}/${encoded}/accept`, {});
   }
+
+  submitUtilizationFee(orderId: string, amount: number, proof: File): Observable<Result<GarbageAdminOrderDto>> {
+    const formData = new FormData();
+    formData.append('utilizationFeeAmount', amount.toString());
+    formData.append('utilizationProof', proof);
+
+    const encoded = encodeURIComponent(orderId);
+    return this.http.post<Result<GarbageAdminOrderDto>>(`${this.baseUrl}/${encoded}/utilization-fee`, formData);
+  }
 }

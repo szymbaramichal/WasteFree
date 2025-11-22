@@ -26,11 +26,13 @@ import {
   PICKUP_OPTION_KEYS,
   CONTAINER_SIZE_KEYS
 } from '../garbage-admin-orders.types';
+import { UtilizationFeeModalComponent } from '../utilization-fee-modal/utilization-fee-modal.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-garbage-admin-orders-assigned',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, UtilizationFeeModalComponent],
   templateUrl: './garbage-admin-orders-assigned.component.html',
   styleUrls: ['./garbage-admin-orders-assigned.component.css']
 })
@@ -38,6 +40,7 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
   private readonly ordersService = inject(GarbageAdminOrdersService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly translation = inject(TranslationService);
+  private readonly toastr = inject(ToastrService);
 
   readonly currentLang = toSignal(this.translation.onLangChange, { initialValue: this.translation.currentLang });
 
@@ -49,6 +52,11 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
   readonly page = signal(1);
   readonly items = signal<GarbageAdminOrderItem[]>([]);
 
+  readonly feeModalVisible = signal(false);
+  readonly feeModalLoading = signal(false);
+  readonly feeModalError = signal<string | null>(null);
+  readonly feeModalOrderId = signal<string | null>(null);
+
   readonly pageMeta = computed(() =>
     this.resolvePageMeta(this.pager(), this.items().length, this.page())
   );
@@ -59,6 +67,54 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
 
   trackById(_index: number, item: GarbageAdminOrderItem): string {
     return item.id;
+  }
+
+  openChat(orderId: string): void {
+    // Mock modal for chat
+    alert('Chat functionality coming soon for order: ' + orderId);
+  }
+
+  openFeeModal(orderId: string): void {
+    this.feeModalOrderId.set(orderId);
+    this.feeModalVisible.set(true);
+    this.feeModalError.set(null);
+  }
+
+  closeFeeModal(): void {
+    this.feeModalVisible.set(false);
+    this.feeModalOrderId.set(null);
+    this.feeModalError.set(null);
+  }
+
+  submitFee(data: { amount: number; proof: File }): void {
+    const orderId = this.feeModalOrderId();
+    if (!orderId) return;
+
+    this.feeModalLoading.set(true);
+    this.feeModalError.set(null);
+
+    this.ordersService.submitUtilizationFee(orderId, data.amount, data.proof)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.feeModalLoading.set(false))
+      )
+      .subscribe({
+        next: () => {
+          this.toastr.success(this.translation.translate('garbageAdminOrders.utilizationFee.submitSuccess'));
+          this.closeFeeModal();
+          this.refresh();
+        },
+        error: (err) => {
+          const errorCode = err?.error?.errorCode;
+          if (errorCode === 'UNSUPPORTED_IMAGE_TYPE') {
+            this.feeModalError.set('garbageAdminOrders.utilizationFee.errors.unsupportedType');
+          } else if (errorCode === 'INVALID_ORDER_STATUS') {
+            this.feeModalError.set('garbageAdminOrders.utilizationFee.errors.invalidStatus');
+          } else {
+            this.feeModalError.set('garbageAdminOrders.utilizationFee.submitError');
+          }
+        }
+      });
   }
 
   refresh(): void {
