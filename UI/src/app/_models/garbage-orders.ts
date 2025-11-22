@@ -33,6 +33,7 @@ export interface GarbageOrderFilterRequest {
 
 export interface GarbageOrderCostDto {
   estimatedCost: number | null;
+  prepaidUtilizationFee: number | null;
 }
 
 export interface CalculateGarbageOrderRequest {
