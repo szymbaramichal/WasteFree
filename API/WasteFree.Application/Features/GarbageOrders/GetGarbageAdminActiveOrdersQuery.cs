@@ -28,12 +28,6 @@ public sealed class GetGarbageAdminActiveOrdersQueryHandler(ApplicationDataConte
             return Result<ICollection<GarbageOrderDto>>.Failure(ApiErrorCodes.InvalidUser, HttpStatusCode.BadRequest);
         }
 
-        var activeStatuses = new[]
-        {
-            GarbageOrderStatus.WaitingForPickup,
-            GarbageOrderStatus.WaitingForUtilizationFee
-        };
-
         var ordersQuery = context.GarbageOrders
             .AsNoTracking()
             .Include(order => order.GarbageGroup)
@@ -41,7 +35,7 @@ public sealed class GetGarbageAdminActiveOrdersQueryHandler(ApplicationDataConte
             .Include(order => order.GarbageOrderUsers)
                 .ThenInclude(orderUser => orderUser.User)
             .Where(order => order.AssignedGarbageAdminId == request.GarbageAdminId)
-            .Where(order => activeStatuses.Contains(order.GarbageOrderStatus))
+            .Where(order => order.GarbageOrderStatus == GarbageOrderStatus.WaitingForUtilizationFee)
             .OrderBy(order => order.PickupDate)
             .ThenBy(order => order.CreatedDateUtc);
 
