@@ -96,6 +96,17 @@
           *ngIf="detail.assignedGarbageAdminId"
         >
           <div class="order-details__admin-content">
+            <div class="order-details__admin-info">
+              <h2 class="h6 text-uppercase fw-semibold small mb-1">
+                {{ 'myPickups.details.assignedAdmin.title' | translate }}
+              </h2>
+              <p class="mb-1 text-muted small">
+                {{ 'myPickups.details.assignedAdmin.lead' | translate }}
+              </p>
+              <div class="order-details__admin-name fw-semibold">
+                {{ assignedAdminDisplayName(detail) }}
+              </div>
+            </div>
             <div class="order-details__admin-avatar">
               <ng-container *ngIf="assignedAdminAvatar(); else adminAvatarFallback">
                 <img
@@ -116,17 +127,6 @@
                 </ng-template>
               </ng-template>
             </div>
-            <div class="order-details__admin-info">
-              <h2 class="h6 text-uppercase fw-semibold small mb-1">
-                {{ 'myPickups.details.assignedAdmin.title' | translate }}
-              </h2>
-              <p class="mb-1 text-muted small">
-                {{ 'myPickups.details.assignedAdmin.lead' | translate }}
-              </p>
-              <div class="order-details__admin-name fw-semibold">
-                {{ assignedAdminDisplayName(detail) }}
-              </div>
-            </div>
           </div>
         </section>
 
@@ -143,6 +143,12 @@
               {{ hasPaidUtilizationFee() ? ('myPickups.details.utilization.paid' | translate) : ('myPickups.details.utilization.pending' | translate) }}
             </span>
           </div>
+
+          <div class="order-details__utilization-proof mb-4" *ngIf="detail.utilizationProofUrl">
+            <h3 class="h6 text-uppercase fw-semibold small mb-2">{{ 'myPickups.details.utilization.proof' | translate }}</h3>
+            <img [src]="detail.utilizationProofUrl" alt="Utilization Proof" class="img-fluid rounded border shadow-sm" />
+          </div>
+
           <div class="order-details__utilization-grid">
             <dl class="order-details__utilization-metrics">
               <div>
