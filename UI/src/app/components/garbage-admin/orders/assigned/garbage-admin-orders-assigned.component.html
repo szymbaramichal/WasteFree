@@ -115,6 +115,17 @@
                   {{ 'garbageAdminOrders.badges.utilizationFeePending' | translate }}
                 </li>
               </ul>
+
+              <div class="d-flex gap-2 mt-3 pt-3 border-top">
+                <button type="button" class="btn btn-sm btn-outline-primary flex-grow-1" (click)="openChat(item.id)">
+                  <i class="bi bi-chat-dots me-1"></i>
+                  {{ 'garbageAdminOrders.actions.chat' | translate }}
+                </button>
+                <button type="button" class="btn btn-sm btn-primary flex-grow-1" (click)="openFeeModal(item.id)">
+                  <i class="bi bi-cash-coin me-1"></i>
+                  {{ 'garbageAdminOrders.actions.submitFee' | translate }}
+                </button>
+              </div>
             </div>
           </article>
         </div>
@@ -146,3 +157,11 @@
     </div>
   </div>
 </div>
+
+<app-utilization-fee-modal
+  [visible]="feeModalVisible()"
+  [loading]="feeModalLoading()"
+  [error]="feeModalError()"
+  (submitFee)="submitFee($event)"
+  (cancel)="closeFeeModal()"
+></app-utilization-fee-modal>
