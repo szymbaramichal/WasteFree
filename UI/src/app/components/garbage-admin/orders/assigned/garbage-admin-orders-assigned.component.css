@@ -124,6 +124,91 @@
 .page-btn:hover:not(:disabled) { background: rgba(13, 110, 253, 0.08); border-color: rgba(13, 110, 253, 0.5); }
 .page-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
+/* Custom Theme Buttons */
+.btn-theme {
+  background-color: var(--primary-green);
+  border-color: var(--primary-green);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-theme:hover {
+  background-color: var(--primary-green-dark);
+  border-color: var(--primary-green-dark);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(43, 182, 115, 0.25);
+}
+
+.btn-outline-theme {
+  color: var(--primary-green);
+  border-color: var(--primary-green);
+  background-color: transparent;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-theme:hover {
+  background-color: var(--primary-green);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(43, 182, 115, 0.15);
+}
+
+/* Service Tags */
+.border-top-dashed {
+  border-top: 1px dashed rgba(15, 32, 62, 0.15);
+}
+
+.service-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s ease;
+}
+
+.service-tag i { font-size: 0.9rem; }
+
+.service-tag--priority {
+  background-color: #fff5f5;
+  color: #e03131;
+  border: 1px solid #ffc9c9;
+}
+
+.service-tag--collecting {
+  background-color: #e7f5ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+}
+
+/* Utilization Fee Alert */
+.utilization-fee-alert {
+  background-color: rgba(255, 193, 7, 0.12);
+  color: #b58107;
+  border: 1px solid rgba(255, 193, 7, 0.25);
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.utilization-fee-alert i {
+  font-size: 1.1rem;
+}
+
 @media (max-width: 991.98px) {
   .order-card__body { flex-direction: column; }
   .order-card__flags { flex-direction: row; flex-wrap: wrap; min-width: 0; }

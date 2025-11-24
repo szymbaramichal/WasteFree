@@ -124,6 +124,37 @@
 .page-btn:hover:not(:disabled) { background: rgba(13, 110, 253, 0.08); border-color: rgba(13, 110, 253, 0.5); }
 .page-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
+/* Service Tags */
+.border-top-dashed {
+  border-top: 1px dashed rgba(15, 32, 62, 0.15);
+}
+
+.service-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s ease;
+}
+
+.service-tag i { font-size: 0.9rem; }
+
+.service-tag--priority {
+  background-color: #fff5f5;
+  color: #e03131;
+  border: 1px solid #ffc9c9;
+}
+
+.service-tag--collecting {
+  background-color: #e7f5ff;
+  color: #1971c2;
+  border: 1px solid #a5d8ff;
+}
+
 @media (max-width: 991.98px) {
   .order-card__body { flex-direction: column; }
   .order-card__flags { flex-direction: row; flex-wrap: wrap; min-width: 0; }

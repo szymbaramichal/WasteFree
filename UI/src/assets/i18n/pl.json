@@ -180,6 +180,8 @@
   "garbageAdminOrders.lead": "Przeglądaj i zarządzaj zleceniami oczekującymi na Twoją decyzję.",
   "garbageAdminOrders.actions.refresh": "Odśwież",
   "garbageAdminOrders.actions.retry": "Spróbuj ponownie",
+  "garbageAdminOrders.actions.chat": "Czat",
+  "garbageAdminOrders.actions.submitFee": "Nalicz opłatę",
   "garbageAdminOrders.loading": "Ładuję zlecenia...",
   "garbageAdminOrders.waiting.title": "Oczekujące na przyjęcie",
   "garbageAdminOrders.waiting.lead": "Nowe zgłoszenia z Twojego miasta gotowe do przyjęcia.",
