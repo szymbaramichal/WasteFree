@@ -62,7 +62,7 @@
           <dl class="row small mb-0">
             <div class="col-md-6 mb-3">
               <dt class="text-muted">{{ 'myPickups.details.summary.pickupDate' | translate }}</dt>
-              <dd class="fw-semibold">{{ detail.pickupDate | date:'fullDate' }} • {{ detail.pickupDate | date:'shortTime' }}</dd>
+              <dd class="fw-semibold">{{ detail.pickupDate | date:'fullDate':undefined:currentLocale() }} • {{ detail.pickupDate | date:'shortTime':undefined:currentLocale() }}</dd>
             </div>
             <div class="col-md-6 mb-3">
               <dt class="text-muted">{{ 'myPickups.details.summary.pickupType' | translate }}</dt>
