@@ -24,15 +24,15 @@ public class InboxNotificationSeeder(ApplicationDataContext context)
                 Title = "Przypomnienie o płatności",
                 Message = "Twoja płatność za odbiór odpadów jest wymagana do końca tygodnia.",
                 ActionType = InboxActionType.MakePayment,
-                RelatedEntityId = (Guid?)null
+                RelatedEntityId = (Guid?)Guid.Parse("22222222-2222-2222-2222-222222222222")
             },
             new
             {
                 Username = "garbageadmin2",
                 Title = "Nowy członek oczekuje",
-                Message = "test3 oczekuje na zatwierdzenie dołączenia do grupy Gdańsk Eco Harbor.",
+                Message = "test3 oczekuje na zatwierdzenie dołączenia do grupy Warszawa Mokotów ZeroWaste.",
                 ActionType = InboxActionType.GroupInvitation,
-                RelatedEntityId = (Guid?)Guid.Parse("77777777-7777-7777-7777-777777777777")
+                RelatedEntityId = (Guid?)Guid.Parse("66666666-6666-6666-6666-666666666666")
             }
         };
 

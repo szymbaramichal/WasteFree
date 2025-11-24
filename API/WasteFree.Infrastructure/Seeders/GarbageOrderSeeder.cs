@@ -153,7 +153,7 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 PrepaidUtilizationFeeAmount = 72m,
                 AssignedGarbageAdminId = garbageAdmin2Id,
                 UtilizationFeeAmount = 120m,
-                AdditionalUtilizationFeeAmount = 28m,
+                AdditionalUtilizationFeeAmount = 48m,
                 UtilizationProofBlobName = "seeded-proof-order-441.jpg",
                 UtilizationFeeSubmittedDateUtc = DateTime.UtcNow.AddDays(-2)
             }
