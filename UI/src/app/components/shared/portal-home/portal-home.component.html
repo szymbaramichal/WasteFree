@@ -66,6 +66,11 @@
 								</div>
 							</li>
 						</ul>
+						<div *ngIf="hasMore()" class="mt-2 text-center border-top pt-2">
+							<button class="btn btn-link btn-sm text-decoration-none p-0" (click)="toggleNotifications()">
+								{{ (notificationsExpanded() ? 'common.showLess' : 'common.showMore') | translate }}
+							</button>
+						</div>
 						<ng-template #noNotif>
 							<div class="text-center text-muted small py-4">{{ 'portal.home.empty.notifications' | translate }}</div>
 						</ng-template>
@@ -168,6 +173,11 @@
 								</div>
 							</li>
 						</ul>
+						<div *ngIf="hasMore()" class="mt-2 text-center border-top pt-2">
+							<button class="btn btn-link btn-sm text-decoration-none p-0" (click)="toggleNotifications()">
+								{{ (notificationsExpanded() ? 'common.showLess' : 'common.showMore') | translate }}
+							</button>
+						</div>
 						<ng-template #noNotifGarbageAdmin>
 							<div class="text-muted text-center small py-4">{{ 'portal.home.empty.notifications' | translate }}</div>
 						</ng-template>
