@@ -54,8 +54,9 @@ export interface GarbageOrderUserDto {
   hasPaidAdditionalUtilizationFee: boolean;
 }
 
-export interface GarbageAdminAvatarUrlDto {
-  avatarUrl: string | null;
+export interface GarbageOrderDetailsDto {
+  assignedAdminAvatarUrl: string | null;
+  userAvatarsUrls: Record<string, string>;
 }
 
 export interface GarbageOrderDto {

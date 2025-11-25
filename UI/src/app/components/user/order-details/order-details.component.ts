@@ -3,7 +3,7 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
-import { GarbageOrderDto, GarbageOrderStatus, GarbageOrderUserDto, PickupOption } from '@app/_models/garbage-orders';
+import { GarbageOrderDetailsDto, GarbageOrderDto, GarbageOrderStatus, GarbageOrderUserDto, PickupOption } from '@app/_models/garbage-orders';
 import { GarbageOrderService, USER_ORDERS_PAGE_SIZE } from '@app/services/garbage-order.service';
 import { TranslationService } from '@app/services/translation.service';
 import { CurrentUserService } from '@app/services/current-user.service';
@@ -43,9 +43,10 @@ export class OrderDetailsComponent {
   readonly orderStatus = GarbageOrderStatus;
   readonly assignedAdminAvatar = signal<string | null>(null);
   readonly assignedAdminAvatarLoading = signal(false);
+  readonly participantAvatars = signal<Record<string, string>>({});
 
-  private lastAssignedAdminAvatarKey: string | null = null;
-  private requestedAssignedAdminAvatarKey: string | null = null;
+  private lastOrderDetailsKey: string | null = null;
+  private requestedOrderDetailsKey: string | null = null;
 
   constructor() {
     this.route.paramMap
@@ -342,76 +343,108 @@ export class OrderDetailsComponent {
   }
 
   assignedAdminAvatarAlt(detail: GarbageOrderDto | null): string {
-    const template = this.translation.translate('myPickups.details.assignedAdmin.avatarAlt');
-    const username = this.assignedAdminDisplayName(detail);
-    return template.replace(/\{\{\s*username\s*\}\}|\{\s*username\s*\}/g, username);
+    return this.firstNicknameLetter(this.assignedAdminDisplayName(detail));
   }
 
-  private loadAssignedGarbageAdminAvatar(detail: GarbageOrderDto | null, forceRefresh = false): void {
-    if (!detail?.assignedGarbageAdminId) {
+  participantDisplayName(user: GarbageOrderUserDto): string {
+    const raw = typeof user.username === 'string' ? user.username.trim() : '';
+    return raw.length > 0 ? raw : user.userId;
+  }
+
+  participantInitials(user: GarbageOrderUserDto): string {
+    const name = this.participantDisplayName(user);
+    const tokens = name.split(/\s+/).filter(Boolean);
+    if (tokens.length === 0) {
+      return user.userId.slice(0, 2).toUpperCase();
+    }
+
+    const letters = tokens.slice(0, 2).map(token => token.charAt(0).toUpperCase()).join('');
+    return letters.length > 0 ? letters : user.userId.slice(0, 2).toUpperCase();
+  }
+
+  participantAvatarAlt(user: GarbageOrderUserDto): string {
+    return this.firstNicknameLetter(this.participantDisplayName(user));
+  }
+
+  participantAvatarUrl(userId: string | null | undefined): string | null {
+    if (!userId) {
+      return null;
+    }
+
+    const normalizedKey = userId.toLowerCase();
+    const map = this.participantAvatars();
+    return map[normalizedKey] ?? map[userId] ?? null;
+  }
+
+  private loadOrderAvatars(detail: GarbageOrderDto | null, forceRefresh = false): void {
+    if (!detail) {
       this.assignedAdminAvatar.set(null);
+      this.participantAvatars.set({});
       this.assignedAdminAvatarLoading.set(false);
-      this.lastAssignedAdminAvatarKey = null;
-      this.requestedAssignedAdminAvatarKey = null;
+      this.lastOrderDetailsKey = null;
+      this.requestedOrderDetailsKey = null;
       return;
     }
 
-    const key = this.buildAssignedAdminAvatarKey(detail);
+    const key = this.buildOrderDetailsKey(detail);
     if (!forceRefresh) {
-      if (key && key === this.lastAssignedAdminAvatarKey) {
+      if (key && key === this.lastOrderDetailsKey) {
         return;
       }
-      if (key && key === this.requestedAssignedAdminAvatarKey) {
+      if (key && key === this.requestedOrderDetailsKey) {
         return;
       }
     }
 
     if (key) {
-      this.requestedAssignedAdminAvatarKey = key;
+      this.requestedOrderDetailsKey = key;
     }
 
     this.assignedAdminAvatarLoading.set(true);
 
-    this.orderService.getAssignedGarbageAdminAvatar(detail.id)
+    this.orderService.getGarbageOrderDetails(detail.id)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          if (!key || this.requestedAssignedAdminAvatarKey === key) {
-            this.requestedAssignedAdminAvatarKey = null;
+          if (!key || this.requestedOrderDetailsKey === key) {
+            this.requestedOrderDetailsKey = null;
           }
           this.assignedAdminAvatarLoading.set(false);
         })
       )
       .subscribe({
         next: (res) => {
-          if (!res || res.errorMessage) {
-            this.assignedAdminAvatar.set(null);
-            this.lastAssignedAdminAvatarKey = forceRefresh ? null : key;
+          if (!res || res.errorMessage || !res.resultModel) {
+            this.handleOrderDetailsFailure();
             return;
           }
 
-          const rawModel = res.resultModel ?? (res as any)?.resultModel ?? null;
-          const rawUrl = rawModel?.avatarUrl ?? rawModel?.AvatarUrl ?? rawModel ?? null;
-          const url = this.normalizeAvatar(rawUrl);
-          const finalUrl = url ? this.applyAvatarCacheBuster(url) : null;
-          this.assignedAdminAvatar.set(finalUrl);
-          this.lastAssignedAdminAvatarKey = finalUrl ? key : null;
+          const adminUrl = this.normalizeAvatar(res.resultModel.assignedAdminAvatarUrl);
+          const finalAdminUrl = adminUrl ? this.applyAvatarCacheBuster(adminUrl) : null;
+          this.assignedAdminAvatar.set(finalAdminUrl);
+          this.participantAvatars.set(this.normalizeAvatarMap(res.resultModel.userAvatarsUrls));
+          this.lastOrderDetailsKey = key;
         },
         error: () => {
-          this.assignedAdminAvatar.set(null);
-          if (this.lastAssignedAdminAvatarKey === key) {
-            this.lastAssignedAdminAvatarKey = null;
-          }
+          this.handleOrderDetailsFailure();
         }
       });
   }
 
-  private buildAssignedAdminAvatarKey(order: GarbageOrderDto | null): string | null {
-    if (!order?.assignedGarbageAdminId) {
+  private handleOrderDetailsFailure(): void {
+    this.assignedAdminAvatar.set(null);
+    this.participantAvatars.set({});
+    this.lastOrderDetailsKey = null;
+  }
+
+  private buildOrderDetailsKey(order: GarbageOrderDto | null): string | null {
+    if (!order) {
       return null;
     }
-    const avatarName = order.assignedGarbageAdminAvatarName ?? '';
-    return `${order.id}:${order.assignedGarbageAdminId}:${avatarName}`;
+
+    const adminPart = `${order.assignedGarbageAdminId ?? 'na'}:${order.assignedGarbageAdminAvatarName ?? 'na'}`;
+    const participantsPart = order.users.map(user => user.userId).sort().join('|');
+    return `${order.id}:${adminPart}:${participantsPart}`;
   }
 
   private normalizeAvatar(value: unknown): string | null {
@@ -432,6 +465,34 @@ export class OrderDetailsComponent {
     return trimmed.length > 0 ? trimmed : null;
   }
 
+  private normalizeAvatarMap(source: Record<string, string> | null | undefined): Record<string, string> {
+    if (!source) {
+      return {};
+    }
+
+    const normalized: Record<string, string> = {};
+    Object.entries(source).forEach(([rawKey, rawValue]) => {
+      const avatarUrl = this.normalizeAvatar(rawValue);
+      if (!avatarUrl) {
+        return;
+      }
+
+      const finalUrl = this.applyAvatarCacheBuster(avatarUrl);
+      normalized[rawKey.toLowerCase()] = finalUrl;
+    });
+
+    return normalized;
+  }
+
+  private firstNicknameLetter(value: string | null | undefined): string {
+    if (!value) {
+      return '?';
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed.charAt(0).toUpperCase() : '?';
+  }
+
   private applyAvatarCacheBuster(url: string): string {
     try {
       const parsed = new URL(url);
@@ -446,7 +507,7 @@ export class OrderDetailsComponent {
 
   private setOrderDetail(detail: GarbageOrderDto | null, forceAvatarRefresh = false): void {
     this.order.set(detail);
-    this.loadAssignedGarbageAdminAvatar(detail, forceAvatarRefresh);
+    this.loadOrderAvatars(detail, forceAvatarRefresh);
   }
 
   private currentUserEntry(pickup: GarbageOrderDto): GarbageOrderUserDto | null {
