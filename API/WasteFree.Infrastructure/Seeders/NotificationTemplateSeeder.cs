@@ -82,7 +82,7 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
                         <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
-                          <h2 style='color:#2e7d32;margin:0 0 16px;'>WasteFree invitation to <strong>{{GroupName}}</strong></h2>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>WasteFree invitation to {{GroupName}}</h2>
                           <p style='font-size:16px;color:#333;margin:0;'><strong>{{SenderUsername}}</strong> invited you to join the group <strong>{{GroupName}}</strong>.</p>
                         </div>
                       </body>
@@ -106,7 +106,7 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
                         <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
-                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Zaproszenie WasteFree do <strong>{{GroupName}}</strong></h2>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Zaproszenie WasteFree do {{GroupName}}</h2>
                           <p style='font-size:16px;color:#333;margin:0;'><strong>{{SenderUsername}}</strong> zaprosił Cię do grupy <strong>{{GroupName}}</strong>.</p>
                         </div>
                       </body>
