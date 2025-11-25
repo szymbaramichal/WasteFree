@@ -568,6 +568,7 @@
     "myPickups.details.summary.pickupType": "Rodzaj odbioru",
     "myPickups.details.summary.cost": "Całkowity koszt",
     "myPickups.details.summary.group": "Grupa odpadowa",
+    "myPickups.details.summary.privateGroup": "Wywóz prywatny",
     "myPickups.details.summary.collectingService": "Usługa wyniesienia",
     "myPickups.details.summary.highPriority": "Wysoki priorytet",
     "myPickups.details.summary.priorityLabel": "Zlecenie priorytetowe",
