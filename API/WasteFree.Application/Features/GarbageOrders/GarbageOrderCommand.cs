@@ -173,6 +173,13 @@ public class GarbageOrderCommandHandler(
         
         context.Add(garbageOrder);
         await context.SaveChangesAsync(cancellationToken);
+
+        if (garbageOrder.GarbageGroup is null)
+        {
+            await context.Entry(garbageOrder)
+                .Reference(x => x.GarbageGroup)
+                .LoadAsync(cancellationToken);
+        }
         
         return Result<GarbageOrderDto>.Success(garbageOrder.MapToGarbageOrderDto());
     }

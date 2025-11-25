@@ -575,6 +575,7 @@
   "myPickups.details.summary.pickupType": "Pickup type",
   "myPickups.details.summary.cost": "Total cost",
   "myPickups.details.summary.group": "Garbage group",
+  "myPickups.details.summary.privateGroup": "Private collection",
   "myPickups.details.summary.collectingService": "Collecting service",
   "myPickups.details.summary.highPriority": "High priority",
   "myPickups.details.summary.priorityLabel": "Priority order",

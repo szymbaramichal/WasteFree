@@ -75,9 +75,14 @@
             <div class="col-md-6 mb-3">
               <dt class="text-muted">{{ 'myPickups.details.summary.group' | translate }}</dt>
               <dd class="fw-semibold">
-                <a class="group-link" [routerLink]="['/portal/groups', detail.garbageGroupId]">
-                  <span class="group-link__label">{{ detail.garbageGroupName || '—' }}</span>
-                </a>
+                <ng-container *ngIf="detail.garbageGroupIsPrivate; else publicGroup">
+                  <span>{{ 'myPickups.details.summary.privateGroup' | translate }}</span>
+                </ng-container>
+                <ng-template #publicGroup>
+                  <a class="group-link" [routerLink]="['/portal/groups', detail.garbageGroupId]">
+                    <span class="group-link__label">{{ detail.garbageGroupName || '—' }}</span>
+                  </a>
+                </ng-template>
               </dd>
             </div>
             <div class="col-md-6 mb-3" *ngIf="detail.collectingService">

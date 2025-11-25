@@ -87,7 +87,7 @@
                       <span class="order-number">#{{ orderCode(pickup) }}</span>
                     </td>
                     <td>
-                      <ng-container *ngIf="pickup.groupId; else groupNameOnly">
+                      <ng-container *ngIf="pickup.groupId && !pickup.isPrivateGroup; else groupNameOnly">
                         <a class="group-link" [routerLink]="['/portal/groups', pickup.groupId]">
                           <i class="bi bi-arrow-up-right-circle" aria-hidden="true"></i>
                           <span class="group-link__label">
