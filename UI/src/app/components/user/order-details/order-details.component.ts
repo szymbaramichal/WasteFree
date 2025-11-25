@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import { GarbageOrderDto, GarbageOrderStatus, GarbageOrderUserDto, PickupOption } from '@app/_models/garbage-orders';
 import { GarbageOrderService, USER_ORDERS_PAGE_SIZE } from '@app/services/garbage-order.service';
@@ -9,7 +9,7 @@ import { TranslationService } from '@app/services/translation.service';
 import { CurrentUserService } from '@app/services/current-user.service';
 import { WalletService } from '@app/services/wallet.service';
 import { ToastrService } from 'ngx-toastr';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-order-details',
@@ -27,6 +27,13 @@ export class OrderDetailsComponent {
   private wallet = inject(WalletService);
   private toastr = inject(ToastrService);
   private destroyRef = inject(DestroyRef);
+
+  readonly currentLocale = toSignal(
+    this.translation.onLangChange.pipe(
+      map(lang => lang === 'pl' ? 'pl' : 'en-US')
+    ),
+    { initialValue: 'en-US' }
+  );
 
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);

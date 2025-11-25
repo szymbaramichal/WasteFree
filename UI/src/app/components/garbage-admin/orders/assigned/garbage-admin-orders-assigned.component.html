@@ -102,26 +102,32 @@
                   <span class="order-card__label">{{ 'garbageAdminOrders.summary.address' | translate }}</span>
                   <span class="order-card__value">{{ item.addressLine }}</span>
                 </div>
+
+                <div *ngIf="item.isHighPriority || item.collectingService" class="d-flex flex-wrap gap-2 mt-2 pt-2 border-top-dashed">
+                  <span *ngIf="item.isHighPriority" class="service-tag service-tag--priority">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    {{ 'garbageAdminOrders.badges.highPriority' | translate }}
+                  </span>
+                  <span *ngIf="item.collectingService" class="service-tag service-tag--collecting">
+                    <i class="bi bi-person-raised-hand"></i>
+                    {{ 'garbageAdminOrders.badges.collectingService' | translate }}
+                  </span>
+                </div>
               </div>
 
-              <ul class="order-card__flags">
-                <li *ngIf="item.isHighPriority" class="order-card__flag order-card__flag--priority">
-                  {{ 'garbageAdminOrders.badges.highPriority' | translate }}
-                </li>
-                <li *ngIf="item.collectingService" class="order-card__flag">
-                  {{ 'garbageAdminOrders.badges.collectingService' | translate }}
-                </li>
-                <li *ngIf="item.raw.utilizationFeeAmount !== null" class="order-card__flag order-card__flag--fee">
+              <div *ngIf="item.raw.utilizationFeeAmount !== null" class="w-100">
+                <div class="utilization-fee-alert">
+                  <i class="bi bi-info-circle-fill"></i>
                   {{ 'garbageAdminOrders.badges.utilizationFeePending' | translate }}
-                </li>
-              </ul>
+                </div>
+              </div>
 
-              <div class="d-flex gap-2 mt-3 pt-3 border-top">
-                <button type="button" class="btn btn-sm btn-outline-primary flex-grow-1" (click)="openChat(item.id)">
+              <div class="d-flex gap-2 mt-3 pt-3 border-top w-100">
+                <button type="button" class="btn btn-outline-theme flex-grow-1" (click)="openChat(item.id)">
                   <i class="bi bi-chat-dots me-1"></i>
                   {{ 'garbageAdminOrders.actions.chat' | translate }}
                 </button>
-                <button type="button" class="btn btn-sm btn-primary flex-grow-1" (click)="openFeeModal(item.id)">
+                <button type="button" class="btn btn-theme flex-grow-1" (click)="openFeeModal(item.id)" [disabled]="item.raw.utilizationFeeAmount !== null">
                   <i class="bi bi-cash-coin me-1"></i>
                   {{ 'garbageAdminOrders.actions.submitFee' | translate }}
                 </button>

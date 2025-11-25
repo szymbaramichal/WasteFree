@@ -94,16 +94,18 @@
                   <span class="order-card__label">{{ 'garbageAdminOrders.summary.address' | translate }}</span>
                   <span class="order-card__value">{{ item.addressLine }}</span>
                 </div>
-              </div>
 
-              <ul class="order-card__flags">
-                <li *ngIf="item.isHighPriority" class="order-card__flag order-card__flag--priority">
-                  {{ 'garbageAdminOrders.badges.highPriority' | translate }}
-                </li>
-                <li *ngIf="item.collectingService" class="order-card__flag">
-                  {{ 'garbageAdminOrders.badges.collectingService' | translate }}
-                </li>
-              </ul>
+                <div *ngIf="item.isHighPriority || item.collectingService" class="d-flex flex-wrap gap-2 mt-2 pt-2 border-top-dashed">
+                  <span *ngIf="item.isHighPriority" class="service-tag service-tag--priority">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    {{ 'garbageAdminOrders.badges.highPriority' | translate }}
+                  </span>
+                  <span *ngIf="item.collectingService" class="service-tag service-tag--collecting">
+                    <i class="bi bi-person-raised-hand"></i>
+                    {{ 'garbageAdminOrders.badges.collectingService' | translate }}
+                  </span>
+                </div>
+              </div>
             </div>
 
             <footer class="order-card__footer">
