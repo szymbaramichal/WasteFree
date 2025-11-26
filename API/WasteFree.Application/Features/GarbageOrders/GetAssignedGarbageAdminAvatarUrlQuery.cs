@@ -22,7 +22,6 @@ public sealed class GetAssignedGarbageAdminAvatarUrlQueryHandler(
     {
         var order = await context.GarbageOrders
             .AsNoTracking()
-            .Include(x => x.AssignedGarbageAdmin)
             .FirstOrDefaultAsync(x => x.Id == request.OrderId, cancellationToken);
 
         if (order is null)
@@ -50,14 +49,22 @@ public sealed class GetAssignedGarbageAdminAvatarUrlQueryHandler(
 
         string? avatarUrl = null;
 
-        var avatarName = order.AssignedGarbageAdmin?.AvatarName;
-        if (!string.IsNullOrWhiteSpace(avatarName))
+        if (order.AssignedGarbageAdminId.HasValue)
         {
-            avatarUrl = await blobStorageService.GetReadSasUrlAsync(
-                BlobContainerNames.Avatars,
-                avatarName,
-                TimeSpan.FromMinutes(5),
-                cancellationToken);
+            var avatarName = await context.Users
+                .AsNoTracking()
+                .Where(x => x.Id == order.AssignedGarbageAdminId)
+                .Select(x => x.AvatarName)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(avatarName))
+            {
+                avatarUrl = await blobStorageService.GetReadSasUrlAsync(
+                    BlobContainerNames.Avatars,
+                    avatarName,
+                    TimeSpan.FromMinutes(5),
+                    cancellationToken);
+            }
         }
 
         return Result<GarbageAdminAvatarUrlDto>.Success(new GarbageAdminAvatarUrlDto(avatarUrl));
