@@ -90,13 +90,13 @@ public static class GarbageOrderEndpoints
             .WithTags("GarbageOrders")
             .WithDescription("Get garbage orders for the current user with pagination support.");
 
-        app.MapGet("/garbage-orders/{orderId:guid}/assigned-garbage-admin/avatar", GetAssignedGarbageAdminAvatarUrlAsync)
+        app.MapGet("/garbage-orders/{orderId:guid}/details", GetGarbageOrderDetailsAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
-            .Produces<Result<GarbageAdminAvatarUrlDto>>()
+            .Produces<Result<GarbageOrderDetailsDto>>()
             .Produces<Result<EmptyResult>>(400)
             .WithTags("GarbageOrders")
-            .WithDescription("Get temporary avatar URL for the garbage admin assigned to the order.");
+            .WithDescription("Get temporary avatar URLs for the assigned garbage admin and participants.");
 
         app.MapPost("/garbage-admin/orders/{orderId:guid}/utilization-fee", SubmitUtilizationFeeAsync)
             .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
@@ -306,9 +306,9 @@ public static class GarbageOrderEndpoints
     }
 
     /// <summary>
-    /// Get blob storage URL for the avatar of the garbage admin assigned to a specific order.
+    /// Get blob storage URLs for the avatars of the assigned garbage admin and order participants.
     /// </summary>
-    private static async Task<IResult> GetAssignedGarbageAdminAvatarUrlAsync(
+    private static async Task<IResult> GetGarbageOrderDetailsAsync(
         [FromRoute] Guid orderId,
         ICurrentUserService currentUserService,
         IMediator mediator,

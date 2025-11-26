@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
@@ -10,13 +9,13 @@ using WasteFree.Infrastructure;
 
 namespace WasteFree.Application.Features.GarbageOrders;
 
-public sealed record GetAssignedGarbageAdminAvatarUrlQuery(Guid OrderId, Guid RequesterId) : IRequest<GarbageAdminAvatarUrlDto>;
+public sealed record GetAssignedGarbageAdminAvatarUrlQuery(Guid OrderId, Guid RequesterId) : IRequest<GarbageOrderDetailsDto>;
 
 public sealed class GetAssignedGarbageAdminAvatarUrlQueryHandler(
     ApplicationDataContext context,
-    IBlobStorageService blobStorageService) : IRequestHandler<GetAssignedGarbageAdminAvatarUrlQuery, GarbageAdminAvatarUrlDto>
+    IBlobStorageService blobStorageService) : IRequestHandler<GetAssignedGarbageAdminAvatarUrlQuery, GarbageOrderDetailsDto>
 {
-    public async Task<Result<GarbageAdminAvatarUrlDto>> HandleAsync(
+    public async Task<Result<GarbageOrderDetailsDto>> HandleAsync(
         GetAssignedGarbageAdminAvatarUrlQuery request,
         CancellationToken cancellationToken)
     {
@@ -26,14 +25,13 @@ public sealed class GetAssignedGarbageAdminAvatarUrlQueryHandler(
 
         if (order is null)
         {
-            return Result<GarbageAdminAvatarUrlDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
+            return Result<GarbageOrderDetailsDto>.Failure(ApiErrorCodes.NotFound, HttpStatusCode.NotFound);
         }
 
         var isRequesterAssignedAdmin = order.AssignedGarbageAdminId == request.RequesterId;
 
-        var isParticipant = isRequesterAssignedAdmin || await context.GarbageOrderUsers
-            .AsNoTracking()
-            .AnyAsync(x => x.GarbageOrderId == request.OrderId && x.UserId == request.RequesterId, cancellationToken);
+        var isParticipant = isRequesterAssignedAdmin || order.GarbageOrderUsers
+            .Any(x => x.UserId == request.RequesterId);
 
         if (!isParticipant)
         {
@@ -43,7 +41,7 @@ public sealed class GetAssignedGarbageAdminAvatarUrlQueryHandler(
 
             if (!isGroupMember)
             {
-                return Result<GarbageAdminAvatarUrlDto>.Failure(ApiErrorCodes.Forbidden, HttpStatusCode.Forbidden);
+                return Result<GarbageOrderDetailsDto>.Failure(ApiErrorCodes.Forbidden, HttpStatusCode.Forbidden);
             }
         }
 
@@ -67,6 +65,40 @@ public sealed class GetAssignedGarbageAdminAvatarUrlQueryHandler(
             }
         }
 
-        return Result<GarbageAdminAvatarUrlDto>.Success(new GarbageAdminAvatarUrlDto(avatarUrl));
+        var userAvatarsUrls = new Dictionary<Guid, string>();
+
+        var participantsWithAvatars = order.GarbageOrderUsers
+            .Where(x => x.User is not null && !string.IsNullOrWhiteSpace(x.User.AvatarName))
+            .Select(x => new { x.UserId, x.User.AvatarName })
+            .Distinct()
+            .ToArray();
+
+        if (participantsWithAvatars.Length > 0)
+        {
+            var avatarTasks = participantsWithAvatars
+                .Select(async participant => new
+                {
+                    participant.UserId,
+                    Url = participant.AvatarName is not null ?
+                        await blobStorageService.GetReadSasUrlAsync(
+                        BlobContainerNames.Avatars,
+                        participant.AvatarName,
+                        TimeSpan.FromMinutes(5),
+                        cancellationToken)
+                        : ""
+                });
+
+            var resolvedAvatars = await Task.WhenAll(avatarTasks);
+
+            foreach (var resolvedAvatar in resolvedAvatars)
+            {
+                if (!string.IsNullOrWhiteSpace(resolvedAvatar.Url))
+                {
+                    userAvatarsUrls[resolvedAvatar.UserId] = resolvedAvatar.Url!;
+                }
+            }
+        }
+
+        return Result<GarbageOrderDetailsDto>.Success(new GarbageOrderDetailsDto(avatarUrl, userAvatarsUrls));
     }
 }

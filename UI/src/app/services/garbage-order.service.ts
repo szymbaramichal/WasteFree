@@ -7,7 +7,7 @@ import { PaginatedResult, Pager, Result } from '@app/_models/result';
 import {
   CalculateGarbageOrderRequest,
   CreateGarbageOrderRequest,
-  GarbageAdminAvatarUrlDto,
+  GarbageOrderDetailsDto,
   GarbageOrderCostDto,
   GarbageOrderDto,
   GarbageOrderFilterRequest
@@ -40,10 +40,10 @@ export class GarbageOrderService {
       .pipe(tap((res) => this.setCache(res)));
   }
 
-  getAssignedGarbageAdminAvatar(orderId: string): Observable<Result<GarbageAdminAvatarUrlDto>> {
+  getGarbageOrderDetails(orderId: string): Observable<Result<GarbageOrderDetailsDto>> {
     const encodedOrderId = encodeURIComponent(orderId);
-    return this.http.get<Result<GarbageAdminAvatarUrlDto>>(
-      `${this.apiUrl}/garbage-orders/${encodedOrderId}/assigned-garbage-admin/avatar`
+    return this.http.get<Result<GarbageOrderDetailsDto>>(
+      `${this.apiUrl}/garbage-orders/${encodedOrderId}/details`
     );
   }
 

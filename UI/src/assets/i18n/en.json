@@ -591,6 +591,7 @@
   "myPickups.details.participants.utilizationPayment": "Utilization fee payment",
   "myPickups.details.participants.paid": "Paid",
   "myPickups.details.participants.pending": "Pending",
+  "myPickups.details.participants.avatarAlt": "{{username}} participant photo",
   "myPickups.details.payment.title": "Your payment",
   "myPickups.details.payment.pending": "Your share is {amount} PLN. Please confirm the payment.",
   "myPickups.details.payment.accepted": "Your payment has been accepted.",

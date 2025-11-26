@@ -584,6 +584,7 @@
     "myPickups.details.participants.utilizationPayment": "Płatność za utylizację",
     "myPickups.details.participants.paid": "Opłacono",
     "myPickups.details.participants.pending": "Oczekuje",
+    "myPickups.details.participants.avatarAlt": "Zdjęcie profilowe użytkownika {{username}}",
     "myPickups.details.payment.title": "Twoja płatność",
     "myPickups.details.payment.pending": "Twój udział wynosi {amount} PLN. Potwierdź płatność.",
     "myPickups.details.payment.accepted": "Twoja płatność została przyjęta.",
