@@ -339,12 +339,12 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
                 continue;
             }
 
-            await DispatchNotificationAsync(participant.User, content, InboxActionType.None, garbageOrder.Id, scheduler, cancellationToken);
+            await DispatchNotificationAsync(participant.User, content, InboxActionType.GarbageOrderDetails, garbageOrder.Id, scheduler, cancellationToken);
         }
 
         if (garbageOrder.AssignedGarbageAdmin is { } admin && contentsByUser.TryGetValue(admin.Id, out var adminContent))
         {
-            await DispatchNotificationAsync(admin, adminContent, InboxActionType.None, garbageOrder.Id, scheduler, cancellationToken);
+            await DispatchNotificationAsync(admin, adminContent, InboxActionType.GarbageOrderDetails, garbageOrder.Id, scheduler, cancellationToken);
         }
     }
 
