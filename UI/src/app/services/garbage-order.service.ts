@@ -15,6 +15,16 @@ import {
 
 export const USER_ORDERS_PAGE_SIZE = 200;
 
+interface MyOrdersFilters {
+  garbageGroupId: string | null;
+  statuses: number[] | null;
+}
+
+const DEFAULT_MY_ORDERS_FILTERS: MyOrdersFilters = {
+  garbageGroupId: null,
+  statuses: null
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -30,13 +40,17 @@ export class GarbageOrderService {
   readonly pager = this.pagerSignal.asReadonly();
   readonly hasLoaded = this.loadedSignal.asReadonly();
 
-  getMyOrders(pageNumber: number, pageSize: number): Observable<PaginatedResult<GarbageOrderDto[]>> {
-    const params = new URLSearchParams({
-      pageNumber: String(pageNumber),
-      pageSize: String(pageSize)
-    });
+  getMyOrders(
+    pageNumber: number,
+    pageSize: number,
+    filters: MyOrdersFilters = DEFAULT_MY_ORDERS_FILTERS
+  ): Observable<PaginatedResult<GarbageOrderDto[]>> {
+    const params = new HttpParams()
+      .set('pageNumber', String(pageNumber))
+      .set('pageSize', String(pageSize));
+
     return this.http
-      .get<PaginatedResult<GarbageOrderDto[]>>(`${this.apiUrl}/garbage-orders/my?${params.toString()}`)
+      .post<PaginatedResult<GarbageOrderDto[]>>(`${this.apiUrl}/garbage-orders/my`, filters, { params })
       .pipe(tap((res) => this.setCache(res)));
   }
 
@@ -82,7 +96,11 @@ export class GarbageOrderService {
       }));
   }
 
-  ensureMyOrders(pageNumber: number, pageSize: number): Observable<PaginatedResult<GarbageOrderDto[]>> {
+  ensureMyOrders(
+    pageNumber: number,
+    pageSize: number,
+    filters: MyOrdersFilters = DEFAULT_MY_ORDERS_FILTERS
+  ): Observable<PaginatedResult<GarbageOrderDto[]>> {
     if (this.loadedSignal()) {
       return of({
         resultModel: this.ordersSignal(),
@@ -91,7 +109,7 @@ export class GarbageOrderService {
         pager: this.pagerSignal()
       });
     }
-    return this.getMyOrders(pageNumber, pageSize);
+    return this.getMyOrders(pageNumber, pageSize, filters);
   }
 
   findOrderById(orderId: string): GarbageOrderDto | null {

@@ -1,21 +1,12 @@
 ﻿import { CommonModule } from '@angular/common';
-import {
-  Component,
-  DestroyRef,
-  OnInit,
-  computed,
-  effect,
-  inject,
-  signal
-} from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
-import { forkJoin, of } from 'rxjs';
-import { finalize, map, switchMap } from 'rxjs/operators';
+import { finalize } from 'rxjs/operators';
 import { Pager, PaginatedResult } from '@app/_models/result';
 import { MyPickupDto } from '@app/_models/pickups';
-import { MyPickupsService } from '@app/services/my-pickups.service';
+import { MyPickupsFilters, MyPickupsService } from '@app/services/my-pickups.service';
 import { PickupOptionKey } from '@app/_models/profile';
 
 interface PortalPickupItem {
@@ -59,6 +50,17 @@ const STATUS_VALUE_TO_KEY: Record<number, PickupStatusKey> = {
   5: 'complained',
   6: 'resolved',
   7: 'cancelled'
+};
+
+const STATUS_KEY_TO_VALUE: Record<PickupStatusKey, number> = {
+  waitingForPayment: 0,
+  waitingForAccept: 1,
+  waitingForPickup: 2,
+  waitingForUtilizationFee: 3,
+  completed: 4,
+  complained: 5,
+  resolved: 6,
+  cancelled: 7
 };
 
 const PICKUP_OPTION_VALUE_TO_KEY: Record<number, PickupOptionKey> = {
@@ -118,43 +120,15 @@ export class MyPickupsComponent implements OnInit {
   readonly totalCount = signal(0);
   readonly itemsPerPage = DEFAULT_ITEMS_PER_PAGE;
   readonly apiPageSize = this.itemsPerPage;
-  readonly statusOptions = signal<PickupStatusKey[]>([]);
+  readonly statusOptions = signal<PickupStatusKey[]>([...STATUS_ORDER]);
   readonly statusFilter = signal<StatusFilter>('all');
   readonly groupFilter = signal<GroupFilter>('all');
   readonly currentPage = signal(1);
+  readonly pager = signal<Pager | null>(null);
+  readonly hasAnyPickups = signal(false);
+  readonly groupOptions = signal<GroupOption[]>([]);
 
-  readonly filteredPickups = computed(() => {
-    const statusFilter = this.statusFilter();
-    const groupFilter = this.groupFilter();
-
-    return this.pickups().filter((pickup) => {
-      const matchesStatus = statusFilter === 'all' || pickup.status === statusFilter;
-      const matchesGroup = groupFilter === 'all' || pickup.groupId === groupFilter;
-      return matchesStatus && matchesGroup;
-    });
-  });
-
-  readonly groupOptions = computed<GroupOption[]>(() => {
-    const groups = new Map<string, { name: string; isPrivate: boolean }>();
-
-    for (const pickup of this.pickups()) {
-      if (pickup.groupId && !groups.has(pickup.groupId)) {
-        groups.set(pickup.groupId, { name: pickup.groupName, isPrivate: pickup.isPrivateGroup });
-      }
-    }
-
-    return Array.from(groups.entries()).map(([id, value]) => ({ id, name: value.name, isPrivate: value.isPrivate }));
-  });
-
-  readonly totalPages = computed(() => {
-    const totalItems = this.filteredPickups().length;
-    return totalItems === 0 ? 0 : Math.ceil(totalItems / this.itemsPerPage);
-  });
-
-  readonly paginatedPickups = computed(() => {
-    const start = (this.currentPage() - 1) * this.itemsPerPage;
-    return this.filteredPickups().slice(start, start + this.itemsPerPage);
-  });
+  readonly totalPages = computed(() => this.pager()?.totalPages ?? 0);
 
   readonly pages = computed(() => {
     const total = this.totalPages();
@@ -162,38 +136,22 @@ export class MyPickupsComponent implements OnInit {
   });
 
   readonly pageStartIndex = computed(() => {
-    if (!this.filteredPickups().length) {
+    const pager = this.pager();
+    if (!pager || pager.totalCount === 0) {
       return 0;
     }
 
-    return (this.currentPage() - 1) * this.itemsPerPage;
+    return (pager.pageNumber - 1) * pager.pageSize;
   });
 
   readonly pageEndIndex = computed(() => {
-    if (!this.filteredPickups().length) {
+    const pager = this.pager();
+    if (!pager || pager.totalCount === 0) {
       return 0;
     }
 
-    return Math.min(this.pageStartIndex() + this.itemsPerPage, this.filteredPickups().length);
+    return Math.min(pager.pageNumber * pager.pageSize, pager.totalCount);
   });
-
-  constructor() {
-    effect(() => {
-      const total = this.totalPages();
-      const current = this.currentPage();
-
-      if (total === 0) {
-        if (current !== 1) {
-          this.currentPage.set(1);
-        }
-        return;
-      }
-
-      if (current > total) {
-        this.currentPage.set(total);
-      }
-    });
-  }
 
   ngOnInit(): void {
     this.fetchPickups();
@@ -205,31 +163,44 @@ export class MyPickupsComponent implements OnInit {
 
   setStatusFilter(raw: StatusFilter | string): void {
     const value: StatusFilter = raw === 'all' ? 'all' : (raw as PickupStatusKey);
+
+    if (this.statusFilter() === value) {
+      return;
+    }
+
     this.statusFilter.set(value);
-    this.currentPage.set(1);
+    this.fetchPickups(1);
   }
 
   setGroupFilter(raw: GroupFilter | string): void {
     const value: GroupFilter = raw === 'all' ? 'all' : String(raw);
+
+    if (this.groupFilter() === value) {
+      return;
+    }
+
     this.groupFilter.set(value);
-    this.currentPage.set(1);
+    this.fetchPickups(1);
   }
 
   goToPage(page: number): void {
     const total = this.totalPages();
 
     if (total === 0) {
-      this.currentPage.set(1);
       return;
     }
 
     const clamped = Math.min(Math.max(page, 1), total);
-    this.currentPage.set(clamped);
+    if (clamped === this.currentPage()) {
+      return;
+    }
+
+    this.fetchPickups(clamped);
   }
 
   previousPage(): void {
     if (this.currentPage() > 1) {
-      this.currentPage.update((current) => current - 1);
+      this.fetchPickups(this.currentPage() - 1);
     }
   }
 
@@ -237,7 +208,7 @@ export class MyPickupsComponent implements OnInit {
     const total = this.totalPages();
 
     if (total > 0 && this.currentPage() < total) {
-      this.currentPage.update((current) => current + 1);
+      this.fetchPickups(this.currentPage() + 1);
     }
   }
 
@@ -276,81 +247,83 @@ export class MyPickupsComponent implements OnInit {
     return PICKUP_OPTION_TRANSLATION_KEY[option] ?? PICKUP_OPTION_TRANSLATION_KEY.pickup;
   }
 
-  private fetchPickups(): void {
+  private buildFilters(): MyPickupsFilters {
+    const statusFilter = this.statusFilter();
+    const groupFilter = this.groupFilter();
+
+    return {
+      garbageGroupId: groupFilter === 'all' ? null : groupFilter,
+      statuses: statusFilter === 'all' ? null : [STATUS_KEY_TO_VALUE[statusFilter]]
+    };
+  }
+
+  private fetchPickups(pageOverride?: number): void {
     this.loading.set(true);
     this.error.set(null);
+    const previousPage = this.currentPage();
+    const targetPage = Math.max(pageOverride ?? previousPage, 1);
+    const filters = this.buildFilters();
 
     this.myPickupsService
-      .getMyPickups(1, this.apiPageSize)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-  switchMap((firstPage: PaginatedResult<MyPickupDto[]>) => {
-          const pager = firstPage?.pager;
-          const initialItems: MyPickupDto[] = Array.isArray(firstPage?.resultModel)
-            ? firstPage.resultModel
-            : [];
-          const totalPages = pager?.totalPages ?? 1;
-
-          if (totalPages <= 1) {
-            return of({ items: initialItems, pager });
-          }
-
-          const requests: ReturnType<MyPickupsService['getMyPickups']>[] = [];
-
-          for (let page = 2; page <= totalPages; page++) {
-            requests.push(this.myPickupsService.getMyPickups(page, this.apiPageSize));
-          }
-
-          if (!requests.length) {
-            return of({ items: initialItems, pager });
-          }
-
-          return forkJoin(requests).pipe(
-            map((responses: PaginatedResult<MyPickupDto[]>[]) => {
-              const combined = responses.reduce<MyPickupDto[]>((acc, res) => {
-                if (Array.isArray(res?.resultModel)) {
-                  acc.push(...res.resultModel);
-                }
-                return acc;
-              }, [...initialItems]);
-
-              let resolvedPager: Pager | null = pager ?? null;
-
-              if (responses.length) {
-                const tailPager = responses[responses.length - 1]?.pager ?? null;
-                if (tailPager) {
-                  resolvedPager = tailPager;
-                }
-              }
-
-              return { items: combined, pager: resolvedPager };
-            })
-          );
-        }),
-        finalize(() => this.loading.set(false))
-      )
+      .getMyPickups(targetPage, this.apiPageSize, filters)
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.loading.set(false)))
       .subscribe({
-        next: (payload: { items: MyPickupDto[]; pager: Pager | null }) => {
-          const mapped = payload.items.map((item) => this.toPortalPickup(item));
+        next: (response: PaginatedResult<MyPickupDto[]>) => {
+          const items = Array.isArray(response?.resultModel) ? response.resultModel : [];
+          const mapped = items.map((item) => this.toPortalPickup(item));
           this.pickups.set(mapped);
-          this.totalCount.set(payload.pager?.totalCount ?? mapped.length);
-          this.currentPage.set(1);
 
-          const uniqueStatuses = STATUS_ORDER.filter((status) =>
-            mapped.some((item) => item.status === status)
-          );
+          const pager = response?.pager ?? null;
+          this.pager.set(pager);
 
-          this.statusOptions.set(uniqueStatuses);
+          const totalItems = pager?.totalCount ?? mapped.length;
+          this.totalCount.set(totalItems);
 
-          const currentStatus = this.statusFilter();
-          if (currentStatus !== 'all' && !uniqueStatuses.includes(currentStatus)) {
-            this.statusFilter.set('all');
+          const resolvedPage = pager?.pageNumber ?? targetPage;
+          this.currentPage.set(resolvedPage);
+
+          if (totalItems === 0 && this.statusFilter() === 'all' && this.groupFilter() === 'all') {
+            this.groupOptions.set([]);
+          } else {
+            this.updateGroupOptions(mapped);
+          }
+
+          if (this.statusFilter() === 'all' && this.groupFilter() === 'all') {
+            this.hasAnyPickups.set(totalItems > 0);
+          } else if (totalItems > 0) {
+            this.hasAnyPickups.set(true);
           }
         },
         error: () => {
           this.error.set('myPickups.loadError');
+          this.currentPage.set(previousPage);
         }
       });
+  }
+
+  private updateGroupOptions(items: PortalPickupItem[]): void {
+    if (!items.length) {
+      return;
+    }
+
+    const existing = new Map<string, GroupOption>();
+
+    for (const option of this.groupOptions()) {
+      existing.set(option.id, option);
+    }
+
+    for (const pickup of items) {
+      if (pickup.groupId) {
+        existing.set(pickup.groupId, {
+          id: pickup.groupId,
+          name: pickup.groupName,
+          isPrivate: pickup.isPrivateGroup
+        });
+      }
+    }
+
+    const options = Array.from(existing.values()).sort((a, b) => a.name.localeCompare(b.name));
+    this.groupOptions.set(options);
   }
 
   private toPortalPickup(dto: MyPickupDto): PortalPickupItem {
