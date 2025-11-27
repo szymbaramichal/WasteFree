@@ -26,7 +26,9 @@ public class GetInboxMessagesQueryHandler(ApplicationDataContext context)
                 Id = x.Id,
                 Title = x.Title,
                 CreatedDateUtc = x.CreatedDateUtc,
-                Body = x.Message
+                Body = x.Message,
+                ActionType = x.ActionType,
+                RelatedEntityId = x.RelatedEntityId
             })
             .OrderByDescending(x => x.CreatedDateUtc)
             .ToListAsync(cancellationToken);

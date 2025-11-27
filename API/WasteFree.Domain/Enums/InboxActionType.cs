@@ -18,5 +18,10 @@ public enum InboxActionType
     /// <summary>
     /// The message relates to making a payment.
     /// </summary>
-    MakePayment
+    MakePayment,
+
+    /// <summary>
+    /// The message is about a garbage order and should open its details.
+    /// </summary>
+    GarbageOrderDetails
 }

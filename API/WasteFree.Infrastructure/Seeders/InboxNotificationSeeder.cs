@@ -29,9 +29,9 @@ public class InboxNotificationSeeder(ApplicationDataContext context)
             new
             {
                 Username = "garbageadmin2",
-                Title = "Nowy członek oczekuje",
-                Message = "test3 oczekuje na zatwierdzenie dołączenia do grupy Warszawa Mokotów ZeroWaste.",
-                ActionType = InboxActionType.GroupInvitation,
+                Title = "Aktualizacja zlecenia",
+                Message = "Zlecenie odbioru nr WF-2043 zostało zaktualizowane. Sprawdź szczegóły.",
+                ActionType = InboxActionType.GarbageOrderDetails,
                 RelatedEntityId = (Guid?)Guid.Parse("66666666-6666-6666-6666-666666666666")
             }
         };
