@@ -1,5 +1,6 @@
 ﻿import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
@@ -105,7 +106,7 @@ const DEFAULT_ITEMS_PER_PAGE = 10;
 @Component({
   selector: 'app-my-pickups',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe, FormsModule],
   templateUrl: './my-pickups.component.html',
   styleUrls: ['./my-pickups.component.css']
 })

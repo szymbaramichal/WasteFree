@@ -39,9 +39,11 @@
               <label class="form-label small fw-semibold filter-label" for="statusFilter">{{ 'myPickups.filters.status.label' | translate }}</label>
               <select
                 id="statusFilter"
+                name="statusFilter"
                 class="form-select form-select-sm"
-                [value]="statusFilter()"
-                (change)="setStatusFilter($any($event.target).value)"
+                [ngModel]="statusFilter()"
+                (ngModelChange)="setStatusFilter($event)"
+                [ngModelOptions]="{ standalone: true }"
                 [attr.aria-label]="'myPickups.filters.status.label' | translate"
               >
                 <option value="all">{{ 'myPickups.filters.status.all' | translate }}</option>
@@ -54,9 +56,11 @@
               <label class="form-label small fw-semibold filter-label" for="groupFilter">{{ 'myPickups.filters.group.label' | translate }}</label>
               <select
                 id="groupFilter"
+                name="groupFilter"
                 class="form-select form-select-sm"
-                [value]="groupFilter()"
-                (change)="setGroupFilter($any($event.target).value)"
+                [ngModel]="groupFilter()"
+                (ngModelChange)="setGroupFilter($event)"
+                [ngModelOptions]="{ standalone: true }"
                 [attr.aria-label]="'myPickups.filters.group.label' | translate"
               >
                 <option value="all">{{ 'myPickups.filters.group.all' | translate }}</option>
