@@ -302,6 +302,7 @@
   "pickupOrder.validation.containerSize": "Wybierz rozmiar kontenera, aby kontynuować.",
   "pickupOrder.validation.dropOffDate": "Wybierz datę podstawienia kontenera.",
   "pickupOrder.validation.dropOffTime": "Wybierz godzinę podstawienia kontenera.",
+  "pickupOrder.validation.scheduleSequence": "Data odbioru nie może być wcześniejsza niż data podstawienia.",
   "pickupOrder.step.details.title": "Szczegóły wywozu",
   "pickupOrder.step.details.lead": "Opcjonalnie zaznacz priorytet lub poproś ekipę o pomoc w wyniesieniu odpadów.",
   "pickupOrder.step.details.placeholder": "Skonfiguruj dodatkowe usługi, takie jak priorytetowy odbiór czy pomoc przy wyniesieniu.",

@@ -413,15 +413,18 @@
 													<input
 														matInput
 														[matDatepicker]="pickupPicker"
-														[min]="minPickupDate"
+														[min]="pickupDateMin()"
 														id="pickupDate"
 														formControlName="pickupDate"
 													/>
 													<mat-hint>{{ 'pickupOrder.step.address.dateHint' | translate }}</mat-hint>
 													<mat-datepicker-toggle matIconSuffix [for]="pickupPicker"></mat-datepicker-toggle>
 													<mat-datepicker #pickupPicker></mat-datepicker>
-													<mat-error *ngIf="pickupDateCtrl.invalid && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
+													<mat-error *ngIf="pickupDateCtrl.hasError('required') && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
 														{{ 'pickupOrder.validation.date' | translate }}
+													</mat-error>
+													<mat-error *ngIf="form.hasError('pickupBeforeDropOff') && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
+														{{ 'pickupOrder.validation.scheduleSequence' | translate }}
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -437,8 +440,11 @@
 														</mat-option>
 													</mat-select>
 													<mat-hint>{{ 'pickupOrder.step.address.timeHint' | translate }}</mat-hint>
-													<mat-error *ngIf="pickupTimeCtrl.invalid && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
+													<mat-error *ngIf="pickupTimeCtrl.hasError('required') && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
 														{{ 'pickupOrder.validation.time' | translate }}
+													</mat-error>
+													<mat-error *ngIf="form.hasError('pickupBeforeDropOff') && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
+														{{ 'pickupOrder.validation.scheduleSequence' | translate }}
 													</mat-error>
 												</mat-form-field>
 											</div>
