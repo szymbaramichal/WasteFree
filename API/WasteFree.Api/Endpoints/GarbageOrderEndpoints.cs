@@ -82,7 +82,7 @@ public static class GarbageOrderEndpoints
             .WithTags("GarbageOrders")
             .WithDescription("Pay outstanding utilization fee share to the assigned garbage admin.");
 
-        app.MapGet("/garbage-orders/my", GetUserGarbageOrdersAsync)
+        app.MapPost("/garbage-orders/my", GetUserGarbageOrdersAsync)
             .RequireAuthorization(PolicyNames.UserPolicy)
             .WithOpenApi()
             .Produces<PaginatedResult<ICollection<GarbageOrderDto>>>()
@@ -286,13 +286,18 @@ public static class GarbageOrderEndpoints
     private static async Task<IResult> GetUserGarbageOrdersAsync(
         [FromQuery] int pageNumber,
         [FromQuery] int pageSize,
+        [FromBody] GetUserGarbageOrdersRequest request,
         ICurrentUserService currentUserService,
         IMediator mediator,
         IStringLocalizer stringLocalizer,
         CancellationToken cancellationToken)
     {
         var pager = new Pager(pageNumber <= 0 ? 1 : pageNumber, pageSize <= 0 ? 20 : pageSize);
-        var query = new GetUserGarbageOrdersQuery(currentUserService.UserId, pager);
+        var query = new GetUserGarbageOrdersQuery(
+            currentUserService.UserId,
+            pager,
+            request.GarbageGroupId,
+            request.Statuses);
 
         var result = await mediator.SendAsync(query, cancellationToken);
 
@@ -434,6 +439,22 @@ public record GetGarbageOrdersRequest
 
     /// <summary>
     /// Array of order statuses to filter by. If empty, all statuses are returned.
+    /// </summary>
+    public GarbageOrderStatus[] Statuses { get; init; } = [];
+}
+
+/// <summary>
+/// Request parameters for retrieving current user's garbage orders.
+/// </summary>
+public record GetUserGarbageOrdersRequest
+{
+    /// <summary>
+    /// Optional garbage group filter.
+    /// </summary>
+    public Guid? GarbageGroupId { get; init; }
+
+    /// <summary>
+    /// Order statuses to include. Empty returns all statuses.
     /// </summary>
     public GarbageOrderStatus[] Statuses { get; init; } = [];
 }

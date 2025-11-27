@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WasteFree.Application.Abstractions.Messaging;
 using WasteFree.Application.Features.GarbageOrders.Dtos;
 using WasteFree.Domain.Constants;
+using WasteFree.Domain.Enums;
 using WasteFree.Domain.Interfaces;
 using WasteFree.Domain.Models;
 using WasteFree.Infrastructure;
@@ -9,7 +10,11 @@ using WasteFree.Infrastructure.Extensions;
 
 namespace WasteFree.Application.Features.GarbageOrders;
 
-public record GetUserGarbageOrdersQuery(Guid UserId, Pager Pager) : IRequest<ICollection<GarbageOrderDto>>;
+public record GetUserGarbageOrdersQuery(
+    Guid UserId,
+    Pager Pager,
+    Guid? GarbageGroupId,
+    GarbageOrderStatus[]? Statuses) : IRequest<ICollection<GarbageOrderDto>>;
 
 public class GetUserGarbageOrdersQueryHandler(ApplicationDataContext context, IBlobStorageService blobStorageService)
     : IRequestHandler<GetUserGarbageOrdersQuery, ICollection<GarbageOrderDto>>
@@ -24,7 +29,18 @@ public class GetUserGarbageOrdersQueryHandler(ApplicationDataContext context, IB
             .Include(order => order.AssignedGarbageAdmin)
             .Include(order => order.GarbageOrderUsers)
                 .ThenInclude(user => user.User)
-            .OrderByDescending(order => order.PickupDate);
+            .OrderByDescending(order => order.PickupDate)
+            .AsQueryable();
+
+        if (request.GarbageGroupId.HasValue)
+        {
+            ordersQuery = ordersQuery.Where(order => order.GarbageGroupId == request.GarbageGroupId.Value);
+        }
+
+        if (request.Statuses?.Any() == true)
+        {
+            ordersQuery = ordersQuery.Where(order => request.Statuses.Contains(order.GarbageOrderStatus));
+        }
 
         var totalCount = await ordersQuery.CountAsync(cancellationToken);
 
