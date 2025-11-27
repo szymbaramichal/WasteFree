@@ -311,6 +311,7 @@
   "pickupOrder.validation.containerSize": "Select a container size to continue.",
   "pickupOrder.validation.dropOffDate": "Choose the container delivery date.",
   "pickupOrder.validation.dropOffTime": "Choose the container delivery time.",
+  "pickupOrder.validation.scheduleSequence": "Pickup date cannot be earlier than the drop-off date.",
   "pickupOrder.step.details.title": "Pickup details",
   "pickupOrder.step.details.lead": "Optionally flag this pickup as high priority or request help with carrying waste.",
   "pickupOrder.step.details.placeholder": "Configure additional services like priority handling or collecting assistance.",
