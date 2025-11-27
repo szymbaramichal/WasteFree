@@ -132,13 +132,16 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
             baseCost = 0m;
         }
 
-        garbageOrder.UtilizationFeeAmount = normalizedUtilizationFee;
-        garbageOrder.UtilizationProofBlobName = blobName;
-        garbageOrder.UtilizationFeeSubmittedDateUtc = DateTime.UtcNow;
-        garbageOrder.AdditionalUtilizationFeeAmount = null;
-        garbageOrder.GarbageOrderStatus = GarbageOrderStatus.WaitingForUtilizationFee;
+        var prepaidPortionToPayout = decimal.Round(
+            Math.Min(normalizedUtilizationFee, prepaidUtilizationFee),
+            2,
+            MidpointRounding.AwayFromZero);
+        var initialPayoutAmount = decimal.Round(
+            baseCost + prepaidPortionToPayout,
+            2,
+            MidpointRounding.AwayFromZero);
 
-        if (normalizedUtilizationFee <= prepaidUtilizationFee)
+        if (initialPayoutAmount > 0m)
         {
             var adminWallet = await context.Wallets
                 .FirstOrDefaultAsync(w => w.UserId == request.GarbageAdminId, cancellationToken);
@@ -148,20 +151,26 @@ public sealed class SubmitGarbageOrderUtilizationFeeCommandHandler(
                 return Result<GarbageOrderDto>.Failure(ApiErrorCodes.GenericError, HttpStatusCode.BadRequest);
             }
 
-            if (normalizedUtilizationFee > 0m)
+            var payoutAmount = Math.Round((double)initialPayoutAmount, 2, MidpointRounding.AwayFromZero);
+            adminWallet.Funds += payoutAmount;
+
+            context.WalletTransactions.Add(new WalletTransaction
             {
-                var adminPayout = Math.Round((double)normalizedUtilizationFee, 2, MidpointRounding.AwayFromZero);
-                adminWallet.Funds += adminPayout;
+                Id = Guid.CreateVersion7(),
+                WalletId = adminWallet.Id,
+                Amount = payoutAmount,
+                TransactionType = TransactionType.GarbageIncome
+            });
+        }
 
-                context.WalletTransactions.Add(new WalletTransaction
-                {
-                    Id = Guid.CreateVersion7(),
-                    WalletId = adminWallet.Id,
-                    Amount = adminPayout,
-                    TransactionType = TransactionType.GarbageIncome
-                });
-            }
+        garbageOrder.UtilizationFeeAmount = normalizedUtilizationFee;
+        garbageOrder.UtilizationProofBlobName = blobName;
+        garbageOrder.UtilizationFeeSubmittedDateUtc = DateTime.UtcNow;
+        garbageOrder.AdditionalUtilizationFeeAmount = null;
+        garbageOrder.GarbageOrderStatus = GarbageOrderStatus.WaitingForUtilizationFee;
 
+        if (normalizedUtilizationFee <= prepaidUtilizationFee)
+        {
             var refundAmount = decimal.Round(prepaidUtilizationFee - normalizedUtilizationFee, 2, MidpointRounding.AwayFromZero);
             if (refundAmount > 0m)
             {
