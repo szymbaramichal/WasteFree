@@ -153,6 +153,7 @@
   "inbox.emptyFiltered": "No notifications for selected filters",
   "inbox.markRead": "Mark as read",
   "inbox.clearAll": "Clear all",
+  "inbox.open": "Open details",
   "inbox.status.unread": "New",
   "inbox.status.read": "Read"
   ,
