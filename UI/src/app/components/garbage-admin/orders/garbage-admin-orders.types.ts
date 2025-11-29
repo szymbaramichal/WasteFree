@@ -6,6 +6,9 @@ export interface GarbageAdminOrderItem {
   orderNumber: string;
   schedule: string | null;
   scheduleType: 'pickup' | 'dropOff' | 'none';
+  dropOffSchedule: string | null;
+  pickupSchedule: string | null;
+  isContainer: boolean;
   pickupOptionKey: string;
   containerSizeKey: string | null;
   statusKey: string;

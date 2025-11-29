@@ -224,6 +224,8 @@
   "garbageAdminOrders.group.private": "Zamówienie indywidualne",
   "garbageAdminOrders.summary.pickupOption": "Rodzaj wywozu",
   "garbageAdminOrders.summary.schedule": "Termin",
+  "garbageAdminOrders.summary.dropOff": "Termin podstawienia kontenera",
+  "garbageAdminOrders.summary.pickup": "Termin odbioru kontenera",
   "garbageAdminOrders.summary.containerSize": "Kontener",
   "garbageAdminOrders.summary.cost": "Koszt zlecenia",
   "garbageAdminOrders.summary.distance": "Dystans",
