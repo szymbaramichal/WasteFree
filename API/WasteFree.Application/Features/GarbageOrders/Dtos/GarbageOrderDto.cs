@@ -1,5 +1,6 @@
 using WasteFree.Domain.Entities;
 using WasteFree.Domain.Enums;
+using WasteFree.Domain.Models;
 
 namespace WasteFree.Application.Features.GarbageOrders.Dtos;
 
@@ -35,6 +36,7 @@ public class GarbageOrderDto
     public DateTime? UtilizationFeeSubmittedDateUtc { get; set; }
     public double? DistanceInKilometers { get; set; }
     public ICollection<GarbageOrderUserDto> Users { get; set; } = [];
+    public Address GarbageGroupAddress { get; set; }
 }
 
 public static class GarbageOrderDtoExtensions
@@ -64,6 +66,7 @@ public static class GarbageOrderDtoExtensions
             UtilizationProofBlobName = garbageOrder.UtilizationProofBlobName,
             UtilizationFeeSubmittedDateUtc = garbageOrder.UtilizationFeeSubmittedDateUtc,
             DistanceInKilometers = distanceInKilometers,
+            GarbageGroupAddress = garbageOrder.GarbageGroup?.Address ?? new Address(),
             Users = garbageOrder.GarbageOrderUsers.Select(x => new GarbageOrderUserDto
             {
                 UserId = x.UserId,
