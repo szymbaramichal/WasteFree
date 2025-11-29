@@ -10,7 +10,8 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import {
-  GarbageAdminOrderDto
+  GarbageAdminOrderDto,
+  PickupOption
 } from '@app/_models/garbage-orders';
 import { Address } from '@app/_models/address';
 import { Pager, PaginatedResult } from '@app/_models/result';
@@ -223,10 +224,13 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
       dto.containerSize === null || dto.containerSize === undefined
         ? null
         : CONTAINER_SIZE_KEYS[dto.containerSize] ?? null;
-    const schedule = dto.pickupDate ?? dto.dropOffDate ?? null;
-    const scheduleType: GarbageAdminOrderItem['scheduleType'] = dto.pickupDate
+    const dropOffSchedule = dto.dropOffDate ?? null;
+    const pickupSchedule = dto.pickupDate ?? null;
+    const isContainer = dto.pickupOption === PickupOption.Container;
+    const schedule = pickupSchedule ?? dropOffSchedule;
+    const scheduleType: GarbageAdminOrderItem['scheduleType'] = pickupSchedule
       ? 'pickup'
-      : dto.dropOffDate
+      : dropOffSchedule
       ? 'dropOff'
       : 'none';
 
@@ -236,6 +240,9 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
       orderNumber: this.formatOrderNumber(dto.id),
       schedule,
       scheduleType,
+      dropOffSchedule,
+      pickupSchedule,
+      isContainer,
       pickupOptionKey,
       containerSizeKey,
       statusKey,

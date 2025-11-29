@@ -232,6 +232,8 @@
   "garbageAdminOrders.group.private": "Private order",
   "garbageAdminOrders.summary.pickupOption": "Pickup option",
   "garbageAdminOrders.summary.schedule": "Schedule",
+  "garbageAdminOrders.summary.dropOff": "Container delivery",
+  "garbageAdminOrders.summary.pickup": "Container pickup",
   "garbageAdminOrders.summary.containerSize": "Container size",
   "garbageAdminOrders.summary.cost": "Order cost",
   "garbageAdminOrders.summary.distance": "Distance",
