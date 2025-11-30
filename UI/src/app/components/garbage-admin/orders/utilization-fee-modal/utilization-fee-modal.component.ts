@@ -16,7 +16,7 @@ export class UtilizationFeeModalComponent implements OnChanges {
   @Input() error: string | null = null;
 
   @Output() submitFee = new EventEmitter<{ amount: number; proof: File }>();
-  @Output() cancel = new EventEmitter<void>();
+  @Output() dismiss = new EventEmitter<void>();
 
   amount: number | null = null;
   proof: File | null = null;
@@ -29,9 +29,7 @@ export class UtilizationFeeModalComponent implements OnChanges {
 
   onFileChange(event: Event) {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.proof = input.files[0];
-    }
+    this.proof = input.files && input.files.length > 0 ? input.files[0] : null;
   }
 
   onSubmit() {
@@ -40,8 +38,8 @@ export class UtilizationFeeModalComponent implements OnChanges {
     }
   }
 
-  onCancel() {
-    this.cancel.emit();
+  onDismiss() {
+    this.dismiss.emit();
   }
 
   private reset() {
