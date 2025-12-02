@@ -100,6 +100,34 @@
                 {{ 'auth.address.streetNumberRequired' | translate }}
               </div>
             </div>
+
+            <section class="preferences-section" *ngIf="isGarbageAdminRole">
+              <header class="preferences-header">
+                <h3 id="preferences-title" class="preferences-title">{{ 'auth.preferences.title' | translate }}</h3>
+                <p class="preferences-lead">{{ 'auth.preferences.lead' | translate }}</p>
+              </header>
+
+              <div class="preferences-grid" role="group" [attr.aria-labelledby]="'preferences-title'">
+                <label class="preference-card" *ngFor="let option of pickupOptionChoices">
+                  <input
+                    type="checkbox"
+                    [checked]="isPickupOptionSelected(option.value)"
+                    (change)="onPickupOptionToggle(option.value, $event)"
+                  />
+                  <span class="preference-content">
+                    <span class="preference-label">{{ option.label | translate }}</span>
+                    <small class="preference-desc">{{ option.description | translate }}</small>
+                  </span>
+                </label>
+              </div>
+
+              <div
+                *ngIf="pickupOptionsControl.invalid && (pickupOptionsControl.dirty || pickupOptionsControl.touched)"
+                class="form-helper error-text"
+              >
+                {{ 'auth.preferences.validation' | translate }}
+              </div>
+            </section>
           </div>
         </ng-container>
       </ng-container>

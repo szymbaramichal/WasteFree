@@ -39,6 +39,19 @@ public class RegisterUserRequestValidator : AbstractValidator<RegisterUserReques
             .Must(lang => lang.Equals(nameof(LanguagePreference.English), StringComparison.InvariantCultureIgnoreCase) || 
                           lang.Equals(nameof(LanguagePreference.Polish), StringComparison.InvariantCultureIgnoreCase))
             .WithMessage(localizer[ValidationErrorCodes.InvalidLang]);
+
+        When(x => x.Role.Equals(nameof(UserRole.GarbageAdmin), StringComparison.InvariantCultureIgnoreCase), () =>
+        {
+            RuleFor(x => x.PickupOptions)
+                .NotNull()
+                .WithMessage(localizer[ValidationErrorCodes.PickupOptionsRequired])
+                .Must(options => options!.Any())
+                .WithMessage(localizer[ValidationErrorCodes.PickupOptionsRequired]);
+
+            RuleForEach(x => x.PickupOptions)
+                .Must(option => Enum.IsDefined(typeof(PickupOption), option))
+                .WithMessage(localizer[ValidationErrorCodes.PickupOptionInvalid]);
+        });
     }
 }
 

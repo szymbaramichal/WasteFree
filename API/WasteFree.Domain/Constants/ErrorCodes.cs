@@ -52,6 +52,7 @@ public static class ValidationErrorCodes
     
     public const string InvalidPaymentCode = "INVALID_PAYMENT_CODE";
     public const string PickupOptionInvalid = "ERR_PICKUP_OPTION_INVALID";
+    public const string PickupOptionsRequired = "ERR_PICKUP_OPTIONS_REQUIRED";
     public const string ContainerSizeRequired = "ERR_CONTAINER_SIZE_REQUIRED";
     public const string PickupDateRequired = "ERR_PICKUP_DATE_REQUIRED";
     public const string PickupDateInPast = "ERR_PICKUP_DATE_IN_PAST";
