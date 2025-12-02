@@ -60,8 +60,8 @@
             <label for="reg-language">{{ 'auth.languagePreference' | translate }}</label>
             <div class="language-select">
               <select id="reg-language" formControlName="languagePreference" [attr.aria-label]="'auth.languagePreference' | translate">
-                <option value="English">{{ 'language.english' | translate }} 🇬🇧</option>
-                <option value="Polish">{{ 'language.polish' | translate }} 🇵🇱</option>
+                <option value="English">{{ 'language.english' | translate }}</option>
+                <option value="Polish">{{ 'language.polish' | translate }}</option>
               </select>
               <div class="language-flag">
                 <img [src]="(registerForm.get('languagePreference')?.value === 'Polish') ? 'assets/images/flag-pl.svg' : 'assets/images/flag-en.svg'" alt="flag" />
