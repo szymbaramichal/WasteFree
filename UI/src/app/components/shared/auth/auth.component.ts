@@ -37,11 +37,9 @@ export class AuthComponent {
   showActivationSection = false;
   registerStep = 1;
 
-  private readonly totalRegisterSteps = 2;
-  private readonly registerStepControlPaths: string[][] = [
-    ['username', 'email', 'password', 'role'],
-    ['languagePreference', 'address.city', 'address.postalCode', 'address.street', 'pickupOptions']
-  ];
+  private get totalSteps(): number {
+    return this.isGarbageAdminRole ? 3 : 2;
+  }
 
   loginForm: FormGroup;
   registerForm: FormGroup;
@@ -228,7 +226,7 @@ export class AuthComponent {
   }
 
   get isRegisterLastStep(): boolean {
-    return this.registerStep === this.totalRegisterSteps;
+    return this.registerStep === this.totalSteps;
   }
 
   get isCurrentRegisterStepValid(): boolean {
@@ -245,7 +243,7 @@ export class AuthComponent {
       this.registerForm.updateValueAndValidity({ onlySelf: false, emitEvent: true });
       return;
     }
-    this.registerStep = Math.min(this.registerStep + 1, this.totalRegisterSteps);
+    this.registerStep = Math.min(this.registerStep + 1, this.totalSteps);
   }
 
   goToPreviousRegisterStep() {
@@ -262,7 +260,23 @@ export class AuthComponent {
   }
 
   private getControlPathsForCurrentStep(): string[] {
-    return this.registerStepControlPaths[this.registerStep - 1] ?? [];
+    return this.getControlPathsForStep(this.registerStep);
+  }
+
+  private getControlPathsForStep(step: number): string[] {
+    if (step === 1) {
+      return ['username', 'email', 'password', 'role'];
+    }
+
+    if (step === 2) {
+      return ['languagePreference', 'address.city', 'address.postalCode', 'address.street'];
+    }
+
+    if (step === 3 && this.isGarbageAdminRole) {
+      return ['pickupOptions'];
+    }
+
+    return [];
   }
 
   private loadCities(force = false) {
@@ -381,6 +395,10 @@ export class AuthComponent {
     return this.registerForm.get('role')?.value === 'GarbageAdmin';
   }
 
+  get registerStepSequence(): number[] {
+    return Array.from({ length: this.totalSteps }, (_value, index) => index + 1);
+  }
+
   isPickupOptionSelected(option: PickupOption): boolean {
     return (this.pickupOptionsControl.value ?? []).includes(option);
   }
@@ -392,9 +410,7 @@ export class AuthComponent {
       : current.filter((value) => value !== option);
     this.pickupOptionsControl.setValue(next);
     this.pickupOptionsControl.markAsDirty();
-    if (!selected) {
-      this.pickupOptionsControl.markAsTouched();
-    }
+    this.pickupOptionsControl.markAsTouched();
     this.pickupOptionsControl.updateValueAndValidity({ emitEvent: false });
   }
 
@@ -419,5 +435,9 @@ export class AuthComponent {
     }
 
     pickupControl.updateValueAndValidity({ emitEvent: false });
+
+    if (this.registerStep > this.totalSteps) {
+      this.registerStep = this.totalSteps;
+    }
   }
 }
