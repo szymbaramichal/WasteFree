@@ -15,8 +15,14 @@ using WasteFree.Domain.Models;
 
 namespace WasteFree.Application.Features.Auth;
 
-public record RegisterUserCommand(string Email, string Username, string Password, string Role, 
-    string LanguagePreference, Address Address) 
+public record RegisterUserCommand(
+    string Email,
+    string Username,
+    string Password,
+    string Role,
+    string LanguagePreference,
+    Address Address,
+    IEnumerable<int>? PickupOptions) 
     : IRequest<UserDto>;
 
 public class RegisterUserCommandHandler(ApplicationDataContext context, 
@@ -40,19 +46,34 @@ public class RegisterUserCommandHandler(ApplicationDataContext context,
             return Result<UserDto>.Failure(ApiErrorCodes.EmailTaken, HttpStatusCode.BadRequest);
         
         var hashAndSalt = PasswordHasher.GeneratePasswordHashAndSalt(command.Password);
-        
+
+        var targetRole = Enum.TryParse<UserRole>(command.Role, true, out var parsedRole)
+            ? parsedRole
+            : UserRole.User;
+        var language = Enum.TryParse<LanguagePreference>(command.LanguagePreference, true, out var parsedLanguage)
+            ? parsedLanguage
+            : LanguagePreference.English;
+
+        var resolvedPickupOptions = targetRole == UserRole.GarbageAdmin
+            ? (command.PickupOptions ?? Array.Empty<int>())
+                .Where(option => Enum.IsDefined(typeof(PickupOption), option))
+                .Select(option => (PickupOption)option)
+                .Distinct()
+                .ToArray()
+            : Array.Empty<PickupOption>();
+
         var newUser = new User {
             Id = Guid.CreateVersion7(),
             Email = command.Email,
             PasswordHash = hashAndSalt.passwordHash,
             PasswordSalt = hashAndSalt.passwordSalt,
             Username = command.Username,
-            Role = Enum.TryParse<UserRole>(command.Role, true, out var role) 
-                ? role : UserRole.User,
-            LanguagePreference= Enum.TryParse<LanguagePreference>(command.LanguagePreference, true, out var language) 
-                ? language : LanguagePreference.English,
+            Role = targetRole,
+            LanguagePreference = language,
             Address = command.Address
         };
+
+        newUser.PickupOptionsList = resolvedPickupOptions;
         
         // Set false for garbageAdmin
         newUser.ConsentsAgreed = newUser.Role == UserRole.User;

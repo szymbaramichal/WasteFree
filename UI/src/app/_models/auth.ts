@@ -9,4 +9,5 @@ export interface RegisterRequest {
   role: RegisterRole;
   languagePreference: string;
   address: Address;
+  pickupOptions?: number[];
 }
