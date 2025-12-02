@@ -22,9 +22,10 @@
 
     <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
       <div class="step-indicator" role="group" [attr.aria-label]="'auth.register' | translate">
-        <div class="step-circle" [class.active]="registerStep === 1" [class.completed]="registerStep > 1">1</div>
-        <div class="step-bar" [class.completed]="registerStep > 1"></div>
-        <div class="step-circle" [class.active]="registerStep === 2" [class.completed]="registerStep === 2">2</div>
+        <ng-container *ngFor="let step of registerStepSequence; let last = last">
+          <div class="step-circle" [class.active]="registerStep === step" [class.completed]="registerStep > step">{{ step }}</div>
+          <div *ngIf="!last" class="step-bar" [class.completed]="registerStep > step"></div>
+        </ng-container>
       </div>
 
       <ng-container [ngSwitch]="registerStep">
@@ -101,6 +102,11 @@
               </div>
             </div>
 
+          </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="3">
+          <div class="step-panel">
             <section class="preferences-section" *ngIf="isGarbageAdminRole">
               <header class="preferences-header">
                 <h3 id="preferences-title" class="preferences-title">{{ 'auth.preferences.title' | translate }}</h3>
