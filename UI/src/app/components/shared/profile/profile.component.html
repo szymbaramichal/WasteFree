@@ -94,7 +94,7 @@
                         <span class="address-line" *ngIf="p.address?.street">{{ p.address.street }}</span>
                         <span class="address-line" *ngIf="p.address?.postalCode || p.address?.city">
                           <span *ngIf="p.address?.postalCode">{{ p.address.postalCode }}</span>
-                          <span *ngIf="p.address?.city" class="address-city">{{ p.address.city | translate }}</span>
+                          <span *ngIf="p.address?.city" class="address-city">{{ p.address.city | localizedCity }}</span>
                         </span>
                       </div>
                     </ng-container>
@@ -114,7 +114,7 @@
                               <path d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" fill="currentColor"/>
                             </svg>
                             <select id="profile-city" class="form-select city-select" formControlName="city">
-                              <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                              <option *ngFor="let city of cities" [value]="city">{{ city | localizedCity }}</option>
                             </select>
                           </div>
                           <div class="form-text text-danger" *ngIf="addressForm.get('city')?.invalid && addressForm.get('city')?.touched">

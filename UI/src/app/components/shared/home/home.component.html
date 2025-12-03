@@ -71,7 +71,7 @@
       <article class="city-card" *ngFor="let city of cities; index as idx; trackBy: trackCity">
         <div class="city-card__halo"></div>
         <div class="city-chip">{{ 'home.supportedCities.cityPrefix' | translate }} {{ idx + 1 }}</div>
-        <h3>{{ city | translate }}</h3>
+        <h3>{{ city | localizedCity }}</h3>
         <p>{{ 'home.supportedCities.cityTagline' | translate }}</p>
       </article>
     </div>

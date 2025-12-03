@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators, ReactiveFormsModule } 
 import { CommonModule } from '@angular/common';
 import { CurrentUserService } from '@app/services/current-user.service';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { LocalizedCityPipe } from '@app/pipes/localized-city.pipe';
 import { Router, RouterModule } from '@angular/router';
 import { TranslationService } from '@app/services/translation.service';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ import { WalletService } from '@app/services/wallet.service';
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, LocalizedCityPipe, RouterModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']
 })

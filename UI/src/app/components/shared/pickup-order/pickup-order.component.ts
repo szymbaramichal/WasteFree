@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { LocalizedCityPipe } from '@app/pipes/localized-city.pipe';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -136,6 +137,7 @@ class PickupOrderDateAdapter extends NativeDateAdapter {
   imports: [
     CommonModule,
     TranslatePipe,
+    LocalizedCityPipe,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
