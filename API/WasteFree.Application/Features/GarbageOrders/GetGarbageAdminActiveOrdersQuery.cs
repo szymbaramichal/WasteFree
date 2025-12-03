@@ -38,7 +38,8 @@ public sealed class GetGarbageAdminActiveOrdersQueryHandler(ApplicationDataConte
             .Where(order => 
                 order.GarbageOrderStatus == GarbageOrderStatus.WaitingForUtilizationFee
                 || order.GarbageOrderStatus == GarbageOrderStatus.WaitingForPickup)
-            .OrderBy(order => order.PickupDate)
+            .OrderByDescending(order => order.IsHighPriority)
+            .ThenBy(order => order.PickupDate)
             .ThenBy(order => order.CreatedDateUtc);
 
         var totalCount = await ordersQuery.CountAsync(cancellationToken);

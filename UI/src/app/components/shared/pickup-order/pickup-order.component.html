@@ -43,13 +43,18 @@
 									class="option-card"
 									*ngFor="let option of serviceOptions; trackBy: trackOptionByValue"
 									[class.option-card--active]="serviceTypeCtrl.value === option.value"
+									[class.option-card--disabled]="option.disabled"
 								>
+									<div class="option-card__badge" *ngIf="option.disabled">
+										{{ 'common.soon' | translate }}
+									</div>
 									<input
 										type="radio"
 										class="option-card__input"
 										formControlName="serviceType"
 										name="serviceType"
 										[value]="option.value"
+										[attr.disabled]="option.disabled ? '' : null"
 									/>
 									<div class="option-card__icon" aria-hidden="true">
 										<img [src]="option.icon" alt="" class="option-card__image" />

@@ -34,6 +34,7 @@ type ServiceOption = {
   titleKey: string;
   descriptionKey: string;
   icon: string;
+  disabled?: boolean;
 };
 
 type StepConfig = {
@@ -189,7 +190,8 @@ export class PickupOrderComponent implements OnInit {
       value: PickupOption.SpecialOrder,
       titleKey: 'pickupOrder.options.special.title',
       descriptionKey: 'pickupOrder.options.special.description',
-      icon: '/assets/images/pickup-special.svg'
+      icon: '/assets/images/pickup-special.svg',
+      disabled: true
     }
   ];
 
