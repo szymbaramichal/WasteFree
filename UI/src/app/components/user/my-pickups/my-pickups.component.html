@@ -33,15 +33,17 @@
       </div>
 
       <ng-container *ngIf="!loading()">
-        <ng-container *ngIf="pickups().length; else emptyState">
+        <ng-container *ngIf="hasAnyPickups() || pickups().length">
           <div class="my-pickups__filters">
             <div class="filter-control">
               <label class="form-label small fw-semibold filter-label" for="statusFilter">{{ 'myPickups.filters.status.label' | translate }}</label>
               <select
                 id="statusFilter"
+                name="statusFilter"
                 class="form-select form-select-sm"
-                [value]="statusFilter()"
-                (change)="setStatusFilter($any($event.target).value)"
+                [ngModel]="statusFilter()"
+                (ngModelChange)="setStatusFilter($event)"
+                [ngModelOptions]="{ standalone: true }"
                 [attr.aria-label]="'myPickups.filters.status.label' | translate"
               >
                 <option value="all">{{ 'myPickups.filters.status.all' | translate }}</option>
@@ -54,9 +56,11 @@
               <label class="form-label small fw-semibold filter-label" for="groupFilter">{{ 'myPickups.filters.group.label' | translate }}</label>
               <select
                 id="groupFilter"
+                name="groupFilter"
                 class="form-select form-select-sm"
-                [value]="groupFilter()"
-                (change)="setGroupFilter($any($event.target).value)"
+                [ngModel]="groupFilter()"
+                (ngModelChange)="setGroupFilter($event)"
+                [ngModelOptions]="{ standalone: true }"
                 [attr.aria-label]="'myPickups.filters.group.label' | translate"
               >
                 <option value="all">{{ 'myPickups.filters.group.all' | translate }}</option>
@@ -66,8 +70,8 @@
               </select>
             </div>
           </div>
-
-          <ng-container *ngIf="filteredPickups().length; else filteredEmpty">
+        </ng-container>
+        <ng-container *ngIf="pickups().length; else filteredEmpty">
             <div class="table-responsive my-pickups__table-wrapper">
               <table class="table align-middle mb-0">
                 <thead>
@@ -82,7 +86,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let pickup of paginatedPickups(); trackBy: trackByOrder">
+                  <tr *ngFor="let pickup of pickups(); trackBy: trackByOrder">
                     <td>
                       <span class="order-number">#{{ orderCode(pickup) }}</span>
                     </td>
@@ -132,9 +136,9 @@
               </table>
             </div>
 
-            <div class="my-pickups__pagination" *ngIf="filteredPickups().length">
+            <div class="my-pickups__pagination" *ngIf="totalCount()">
               <div class="my-pickups__pagination-info small text-muted">
-                {{ 'myPickups.pagination.showingLabel' | translate }} {{ pageStartIndex() + 1 }}-{{ pageEndIndex() }} {{ 'myPickups.pagination.ofLabel' | translate }} {{ filteredPickups().length }} {{ 'myPickups.pagination.itemsLabel' | translate }}
+                {{ 'myPickups.pagination.showingLabel' | translate }} {{ totalCount() === 0 ? 0 : pageStartIndex() + 1 }}-{{ pageEndIndex() }} {{ 'myPickups.pagination.ofLabel' | translate }} {{ totalCount() }} {{ 'myPickups.pagination.itemsLabel' | translate }}
               </div>
               <div class="my-pickups__pagination-controls" *ngIf="totalPages() > 1">
                 <button type="button" class="page-btn" (click)="previousPage()" [disabled]="currentPage() === 1">
@@ -161,18 +165,19 @@
                 </button>
               </div>
             </div>
-          </ng-container>
         </ng-container>
       </ng-container>
 
       <ng-template #filteredEmpty>
-        <div class="empty-state text-center text-muted my-pickups__empty-filtered">
-          <div class="empty-visual">
-            <i class="bi bi-funnel"></i>
+        <ng-container *ngIf="hasAnyPickups(); else emptyState">
+          <div class="empty-state text-center text-muted my-pickups__empty-filtered">
+            <div class="empty-visual">
+              <i class="bi bi-funnel"></i>
+            </div>
+            <p class="fw-semibold mb-1">{{ 'myPickups.empty.filtered' | translate }}</p>
+            <small class="opacity-75">{{ 'myPickups.empty.filteredHint' | translate }}</small>
           </div>
-          <p class="fw-semibold mb-1">{{ 'myPickups.empty.filtered' | translate }}</p>
-          <small class="opacity-75">{{ 'myPickups.empty.filteredHint' | translate }}</small>
-        </div>
+        </ng-container>
       </ng-template>
 
       <ng-template #emptyState>

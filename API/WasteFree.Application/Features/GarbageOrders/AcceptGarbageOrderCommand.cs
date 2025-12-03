@@ -132,7 +132,7 @@ public sealed class AcceptGarbageOrderCommandHandler(
                     UserId = participant.UserId,
                     Title = content.Inbox.Subject,
                     Message = content.Inbox.Body,
-                    ActionType = InboxActionType.None,
+                    ActionType = InboxActionType.GarbageOrderDetails,
                     RelatedEntityId = garbageOrder.Id
                 });
             }

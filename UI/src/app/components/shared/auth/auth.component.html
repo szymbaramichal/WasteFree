@@ -22,9 +22,10 @@
 
     <form *ngIf="!isLoginMode" [formGroup]="registerForm" (ngSubmit)="onRegister()" class="register-form">
       <div class="step-indicator" role="group" [attr.aria-label]="'auth.register' | translate">
-        <div class="step-circle" [class.active]="registerStep === 1" [class.completed]="registerStep > 1">1</div>
-        <div class="step-bar" [class.completed]="registerStep > 1"></div>
-        <div class="step-circle" [class.active]="registerStep === 2" [class.completed]="registerStep === 2">2</div>
+        <ng-container *ngFor="let step of registerStepSequence; let last = last">
+          <div class="step-circle" [class.active]="registerStep === step" [class.completed]="registerStep > step">{{ step }}</div>
+          <div *ngIf="!last" class="step-bar" [class.completed]="registerStep > step"></div>
+        </ng-container>
       </div>
 
       <ng-container [ngSwitch]="registerStep">
@@ -60,8 +61,8 @@
             <label for="reg-language">{{ 'auth.languagePreference' | translate }}</label>
             <div class="language-select">
               <select id="reg-language" formControlName="languagePreference" [attr.aria-label]="'auth.languagePreference' | translate">
-                <option value="English">{{ 'language.english' | translate }} 🇬🇧</option>
-                <option value="Polish">{{ 'language.polish' | translate }} 🇵🇱</option>
+                <option value="English">{{ 'language.english' | translate }}</option>
+                <option value="Polish">{{ 'language.polish' | translate }}</option>
               </select>
               <div class="language-flag">
                 <img [src]="(registerForm.get('languagePreference')?.value === 'Polish') ? 'assets/images/flag-pl.svg' : 'assets/images/flag-en.svg'" alt="flag" />
@@ -73,7 +74,7 @@
               <div class="city-select" [attr.aria-busy]="isLoadingCities">
                 <select id="reg-city" formControlName="city" [disabled]="isLoadingCities || cityLoadError || !cities.length">
                   <option value="" disabled>{{ isLoadingCities ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
-                  <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                  <option *ngFor="let city of cities" [value]="city">{{ city | localizedCity }}</option>
                 </select>
                 <span *ngIf="isLoadingCities" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
               </div>
@@ -100,6 +101,39 @@
                 {{ 'auth.address.streetNumberRequired' | translate }}
               </div>
             </div>
+
+          </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="3">
+          <div class="step-panel">
+            <section class="preferences-section" *ngIf="isGarbageAdminRole">
+              <header class="preferences-header">
+                <h3 id="preferences-title" class="preferences-title">{{ 'auth.preferences.title' | translate }}</h3>
+                <p class="preferences-lead">{{ 'auth.preferences.lead' | translate }}</p>
+              </header>
+
+              <div class="preferences-grid" role="group" [attr.aria-labelledby]="'preferences-title'">
+                <label class="preference-card" *ngFor="let option of pickupOptionChoices">
+                  <input
+                    type="checkbox"
+                    [checked]="isPickupOptionSelected(option.value)"
+                    (change)="onPickupOptionToggle(option.value, $event)"
+                  />
+                  <span class="preference-content">
+                    <span class="preference-label">{{ option.label | translate }}</span>
+                    <small class="preference-desc">{{ option.description | translate }}</small>
+                  </span>
+                </label>
+              </div>
+
+              <div
+                *ngIf="pickupOptionsControl.invalid && (pickupOptionsControl.dirty || pickupOptionsControl.touched)"
+                class="form-helper error-text"
+              >
+                {{ 'auth.preferences.validation' | translate }}
+              </div>
+            </section>
           </div>
         </ng-container>
       </ng-container>

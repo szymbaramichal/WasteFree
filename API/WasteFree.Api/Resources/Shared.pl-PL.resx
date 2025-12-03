@@ -42,6 +42,7 @@
   <data name="ERR_CHAT_MESSAGE_REQUIRED" xml:space="preserve"><value>Wiadomość nie może być pusta.</value></data>
   <data name="ERR_CHAT_MESSAGE_TOO_LONG" xml:space="preserve"><value>Wiadomość jest zbyt długa (maks. 2000 znaków).</value></data>
   <data name="ERR_PICKUP_OPTION_INVALID"><value>Opcja odbioru jest nieprawidłowa</value></data>
+  <data name="ERR_PICKUP_OPTIONS_REQUIRED"><value>Wybierz co najmniej jedną opcję odbioru.</value></data>
   <data name="ERR_CONTAINER_SIZE_REQUIRED"><value>Rozmiar kontenera jest wymagany, gdy opcja odbioru to kontener</value></data>
   <data name="ERR_PICKUP_DATE_REQUIRED"><value>Data odbioru jest wymagana</value></data>
   <data name="ERR_PICKUP_DATE_IN_PAST"><value>Data odbioru nie może być w przeszłości</value></data>

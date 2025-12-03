@@ -19,11 +19,11 @@ public sealed class GetGarbageAdminActiveOrdersQueryHandler(ApplicationDataConte
         GetGarbageAdminActiveOrdersQuery request,
         CancellationToken cancellationToken)
     {
-        var garbageAdminExists = await context.Users
+        var garbageAdmin = await context.Users
             .AsNoTracking()
-            .AnyAsync(user => user.Id == request.GarbageAdminId, cancellationToken);
+            .FirstOrDefaultAsync(user => user.Id == request.GarbageAdminId, cancellationToken);
 
-        if (!garbageAdminExists)
+        if (garbageAdmin is null)
         {
             return Result<ICollection<GarbageOrderDto>>.Failure(ApiErrorCodes.InvalidUser, HttpStatusCode.BadRequest);
         }
@@ -48,8 +48,28 @@ public sealed class GetGarbageAdminActiveOrdersQueryHandler(ApplicationDataConte
             .Paginate(request.Pager)
             .ToListAsync(cancellationToken);
 
+        var adminLatitude = garbageAdmin.Address?.Latitude;
+        var adminLongitude = garbageAdmin.Address?.Longitude;
+
         var dtoItems = pagedOrders
-            .Select(order => order.MapToGarbageOrderDto())
+            .Select(order =>
+            {
+                double? distance = null;
+                var groupAddress = order.GarbageGroup?.Address;
+
+                if (adminLatitude.HasValue && adminLongitude.HasValue &&
+                    groupAddress?.Latitude.HasValue == true &&
+                    groupAddress.Longitude.HasValue)
+                {
+                    distance = GarbageOrderDistanceHelpers.HaversineDistance(
+                        adminLatitude.Value,
+                        adminLongitude.Value,
+                        groupAddress.Latitude.Value,
+                        groupAddress.Longitude.Value);
+                }
+
+                return order.MapToGarbageOrderDto(distance);
+            })
             .ToList();
 
         var pager = new Pager(request.Pager.PageNumber, request.Pager.PageSize, totalCount);

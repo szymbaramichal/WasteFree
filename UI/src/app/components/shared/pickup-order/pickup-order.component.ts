@@ -1,11 +1,12 @@
 import { Component, OnInit, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { LocalizedCityPipe } from '@app/pipes/localized-city.pipe';
+import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -75,12 +76,69 @@ type ContainerSizeOption = {
   descriptionKey: string;
 };
 
+const PICKUP_ORDER_DATE_FORMATS = {
+  parse: {
+    dateInput: 'input'
+  },
+  display: {
+    dateInput: 'input',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY'
+  }
+};
+
+class PickupOrderDateAdapter extends NativeDateAdapter {
+  override parse(value: unknown): Date | null {
+    if (typeof value === 'string' && this.locale?.toLowerCase().startsWith('pl')) {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return null;
+      }
+
+      const normalized = trimmed.replace(/[\/\-]/g, '.');
+      const parts = normalized.split('.');
+      if (parts.length === 3) {
+        const [dayStr, monthStr, yearStr] = parts;
+        const day = Number(dayStr);
+        const month = Number(monthStr) - 1;
+        const year = Number(yearStr);
+        if (!Number.isNaN(day) && !Number.isNaN(month) && !Number.isNaN(year)) {
+          const candidate = new Date(year, month, day);
+          if (candidate.getFullYear() === year && candidate.getMonth() === month && candidate.getDate() === day) {
+            return candidate;
+          }
+        }
+      }
+    }
+
+    return super.parse(value);
+  }
+
+  override format(date: Date, displayFormat: any): string {
+    const locale = (this.locale || '').toLowerCase();
+    if (displayFormat === 'input' && locale.startsWith('pl')) {
+      const day = this.to2Digit(date.getDate());
+      const month = this.to2Digit(date.getMonth() + 1);
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}`;
+    }
+
+    return super.format(date, displayFormat);
+  }
+
+  private to2Digit(value: number): string {
+    return value < 10 ? `0${value}` : `${value}`;
+  }
+}
+
 @Component({
   selector: 'app-pickup-order',
   standalone: true,
   imports: [
     CommonModule,
     TranslatePipe,
+    LocalizedCityPipe,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -91,7 +149,11 @@ type ContainerSizeOption = {
     MatSelectModule
   ],
   templateUrl: './pickup-order.component.html',
-  styleUrls: ['./pickup-order.component.css']
+  styleUrls: ['./pickup-order.component.css'],
+  providers: [
+    { provide: DateAdapter, useClass: PickupOrderDateAdapter },
+    { provide: MAT_DATE_FORMATS, useValue: PICKUP_ORDER_DATE_FORMATS }
+  ]
 })
 export class PickupOrderComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -101,6 +163,7 @@ export class PickupOrderComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly toastr = inject(ToastrService);
   private readonly translation = inject(TranslationService);
+  private readonly dateAdapter = inject(DateAdapter<Date>);
   private lastSelectedContainerSize: ContainerSize = ContainerSize.ContainerSmall;
   private readonly navigationDelayMs = 250;
 
@@ -191,18 +254,23 @@ export class PickupOrderComponent implements OnInit {
 
   readonly currentStepConfig = computed<StepConfig>(() => this.steps[this.currentStep()] ?? this.steps[0]);
 
-  readonly form = this.fb.group({
-    serviceType: this.fb.control<PickupOption | null>(null, { validators: Validators.required }),
-    groupId: this.fb.control<string | null>(null, { validators: Validators.required }),
-    participantIds: this.fb.control<string[]>([], { validators: Validators.required }),
-    pickupDate: this.fb.control<Date | null>(null, { validators: Validators.required }),
-    pickupTime: this.fb.control<string | Date | null>(null, { validators: Validators.required }),
-    dropOffDate: this.fb.control<Date | null>(null),
-    dropOffTime: this.fb.control<string | Date | null>(null),
-    isHighPriority: this.fb.control<boolean>(false),
-    collectingService: this.fb.control<boolean>(false),
-    containerSize: this.fb.control<ContainerSize | null>(null)
-  });
+  readonly form = this.fb.group(
+    {
+      serviceType: this.fb.control<PickupOption | null>(null, { validators: Validators.required }),
+      groupId: this.fb.control<string | null>(null, { validators: Validators.required }),
+      participantIds: this.fb.control<string[]>([], { validators: Validators.required }),
+      pickupDate: this.fb.control<Date | null>(null, { validators: Validators.required }),
+      pickupTime: this.fb.control<string | Date | null>(null, { validators: Validators.required }),
+      dropOffDate: this.fb.control<Date | null>(null),
+      dropOffTime: this.fb.control<string | Date | null>(null),
+      isHighPriority: this.fb.control<boolean>(false),
+      collectingService: this.fb.control<boolean>(false),
+      containerSize: this.fb.control<ContainerSize | null>(null)
+    },
+    {
+      validators: (control) => this.validateContainerSchedule(control)
+    }
+  );
 
   private readonly groupIdValue = toSignal(this.groupIdCtrl.valueChanges, {
     initialValue: this.groupIdCtrl.value
@@ -282,6 +350,7 @@ export class PickupOrderComponent implements OnInit {
 
   readonly pickupDateTime = computed(() => this.combineDateTime(this.pickupDateValue(), this.pickupTimeValue()));
   readonly dropOffDateTime = computed(() => this.combineDateTime(this.dropOffDateValue(), this.dropOffTimeValue()));
+  readonly pickupDateMin = computed(() => this.resolvePickupDateMin());
 
   readonly summaryRequest = computed<CreateGarbageOrderRequest | null>(() => {
     const currentOption = this.serviceTypeValue();
@@ -425,6 +494,12 @@ export class PickupOrderComponent implements OnInit {
   }, { allowSignalWrites: true });
 
   ngOnInit(): void {
+    this.configureDateLocale(this.translation.currentLang);
+    this.translation
+      .onLangChange
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(lang => this.configureDateLocale(lang));
+
     this.loadGroupsWithUsers();
     this.serviceTypeCtrl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -489,12 +564,14 @@ export class PickupOrderComponent implements OnInit {
     }
     if (step === 2) {
       const requiresDropOff = this.serviceTypeCtrl.value === PickupOption.Container;
+      const scheduleInvalid = this.form.hasError('pickupBeforeDropOff');
       if (requiresDropOff) {
         return (
           this.dropOffDateCtrl.invalid ||
           this.dropOffTimeCtrl.invalid ||
           this.pickupDateCtrl.invalid ||
-          this.pickupTimeCtrl.invalid
+          this.pickupTimeCtrl.invalid ||
+          scheduleInvalid
         );
       }
       return this.pickupDateCtrl.invalid || this.pickupTimeCtrl.invalid;
@@ -553,6 +630,9 @@ export class PickupOrderComponent implements OnInit {
         this.pickupTimeCtrl.invalid ||
         (requiresDropOff && (this.dropOffDateCtrl.invalid || this.dropOffTimeCtrl.invalid))
       ) {
+        return;
+      }
+      if (requiresDropOff && this.form.hasError('pickupBeforeDropOff')) {
         return;
       }
     }
@@ -878,5 +958,69 @@ export class PickupOrderComponent implements OnInit {
     this.containerSizeCtrl.updateValueAndValidity({ emitEvent: false });
     this.dropOffDateCtrl.updateValueAndValidity({ emitEvent: false });
     this.dropOffTimeCtrl.updateValueAndValidity({ emitEvent: false });
+    this.form.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private validateContainerSchedule(control: AbstractControl): ValidationErrors | null {
+    const serviceType = control.get('serviceType')?.value as PickupOption | null;
+    if (serviceType !== PickupOption.Container) {
+      return null;
+    }
+
+    const dropOffDate = control.get('dropOffDate')?.value ?? null;
+    const dropOffTime = control.get('dropOffTime')?.value ?? null;
+    const pickupDate = control.get('pickupDate')?.value ?? null;
+    const pickupTime = control.get('pickupTime')?.value ?? null;
+
+    const dropOffSchedule = this.combineDateTime(dropOffDate, dropOffTime);
+    const pickupSchedule = this.combineDateTime(pickupDate, pickupTime);
+
+    if (!dropOffSchedule || !pickupSchedule) {
+      return null;
+    }
+
+    const dropOffTimeValue = dropOffSchedule.displayDate.getTime();
+    const pickupTimeValue = pickupSchedule.displayDate.getTime();
+
+    if (pickupTimeValue < dropOffTimeValue) {
+      return { pickupBeforeDropOff: true };
+    }
+
+    return null;
+  }
+
+  private resolvePickupDateMin(): Date {
+    const requiresDropOff = this.serviceTypeValue() === PickupOption.Container;
+    if (!requiresDropOff) {
+      return this.cloneDateOnly(this.minPickupDate);
+    }
+
+    const dropOffRaw = this.dropOffDateValue();
+    if (!dropOffRaw) {
+      return this.cloneDateOnly(this.minPickupDate);
+    }
+
+    if (dropOffRaw instanceof Date) {
+      return this.cloneDateOnly(dropOffRaw);
+    }
+
+    const parsed = new Date(dropOffRaw);
+    if (Number.isNaN(parsed.getTime())) {
+      return this.cloneDateOnly(this.minPickupDate);
+    }
+
+    return this.cloneDateOnly(parsed);
+  }
+
+  private cloneDateOnly(source: Date): Date {
+    const copy = new Date(source);
+    copy.setHours(0, 0, 0, 0);
+    return copy;
+  }
+
+  private configureDateLocale(language: string): void {
+    const normalized = (language || '').toLowerCase();
+    const locale = normalized === 'pl' ? 'pl-PL' : 'en-US';
+    this.dateAdapter.setLocale(locale);
   }
 }

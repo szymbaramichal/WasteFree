@@ -58,6 +58,11 @@ export class PortalHomeComponent {
   }
 
   private loadStats() {
+    const user = this.currentUser();
+    if (!user || user.role !== UserRole.User) {
+      return;
+    }
+
     this.orderService.getMyOrders(1, USER_ORDERS_PAGE_SIZE).subscribe(res => {
       const orders = res.resultModel || [];
       const completed = orders.filter(o => o.garbageOrderStatus === GarbageOrderStatus.Completed);

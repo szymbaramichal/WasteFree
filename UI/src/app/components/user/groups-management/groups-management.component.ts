@@ -6,6 +6,7 @@ import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { HttpClientModule } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { LocalizedCityPipe } from '@app/pipes/localized-city.pipe';
 import { ToastrService } from 'ngx-toastr';
 import { TranslationService } from '@app/services/translation.service';
 import { CityService } from '@app/services/city.service';
@@ -16,7 +17,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-groups-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, TranslatePipe],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, TranslatePipe, LocalizedCityPipe],
   templateUrl: './groups-management.component.html',
   styleUrls: ['./groups-management.component.css']
 })

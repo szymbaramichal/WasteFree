@@ -124,7 +124,7 @@
                       <div class="position-relative">
                         <select id="group-edit-city" class="form-select" formControlName="city" [class.is-invalid]="hasControlError('address.city','required') || hasControlError('address.city','maxlength')" [disabled]="citiesLoading">
                           <option value="" disabled>{{ citiesLoading ? ('auth.address.city.loading' | translate) : ('auth.address.city.placeholder' | translate) }}</option>
-                          <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                          <option *ngFor="let city of cities" [value]="city">{{ city | localizedCity }}</option>
                         </select>
                         <span class="spinner-border spinner-border-sm form-spinner" *ngIf="citiesLoading" role="status" aria-hidden="true"></span>
                       </div>
