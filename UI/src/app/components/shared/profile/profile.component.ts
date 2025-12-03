@@ -2,6 +2,7 @@ import { Component, EffectRef, ElementRef, OnDestroy, OnInit, ViewChild, effect,
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { LocalizedCityPipe } from '@app/pipes/localized-city.pipe';
 import { ProfileService } from '@app/services/profile.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslationService } from '@app/services/translation.service';
@@ -18,7 +19,7 @@ import { PickupOptionKey } from '@app/_models/profile';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, ShowForRolesDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe, LocalizedCityPipe, ShowForRolesDirective],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })

@@ -187,7 +187,7 @@
 													<small class="text-muted d-block" *ngIf="group.address">
 														{{ group.address.street }}
 														<br />
-														{{ group.address.postalCode }} {{ group.address.city }}
+														{{ group.address.postalCode }} {{ group.address.city | localizedCity }}
 													</small>
 												</ng-container>
 											</div>
@@ -350,7 +350,7 @@
 											</div>
 											<div class="address-card__address">
 												<span>{{ group.address.street }}</span>
-												<span>{{ group.address.postalCode }} {{ group.address.city }}</span>
+												<span>{{ group.address.postalCode }} {{ group.address.city | localizedCity }}</span>
 											</div>
 										</ng-container>
 										<ng-template #noGroupAddress>

@@ -54,7 +54,7 @@
                       <div class="form-control-wrap">
                         <select id="groupCity" class="form-select" formControlName="city"
                                 [class.is-invalid]="hasError('address.city','required') || hasError('address.city','maxlength')">
-                          <option *ngFor="let city of cities" [value]="city">{{ city | translate }}</option>
+                          <option *ngFor="let city of cities" [value]="city">{{ city | localizedCity }}</option>
                         </select>
                       </div>
                       <div class="invalid-feedback d-block" *ngIf="hasError('address.city','required')">{{ 'groups.form.errors.city.required' | translate }}</div>
