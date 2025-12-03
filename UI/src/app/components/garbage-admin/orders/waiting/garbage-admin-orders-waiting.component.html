@@ -59,7 +59,13 @@
           >
             <header class="order-card__header">
               <div>
-                <span class="order-card__code">{{ item.orderNumber }}</span>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="order-card__code">{{ item.orderNumber }}</span>
+                  <span *ngIf="item.isHighPriority" class="badge rounded-pill bg-danger text-white shadow-sm">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                    {{ 'garbageAdminOrders.badges.highPriority' | translate }}
+                  </span>
+                </div>
               </div>
               <span class="badge text-uppercase" [ngClass]="item.statusClass">{{ item.statusKey | translate }}</span>
             </header>
@@ -95,11 +101,7 @@
                   <span class="order-card__value">{{ item.addressLine }}</span>
                 </div>
 
-                <div *ngIf="item.isHighPriority || item.collectingService" class="d-flex flex-wrap gap-2 mt-2 pt-2 border-top-dashed">
-                  <span *ngIf="item.isHighPriority" class="service-tag service-tag--priority">
-                    <i class="bi bi-exclamation-circle-fill"></i>
-                    {{ 'garbageAdminOrders.badges.highPriority' | translate }}
-                  </span>
+                <div *ngIf="item.collectingService" class="d-flex flex-wrap gap-2 mt-2 pt-2 border-top-dashed">
                   <span *ngIf="item.collectingService" class="service-tag service-tag--collecting">
                     <i class="bi bi-person-raised-hand"></i>
                     {{ 'garbageAdminOrders.badges.collectingService' | translate }}

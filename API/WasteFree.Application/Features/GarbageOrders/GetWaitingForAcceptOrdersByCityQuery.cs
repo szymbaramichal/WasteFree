@@ -84,7 +84,8 @@ public sealed class GetWaitingForAcceptOrdersByCityQueryHandler(ApplicationDataC
             .ToList();
 
         var orderedOrders = ordersWithDistance
-            .OrderBy(entry => entry.Distance ?? double.MaxValue)
+            .OrderByDescending(entry => entry.Order.IsHighPriority)
+            .ThenBy(entry => entry.Distance ?? double.MaxValue)
             .ThenBy(entry => entry.Order.PickupDate)
             .ThenBy(entry => entry.Order.CreatedDateUtc)
             .ToList();
