@@ -352,7 +352,7 @@
   "pickupOrder.summary.cost.specialOrder": "Dla zamówień specjalnych koszt ustalimy indywidualnie",
   "pickupOrder.summary.cost.note": "Po utylizacji doliczymy ostateczną opłatę za utylizację.",
   "pickupOrder.summary.cost.prepaidLabel": "Zaliczka na utylizację (25%)",
-  "pickupOrder.summary.cost.prepaidCopy": "Grupa zapłaci {{ estimatedCost }}, a dodatkowo pobierzemy {{ prepaidUtilizationFee }} jako 25% zaliczki na opłatę za utylizację. Jeśli ostateczna opłata będzie niższa, zwrócimy różnicę.",
+  "pickupOrder.summary.cost.prepaidCopy": "Grupa zapłaci łącznie {{ estimatedTotalCost }}. Dodatkowo pobierzemy z góry {{ prepaidUtilizationFee }} jako 25% zaliczki na opłatę za utylizację. Jeśli ostateczna opłata będzie niższa, zwrócimy różnicę.",
   "pickupOrder.step.summary.title": "Podsumowanie",
   "pickupOrder.step.summary.lead": "Zweryfikuj wszystkie dane przed wysłaniem zamówienia.",
   "pickupOrder.step.summary.placeholder": "Już wkrótce zobaczysz kompletne podsumowanie swojego zamówienia.",

@@ -412,6 +412,7 @@ export class PickupOrderComponent implements OnInit {
 
   readonly costLoading = signal(false);
   readonly estimatedCost = signal<number | null>(null);
+  readonly estimatedTotalCost = signal<number | null>(null);
   readonly prepaidUtilizationFee = signal<number | null>(null);
   readonly costMessage = signal<string | null>(null);
   readonly costMessageType = signal<'info' | 'error'>('info');
@@ -460,6 +461,7 @@ export class PickupOrderComponent implements OnInit {
 
     this.costLoading.set(true);
     this.estimatedCost.set(null);
+    this.estimatedTotalCost.set(null);
     this.prepaidUtilizationFee.set(null);
     this.setCostMessage(null);
 
@@ -470,14 +472,19 @@ export class PickupOrderComponent implements OnInit {
         next: (res) => {
           if (res.errorMessage || !res.resultModel) {
             this.estimatedCost.set(null);
+            this.estimatedTotalCost.set(null);
             this.prepaidUtilizationFee.set(null);
             this.setCostMessage(res.errorMessage ?? 'pickupOrder.summary.cost.error', 'error');
             return;
           }
 
-          this.estimatedCost.set(res.resultModel.estimatedCost ?? null);
-          this.prepaidUtilizationFee.set(res.resultModel.prepaidUtilizationFee ?? null);
-          if (res.resultModel.estimatedCost === null || res.resultModel.estimatedCost === undefined) {
+          const result = res.resultModel;
+          const totalCost = result.estimatedTotalCost ?? result.estimatedCost ?? null;
+
+          this.estimatedCost.set(result.estimatedCost ?? null);
+          this.estimatedTotalCost.set(totalCost);
+          this.prepaidUtilizationFee.set(result.prepaidUtilizationFee ?? null);
+          if (totalCost === null || totalCost === undefined) {
             this.setCostMessage('pickupOrder.summary.cost.unavailable', 'info');
           } else {
             this.setCostMessage(null);
@@ -485,6 +492,7 @@ export class PickupOrderComponent implements OnInit {
         },
         error: () => {
           this.estimatedCost.set(null);
+          this.estimatedTotalCost.set(null);
           this.prepaidUtilizationFee.set(null);
           this.setCostMessage('pickupOrder.summary.cost.error', 'error');
         }
@@ -793,6 +801,7 @@ export class PickupOrderComponent implements OnInit {
   private resetCostState(clearMessage: boolean): void {
     this.costLoading.set(false);
     this.estimatedCost.set(null);
+    this.estimatedTotalCost.set(null);
     this.prepaidUtilizationFee.set(null);
     if (clearMessage) {
       this.setCostMessage(null);
