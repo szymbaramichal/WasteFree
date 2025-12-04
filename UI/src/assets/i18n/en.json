@@ -351,7 +351,7 @@
   "pickupOrder.summary.cost.specialOrder": "Service cost is agreed individually for special orders.",
   "pickupOrder.summary.cost.note": "Final utilization fee will be added after waste processing.",
   "pickupOrder.summary.cost.prepaidLabel": "Utilization fee prepayment (25%)",
-  "pickupOrder.summary.cost.prepaidCopy": "Group will pay {{ estimatedCost }} and additionally {{ prepaidUtilizationFee }} will be charged upfront as a 25% utilization fee deposit. If the final utilization fee is lower, we will refund the difference.",
+  "pickupOrder.summary.cost.prepaidCopy": "Group will pay {{ estimatedTotalCost }} in total. We'll also charge {{ prepaidUtilizationFee }} upfront as a 25% utilization fee deposit. If the final utilization fee is lower, we'll refund the difference.",
   "pickupOrder.step.summary.title": "Summary",
   "pickupOrder.step.summary.lead": "Review all data before sending your request.",
   "pickupOrder.step.summary.placeholder": "You will soon see a full summary of your order here.",

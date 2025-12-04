@@ -289,12 +289,12 @@
 													<span>{{ 'pickupOrder.summary.cost.loading' | translate }}</span>
 												</div>
 											</div>
-											<ng-container *ngIf="estimatedCost() !== null && prepaidUtilizationFee() !== null; else summaryCostDefaultNote">
+											<ng-container *ngIf="estimatedTotalCost() !== null && prepaidUtilizationFee() !== null; else summaryCostDefaultNote">
 												<small class="summary-cost__note">
 													{{
 														'pickupOrder.summary.cost.prepaidCopy'
 														| translate:{
-															estimatedCost: (estimatedCost() | currency:'PLN':'symbol':'1.2-2'),
+															estimatedTotalCost: (estimatedTotalCost() | currency:'PLN':'symbol':'1.2-2'),
 															prepaidUtilizationFee: (prepaidUtilizationFee() | currency:'PLN':'symbol':'1.2-2')
 														}
 													}}
@@ -304,8 +304,8 @@
 												<small class="summary-cost__note">{{ 'pickupOrder.summary.cost.note' | translate }}</small>
 											</ng-template>
 											<ng-template #costContent>
-												<ng-container *ngIf="estimatedCost() !== null; else costMessages">
-													<span class="summary-cost__amount">{{ estimatedCost() | currency:'PLN':'symbol':'1.2-2' }}</span>
+												<ng-container *ngIf="estimatedTotalCost() !== null; else costMessages">
+													<span class="summary-cost__amount">{{ estimatedTotalCost() | currency:'PLN':'symbol':'1.2-2' }}</span>
 													<div class="summary-cost__breakdown" *ngIf="prepaidUtilizationFee() !== null">
 														<span class="summary-cost__breakdown-label">{{ 'pickupOrder.summary.cost.prepaidLabel' | translate }}</span>
 														<span class="summary-cost__breakdown-value">{{ prepaidUtilizationFee() | currency:'PLN':'symbol':'1.2-2' }}</span>
