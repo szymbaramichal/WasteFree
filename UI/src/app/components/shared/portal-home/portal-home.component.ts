@@ -10,6 +10,7 @@ import { UserRole } from '@app/_models/user';
 import { GarbageOrderService, USER_ORDERS_PAGE_SIZE } from '@app/services/garbage-order.service';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { GarbageOrderStatus, PickupOption } from '@app/_models/garbage-orders';
+import { TranslationService } from '@app/services/translation.service';
 
 @Component({
   selector: 'app-portal-home',
@@ -23,6 +24,7 @@ export class PortalHomeComponent {
   private wallet = inject(WalletService);
   private orderService = inject(GarbageOrderService);
   private groupService = inject(GarbageGroupService);
+  private translationService = inject(TranslationService);
   currentUser = inject(CurrentUserService).user;
   userRole = UserRole;
 
@@ -122,7 +124,7 @@ export class PortalHomeComponent {
     const normalized = hasZone ? date : `${date}Z`;
     const value = new Date(normalized);
     if (Number.isNaN(value.getTime())) return '';
-    return value.toLocaleString(undefined, {
+    return value.toLocaleString(this.translationService.currentLang, {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
