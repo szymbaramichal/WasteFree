@@ -36,16 +36,24 @@
 								</div>
 								<p class="notification-message" [innerHTML]="getMessage(n)"></p>
 								<div class="notification-actions">
-									<button class="btn btn-outline-success btn-xs" type="button" (click)="accept(n)">
+									<ng-container *ngIf="canRespond(n)">
+										<button class="btn btn-outline-success btn-xs" type="button" (click)="accept(n)">
+											<span class="d-inline-flex align-items-center gap-1">
+												<i class="bi bi-check2"></i>
+												{{ 'groups.invitations.accept' | translate }}
+											</span>
+										</button>
+										<button class="btn btn-outline-danger btn-xs" type="button" (click)="decline(n)">
+											<span class="d-inline-flex align-items-center gap-1">
+												<i class="bi bi-x-circle"></i>
+												{{ 'groups.invitations.decline' | translate }}
+											</span>
+										</button>
+									</ng-container>
+									<button class="btn btn-outline-primary btn-xs" type="button" (click)="goToTarget(n)" *ngIf="hasRedirect(n)">
 										<span class="d-inline-flex align-items-center gap-1">
-											<i class="bi bi-check2"></i>
-											{{ 'groups.invitations.accept' | translate }}
-										</span>
-									</button>
-									<button class="btn btn-outline-danger btn-xs" type="button" (click)="decline(n)">
-										<span class="d-inline-flex align-items-center gap-1">
-											<i class="bi bi-x-circle"></i>
-											{{ 'groups.invitations.decline' | translate }}
+											<i class="bi bi-box-arrow-up-right"></i>
+											{{ 'inbox.open' | translate }}
 										</span>
 									</button>
 								</div>
@@ -54,7 +62,7 @@
 					</ul>
 
 					<!-- Pagination controls -->
-					<div class="inbox-pagination d-flex align-items-center justify-content-between mt-3" *ngIf="(totalPages() ?? 1) > 1">
+					<div class="inbox-pagination d-flex align-items-center justify-content-between mt-3" *ngIf="totalPages() > 1">
 						<div class="d-flex align-items-center gap-2">
 							<button class="btn btn-sm btn-outline-secondary" (click)="prevPage()" [disabled]="pageNumber()<=1">
 								<i class="bi bi-chevron-left"></i>

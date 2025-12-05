@@ -6,7 +6,6 @@ using WasteFree.Application.Features;
 using WasteFree.Application.Features.Auth;
 using WasteFree.Application.Features.Auth.Dtos;
 using WasteFree.Domain.Models;
-using WasteFree.Domain.Models;
 
 namespace WasteFree.Api.Endpoints;
 
@@ -49,8 +48,14 @@ public static class AuthEndpoints
         IMediator mediator,
         CancellationToken cancellationToken)
     {
-        var command = new RegisterUserCommand(request.Email, request.Username, request.Password,
-            request.Role, request.LanguagePreference, request.Address);
+        var command = new RegisterUserCommand(
+            request.Email,
+            request.Username,
+            request.Password,
+            request.Role,
+            request.LanguagePreference,
+            request.Address,
+            request.PickupOptions);
 
         var result = await mediator.SendAsync(command, cancellationToken);
 
@@ -140,6 +145,11 @@ public record RegisterUserRequest
     /// Address object
     /// </summary>
     public required Address Address { get; set; }
+
+    /// <summary>
+    /// Selected pickup options when registering as a garbage admin.
+    /// </summary>
+    public IEnumerable<int>? PickupOptions { get; init; }
 }
 
 /// <summary>

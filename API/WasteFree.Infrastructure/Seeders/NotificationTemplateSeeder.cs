@@ -18,7 +18,7 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:40px;'>
                         <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
-                          <h2 style='color:#2e7d32;'>Welcome {{Username}} to WasteFree!</h2>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Welcome <strong>{{Username}}</strong> to WasteFree!</h2>
                           <p>
                             Thank you for registering. We are excited to have you join our community.<br><br>
                             <b>Get started by exploring our features and reducing waste today!</b> <br><br>
@@ -50,7 +50,7 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:40px;'>
                         <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
-                          <h2 style='color:#2e7d32;'>Witamy {{Username}} w WasteFree!</h2>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Witamy <strong>{{Username}}</strong> w WasteFree!</h2>
                           <p>
                             Dziękujemy za rejestrację. Cieszymy się, że dołączasz do naszej społeczności.<br><br>
                             <b>Rozpocznij, odkrywając nasze funkcje i ograniczając marnowanie już dziś!</b> <br><br>
@@ -81,8 +81,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Invitation to join {{GroupName}}",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
-                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{SenderUsername}} invited you to join the group <strong>{{GroupName}}</strong>.</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>WasteFree invitation to {{GroupName}}</h2>
+                          <p style='font-size:16px;color:#333;margin:0;'><strong>{{SenderUsername}}</strong> invited you to join the group <strong>{{GroupName}}</strong>.</p>
                         </div>
                       </body>
                     </html>",
@@ -104,8 +105,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Zaproszenie do grupy {{GroupName}}",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
-                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{SenderUsername}} zaprosił Cię do grupy <strong>{{GroupName}}</strong>.</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Zaproszenie WasteFree do {{GroupName}}</h2>
+                          <p style='font-size:16px;color:#333;margin:0;'><strong>{{SenderUsername}}</strong> zaprosił Cię do grupy <strong>{{GroupName}}</strong>.</p>
                         </div>
                       </body>
                     </html>",
@@ -127,11 +129,11 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Your garbage order for {{GroupName}} is scheduled",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:32px;'>
-                        <div style='max-width:640px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:28px;'>
-                          <h2 style='color:#2e7d32;margin-bottom:16px;'>Garbage order created</h2>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hello {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Garbage order for <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hello <strong>{{Username}}</strong>,</p>
                           <p style='font-size:16px;color:#333;margin:0 0 12px;'>Your group <strong>{{GroupName}}</strong> created a garbage order.</p>
-                          <p style='font-size:14px;color:#555;'>As you are member of that order, sign in to WasteFreeCloud portal and make payment in 7 days.</p>
+                          <p style='font-size:14px;color:#555;'>As you are a member of that order, sign in to the WasteFree Cloud portal and complete the payment within 7 days.</p>
                         </div>
                       </body>
                     </html>",
@@ -150,14 +152,14 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
             context.NotificationTemplates.Add(new NotificationTemplate
             {
                 Id = garbageOrderEmailPlId,
-                Subject = "Zamowienie na odpady dla {{GroupName}} zostalo utworzone",
+                Subject = "Zamówienie na odpady dla {{GroupName}} zostało utworzone",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:32px;'>
-                        <div style='max-width:640px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:28px;'>
-                          <h2 style='color:#2e7d32;margin-bottom:16px;'>Zamówienie na odpady zostało utworzone</h2>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Zamówienie dla <strong>{{GroupName}}</strong> utworzone</h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć <strong>{{Username}}</strong>,</p>
                           <p style='font-size:16px;color:#333;margin:0 0 12px;'>Twoja grupa <strong>{{GroupName}}</strong> utworzyła zamówienie na odpady.</p>
-                          <p style='font-size:14px;color:#555;'>Jako, że jesteś członkiem tego wywozu to zaloguj się do portalu WasteFreeCloud i dokonaj płatności w ciągu 7 dni.</p>
+                          <p style='font-size:14px;color:#555;'>Jako członek tego wywozu zaloguj się do portalu WasteFree Cloud i dokonaj płatności w ciągu 7 dni.</p>
                         </div>
                       </body>
                     </html>",
@@ -179,8 +181,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Garbage order created",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>New order for <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi <strong>{{Username}}</strong>,</p>
                           <p style='font-size:16px;color:#333;margin:0 0 12px;'>A new garbage order for group <strong>{{GroupName}}</strong> is scheduled on <strong>{{PickupDate}}</strong>.</p>
                           <p style='font-size:14px;color:#555;margin:0;'>Check the order details and confirm your payment.</p>
                         </div>
@@ -201,13 +204,14 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
             context.NotificationTemplates.Add(new NotificationTemplate
             {
                 Id = garbageOrderInboxPlId,
-                Subject = "Zamowienie na odpady utworzone",
+                Subject = "Zamówienie na odpady utworzone",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Czesc {{Username}},</p>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Nowe zamowienie dla grupy <strong>{{GroupName}}</strong> zaplanowane na <strong>{{PickupDate}}</strong>.</p>
-                          <p style='font-size:14px;color:#555;margin:0;'>Sprawdz szczegoly zamowienia i potwierdz swoja płatność.</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Nowe zamówienie dla <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć <strong>{{Username}}</strong>,</p>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Nowe zamówienie dla grupy <strong>{{GroupName}}</strong> zaplanowane na <strong>{{PickupDate}}</strong>.</p>
+                          <p style='font-size:14px;color:#555;margin:0;'>Sprawdź szczegóły zamówienia i potwierdź swoją płatność.</p>
                         </div>
                       </body>
                     </html>",
@@ -229,9 +233,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Garbage order for {{GroupName}} accepted",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:32px;'>
-                        <div style='max-width:640px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:28px;'>
-                          <h2 style='color:#2e7d32;margin-bottom:16px;'>Order accepted</h2>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Garbage order for <strong>{{GroupName}}</strong> accepted</h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi <strong>{{Username}}</strong>,</p>
                           <p style='font-size:16px;color:#333;margin:0 0 12px;'>Administrator <strong>{{GarbageAdminName}}</strong> accepted the garbage order for group <strong>{{GroupName}}</strong>.</p>
                           <p style='font-size:14px;color:#555;margin:0;'>Pickup is scheduled for <strong>{{PickupDate}}</strong>. You will receive updates once the collection is completed.</p>
                         </div>
@@ -255,9 +259,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Zamówienie dla {{GroupName}} zaakceptowane",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:32px;'>
-                        <div style='max-width:640px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:28px;'>
-                          <h2 style='color:#2e7d32;margin-bottom:16px;'>Zamówienie zaakceptowane</h2>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Zamówienie dla <strong>{{GroupName}}</strong> zaakceptowane</h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć <strong>{{Username}}</strong>,</p>
                           <p style='font-size:16px;color:#333;margin:0 0 12px;'>Administrator <strong>{{GarbageAdminName}}</strong> zaakceptował zamówienie na wywóz dla grupy <strong>{{GroupName}}</strong>.</p>
                           <p style='font-size:14px;color:#555;margin:0;'>Odbiór zaplanowany jest na <strong>{{PickupDate}}</strong>. Poinformujemy Cię po zakończeniu wywozu.</p>
                         </div>
@@ -281,9 +285,10 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Garbage order accepted",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi {{Username}},</p>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{GarbageAdminName}} accepted the garbage order for <strong>{{GroupName}}</strong> scheduled on <strong>{{PickupDate}}</strong>.</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Order accepted for <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Hi <strong>{{Username}}</strong>,</p>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'><strong>{{GarbageAdminName}}</strong> accepted the garbage order for <strong>{{GroupName}}</strong> scheduled on <strong>{{PickupDate}}</strong>.</p>
                           <p style='font-size:14px;color:#555;margin:0;'>Track the order status in the app.</p>
                         </div>
                       </body>
@@ -306,9 +311,10 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 Subject = "Zamówienie zaakceptowane",
                 Body = @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f9f9f9;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:20px;'>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć {{Username}},</p>
-                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>{{GarbageAdminName}} zaakceptował zamówienie dla <strong>{{GroupName}}</strong> zaplanowane na <strong>{{PickupDate}}</strong>.</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Zamówienie dla <strong>{{GroupName}}</strong> zaakceptowane</h2>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'>Cześć <strong>{{Username}}</strong>,</p>
+                          <p style='font-size:16px;color:#333;margin:0 0 12px;'><strong>{{GarbageAdminName}}</strong> zaakceptował zamówienie dla <strong>{{GroupName}}</strong> zaplanowane na <strong>{{PickupDate}}</strong>.</p>
                           <p style='font-size:14px;color:#555;margin:0;'>Śledź status zamówienia w aplikacji.</p>
                         </div>
                       </body>
@@ -334,8 +340,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 "Additional utilization fee required for {{GroupName}}",
                 @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f4f6f8;padding:20px;'>
-                        <div style='max-width:560px;margin:auto;background:#ffffff;border-radius:10px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,0.08);'>
-                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hi {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Additional fee for <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hi <strong>{{Username}}</strong>,</p>
                           <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Order <strong>{{OrderId}}</strong> for group <strong>{{GroupName}}</strong> incurred additional utilization costs.</p>
                           <p style='font-size:14px;color:#475569;margin:0 0 16px;'>Outstanding amount: <strong>{{OutstandingAmount}} PLN</strong><br/>Your share: <strong>{{UserShare}} PLN</strong>.</p>
                           <p style='font-size:14px;color:#475569;margin:0;'>Please settle the fee in the app to help close the order.</p>
@@ -348,11 +355,12 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
             ),
             (
                 Guid.Parse("99999999-9999-9999-9999-999999999902"),
-                "Dodatkowa oplata utylizacyjna dla {{GroupName}}",
+                "Dodatkowa opłata utylizacyjna dla {{GroupName}}",
                 @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f4f6f8;padding:20px;'>
-                        <div style='max-width:560px;margin:auto;background:#ffffff;border-radius:10px;padding:24px;box-shadow:0 4px 16px rgba(0,0,0,0.08);'>
-                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Dodatkowa opłata dla <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć <strong>{{Username}}</strong>,</p>
                           <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Zamówienie <strong>{{OrderId}}</strong> dla grupy <strong>{{GroupName}}</strong> wygenerowało dodatkowe koszty utylizacji.</p>
                           <p style='font-size:14px;color:#475569;margin:0 0 16px;'>Do zapłaty: <strong>{{OutstandingAmount}} PLN</strong><br/>Twoja część: <strong>{{UserShare}} PLN</strong>.</p>
                           <p style='font-size:14px;color:#475569;margin:0;'>Ureguluj opłatę w aplikacji, aby zamknąć zamówienie.</p>
@@ -368,8 +376,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 "Settlement complete for {{GroupName}}",
                 @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f6f6f6;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 6px 20px rgba(15,23,42,0.1);'>
-                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hi {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Settlement complete for <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hi <strong>{{Username}}</strong>,</p>
                           <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Order <strong>{{OrderId}}</strong> for <strong>{{GroupName}}</strong> has been fully settled.</p>
                           <p style='font-size:14px;color:#475569;margin:0;'>Thank you for completing all payments.</p>
                         </div>
@@ -384,8 +393,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 "Rozliczenie zamówienia {{GroupName}} zakończone",
                 @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f6f6f6;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 6px 20px rgba(15,23,42,0.1);'>
-                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Rozliczenie dla <strong>{{GroupName}}</strong> zakończone</h2>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć <strong>{{Username}}</strong>,</p>
                           <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Zamówienie <strong>{{OrderId}}</strong> dla grupy <strong>{{GroupName}}</strong> zostało w pełni rozliczone.</p>
                           <p style='font-size:14px;color:#475569;margin:0;'>Dziękujemy za terminową płatność.</p>
                         </div>
@@ -400,8 +410,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 "Participants settled utilization fee for {{GroupName}}",
                 @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f1f5f9;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 8px 24px rgba(15,23,42,0.12);'>
-                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hello {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Participants paid in <strong>{{GroupName}}</strong></h2>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Hello <strong>{{Username}}</strong>,</p>
                           <p style='font-size:15px;color:#334155;margin:0 0 12px;'>All participants paid the outstanding utilization fee for order <strong>{{OrderId}}</strong> in group <strong>{{GroupName}}</strong>.</p>
                           <p style='font-size:14px;color:#475569;margin:0;'>You can proceed with closing the process.</p>
                         </div>
@@ -416,8 +427,9 @@ public class NotificationTemplateSeeder(ApplicationDataContext context)
                 "Uczestnicy opłacili dodatkową opłatę dla {{GroupName}}",
                 @"<html>
                       <body style='font-family:Arial,sans-serif;background:#f1f5f9;padding:20px;'>
-                        <div style='max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:24px;box-shadow:0 8px 24px rgba(15,23,42,0.12);'>
-                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć {{Username}},</p>
+                        <div style='max-width:600px;margin:auto;background:#fff;border-radius:8px;box-shadow:0 2px 8px #ccc;padding:32px;'>
+                          <h2 style='color:#2e7d32;margin:0 0 16px;'>Uczestnicy z <strong>{{GroupName}}</strong> zapłacili</h2>
+                          <p style='font-size:16px;color:#0f172a;margin:0 0 12px;'>Cześć <strong>{{Username}}</strong>,</p>
                           <p style='font-size:15px;color:#334155;margin:0 0 12px;'>Wszyscy uczestnicy opłacili dodatkową opłatę utylizacyjną dla zamówienia <strong>{{OrderId}}</strong> w grupie <strong>{{GroupName}}</strong>.</p>
                           <p style='font-size:14px;color:#475569;margin:0;'>Możesz zakończyć proces.</p>
                         </div>

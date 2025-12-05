@@ -4,15 +4,17 @@ import {
   DestroyRef,
   OnInit,
   computed,
+  effect,
   inject,
   signal
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
 import {
-  GarbageAdminOrderDto
+  GarbageAdminOrderDto,
+  PickupOption
 } from '@app/_models/garbage-orders';
-import { Address } from '@app/_models/address';
+import { Address, formatLocalizedAddress } from '@app/_models/address';
 import { Pager, PaginatedResult } from '@app/_models/result';
 import { GarbageAdminOrdersService } from '@app/services/garbage-admin-orders.service';
 import { TranslationService } from '@app/services/translation.service';
@@ -60,6 +62,29 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
   readonly pageMeta = computed(() =>
     this.resolvePageMeta(this.pager(), this.items().length, this.page())
   );
+
+  private readonly localizedAddressesEffect = effect(() => {
+    const lang = this.currentLang();
+    const items = this.items();
+
+    if (!items.length) {
+      return;
+    }
+
+    let changed = false;
+    const nextItems = items.map((item) => {
+      const nextAddress = formatLocalizedAddress(item.raw?.garbageGroupAddress, lang);
+      if (nextAddress === item.addressLine) {
+        return item;
+      }
+      changed = true;
+      return { ...item, addressLine: nextAddress };
+    });
+
+    if (changed) {
+      this.items.set(nextItems);
+    }
+  });
 
   ngOnInit(): void {
     this.load();
@@ -223,10 +248,13 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
       dto.containerSize === null || dto.containerSize === undefined
         ? null
         : CONTAINER_SIZE_KEYS[dto.containerSize] ?? null;
-    const schedule = dto.pickupDate ?? dto.dropOffDate ?? null;
-    const scheduleType: GarbageAdminOrderItem['scheduleType'] = dto.pickupDate
+    const dropOffSchedule = dto.dropOffDate ?? null;
+    const pickupSchedule = dto.pickupDate ?? null;
+    const isContainer = dto.pickupOption === PickupOption.Container;
+    const schedule = pickupSchedule ?? dropOffSchedule;
+    const scheduleType: GarbageAdminOrderItem['scheduleType'] = pickupSchedule
       ? 'pickup'
-      : dto.dropOffDate
+      : dropOffSchedule
       ? 'dropOff'
       : 'none';
 
@@ -236,6 +264,9 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
       orderNumber: this.formatOrderNumber(dto.id),
       schedule,
       scheduleType,
+      dropOffSchedule,
+      pickupSchedule,
+      isContainer,
       pickupOptionKey,
       containerSizeKey,
       statusKey,
@@ -261,19 +292,6 @@ export class GarbageAdminOrdersAssignedComponent implements OnInit {
   }
 
   private formatAddress(address: Address | null | undefined): string | null {
-    if (!address) {
-      return null;
-    }
-
-    const street = address.street?.trim() ?? '';
-    const cityLine = [address.postalCode, address.city]
-      .map((part) => part?.trim())
-      .filter((part) => !!part)
-      .join(' ');
-
-    const parts = [street, cityLine].filter((part) => !!part);
-    const formatted = parts.join(', ');
-
-    return formatted || null;
+    return formatLocalizedAddress(address, this.currentLang());
   }
 }

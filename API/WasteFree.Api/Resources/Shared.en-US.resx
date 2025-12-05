@@ -42,6 +42,7 @@
   <data name="ERR_CHAT_MESSAGE_REQUIRED" xml:space="preserve"><value>Message cannot be empty.</value></data>
   <data name="ERR_CHAT_MESSAGE_TOO_LONG" xml:space="preserve"><value>Message is too long (max 2000 characters).</value></data>
   <data name="ERR_PICKUP_OPTION_INVALID"><value>Pickup option is invalid</value></data>
+  <data name="ERR_PICKUP_OPTIONS_REQUIRED"><value>Select at least one pickup option.</value></data>
   <data name="ERR_CONTAINER_SIZE_REQUIRED"><value>Container size is required when pickup option is container</value></data>
   <data name="ERR_PICKUP_DATE_REQUIRED"><value>Pickup date is required</value></data>
   <data name="ERR_PICKUP_DATE_IN_PAST"><value>Pickup date cannot be in the past</value></data>

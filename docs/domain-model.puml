@@ -1,0 +1,114 @@
+@startuml domain-model
+skinparam linetype ortho
+skinparam classAttributeIconSize 0
+hide methods
+
+abstract class DatabaseEntity {
+  +Guid Id
+  +DateTime CreatedDateUtc
+  +Guid CreatedBy
+  +DateTime? ModifiedDateUtc
+  +Guid? ModifiedBy
+}
+
+class GarbageAdminConsent {
+  Content : string
+  Language : LanguagePreference
+}
+
+class GarbageGroup {
+  Name : string
+  Description : string
+  Address : Address
+  IsPrivate : bool
+}
+
+class GarbageGroupMessage {
+  Content : string
+}
+
+class GarbageOrder {
+  PickupOption : PickupOption
+  ContainerSize : ContainerSize?
+  DropOffDate : DateTime?
+  PickupDate : DateTime
+  IsHighPriority : bool
+  CollectingService : bool
+  Status : GarbageOrderStatus
+  Cost : decimal
+  UtilizationFeeAmount : decimal?
+  AssignedGarbageAdminId : Guid?
+}
+
+class GarbageOrderUsers {
+  HasAcceptedPayment : bool
+  ShareAmount : decimal
+  AdditionalUtilizationFeeShareAmount : decimal
+  HasPaidAdditionalUtilizationFee : bool
+}
+
+class InboxNotification {
+  Title : string
+  Message : string
+  RelatedEntityId : Guid?
+  ActionType : InboxActionType
+}
+
+class NotificationTemplate {
+  Subject : string
+  Body : string
+  Channel : NotificationChannel
+  Type : NotificationType
+  LanguagePreference : LanguagePreference
+}
+
+class User {
+  Username : string
+  Email : string
+  IsActive : bool
+  ConsentsAgreed : bool
+  Role : UserRole
+  LanguagePreference : LanguagePreference
+  AvatarName : string?
+  PickupOptions : string
+}
+
+class UserGarbageGroup {
+  Role : GarbageGroupRole
+  IsPending : bool
+}
+
+class Wallet {
+  Funds : double
+  WithdrawalAccountNumber : string?
+}
+
+class WalletTransaction {
+  Amount : double
+  TransactionType : TransactionType
+}
+
+DatabaseEntity <|-- GarbageAdminConsent
+DatabaseEntity <|-- GarbageGroup
+DatabaseEntity <|-- GarbageGroupMessage
+DatabaseEntity <|-- GarbageOrder
+DatabaseEntity <|-- GarbageOrderUsers
+DatabaseEntity <|-- InboxNotification
+DatabaseEntity <|-- NotificationTemplate
+DatabaseEntity <|-- User
+DatabaseEntity <|-- UserGarbageGroup
+DatabaseEntity <|-- Wallet
+DatabaseEntity <|-- WalletTransaction
+
+GarbageGroup "1" -- "*" UserGarbageGroup : memberships
+User "1" -- "*" UserGarbageGroup : memberships
+GarbageGroup "1" -- "*" GarbageGroupMessage : messages
+User "1" -- "*" GarbageGroupMessage : messages
+GarbageGroup "1" -- "*" GarbageOrder : orders
+User "0..*" -- "0..1" GarbageOrder : assignedAdmin
+GarbageOrder "1" -- "*" GarbageOrderUsers : participants
+User "1" -- "*" GarbageOrderUsers : participants
+User "1" -- "1" Wallet : owns
+Wallet "1" -- "*" WalletTransaction : ledger
+User "1" -- "*" InboxNotification : notifications
+@enduml

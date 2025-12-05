@@ -259,9 +259,19 @@
               <tbody *ngIf="detail.users.length; else noParticipants">
                 <tr *ngFor="let user of detail.users">
                   <td>
-                    <span class="fw-semibold">
-                      {{ user.username || user.userId }}
-                    </span>
+                    <div class="order-details__participant">
+                      <div class="order-details__participant-avatar">
+                        <ng-container *ngIf="participantAvatarUrl(user.userId) as avatarUrl; else participantAvatarFallback">
+                          <img [src]="avatarUrl" [attr.alt]="participantAvatarAlt(user)" />
+                        </ng-container>
+                        <ng-template #participantAvatarFallback>
+                          <span>{{ participantInitials(user) }}</span>
+                        </ng-template>
+                      </div>
+                      <div class="order-details__participant-info">
+                        <span class="order-details__participant-name">{{ participantDisplayName(user) }}</span>
+                      </div>
+                    </div>
                   </td>
                   <td class="text-end">{{ user.shareAmount | number:'1.2-2' }} PLN</td>
                   <td class="text-end">

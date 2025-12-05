@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { LocalizedCityPipe } from '@app/pipes/localized-city.pipe';
 import { CommonModule } from '@angular/common';
 import { LoaderService } from '@app/services/loader.service';
 import { CityService } from '@app/services/city.service';
@@ -9,7 +10,7 @@ import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, LocalizedCityPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

@@ -2,9 +2,11 @@ import { CommonModule, SlicePipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TranslatePipe } from '@app/pipes/translate.pipe';
+import { LocalizedCityPipe } from '@app/pipes/localized-city.pipe';
 import { GarbageGroup, GarbageGroupInfo, GarbageGroupRole, UpdateGarbageGroupRequest, GarbageGroupUser } from '@app/_models/garbageGroups';
 import { GarbageOrderDto, GarbageOrderStatus } from '@app/_models/garbage-orders';
 import { PaginatedResult, Pager } from '@app/_models/result';
+import { getLocalizedCityName } from '@app/_models/address';
 import { GarbageGroupService } from '@app/services/garbage-group.service';
 import { GarbageOrderService } from '@app/services/garbage-order.service';
 import { TranslationService } from '@app/services/translation.service';
@@ -54,7 +56,7 @@ const ORDER_NUMBER_SANITIZE_REGEX = /[^a-zA-Z0-9]/g;
 @Component({
   selector: 'app-group-panel',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe, ReactiveFormsModule, SlicePipe, UpperCasePipe, GroupChatComponent],
+  imports: [CommonModule, RouterModule, TranslatePipe, LocalizedCityPipe, ReactiveFormsModule, SlicePipe, UpperCasePipe, GroupChatComponent],
   templateUrl: './group-panel.component.html',
   styleUrls: ['./group-panel.component.css']
 })
@@ -367,8 +369,7 @@ export class GroupPanelComponent implements OnInit {
     if (!this.group) return '';
     const rawCity = this.group.address.city || this.group.city || '';
     if (!rawCity) return '';
-    const translated = this.t.translate(rawCity);
-    return translated && translated !== rawCity ? translated : rawCity;
+    return getLocalizedCityName(rawCity, this.t.currentLang) ?? rawCity;
   }
 
   getGroupPostalCode(): string {

@@ -90,6 +90,7 @@ export class WalletComponent implements OnInit, OnDestroy {
     const iban = this.profileSvc.profile()?.bankAccountNumber || '';
     if (!iban) {
       this.withdrawLoading = false;
+      this.toastr.error(this.translationService.translate('wallet.withdraw.noIban'));
       return;
     }
     this.wallet.createTransaction({ code: 'IBAN', amount, paymentProperty: iban }).subscribe({

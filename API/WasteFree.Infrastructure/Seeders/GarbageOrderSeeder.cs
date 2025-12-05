@@ -65,7 +65,6 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 AssignedGarbageAdminId = garbageAdmin1Id,
                 UtilizationFeeAmount = 184m,
                 AdditionalUtilizationFeeAmount = 60m,
-                UtilizationProofBlobName = "seeded-proof-order-223.jpg",
                 UtilizationFeeSubmittedDateUtc = DateTime.UtcNow.AddDays(-1)
             },
             new()
@@ -154,7 +153,6 @@ public class GarbageOrderSeeder(ApplicationDataContext context)
                 AssignedGarbageAdminId = garbageAdmin2Id,
                 UtilizationFeeAmount = 120m,
                 AdditionalUtilizationFeeAmount = 48m,
-                UtilizationProofBlobName = "seeded-proof-order-441.jpg",
                 UtilizationFeeSubmittedDateUtc = DateTime.UtcNow.AddDays(-2)
             }
         };

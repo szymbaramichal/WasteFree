@@ -153,7 +153,7 @@ public class GarbageOrderCommandHandler(
             {
                 await context.InboxNotifications.AddAsync(new InboxNotification
                 {
-                    ActionType = InboxActionType.GroupInvitation,
+                    ActionType = InboxActionType.GarbageOrderDetails,
                     Title = notificationContent.Inbox.Subject,
                     Message = notificationContent.Inbox.Body,
                     UserId = user.User.Id,

@@ -192,7 +192,7 @@
 													<small class="text-muted d-block" *ngIf="group.address">
 														{{ group.address.street }}
 														<br />
-														{{ group.address.postalCode }} {{ group.address.city }}
+														{{ group.address.postalCode }} {{ group.address.city | localizedCity }}
 													</small>
 												</ng-container>
 											</div>
@@ -289,12 +289,12 @@
 													<span>{{ 'pickupOrder.summary.cost.loading' | translate }}</span>
 												</div>
 											</div>
-											<ng-container *ngIf="estimatedCost() !== null && prepaidUtilizationFee() !== null; else summaryCostDefaultNote">
+											<ng-container *ngIf="estimatedTotalCost() !== null && prepaidUtilizationFee() !== null; else summaryCostDefaultNote">
 												<small class="summary-cost__note">
 													{{
 														'pickupOrder.summary.cost.prepaidCopy'
 														| translate:{
-															estimatedCost: (estimatedCost() | currency:'PLN':'symbol':'1.2-2'),
+															estimatedTotalCost: (estimatedTotalCost() | currency:'PLN':'symbol':'1.2-2'),
 															prepaidUtilizationFee: (prepaidUtilizationFee() | currency:'PLN':'symbol':'1.2-2')
 														}
 													}}
@@ -304,8 +304,8 @@
 												<small class="summary-cost__note">{{ 'pickupOrder.summary.cost.note' | translate }}</small>
 											</ng-template>
 											<ng-template #costContent>
-												<ng-container *ngIf="estimatedCost() !== null; else costMessages">
-													<span class="summary-cost__amount">{{ estimatedCost() | currency:'PLN':'symbol':'1.2-2' }}</span>
+												<ng-container *ngIf="estimatedTotalCost() !== null; else costMessages">
+													<span class="summary-cost__amount">{{ estimatedTotalCost() | currency:'PLN':'symbol':'1.2-2' }}</span>
 													<div class="summary-cost__breakdown" *ngIf="prepaidUtilizationFee() !== null">
 														<span class="summary-cost__breakdown-label">{{ 'pickupOrder.summary.cost.prepaidLabel' | translate }}</span>
 														<span class="summary-cost__breakdown-value">{{ prepaidUtilizationFee() | currency:'PLN':'symbol':'1.2-2' }}</span>
@@ -355,7 +355,7 @@
 											</div>
 											<div class="address-card__address">
 												<span>{{ group.address.street }}</span>
-												<span>{{ group.address.postalCode }} {{ group.address.city }}</span>
+												<span>{{ group.address.postalCode }} {{ group.address.city | localizedCity }}</span>
 											</div>
 										</ng-container>
 										<ng-template #noGroupAddress>
@@ -418,15 +418,18 @@
 													<input
 														matInput
 														[matDatepicker]="pickupPicker"
-														[min]="minPickupDate"
+														[min]="pickupDateMin()"
 														id="pickupDate"
 														formControlName="pickupDate"
 													/>
 													<mat-hint>{{ 'pickupOrder.step.address.dateHint' | translate }}</mat-hint>
 													<mat-datepicker-toggle matIconSuffix [for]="pickupPicker"></mat-datepicker-toggle>
 													<mat-datepicker #pickupPicker></mat-datepicker>
-													<mat-error *ngIf="pickupDateCtrl.invalid && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
+													<mat-error *ngIf="pickupDateCtrl.hasError('required') && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
 														{{ 'pickupOrder.validation.date' | translate }}
+													</mat-error>
+													<mat-error *ngIf="form.hasError('pickupBeforeDropOff') && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
+														{{ 'pickupOrder.validation.scheduleSequence' | translate }}
 													</mat-error>
 												</mat-form-field>
 											</div>
@@ -442,8 +445,11 @@
 														</mat-option>
 													</mat-select>
 													<mat-hint>{{ 'pickupOrder.step.address.timeHint' | translate }}</mat-hint>
-													<mat-error *ngIf="pickupTimeCtrl.invalid && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
+													<mat-error *ngIf="pickupTimeCtrl.hasError('required') && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
 														{{ 'pickupOrder.validation.time' | translate }}
+													</mat-error>
+													<mat-error *ngIf="form.hasError('pickupBeforeDropOff') && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
+														{{ 'pickupOrder.validation.scheduleSequence' | translate }}
 													</mat-error>
 												</mat-form-field>
 											</div>

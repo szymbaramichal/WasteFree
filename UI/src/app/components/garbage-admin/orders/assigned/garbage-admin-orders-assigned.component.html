@@ -84,11 +84,27 @@
                   <span class="order-card__label">{{ 'garbageAdminOrders.summary.pickupOption' | translate }}</span>
                   <span class="order-card__value">{{ item.pickupOptionKey | translate }}</span>
                 </div>
-                <div class="order-card__row">
+                <div class="order-card__row" *ngIf="!item.isContainer">
                   <span class="order-card__label">{{ 'garbageAdminOrders.summary.schedule' | translate }}</span>
                   <span class="order-card__value">
                     <ng-container *ngIf="item.schedule; else currentNoSchedule">
                       <time>{{ item.schedule | date:'medium':'':currentLang() }}</time>
+                    </ng-container>
+                  </span>
+                </div>
+                <div class="order-card__row" *ngIf="item.isContainer">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.dropOff' | translate }}</span>
+                  <span class="order-card__value">
+                    <ng-container *ngIf="item.dropOffSchedule; else currentNoSchedule">
+                      <time>{{ item.dropOffSchedule | date:'medium':'':currentLang() }}</time>
+                    </ng-container>
+                  </span>
+                </div>
+                <div class="order-card__row" *ngIf="item.isContainer">
+                  <span class="order-card__label">{{ 'garbageAdminOrders.summary.pickup' | translate }}</span>
+                  <span class="order-card__value">
+                    <ng-container *ngIf="item.pickupSchedule; else currentNoSchedule">
+                      <time>{{ item.pickupSchedule | date:'medium':'':currentLang() }}</time>
                     </ng-container>
                   </span>
                 </div>
@@ -171,5 +187,5 @@
   [loading]="feeModalLoading()"
   [error]="feeModalError()"
   (submitFee)="submitFee($event)"
-  (cancel)="closeFeeModal()"
+  (dismiss)="closeFeeModal()"
 ></app-utilization-fee-modal>
