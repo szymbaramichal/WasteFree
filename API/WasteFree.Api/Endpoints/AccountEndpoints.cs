@@ -40,6 +40,14 @@ public static class AccountEndpoints
             .WithTags("Account")
             .WithDescription("Get authenticated user's profile.");
 
+        app.MapGet("/user/stats", GetUserStatsAsync)
+            .RequireAuthorization(PolicyNames.GenericPolicy)
+            .WithOpenApi()
+            .Produces<Result<UserStatsDto>>()
+            .Produces<Result<EmptyResult>>(400)
+            .WithTags("Account")
+            .WithDescription("Get authenticated user's statistics.");
+
         app.MapPatch("/user/consents/accept", AcceptConsentAsync)
             .RequireAuthorization(PolicyNames.GarbageAdminPolicy)
             .WithOpenApi()
@@ -126,6 +134,27 @@ public static class AccountEndpoints
         CancellationToken cancellationToken)
     {
         var result = await mediator.SendAsync(new GetUserProfileQuery(currentUserService.UserId),
+            cancellationToken);
+
+        if (!result.IsValid)
+        {
+            result.ErrorMessage = localizer[$"{result.ErrorCode}"];
+            return Results.Json(result, statusCode: (int)result.ResponseCode);
+        }
+
+        return Results.Ok(result);
+    }
+
+    /// <summary>
+    /// Retrieves the statistics for the authenticated user.
+    /// </summary>
+    private static async Task<IResult> GetUserStatsAsync(
+        ICurrentUserService currentUserService,
+        IStringLocalizer localizer,
+        IMediator mediator,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.SendAsync(new GetUserStatsQuery(currentUserService.UserId),
             cancellationToken);
 
         if (!result.IsValid)

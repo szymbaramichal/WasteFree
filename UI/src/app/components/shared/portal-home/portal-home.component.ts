@@ -7,10 +7,8 @@ import { WalletService } from '@app/services/wallet.service';
 import { CurrentUserService } from '@app/services/current-user.service';
 import { ShowForRolesDirective } from '@app/directives/show-for-roles.directive';
 import { UserRole } from '@app/_models/user';
-import { GarbageOrderService, USER_ORDERS_PAGE_SIZE } from '@app/services/garbage-order.service';
-import { GarbageGroupService } from '@app/services/garbage-group.service';
-import { GarbageOrderStatus, PickupOption } from '@app/_models/garbage-orders';
 import { TranslationService } from '@app/services/translation.service';
+import { AccountService } from '@app/services/account.service';
 
 @Component({
   selector: 'app-portal-home',
@@ -22,8 +20,7 @@ import { TranslationService } from '@app/services/translation.service';
 export class PortalHomeComponent {
   inbox = inject(InboxService);
   private wallet = inject(WalletService);
-  private orderService = inject(GarbageOrderService);
-  private groupService = inject(GarbageGroupService);
+  private accountService = inject(AccountService);
   private translationService = inject(TranslationService);
   currentUser = inject(CurrentUserService).user;
   userRole = UserRole;
@@ -60,49 +57,19 @@ export class PortalHomeComponent {
   }
 
   private loadStats() {
-    const user = this.currentUser();
-    if (!user || user.role !== UserRole.User) {
-      return;
-    }
-
-    this.orderService.getMyOrders(1, USER_ORDERS_PAGE_SIZE).subscribe(res => {
-      const orders = res.resultModel || [];
-      const completed = orders.filter(o => o.garbageOrderStatus === GarbageOrderStatus.Completed);
-
-      const totalCost = completed.reduce((acc, o) => acc + o.cost, 0);
-      const savings = totalCost * 0.2; // Assume 20% savings
-
-      const wasteReduced = completed.reduce((acc, o) => acc + this.getWeight(o.pickupOption), 0);
-      const collections = completed.length;
-
-      this.stats.update(s => {
-        const newStats = [...s];
-        newStats[0].value = savings;
-        newStats[1].value = wasteReduced;
-        newStats[2].value = collections;
-        return newStats;
-      });
+    this.accountService.getStats().subscribe(res => {
+      if (res.resultModel) {
+        const s = res.resultModel;
+        this.stats.update(current => {
+          const newStats = [...current];
+          newStats[0].value = s.savings;
+          newStats[1].value = s.wasteReduced;
+          newStats[2].value = s.collections;
+          newStats[3].value = s.communityCount;
+          return newStats;
+        });
+      }
     });
-
-    this.groupService.list().subscribe(res => {
-      const groups = res.resultModel || [];
-      const count = groups.length;
-      this.stats.update(s => {
-        const newStats = [...s];
-        newStats[3].value = count;
-        return newStats;
-      });
-    });
-  }
-
-  private getWeight(option: PickupOption): number {
-    switch (option) {
-      case PickupOption.SmallPickup: return 5;
-      case PickupOption.Pickup: return 20;
-      case PickupOption.Container: return 100;
-      case PickupOption.SpecialOrder: return 50;
-      default: return 0;
-    }
   }
 
   iconPath(name: string) {
@@ -149,3 +116,4 @@ export class PortalHomeComponent {
     return String(m);
   }
 }
+
