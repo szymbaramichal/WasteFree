@@ -38,7 +38,9 @@ export class GroupsManagementComponent implements OnInit {
   pendingInvitations: GarbageGroupInvitation[] = [];
   invitationActions: Record<string, boolean> = {};
 
-  cities: string[] = this.cityService.cities() ?? [];
+  get cities(): string[] {
+    return this.cityService.cities() ?? [];
+  }
 
   private addressGroup: FormGroup = buildAddressFormGroup(this.fb);
 
@@ -64,6 +66,7 @@ export class GroupsManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.cityService.getCitiesList().subscribe();
     this.fetchPendingInvitations();
     this.resetFormDefaults(false);
   }

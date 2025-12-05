@@ -64,7 +64,7 @@ export class InboxComponent {
     const normalized = hasZone ? date : `${date}Z`;
     const value = new Date(normalized);
     if (Number.isNaN(value.getTime())) return '';
-    return value.toLocaleString(undefined, {
+    return value.toLocaleString(this.translateService.currentLang, {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
