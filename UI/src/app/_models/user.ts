@@ -21,3 +21,10 @@ export enum UserRole {
   GarbageAdmin = 2,
   Admin = 3,
 }
+
+export interface UserStats {
+  savings: number;
+  wasteReduced: number;
+  collections: number;
+  communityCount: number;
+}
