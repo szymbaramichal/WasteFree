@@ -323,6 +323,7 @@
   "pickupOrder.validation.participants": "Zaznacz co najmniej jednego uczestnika.",
   "pickupOrder.validation.date": "Wybierz datę, aby kontynuować.",
   "pickupOrder.validation.time": "Wybierz godzinę, aby kontynuować.",
+  "pickupOrder.validation.pickupInPast": "Godzina odbioru musi być w przyszłości.",
   "pickupOrder.validation.containerSize": "Wybierz rozmiar kontenera, aby kontynuować.",
   "pickupOrder.validation.dropOffDate": "Wybierz datę podstawienia kontenera.",
   "pickupOrder.validation.dropOffTime": "Wybierz godzinę podstawienia kontenera.",

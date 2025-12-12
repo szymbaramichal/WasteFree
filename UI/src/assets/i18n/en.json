@@ -322,6 +322,7 @@
   "pickupOrder.validation.participants": "Select at least one participant.",
   "pickupOrder.validation.date": "Pick a date to continue.",
   "pickupOrder.validation.time": "Pick a time to continue.",
+  "pickupOrder.validation.pickupInPast": "Pickup time must be in the future.",
   "pickupOrder.validation.containerSize": "Select a container size to continue.",
   "pickupOrder.validation.dropOffDate": "Choose the container delivery date.",
   "pickupOrder.validation.dropOffTime": "Choose the container delivery time.",

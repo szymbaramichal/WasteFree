@@ -428,6 +428,9 @@
 													<mat-error *ngIf="pickupDateCtrl.hasError('required') && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
 														{{ 'pickupOrder.validation.date' | translate }}
 													</mat-error>
+													<mat-error *ngIf="form.hasError('pickupInPast') && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
+														{{ 'pickupOrder.validation.pickupInPast' | translate }}
+													</mat-error>
 													<mat-error *ngIf="form.hasError('pickupBeforeDropOff') && (pickupDateCtrl.dirty || pickupDateCtrl.touched)">
 														{{ 'pickupOrder.validation.scheduleSequence' | translate }}
 													</mat-error>
@@ -447,6 +450,9 @@
 													<mat-hint>{{ 'pickupOrder.step.address.timeHint' | translate }}</mat-hint>
 													<mat-error *ngIf="pickupTimeCtrl.hasError('required') && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
 														{{ 'pickupOrder.validation.time' | translate }}
+													</mat-error>
+													<mat-error *ngIf="form.hasError('pickupInPast') && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
+														{{ 'pickupOrder.validation.pickupInPast' | translate }}
 													</mat-error>
 													<mat-error *ngIf="form.hasError('pickupBeforeDropOff') && (pickupTimeCtrl.dirty || pickupTimeCtrl.touched)">
 														{{ 'pickupOrder.validation.scheduleSequence' | translate }}

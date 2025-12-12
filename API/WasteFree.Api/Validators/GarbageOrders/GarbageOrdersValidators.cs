@@ -32,7 +32,7 @@ public class GarbageOrderRequestValidator : AbstractValidator<GarbageOrderReques
             .WithErrorCode(ValidationErrorCodes.DropOffDateInPast);
 
         RuleFor(x => x.UserIds)
-            .Must(x => x.Any())
+            .Must(x => x.Any()) 
             .WithErrorCode(ValidationErrorCodes.UserIdsEmpty);
     }
 }

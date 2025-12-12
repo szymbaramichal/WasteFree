@@ -268,7 +268,7 @@ export class PickupOrderComponent implements OnInit {
       containerSize: this.fb.control<ContainerSize | null>(null)
     },
     {
-      validators: (control) => this.validateContainerSchedule(control)
+      validators: (control) => this.validateForm(control)
     }
   );
 
@@ -968,6 +968,45 @@ export class PickupOrderComponent implements OnInit {
     this.dropOffDateCtrl.updateValueAndValidity({ emitEvent: false });
     this.dropOffTimeCtrl.updateValueAndValidity({ emitEvent: false });
     this.form.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private validateForm(control: AbstractControl): ValidationErrors | null {
+    const combinedErrors: ValidationErrors = {};
+
+    const pickupErrors = this.validatePickupSchedule(control);
+    if (pickupErrors) {
+      Object.assign(combinedErrors, pickupErrors);
+    }
+
+    const containerErrors = this.validateContainerSchedule(control);
+    if (containerErrors) {
+      Object.assign(combinedErrors, containerErrors);
+    }
+
+    return Object.keys(combinedErrors).length > 0 ? combinedErrors : null;
+  }
+
+  private validatePickupSchedule(control: AbstractControl): ValidationErrors | null {
+    const pickupDate = control.get('pickupDate')?.value ?? null;
+    const pickupTime = control.get('pickupTime')?.value ?? null;
+
+    const pickupSchedule = this.combineDateTime(pickupDate, pickupTime);
+    if (!pickupSchedule) {
+      return null;
+    }
+
+    const now = Date.now();
+    const pickupTimestamp = pickupSchedule.displayDate.getTime();
+
+    if (Number.isNaN(pickupTimestamp)) {
+      return null;
+    }
+
+    if (pickupTimestamp < now) {
+      return { pickupInPast: true };
+    }
+
+    return null;
   }
 
   private validateContainerSchedule(control: AbstractControl): ValidationErrors | null {
