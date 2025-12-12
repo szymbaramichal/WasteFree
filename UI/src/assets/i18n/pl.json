@@ -296,6 +296,7 @@
   "pickupOrder.step.address.placeholder": "Już wkrótce wskażesz dokładny adres i preferowaną datę.",
   "pickupOrder.step.address.selectedGroupTitle": "Adres odbioru",
   "pickupOrder.step.address.selectedGroupLead": "Wywóz zostanie zrealizowany pod tym adresem grupy.",
+  "pickupOrder.step.address.changeAddressHint": "Chcesz zmienić adres? Właściciel grupy zrobi to w panelu szczegółów grupy.",
   "pickupOrder.step.address.noGroup": "Wybierz w poprzednim kroku grupę, aby zobaczyć jej adres.",
   "pickupOrder.step.address.scheduleTitle": "Preferowana data i godzina",
   "pickupOrder.step.address.scheduleLead": "Wybierz termin przyjazdu ekipy. Potwierdzimy go z Tobą.",
