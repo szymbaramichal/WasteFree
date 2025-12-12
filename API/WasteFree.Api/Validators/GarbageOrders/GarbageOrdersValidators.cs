@@ -24,15 +24,15 @@ public class GarbageOrderRequestValidator : AbstractValidator<GarbageOrderReques
         RuleFor(x => x.PickupDate)
             .NotEmpty()
             .WithErrorCode(ValidationErrorCodes.PickupDateRequired)
-            .GreaterThanOrEqualTo(DateTime.Today)
+            .GreaterThanOrEqualTo(DateTime.UtcNow)
             .WithErrorCode(ValidationErrorCodes.PickupDateInPast);
 
         RuleFor(x => x.DropOffDate)
-            .Must(dropOff => !dropOff.HasValue || dropOff.Value >= DateTime.Today)
+            .Must(dropOff => !dropOff.HasValue || dropOff.Value >= DateTime.UtcNow)
             .WithErrorCode(ValidationErrorCodes.DropOffDateInPast);
 
         RuleFor(x => x.UserIds)
-            .Must(x => x.Any())
+            .Must(x => x.Any()) 
             .WithErrorCode(ValidationErrorCodes.UserIdsEmpty);
     }
 }
