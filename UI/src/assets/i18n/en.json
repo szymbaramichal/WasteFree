@@ -295,6 +295,7 @@
   "pickupOrder.step.address.placeholder": "You will soon be able to pick the exact address and date.",
   "pickupOrder.step.address.selectedGroupTitle": "Pickup address",
   "pickupOrder.step.address.selectedGroupLead": "We will handle the pickup at this group location.",
+  "pickupOrder.step.address.changeAddressHint": "Need a different address? The group owner can update it from the group details panel.",
   "pickupOrder.step.address.noGroup": "Select a group in the previous step to review its address.",
   "pickupOrder.step.address.scheduleTitle": "Preferred date & time",
   "pickupOrder.step.address.scheduleLead": "Pick when we should arrive. We will confirm the schedule with you.",

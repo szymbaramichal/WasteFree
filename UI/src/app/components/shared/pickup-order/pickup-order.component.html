@@ -357,6 +357,9 @@
 												<span>{{ group.address.street }}</span>
 												<span>{{ group.address.postalCode }} {{ group.address.city | localizedCity }}</span>
 											</div>
+											<p class="text-muted small mt-3">
+												{{ 'pickupOrder.step.address.changeAddressHint' | translate }}
+											</p>
 										</ng-container>
 										<ng-template #noGroupAddress>
 											<div class="address-card__empty">
