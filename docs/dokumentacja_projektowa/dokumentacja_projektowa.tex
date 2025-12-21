@@ -79,6 +79,10 @@ urlcolor=BlueViolet}	%%pdfpagemode=FullScreen}
 \newcommand{\captionT}[1]{\caption{\textsc{\footnotesize{#1}}}}
 \renewcommand\figurename{Rys.}
 
+% Pokazuj poziom paragraph w spisie treści i numeracji
+\setcounter{tocdepth}{4}
+\setcounter{secnumdepth}{4}
+
 \numberwithin{equation}{section}
 \renewcommand{\thefootnote}{\arabic{footnote})}
 %\renewcommand{\thefootnote}{\alph{footnote})}
@@ -126,7 +130,8 @@ Instytut Bezpieczeństwa i Informatyki\\
 \end{center}
 \begin{center}
  {\fontsize{12pt}{12pt}\selectfont pod opieką:}\\
- {\bf\fontsize{12pt}{12pt}\selectfont tytuł, imię i nazwisko opiekuna projektu}
+ {\bf\fontsize{12pt}{12pt}\selectfont dr Wojciech Gwizdała}\\
+ {\bf\fontsize{12pt}{12pt}\selectfont mgr Wojciech Baran}
 \end{center}
 
 %\mbox{}
@@ -149,25 +154,53 @@ Kraków \the\year\\
 
 \newpage
 
-\section{Szczegółowa dokumentacja projektowa}
-\textit{W zależności od specyfiki projektu! Wymienione niżej podpunkty mają charakter orientacyjny.}
+\section{Dokumentacja projektowa}
 \subsection{Projekt UML}
-\textit{W szczególności: diagram klas, ew. np. przypadki użycia, diagramy sekwencji, czynności, stanów, obiektów/komponentów/pakietów itp.}
 \subsection{Projekt bazy danych}
-\textit{Między innymi: opis tabel, kolumn, relacji, procedur składowanych.}
-\subsection{Szczegółowa dokumentacja kodu}
-\textit{Między innymi:}
-\begin{itemize}
-\item \textit{opis najważniejszych zmiennych;}
-\item \textit{specyfikacja i opis wszystkich klas (jeśli projekt obiektowy) - opis całej klasy, jej pól i metod (jak poniżej);}
-\item \textit{opis funkcji oraz metod klas (co robią, opis poszczególnych parametrów wejściowych i zwracanych wartości itp.) oraz w przypadku bibliotek programistycznych - przykłady użycia (przykładowy kod);} 
-\item \textit{opis użytych wzorców projektowych.}
-\end{itemize}
-\subsection{Środowisko programistyczne}
-\textit{Opis instalacji i konfiguracji niezbędnego środowiska programistycznego potrzebnego do ewentualnej dalszej pracy deweloperskiej z projektem (system operacyjny, wszelkie niezbędne narzędzia, biblioteki itp. wraz z sugerowanymi/minimalnymi ich wersjami).}
 
+\section{Deploymenty}
+\subsection{Środowisko deweloperskie (Docker Compose)}
+\subsection{Środowiska CI/CD i hosting}
+\subsection{Konfiguracja zmiennych środowiskowych}
 
+\section{Dokumentacja kodu}
+\subsection{Backend (.NET)}
+\subsubsection{Wstęp i umówienie architektury}
+\subsubsection{Warstwa Domain (encje, agregaty, interfejsy)}
+\subsubsection{Warstwa Application}
+\paragraph{Use case'y i mediator}
+\paragraph{DTO i walidacje}
+\paragraph{Usługi pomocnicze i serwisy}
+\subsubsection{Warstwa API}
+\paragraph{Minimal API i middleware}
+\paragraph{Autoryzacja JWT i SignalR}
+\paragraph{OpenAPI, lokalizacja (PL/EN) i konfiguracja}
+\subsubsection{Warstwa Infrastructure}
+\paragraph{EF Core i migracje}
+\paragraph{Integracje (Azure Blob Storage, SMTP, Nominatim)}
+\paragraph{Harmonogramy zadań (Quartz)}
 
+\subsection{Frontend (Angular)}
+\subsubsection{Architektura i stan (sygnały, rxjs)}
+\paragraph{Konfiguracja i routing}
+\paragraph{Stan: sygnały i strumienie rxjs}
+\subsubsection{Komponenty}
+\paragraph{Portal/home, grupy i zgody admina}
+\paragraph{Portfel, zamówienia i odbiory}
+\paragraph{Inbox i chat (SignalR)}
+\subsubsection{Nawigacja i bezpieczeństwo}
+\paragraph{Routing, guardy }
+\subsubsection{Serwisy i integracje}
+\paragraph{Serwisy API}
+\paragraph{SignalR, loader i obsługa błędów}
+\subsubsection{Interceptory i i18n}
+\paragraph{Auth, error, locale}
+\paragraph{pl/en, zasoby i tłumaczenia}
+\subsubsection{Środowiska i build}
+\subsection{CI/CD}
+\subsubsection{Pipelines API}
+\subsubsection{Pipelines UI}
+\subsubsection{Konteneryzacja i obrazy}
 
 
 \renewcommand\refname{Literatura (jeżeli wymagana)}
