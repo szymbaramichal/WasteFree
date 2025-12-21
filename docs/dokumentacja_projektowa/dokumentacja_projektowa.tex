@@ -8,6 +8,7 @@
 \usepackage{lmodern}
 \usepackage{amsmath,amsthm,amsfonts,amssymb,alltt}
 \usepackage{epsfig}
+\usepackage{graphicx}
 \usepackage{pdflscape}
 \usepackage{caption}
 \usepackage{indentfirst}
@@ -156,7 +157,33 @@ Kraków \the\year\\
 
 \section{Dokumentacja projektowa}
 \subsection{Projekt UML}
+Rysunek \ref{fig:domain-model} przedstawia główny model domenowy systemu WasteFree, w którym wszystkie encje dziedziczą po \textit{DatabaseEntity} (identyfikator i metadane audytowe). Model pokazuje relacje użytkowników z grupami, zamówieniami odbioru odpadów, portfelem oraz szablonami powiadomień.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.97\textwidth]{../diagrams/domain-model/domain-model.png}
+	\caption{Model domenowy i powiązania encji}
+	\label{fig:domain-model}
+\end{figure}
+
+Kluczowe zależności:
+\begin{itemize}
+	\item \textbf{User} — posiada role, preferencje językowe, status aktywności oraz jest właścicielem \textbf{Wallet} i powiązany z \textbf{InboxNotification}. Użytkownik dołącza do \textbf{GarbageGroup} poprzez \textbf{UserGarbageGroup} (rola w grupie, stan oczekiwania).
+	\item \textbf{GarbageGroup} — prywatne lub publiczne grupy adresowe, mają wiadomości \textbf{GarbageGroupMessage} oraz zamówienia \textbf{GarbageOrder}. Administrator może wymagać \textbf{GarbageAdminConsent}.
+	\item \textbf{GarbageOrder} — definiuje parametry odbioru (opcja, rozmiar kontenera, daty, priorytet, status, koszty) i jest powiązany z uczestnikami \textbf{GarbageOrderUsers}; może wskazywać przydzielonego admina grupy.
+	\item \textbf{Wallet} i \textbf{WalletTransaction} — ewidencja środków i operacji finansowych użytkownika.
+	\item \textbf{NotificationTemplate} oraz \textbf{InboxNotification} — wzorce treści i konkretne powiadomienia (kanał, typ, język).
+\end{itemize}
+
 \subsection{Projekt bazy danych}
+Implementacja relacyjna odwzorowuje powyższy model: tabelom odpowiadają encje domenowe, a klucze obce odzwierciedlają relacje przedstawione na diagramie. Kluczowe elementy schematu:
+\begin{itemize}
+	\item Tabele użytkownika, portfela i transakcji zabezpieczają integralność środków (powiązanie 1:1 \textbf{User}–\textbf{Wallet}, 1:N \textbf{Wallet}–\textbf{WalletTransaction}).
+	\item Grupy i członkostwa: tabela \textbf{GarbageGroup} z łącznikiem \textbf{UserGarbageGroup} (rola, stan) oraz wiadomościami \textbf{GarbageGroupMessage}.
+	\item Zamówienia odbioru: \textbf{GarbageOrder} wraz z tabelą uczestników \textbf{GarbageOrderUsers}; powiązanie z grupą i ewentualnym adminem.
+	\item Powiadomienia: \textbf{NotificationTemplate} (kanał, typ, język) i \textbf{InboxNotification} (wiadomości przypisane użytkownikowi, typ akcji, powiązana encja).
+	\item Metadane audytowe i klucze główne: wspólne pola z \textbf{DatabaseEntity} (Id, utworzenie/modyfikacja, autorzy) ułatwiają spójność oraz migracje.
+\end{itemize}
 
 \section{Deploymenty}
 \subsection{Środowisko deweloperskie (Docker Compose)}
@@ -189,7 +216,7 @@ Kraków \the\year\\
 \paragraph{Portfel, zamówienia i odbiory}
 \paragraph{Inbox i chat (SignalR)}
 \subsubsection{Nawigacja i bezpieczeństwo}
-\paragraph{Routing, guardy }
+\paragraph{Routing, guardy}
 \subsubsection{Serwisy i integracje}
 \paragraph{Serwisy API}
 \paragraph{SignalR, loader i obsługa błędów}
@@ -197,6 +224,7 @@ Kraków \the\year\\
 \paragraph{Auth, error, locale}
 \paragraph{pl/en, zasoby i tłumaczenia}
 \subsubsection{Środowiska i build}
+
 \subsection{CI/CD}
 \subsubsection{Pipelines API}
 \subsubsection{Pipelines UI}
