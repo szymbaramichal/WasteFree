@@ -187,8 +187,36 @@ Implementacja relacyjna odwzorowuje powyższy model: tabelom odpowiadają encje 
 
 \section{Deploymenty}
 \subsection{Środowisko deweloperskie (Docker Compose)}
+Do lokalnego uruchomienia projektu wykorzystujemy plik \texttt{docker-compose.yml} w katalogu głównym repozytorium. Uruchamiane są dwa serwisy:
+\begin{itemize}
+\item \textbf{wastefree-api} — obraz budowany z katalogu \texttt{API}, ekspozycja \texttt{5001:5001}, zmienne: \texttt{ASPNETCORE\_ENVIRONMENT=Docker} oraz \texttt{ASPNETCORE\_URLS=http://+:5001}.
+\item \textbf{wastefree-ui} — obraz budowany z katalogu \texttt{UI}, ekspozycja \texttt{4200:80}, zależność od \textbf{wastefree-api}.
+\end{itemize}
+Skład uruchamiamy poleceniem \texttt{docker compose up} (domyślnie bez bazy SQL Server, ponieważ lokalnie używamy SQLite). Porty są zgodne z lokalnym developmentem: API 5001, UI 4200.
 \subsection{Środowiska CI/CD i hosting}
+Produkcja i pipeline'y CI/CD działają na hostingu \textbf{Mikr.us}, gdzie aplikacje są uruchamiane jako kontenery Docker. Za automatyzację odpowiada \textbf{GitHub Actions} w katalogu \texttt{.github/workflows}:
+
+\begin{itemize}
+\item \textbf{api-cicd.yml}: wyzwalany na push do \texttt{main} lub ręcznie. Kroki: checkout, instalacja .NET 9, \texttt{dotnet restore/build/publish}, budowa obrazu \texttt{wastefree-api:latest}, logowanie do DockerHub, push obrazu, a następnie SSH na Mikr.us (\texttt{appleboy/ssh-action}) i restart kontenera \textbf{wastefree-api} z mapowaniem portu \texttt{8080:8080}. Sekretne zmienne środowiskowe są przekazywane jako \texttt{-e} do kontenera.
+\item \textbf{ui-cicd.yml}: analogiczny pipeline dla frontendu. Kroki: checkout, Node.js 20, \texttt{npm ci}, \texttt{npm run build}, budowa obrazu \texttt{wastefree-ui:latest}, push do DockerHub, SSH na Mikr.us i restart kontenera \textbf{wastefree-ui} z ekspozycją \texttt{5000:80}.
+\item \textbf{api-pr-ci.yml} i \textbf{ui-pr-ci.yml}: walidacje dla pull requestów do \texttt{main}. Budują odpowiednio API i UI (restore/build/publish lub \texttt{npm ci}/\texttt{npm run build}), weryfikując, że zmiany nie psują procesu budowy. Nie wykonują wdrożenia ani publikacji obrazów.
+\end{itemize}
+
+Proces wdrożenia na Mikr.us przebiega bez dodatkowych orkiestratorów: po zalogowaniu przez SSH istniejące kontenery są zatrzymywane i usuwane, pobierany jest najnowszy obraz z DockerHub, a następnie uruchamiany jest nowy kontener z flagą \texttt{--restart unless-stopped}. Po wdrożeniu wykonywany jest \texttt{docker image prune -f} w celu oczyszczenia nieużywanych warstw.
 \subsection{Konfiguracja zmiennych środowiskowych}
+Kluczowe sekrety wykorzystywane w pipeline'ach i kontenerach (przechowywane w GitHub Secrets, przekazywane do \texttt{docker run}):
+\begin{itemize}
+\item \texttt{ConnectionStrings\_\_Database} — pełny connection string do bazy produkcyjnej (MSSQL).
+\item \texttt{ConnectionStrings\_\_BlobStorage} — dane dostępu do Azure Blob Storage na potrzeby plików.
+\item \texttt{Integrations\_\_Smtp\_\_Password} — hasło do serwera SMTP używanego do wysyłki e-maili.
+\item \texttt{Security\_\_AesEncryptionKey} — klucz dla symetrycznego szyfrowania wrażliwych danych.
+\item \texttt{TickerQBasicAuth\_\_Username} / \texttt{TickerQBasicAuth\_\_Password} — dane do integracji TickerQ.
+\item \texttt{Security\_\_Jwt\_\_Key} — klucz do podpisywania tokenów JWT.
+\item \texttt{DOCKERHUB\_USERNAME} / \texttt{DOCKERHUB\_TOKEN} — uwierzytelnienie push/pull obrazów.
+\item \texttt{DEPLOY\_HOST}, \texttt{DEPLOY\_USER}, \texttt{DEPLOY\_PORT}, \texttt{SSH\_PRIVATE\_KEY} — parametry połączenia SSH do hostingu Mikr.us.
+\end{itemize}
+
+W środowisku Mikr.us wartości te są mapowane na zmienne kontenera. Minimalny zestaw dla uruchomienia API: connection string do bazy, klucz JWT, klucz AES oraz hasło SMTP. UI nie wymaga sekretnych zmiennych (statyczny build), korzysta z API pod wskazanym hostem/portem.
 
 \section{Dokumentacja kodu}
 \subsection{Backend (.NET)}
