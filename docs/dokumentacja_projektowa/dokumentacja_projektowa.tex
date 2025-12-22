@@ -156,6 +156,33 @@ Kraków \the\year\\
 \newpage
 
 \section{Dokumentacja projektowa}
+\subsection{Cel systemu i wymagania niefunkcjonalne}
+WasteFree Cloud wspiera koordynację odbioru odpadów w modelu grupowym: użytkownicy tworzą lub dołączają do grup adresowych, organizują zamówienia odbioru, rozliczają koszty w portfelach oraz otrzymują powiadomienia w czasie rzeczywistym. System musi zapewnić spójność danych finansowych, przewidywalność terminów odbioru oraz przejrzystość komunikacji.
+
+Wymagania niefunkcjonalne (NFR):
+\begin{itemize}
+\item \textbf{Skalowalność}: pozioma na warstwie API i SignalR (konteneryzacja), pozioma/pionowa na bazie danych; brak założeń o stanowości procesu (sesje trzymane w tokenach JWT i klientach SignalR).
+\item \textbf{Niezawodność i odporność}: restartowalne kontenery (\texttt{--restart unless-stopped}), idempotentne komendy (np. walidacja statusów zamówień), walidacja wejścia po stronie Application.
+\item \textbf{Bezpieczeństwo}: autoryzacja JWT, szyfrowanie kluczem symetrycznym (Security\_\_AesEncryptionKey) dla wrażliwych pól, separacja sekretów w zmiennych środowiskowych, kontrola ról w grupach (admin/członek).
+\item \textbf{Wydajność i responsywność}: minimal API bez nadmiarowych middleware, cache klienta po stronie UI, strumienie SignalR dla zdarzeń czasu rzeczywistego; cele operacyjne: czas odpowiedzi API $<300\,\mathrm{ms}$ dla standardowych zapytań, dostępność $\geq 99\%$ w oknie miesiąca.
+\item \textbf{Obserwowalność}: logowanie strukturalne, możliwość rozszerzenia o metryki (Prometheus) i centralne logi; korelacja żądań przez identyfikatory w middleware.
+\item \textbf{Utrzymywalność i spójność}: silna separacja warstw (Clean Architecture), migracje EF Core, testowalność use case'ów bez infrastruktury.
+\end{itemize}
+
+\subsection{Wybór technologii i uzasadnienie}
+\begin{itemize}
+\item \textbf{Platforma backend (.NET 9 + Minimal API + SignalR)} — dojrzały ekosystem, wysoka wydajność serwera Kestrel, bogate wsparcie dla DI i middleware. Minimal API redukuje narzut deklaratywny, a SignalR zapewnia dwukierunkowe kanały czasu rzeczywistego (chat grupowy, powiadomienia) bez budowy własnego transportu.
+\item \textbf{Warstwa danych: EF Core + SQLite (dev) / MSSQL (prod)} — EF Core przyspiesza mapowanie obiektowo-relacyjne i migracje. SQLite w środowisku deweloperskim minimalizuje zależności (brak zewnętrznego serwera), natomiast MSSQL w produkcji zapewnia skalę, replikację i narzędzia administracyjne. Migracje utrzymują spójność schematu między środowiskami.
+\item \textbf{Frontend: Angular 16/17} — sprawdzony framework z wbudowanym routingiem, DI i wsparciem dla i18n. Silne typowanie (TypeScript) ogranicza klasy błędów, a ekosystem narzędzi (CLI, testy) przyspiesza development zespołowy.
+\item \textbf{Konteneryzacja: Docker} — hermetyzuje runtime (.NET, Node), upraszcza parytet środowisk (dev/stage/prod) i jest podstawą pipeline'ów CI/CD. Obrazy są przenośne między lokalnym Compose a produkcyjnym daemonem na Mikr.us.
+\item \textbf{Hosting: Mikr.us (VPS)} — niski koszt i pełna kontrola nad Dockerem bez warstwy orkiestratora. Prostota restartu kontenerów przez SSH zmniejsza operacyjny narzut; w razie potrzeby łatwo dodać reverse proxy lub monitoring na tym samym VPS.
+\item \textbf{Przechowywanie plików: Azure Blob Storage} — trwałość na poziomie klasy LRS/ZRS, podpisy SAS do kontrolowania dostępu, integracja SDK .NET, niski koszt przechowywania dużych obiektów (zdjęcia, załączniki) bez obciążania bazy transakcyjnej.
+\item \textbf{Geokodowanie: Nominatim (OpenStreetMap)} — otwarty serwis geokodowania pozwala na transformację adresów grup na współrzędne bez opłat transakcyjnych. Wymaga ograniczeń stawek (rate limiting) i cachowania po naszej stronie, co kontrolujemy w warstwie Infrastructure.
+\item \textbf{Powiadomienia e-mail: SMTP} — uniwersalny protokół, możliwość podmiany dostawcy bez zmiany logiki domenowej; hasło przechowywane jako sekret środowiskowy.
+\item \textbf{CI/CD: GitHub Actions} — natywna integracja z repozytorium, macierze dla .NET/Node, gotowe akcje logowania do DockerHub i SSH. Deterministyczne pipeline'y (build \textrightarrow{} push \textrightarrow{} deploy) ułatwiają audyt i odtwarzanie procesu.
+\item \textbf{Sekrety i konfiguracja} — zmienne środowiskowe zamiast plików w repozytorium; w produkcji sekretne wartości dostarczane z GitHub Secrets do kontenerów (klucze JWT, AES, poświadczenia blob/SMTP). Redukuje ryzyko wycieku i umożliwia rotację bez rekonstrukcji obrazów.
+\end{itemize}
+
 \subsection{Projekt UML}
 Rysunek \ref{fig:domain-model} przedstawia główny model domenowy systemu WasteFree, w którym wszystkie encje dziedziczą po \textit{DatabaseEntity} (identyfikator i metadane audytowe). Model pokazuje relacje użytkowników z grupami, zamówieniami odbioru odpadów, portfelem oraz szablonami powiadomień.
 
@@ -187,22 +214,23 @@ Implementacja relacyjna odwzorowuje powyższy model: tabelom odpowiadają encje 
 
 \section{Deploymenty}
 \subsection{Środowisko deweloperskie (Docker Compose)}
-Do lokalnego uruchomienia projektu wykorzystujemy plik \texttt{docker-compose.yml} w katalogu głównym repozytorium. Uruchamiane są dwa serwisy:
+Do lokalnego uruchomienia projektu wykorzystujemy plik \texttt{docker-compose.yml} w katalogu głównym repozytorium. Skład odwzorowuje podstawowe komponenty produkcyjne, z uproszczeniem bazy (SQLite zamiast MSSQL):
 \begin{itemize}
-\item \textbf{wastefree-api} — obraz budowany z katalogu \texttt{API}, ekspozycja \texttt{5001:5001}, zmienne: \texttt{ASPNETCORE\_ENVIRONMENT=Docker} oraz \texttt{ASPNETCORE\_URLS=http://+:5001}.
-\item \textbf{wastefree-ui} — obraz budowany z katalogu \texttt{UI}, ekspozycja \texttt{4200:80}, zależność od \textbf{wastefree-api}.
+\item \textbf{wastefree-api} — obraz budowany z katalogu \texttt{API}, ekspozycja \texttt{5001:5001}, zmienne: \texttt{ASPNETCORE\_ENVIRONMENT=Docker} i \texttt{ASPNETCORE\_URLS=http://+:5001}. API korzysta z SQLite skonfigurowanego w profilu Docker.
+\item \textbf{wastefree-ui} — obraz budowany z katalogu \texttt{UI}, ekspozycja \texttt{4200:80}, zależność od \textbf{wastefree-api}. UI komunikuje się z API pod adresem hosta (np. \texttt{http://localhost:5001}).
 \end{itemize}
-Skład uruchamiamy poleceniem \texttt{docker compose up} (domyślnie bez bazy SQL Server, ponieważ lokalnie używamy SQLite). Porty są zgodne z lokalnym developmentem: API 5001, UI 4200.
+Uruchomienie: \texttt{docker compose up}. Różnice względem produkcji: brak zewnętrznego MSSQL, brak zewnętrznych usług (SMTP, Blob Storage) — ich poświadczenia mogą być podane opcjonalnie jako zmienne środowiskowe, jeśli chcemy testować pełne ścieżki. Debugowanie: mapowanie portów umożliwia podłączenie profilerów i narzędzi przeglądarki; kontenery można uruchomić z \texttt{docker compose up --build} po zmianach w kodzie.
 \subsection{Środowiska CI/CD i hosting}
-Produkcja i pipeline'y CI/CD działają na hostingu \textbf{Mikr.us}, gdzie aplikacje są uruchamiane jako kontenery Docker. Za automatyzację odpowiada \textbf{GitHub Actions} w katalogu \texttt{.github/workflows}:
+Produkacja i pipeline'y CI/CD działają na hostingu \textbf{Mikr.us} (VPS z Dockerem). Motywacje: niski koszt, pełna kontrola nad daemonem Docker, brak potrzeby dodatkowych usług orkiestracji. Automatyzacja jest realizowana przez \textbf{GitHub Actions} w katalogu \texttt{.github/workflows}; pipeline'y są deterministyczne i deklaratywne.
 
+Przepływ pipeline'ów:
 \begin{itemize}
-\item \textbf{api-cicd.yml}: wyzwalany na push do \texttt{main} lub ręcznie. Kroki: checkout, instalacja .NET 9, \texttt{dotnet restore/build/publish}, budowa obrazu \texttt{wastefree-api:latest}, logowanie do DockerHub, push obrazu, a następnie SSH na Mikr.us (\texttt{appleboy/ssh-action}) i restart kontenera \textbf{wastefree-api} z mapowaniem portu \texttt{8080:8080}. Sekretne zmienne środowiskowe są przekazywane jako \texttt{-e} do kontenera.
-\item \textbf{ui-cicd.yml}: analogiczny pipeline dla frontendu. Kroki: checkout, Node.js 20, \texttt{npm ci}, \texttt{npm run build}, budowa obrazu \texttt{wastefree-ui:latest}, push do DockerHub, SSH na Mikr.us i restart kontenera \textbf{wastefree-ui} z ekspozycją \texttt{5000:80}.
-\item \textbf{api-pr-ci.yml} i \textbf{ui-pr-ci.yml}: walidacje dla pull requestów do \texttt{main}. Budują odpowiednio API i UI (restore/build/publish lub \texttt{npm ci}/\texttt{npm run build}), weryfikując, że zmiany nie psują procesu budowy. Nie wykonują wdrożenia ani publikacji obrazów.
+\item \textbf{api-cicd.yml}: zdarzenia push do \texttt{main} lub uruchomienie ręczne. Kroki: checkout, instalacja .NET 9, \texttt{dotnet restore/build/publish}, budowa obrazu \texttt{wastefree-api:latest}, logowanie do DockerHub, push, następnie SSH na Mikr.us (\texttt{appleboy/ssh-action}) i przełączenie kontenera \textbf{wastefree-api} (stop/rm, \texttt{docker pull}, \texttt{docker run} z mapowaniem \texttt{8080:8080} i kompletem zmiennych środowiskowych).
+\item \textbf{ui-cicd.yml}: analogiczny pipeline dla frontendu (Node.js 20, \texttt{npm ci}/\texttt{npm run build}, budowa obrazu \texttt{wastefree-ui:latest}, push, SSH na Mikr.us i restart \textbf{wastefree-ui} na porcie \texttt{5000:80}).
+\item \textbf{api-pr-ci.yml} i \textbf{ui-pr-ci.yml}: walidacje PR do \texttt{main}; budują odpowiednio API i UI, aby wychwycić regresje przed merge. Nie publikują obrazów ani nie wdrażają.
 \end{itemize}
 
-Proces wdrożenia na Mikr.us przebiega bez dodatkowych orkiestratorów: po zalogowaniu przez SSH istniejące kontenery są zatrzymywane i usuwane, pobierany jest najnowszy obraz z DockerHub, a następnie uruchamiany jest nowy kontener z flagą \texttt{--restart unless-stopped}. Po wdrożeniu wykonywany jest \texttt{docker image prune -f} w celu oczyszczenia nieużywanych warstw.
+Strategia wdrożenia: \textit{replace} kontenera (stop/rm \textrightarrow{} pull \textrightarrow{} run) bez orkiestratora. Rollback: ponowne uruchomienie poprzedniej wersji obrazu z DockerHub (tag \texttt{latest} można zastąpić wersją historyczną). Utrzymywalność: obrazy są odchudzane przez \texttt{docker image prune -f} po wdrożeniu. Obserwowalność: logi kontenerów są dostępne przez \texttt{docker logs}; można rozszerzyć o zewnętrzne agregaty logów lub metryki (np. Prometheus/Grafana) bez zmian w pipeline.
 \subsection{Konfiguracja zmiennych środowiskowych}
 Kluczowe sekrety wykorzystywane w pipeline'ach i kontenerach (przechowywane w GitHub Secrets, przekazywane do \texttt{docker run}):
 \begin{itemize}
@@ -221,7 +249,44 @@ W środowisku Mikr.us wartości te są mapowane na zmienne kontenera. Minimalny 
 \section{Dokumentacja kodu}
 \subsection{Backend (.NET)}
 \subsubsection{Wstęp i umówienie architektury}
+Backend opiera się na prostym wariancie Clean Architecture: warstwa \textbf{Domain} definiuje model i reguły biznesowe, \textbf{Application} zawiera use case'y z mediatorami i walidacją, \textbf{Infrastructure} dostarcza implementacje portów (EF Core, integracje), a \textbf{API} udostępnia minimalne endpointy HTTP i SignalR. Komunikacja między warstwami przebiega od zewnątrz do środka przez kontrakty (interfejsy) i DTO, co ogranicza sprzężenia i ułatwia testowanie.
+
+Ścieżka żądania HTTP przebiega następująco: klient (UI lub integracja) wywołuje endpoint Minimal API, który deleguje do mediatora (komenda lub zapytanie). Następuje walidacja wejścia (FluentValidation) oraz autoryzacja (JWT + role/grupy). Handler korzysta z usług domenowych i repozytoriów (interfejsy) zdefiniowanych w Domain/Application, a implementowanych w Infrastructure (EF Core, integracje zewnętrzne). Wynik jest mapowany do DTO odpowiedzi i zwracany do klienta; zdarzenia w czasie rzeczywistym są emitowane przez SignalR. Taki przepływ minimalizuje wiedzę transportową w domenie i sprzyja testom jednostkowym handlerów.
+
+Główne założenia:
+\begin{itemize}
+\item \textbf{Rozdział odpowiedzialności}: domena bez zależności na technologię; warstwa Application orkiestruje przypadki użycia; Infrastructure podmienia się per środowisko; API to wyłącznie transport i kompozycja middleware.
+\item \textbf{CQRS light z mediatorem}: komendy i zapytania obsługiwane są przez handlery, walidowane FluentValidation; interfejsy repozytoriów i usług systemowych wstrzykiwane przez DI.
+\item \textbf{Persistencja}: Entity Framework Core z migracjami; w dev lokalnie SQLite, na produkcji zewnętrzny MSSQL (połączenie przez ConnectionStrings\_\_Database).
+\item \textbf{Integracje}: Azure Blob Storage (pliki), SMTP (powiadomienia e-mail), Nominatim (geokodowanie), SignalR (komunikacja w czasie rzeczywistym), obsługa kluczy i sekretów przez zmienne środowiskowe.
+\item \textbf{Cross-cutting}: lokalizacja (PL/EN), JWT auth, własne middleware (obsługa wyjątków), filtry walidacji, logowanie i metryki po stronie hosta.
+\end{itemize}
+
+Struktura katalogów odpowiada warstwom rozwiązania: \texttt{WasteFree.Domain}, \texttt{WasteFree.Application}, \texttt{WasteFree.Infrastructure}, \texttt{WasteFree.Api}. Dzięki temu zależności są jednokierunkowe (API \textrightarrow{} Application \textrightarrow{} Domain; Infrastructure referencjonowana przez API/Application tylko przez interfejsy).
 \subsubsection{Warstwa Domain (encje, agregaty, interfejsy)}
+Warstwa domenowa stanowi rdzeń modelu problemu, niezależny od infrastruktury. Zawiera encje, wartości oraz kontrakty, które opisują reguły biznesowe i integralność danych. Kluczowe elementy:
+\begin{itemize}
+\item \textbf{Encje i agregaty} (przykłady): \textit{User} (role, preferencje językowe, powiązany \textit{Wallet}); \textit{GarbageGroup} (dane adresowe, typ grupy, członkowie przez \textit{UserGarbageGroup}); \textit{GarbageOrder} (parametry odbioru, status, przypisany admin, uczestnicy w \textit{GarbageOrderUsers}); \textit{Wallet} i \textit{WalletTransaction} (bilans i historia operacji); \textit{NotificationTemplate} oraz \textit{InboxNotification} (powiadomienia i ich typ/kanał/język). Każda encja dziedziczy metadane audytowe z \textit{DatabaseEntity}.
+\item \textbf{Inwarianty}: spójność roli użytkownika w grupie (admin/członek/oczekujący), integralność środków w portfelu (bilans = suma transakcji), statusy cyklu życia zamówienia odbioru (utworzone \textrightarrow{} przypisane \textrightarrow{} zrealizowane/anulowane), powiązanie powiadomień z kontekstem (użytkownik + encja referencyjna).
+\item \textbf{Interfejsy domenowe}: kontrakty repozytoriów i usług (np. dostęp do zegara systemowego, generatory tożsamości, integracje zewnętrzne) definiowane w Domain umożliwiają izolację od szczegółów technicznych i późniejszą implementację w Infrastructure.
+\item \textbf{Wartości i typy pomocnicze}: enumeracje (statusy zamówień, role grupowe, typy powiadomień), modele opisujące adresy i lokalizacje (na potrzeby geokodowania), atrybuty audytowe (Id, CreatedAt, CreatedBy, ModifiedAt, ModifiedBy) współdzielone w \textit{DatabaseEntity}.
+\item \textbf{Zasada czystych zależności}: Domain nie referencjonuje frameworków technicznych (EF, HTTP, serwisy chmurowe); zależności przepływają z zewnątrz do wewnątrz poprzez interfejsy. Dzięki temu logika biznesowa jest testowalna w izolacji.
+\end{itemize}
+
+Szczegółowy opis encji domenowych:
+\begin{itemize}
+\item \textbf{User} — \texttt{Username}, \texttt{Email} (100 znaków), opcjonalny \texttt{Description} (500), \texttt{PasswordHash} i \texttt{PasswordSalt} (bajty), flagi \texttt{IsActive}, \texttt{ConsentsAgreed}; preferencje \texttt{LanguagePreference}, \texttt{Role}; opcjonalny \texttt{AvatarName}; serializowane \texttt{PickupOptions} (lista \textit{PickupOption} w notacji CSV, expose jako \texttt{PickupOptionsList}); \texttt{Address} (obiekt wartości), relacja 1:1 do \texttt{Wallet} (\texttt{WalletId}); kolekcje: \texttt{UserGarbageGroups}, \texttt{InboxNotifications}, \texttt{GarbageGroupMessages}. \textbf{Inwariant}: użytkownik ma jeden portfel, role i język są wymagane, pickup options są znormalizowane do unikatów.
+\item \textbf{UserGarbageGroup} — para kluczy \texttt{UserId}, \texttt{GarbageGroupId} z relacjami nawigacyjnymi; \texttt{Role} (\textit{GarbageGroupRole}) oraz \texttt{IsPending}. \textbf{Inwariant}: jeden rekord przypada na członkostwo użytkownika w grupie, a rola odzwierciedla poziom uprawnień.
+\item \textbf{GarbageGroup} — \texttt{Name}, \texttt{Description}, \texttt{Address}, flaga \texttt{IsPrivate}; kolekcje \texttt{UserGarbageGroups} i \texttt{Messages}. \textbf{Inwariant}: grupa ma adres, opcjonalnie prywatny status wymuszający akceptację admina.
+\item \textbf{GarbageGroupMessage} — klucze \texttt{GarbageGroupId}, \texttt{UserId}, treść \texttt{Content} do 2000 znaków. \textbf{Inwariant}: wiadomość powiązana z konkretną grupą i nadawcą.
+\item \textbf{GarbageAdminConsent} — \texttt{Content} i \texttt{Language} (\textit{LanguagePreference}); służy do prezentacji treści zgód administratora grupy w odpowiednim języku. \textbf{Inwariant}: treść istnieje dla danego języka.
+\item \textbf{GarbageOrder} — parametry odbioru: \texttt{PickupOption}, opcjonalny \texttt{ContainerSize}, daty \texttt{DropOffDate?} i \texttt{PickupDate}; flagi \texttt{IsHighPriority}, \texttt{CollectingService}; status \texttt{GarbageOrderStatus}; koszty \texttt{Cost} i \texttt{PrepaidUtilizationFeeAmount}; relacja do \texttt{GarbageGroup} (\texttt{GarbageGroupId}) i opcjonalnie przydzielonego admina \texttt{AssignedGarbageAdminId}; rozliczenia utylizacji: \texttt{UtilizationFeeAmount?}, \texttt{AdditionalUtilizationFeeAmount?}, \texttt{UtilizationProofBlobName?}, \texttt{UtilizationFeeSubmittedDateUtc?}; kolekcja \texttt{GarbageOrderUsers}. \textbf{Inwariant}: status zamówienia i opłaty utylizacyjne są spójne z uczestnikami; zamówienie należy do jednej grupy.
+\item \textbf{GarbageOrderUsers} — wiązanie \texttt{GarbageOrderId}–\texttt{UserId}; pola kosztowe: \texttt{ShareAmount}, \texttt{AdditionalUtilizationFeeShareAmount}; flagi \texttt{HasAcceptedPayment}, \texttt{HasPaidAdditionalUtilizationFee}. \textbf{Inwariant}: udział finansowy uczestnika sumuje się do pełnego kosztu zamówienia.
+\item \textbf{Wallet} — \texttt{Funds} (double), opcjonalny \texttt{WithdrawalAccountNumber}; klucz \texttt{UserId}, relacja do \texttt{User}; kolekcja \texttt{WalletTransactions}. \textbf{Inwariant}: saldo = suma transakcji, jeden portfel na użytkownika.
+\item \textbf{WalletTransaction} — \texttt{Amount} (double), \texttt{TransactionType} (\textit{TransactionType}); relacja do \texttt{WalletId}. \textbf{Inwariant}: typ transakcji determinuje znak/logikę biznesową salda.
+\item \textbf{NotificationTemplate} — \texttt{Subject}, \texttt{Body}, \texttt{Channel} (\textit{NotificationChannel}), \texttt{Type} (\textit{NotificationType}), \texttt{LanguagePreference}. \textbf{Inwariant}: unikalność pary (Type, Channel, Language) w kontekście generatora powiadomień.
+\item \textbf{InboxNotification} — \texttt{UserId}, \texttt{Title}, \texttt{Message}, opcjonalny \texttt{RelatedEntityId}, \texttt{ActionType} (\textit{InboxActionType}, domyślnie \texttt{None}). \textbf{Inwariant}: powiadomienie przypisane do jednego użytkownika, opcjonalnie wskazuje encję źródłową (zamówienie, grupa, wiadomość).
+\end{itemize}
 \subsubsection{Warstwa Application}
 \paragraph{Use case'y i mediator}
 \paragraph{DTO i walidacje}
