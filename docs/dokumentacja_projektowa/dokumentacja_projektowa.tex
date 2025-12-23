@@ -174,7 +174,7 @@ Wymagania niefunkcjonalne (NFR):
 \item \textbf{Platforma backend (.NET 9 + Minimal API + SignalR)} — dojrzały ekosystem, wysoka wydajność serwera Kestrel, bogate wsparcie dla DI i middleware. Minimal API redukuje narzut deklaratywny, a SignalR zapewnia dwukierunkowe kanały czasu rzeczywistego (chat grupowy, powiadomienia) bez budowy własnego transportu.
 \item \textbf{Warstwa danych: EF Core + SQLite (dev) / MSSQL (prod)} — EF Core przyspiesza mapowanie obiektowo-relacyjne i migracje. SQLite w środowisku deweloperskim minimalizuje zależności (brak zewnętrznego serwera), natomiast MSSQL w produkcji zapewnia skalę, replikację i narzędzia administracyjne. Migracje utrzymują spójność schematu między środowiskami.
 \item \textbf{Frontend: Angular 16/17} — sprawdzony framework z wbudowanym routingiem, DI i wsparciem dla i18n. Silne typowanie (TypeScript) ogranicza klasy błędów, a ekosystem narzędzi (CLI, testy) przyspiesza development zespołowy.
-\item \textbf{Konteneryzacja: Docker} — hermetyzuje runtime (.NET, Node), upraszcza parytet środowisk (dev/stage/prod) i jest podstawą pipeline'ów CI/CD. Obrazy są przenośne między lokalnym Compose a produkcyjnym daemonem na Mikr.us.
+\item \textbf{Konteneryzacja: Docker} — hermetyzuje runtime (.NET, Node), upraszcza parytet środowisk i jest podstawą pipeline'ów CI/CD. Obrazy są przenośne między lokalnym Compose a produkcyjnym daemonem na Mikr.us.
 \item \textbf{Hosting: Mikr.us (VPS)} — niski koszt i pełna kontrola nad Dockerem bez warstwy orkiestratora. Prostota restartu kontenerów przez SSH zmniejsza operacyjny narzut; w razie potrzeby łatwo dodać reverse proxy lub monitoring na tym samym VPS.
 \item \textbf{Przechowywanie plików: Azure Blob Storage} — trwałość na poziomie klasy LRS/ZRS, podpisy SAS do kontrolowania dostępu, integracja SDK .NET, niski koszt przechowywania dużych obiektów (zdjęcia, załączniki) bez obciążania bazy transakcyjnej.
 \item \textbf{Geokodowanie: Nominatim (OpenStreetMap)} — otwarty serwis geokodowania pozwala na transformację adresów grup na współrzędne bez opłat transakcyjnych. Wymaga ograniczeń stawek (rate limiting) i cachowania po naszej stronie, co kontrolujemy w warstwie Infrastructure.
@@ -288,17 +288,100 @@ Szczegółowy opis encji domenowych:
 \item \textbf{InboxNotification} — \texttt{UserId}, \texttt{Title}, \texttt{Message}, opcjonalny \texttt{RelatedEntityId}, \texttt{ActionType} (\textit{InboxActionType}, domyślnie \texttt{None}). \textbf{Inwariant}: powiadomienie przypisane do jednego użytkownika, opcjonalnie wskazuje encję źródłową (zamówienie, grupa, wiadomość).
 \end{itemize}
 \subsubsection{Warstwa Application}
-\paragraph{Use case'y i mediator}
-\paragraph{DTO i walidacje}
-\paragraph{Usługi pomocnicze i serwisy}
+Warstwa aplikacji w systemie WasteFree jest realizacją wzorca Clean Architecture, stanowiąc most między logiką biznesową (Domain) a zewnętrznymi interfejsami (API). Kluczowym elementem architektonicznym jest zastosowanie wzorca CQRS (Command Query Responsibility Segregation) oraz Mediator, co pozwala na separację operacji zapisu i odczytu oraz luźne powiązanie komponentów.
+
+\paragraph{Implementacja wzorca Mediator}
+System wykorzystuje autorską implementację interfejsu \texttt{IMediator}, który stanowi centralny punkt dystrybucji komunikatów. Interfejs ten definiuje metodę \texttt{SendAsync<TResponse>}, przyjmującą obiekt żądania implementujący generyczny interfejs \texttt{IRequest<TResponse>}.
+
+Klasa \texttt{Mediator} realizuje dynamiczne wywoływanie handlerów przy użyciu mechanizmu refleksji. W momencie nadejścia żądania:
+\begin{enumerate}
+    \item Typ żądania jest analizowany w celu określenia odpowiedniego typu handlera (\texttt{IRequestHandler<TRequest, TResponse>}) za pomocą metody \texttt{MakeGenericType}.
+    \item Metoda obsługująca \texttt{HandleAsync} jest wyszukiwana poprzez \texttt{Type.GetMethod}.
+    \item W celu uniknięcia kosztownego narzutu refleksji przy każdym zapytaniu, system wykorzystuje \textbf{buforowanie (caching)} par typ żądania–delegat wywołania w strukturze \texttt{ConcurrentDictionary<Type, Func<...>>}.
+\end{enumerate}
+Kluczowym aspektem jest zarządzanie cyklem życia zależności (Lifetime Management). Każde wywołanie handlera jest pakowane w nowy zakres (Scope) kontenera Dependency Injection (\texttt{IServiceProvider.CreateScope()}). Gwarantuje to, że instancje serwisów scoped (takie jak \texttt{DbContext}) są tworzone na nowo dla każdego żądania, zapewniając izolację transakcyjną (Unit of Work).
+
+\paragraph{Features i DTO}
+Logika biznesowa podzielona jest na wertykalne wycinki (Features), np. \texttt{GarbageOrders}, \texttt{Wallet}. Każdy przypadek użycia modelowany jest jako:
+\begin{itemize}
+    \item \textbf{Command/Query}: Rekordy C\# (\texttt{record}) pełniące rolę niemutowalnych DTO (Data Transfer Objects), np. \texttt{GarbageOrderCommand}.
+    \item \textbf{Handler}: Klasa implementująca \texttt{IRequestHandler}, zawierająca właściwą logikę. Przepływ sterowania w metodzie \texttt{HandleAsync} obejmuje:
+    \begin{enumerate}
+        \item Walidację danych wejściowych za pomocą biblioteki \textbf{FluentValidation} (automatycznie wpiętą w potok przetwarzania).
+        \item Pobranie niezbędnych agregatów z bazy danych (z wykorzystaniem \texttt{AsNoTracking} dla operacji tylko do odczytu).
+        \item Wykonanie operacji domenowych i zapis zmian (\texttt{SaveChangesAsync}).
+        \item Emisję powiadomień w czasie rzeczywistym (SignalR) oraz asynchroniczne zlecenie wysyłki e-maili.
+        \item Zwrócenie wyniku operacji opakowanego w strukturę \texttt{Result<T>}.
+    \end{enumerate}
+\end{itemize}
+
+\paragraph{Obsługa wyników i kontrakt z Frontendem}
+Wszystkie handlery zwracają zunifikowaną strukturę \texttt{Result<T>}, która pełni rolę kontraktu wymiany danych z warstwą prezentacji (Frontend). Jest to generyczny wrapper zawierający:
+\begin{itemize}
+    \item \texttt{ResultModel}: Właściwe dane zwrotne (payload) typu \texttt{T} (np. \texttt{GarbageOrderDto}).
+    \item \texttt{ErrorMessage}: Czytelny dla użytkownika komunikat błędu (zazwyczaj zlokalizowany po stronie serwera).
+    \item \texttt{ErrorCode}: Maszynowy kod błędu (np. \texttt{"TOO\_BIG\_IMAGE"}), umożliwiający warunkowe sterowanie logiką interfejsu (np. przekierowania, specyficzne modale).
+    \item \texttt{IsValid}: Właściwość obliczana, determinująca sukces operacji.
+\end{itemize}
+Dzięki takiej standaryzacji, Frontend (Angular) może obsługiwać odpowiedzi w sposób jednolity, wykorzystując globalne interceptory do mapowania sukcesów i błędów na notyfikacje UI (Toasty), bez konieczności powielania logiki obsługi wyjątków w każdym serwisie.
+
+\paragraph{Rejestracja serwisów (Dependency Injection)}
+Warstwa Application definiuje metodę rozszerzającą \texttt{ServiceCollectionExtension}, która odpowiada za rejestrację zależności w kontenerze DI. Wykorzystana jest tu technika \textbf{Assembly Scanning} (biblioteka Scrutor), która automatyzuje proces rejestracji handlerów.
+Kod \texttt{services.Scan(...)} przeszukuje zgromadzenie pod kątem klas implementujących \texttt{IRequestHandler<,>}, rejestrując je jako implementacje interfejsów z cyklem życia \textit{Scoped}. Eliminuje to konieczność ręcznej rejestracji każdego nowego handlera w kodzie startowym \texttt{Program.cs}, co znacząco ułatwia rozwój i utrzymanie systemu.
+
+\paragraph{Zadania w tle (Background Jobs)}
+Do obsługi zadań cyklicznych i asynchronicznych wykorzystano bibliotekę \textbf{TickerQ}. Zadania są definiowane jako metody w dedykowanych klasach (np. \texttt{GarbageOrderJobs}) i oznaczane atrybutem \texttt{[TickerFunction]}.
+Atrybut ten przyjmuje parametry konfiguracyjne, w tym wyrażenie CRON (np. \texttt{"0 * * * *"} dla uruchamiania co godzinę). Przykładem jest metoda \texttt{CancelUnpaidGarbageOrders}, która cyklicznie sprawdza bazę danych pod kątem przeterminowanych, nieopłaconych zamówień i anuluje je, przywracając środki na portfele użytkowników. Jobsy korzystają z wstrzykiwanego \texttt{ApplicationDataContext}, co pozwala im na pełną interakcję z warstwą danych.
 \subsubsection{Warstwa API}
-\paragraph{Minimal API i middleware}
-\paragraph{Autoryzacja JWT i SignalR}
-\paragraph{OpenAPI, lokalizacja (PL/EN) i konfiguracja}
+\paragraph{Minimal API i mechanizmy Middleware}
+Warstwa prezentacji API została zaimplementowana z wykorzystaniem modelu \textbf{Minimal API}, wprowadzonego w nowszych wersjach platformy .NET. Model ten pozwala na redukcję narzutu syntaktycznego (boilerplate) poprzez definicję endpointów bezpośrednio w potoku startowym aplikacji, z pominięciem tradycyjnych kontrolerów. Mapowanie ścieżek HTTP odbywa się za pomocą metod rozszerzających (np. \texttt{MapAuthEndpoints}, \texttt{MapGarbageOrderEndpoints}), co zapewnia modułowość i czytelność pliku \texttt{Program.cs}.
+
+Kluczowym elementem architektury jest wykorzystanie kontenera \textbf{Dependency Injection (DI)}. W Minimal API zależności są wstrzykiwane bezpośrednio do metod obsługujących żądania (Method Injection), co jest widoczne m.in. w handlerach endpointów, gdzie interfejsy takie jak \texttt{IMediator} czy \texttt{IStringLocalizer} są deklarowane jako parametry delegatów.
+
+W celu zapewnienia poprawności danych wejściowych, zaimplementowano generyczny filtr walidacyjny \texttt{ValidationFilter<T>}, implementujący interfejs \texttt{IEndpointFilter}. Mechanizm ten automatycznie przechwytuje obiekt żądania przed jego przekazaniem do logiki biznesowej, uruchamia dedykowany walidator (\textbf{FluentValidation}) i w przypadku wykrycia nieprawidłowości przerywa przetwarzanie, zwracając odpowiedź o kodzie \texttt{422 Unprocessable Entity} ze słownikiem błędów. Uzupełnieniem potoku przetwarzania jest \texttt{ExceptionHandlingMiddleware}, który w sposób globalny przechwytuje nieobsłużone wyjątki aplikacji, loguje je i transformuje do spójnej postaci JSON, ukrywając szczegóły techniczne przed klientem (Security by Obscurity) w środowisku produkcyjnym.
+
+\paragraph{Bezpieczeństwo i komunikacja czasu rzeczywistego}
+Uwierzytelnianie użytkowników zrealizowano w oparciu o standard \textbf{JSON Web Tokens (JWT)}. Podczas logowania system generuje podpisany cyfrowo token (HMAC-SHA256), zawierający roszczenia (claims) takie jak identyfikator użytkownika i rola. Token ten jest przesyłany w nagłówku \texttt{Authorization: Bearer} każdego chronionego żądania. Warstwa API weryfikuje podpis oraz ważność tokena przy użyciu middleware \texttt{JwtBearer}. Autoryzacja dostępu do zasobów opiera się na modelu Role-Based Access Control (RBAC), skonfigurowanym poprzez polityki (Policies) w \texttt{AuthorizationExtensions}. Zdefiniowano polityki takie jak \texttt{UserPolicy}, \texttt{GarbageAdminPolicy} oraz \texttt{AdminPolicy}, które restrykcyjnie określają uprawnienia do poszczególnych endpointów.
+
+Do realizacji funkcjonalności wymagających interakcji w czasie rzeczywistym (powiadomienia, czat grupowy) wykorzystano bibliotekę \textbf{SignalR}. Zdefiniowano huby komunikacyjne: \texttt{NotificationHub} oraz \texttt{GroupChatHub}, które utrzymują stałe połączenie z klientami (poprzez WebSockets, Server-Sent Events lub Long Polling). Umożliwia to serwerowi aktywne wypychanie danych (Push Notifications) do podłączonych klientów bez konieczności ciągłego odpytywania API przez frontend. Huby są zintegrowane z mechanizmem autoryzacji, co gwarantuje, że wiadomości trafiają wyłącznie do uprawnionych odbiorców.
+
+\paragraph{Dokumentacja, internacjonalizacja i konfiguracja}
+API jest samo-dokumentujące się dzięki wykorzystaniu standardu \textbf{OpenAPI} (dawniej Swagger). Definicje endpointów, schematy DTO oraz wymogi autoryzacyjne są automatycznie skanowane i udostępniane w formacie JSON. Do wizualizacji dokumentacji zastosowano nowoczesne narzędzie \textbf{Scalar} (skonfigurowane przez \texttt{MapScalarApiReference}), które oferuje interaktywny interfejs testowania zapytań. Filtr \texttt{EnumDescriptionsSchemaFilter} wzbogaca schematy o opisy wartości wyliczeniowych pobierane z komentarzy XML dokumnetacji kodu.
+
+System wspiera wielojęzyczność (i18n) poprzez mechanizm \textbf{Localization}. Treści komunikatów błędów i powiadomień są przechowywane w plikach zasobów (\texttt{.resx}). Middleware lokalizacyjny (\texttt{UseRequestLocalization}) dynamicznie ustala kulturę bieżącego żądania na podstawie nagłówka \texttt{Accept-Language} lub parametru zapytania \texttt{culture}, co pozwala na serwowanie odpowiedzi w języku polskim (\texttt{pl-PL}) lub angielskim (\texttt{en-US}).
+
+Konfiguracja aplikacji została zrealizowana zgodnie ze wzorcem \textbf{Options Pattern}. Ustawienia są ładowane hierarchicznie z plików \texttt{appsettings.json} (wspólne) oraz specyficznych dla środowiska (np. \texttt{appsettings.Docker.json}), a następnie mogą być nadpisywane przez zmienne środowiskowe. Pliki te definiują parametry takie jak połączenia do bazy danych, klucze szyfrujące (sekcja \texttt{Security}), konfigurację integracji (SMTP, Nominatim) oraz poziomy logowania. Wrażliwe dane (hasła, klucze API) nie są przechowywane w repozytorium kodu, lecz wstrzykiwane w procesie CI/CD.
 \subsubsection{Warstwa Infrastructure}
 \paragraph{EF Core i migracje}
+Warstwa dostępu do danych została zaimplementowana przy użyciu \textbf{Entity Framework Core (EF Core)} – nowoczesnego mapera obiektowo-relacyjnego (ORM). Centralnym punktem jest klasa \texttt{ApplicationDataContext}, dziedzicząca po \texttt{DbContext}, która realizuje wzorzec Unit of Work. Definiuje ona zbiory danych (\texttt{DbSet<T>}) dla encji domenowych, takich jak \texttt{User}, \texttt{GarbageOrder} czy \texttt{Wallet}. Konfiguracja modelu odbywa się w metodzie \texttt{OnModelCreating}, gdzie precyzyjnie określono relacje (np. 1:1 między użytkownikiem a portfelem, kaskadowe usuwanie) oraz ograniczenia (np. indeksy unikalności).
+
+Zastosowano podejście \textbf{Migration-First}: wszelkie zmiany w schemacie bazy danych są inicjowane zmianami w kodzie C\# (modelu), a następnie utrwalane w postaci plików migracji. Gwarantuje to spójność struktury bazy danych między środowiskami oraz pełną historię ewolucji schematu w systemie kontroli wersji.
+
+Istotnym elementem implementacji jest nadpisanie metod \texttt{SaveChangesAsync}. Wykorzystano ten punkt przecięcia (interception) do realizacji logiki systemowej (Cross-Cutting Concerns) w sposób przezroczysty dla warstwy biznesowej:
+\begin{itemize}
+    \item \textbf{Audyt danych}: Automatyczne uzupełnianie pól \texttt{CreatedDateUtc}, \texttt{ModifiedDateUtc} oraz identyfikatorów autorów zmian na podstawie \texttt{ChangeTracker}.
+    \item \textbf{Automatyczne geokodowanie}: Przed zatwierdzeniem transakcji, system wykrywa nowe lub zmodyfikowane encje \texttt{Address}. Jeśli adres uległ zmianie, następuje asynchroniczne wywołanie serwisu geokodującego, a zwrócone współrzędne są zapisywane w tej samej transakcji. Zapewnia to atomową spójność danych adresowych i geograficznych.
+\end{itemize}
+
 \paragraph{Integracje (Azure Blob Storage, SMTP, Nominatim)}
-\paragraph{Harmonogramy zadań (Quartz)}
+System integruje się z usługami zewnętrznymi poprzez dedykowane serwisy w warstwie Infrastructure, ukryte za interfejsami domenowymi (Dependency Inversion Principle).
+\begin{itemize}
+    \item \textbf{Azure Blob Storage}: Serwis \texttt{AzureBlobStorageService} (biblioteka \texttt{Azure.Storage.Blobs}) odpowiada za trwałe przechowywanie plików (np. awatarów, potwierdzeń utylizacji). W celu optymalizacji wydajności i kosztów, zaimplementowano lokalny cache (\texttt{ConcurrentDictionary}) dla tokenów SAS (Shared Access Signature). Tokeny te, umożliwiające bezpieczny, czasowy dostęp do pliku bezpośrednio z chmury, są buforowane w pamięci aplikacji z marginesem bezpieczeństwa (Safety Margin), co drastycznie redukuje liczbę zapytań do API Azure.
+    \item \textbf{Powiadomienia E-mail}: Realizowane przez \texttt{EmailService} z wykorzystaniem biblioteki \texttt{MailKit}. Konfiguracja serwera SMTP (host, port, poświadczenia) jest wstrzykiwana z poziomu zmiennych środowiskowych, co pozwala na łatwą wymianę dostawcy wysyłki (np. Gmail, SendGrid) bez zmian w kodzie.
+    \item \textbf{Geokodowanie (Nominatim)}: Serwis \texttt{NominatimGeocodingService} korzysta z otwartego API OpenStreetMap. Implementacja uwzględnia politykę użytkowania serwisu (wymagany User-Agent, limity zapytań). W celu zwiększenia niezawodności zastosowano bibliotekę \textbf{Polly}, definiując politykę \texttt{WaitAndRetryAsync} dla klienta HTTP. W przypadku chwilowej niedostępności usługi, system ponawia zapytania z wykładniczym czasem oczekiwania (Exponential Backoff).
+\end{itemize}
+
+\paragraph{Harmonogramy zadań (Quartz / TickerQ)}
+Do obsługi zadań w tle i harmonogramów wykorzystano bibliotekę \textbf{TickerQ}, która pełni rolę zaawansowanego zarządcy zadań (Job Scheduler), realizując funkcjonalności zbliżone do biblioteki Quartz.NET, lecz ze ścisłą integracją z EF Core.
+Rozwiązanie opiera się na persystencji zadań w bazie danych (tabela \texttt{TimeTicker}), co gwarantuje, że zaplanowane operacje nie zostaną utracone w przypadku restartu aplikacji ("Outbox pattern" dla zadań).
+
+Kluczowe komponenty implementacji:
+\begin{itemize}
+    \item \textbf{JobSchedulerFacade}: Fasada ukrywająca złożoność planowania, umożliwiająca warstwie aplikacji proste zlecanie zadań jednorazowych (np. "Anuluj nieopłacone zamówienie za 24h") lub cyklicznych.
+    \item \textbf{Retry Policy}: Zadania posiadają skonfigurowaną politykę ponowień (domyślnie interwały 1, 5, 15 minut). W przypadku wystąpienia błędu podczas wykonywania zadania, nie jest ono tracone, lecz kolejkowane do ponownego wykonania.
+    \item \textbf{Konfiguracja}: Rejestracja \texttt{AddTickerQ} w kontenerze DI konfiguruje "Operational Store" na bazie \texttt{ApplicationDataContext}, co pozwala na wykonywanie operacji na bazie w ramach tej samej transakcji, co przetworzenie zadania.
+\end{itemize}
+Takie podejście eliminuje potrzebę zewnętrznego procesu (worker) w prostych wdrożeniach, zachowując jednocześnie wysoką niezawodność i obserwowalność procesów asynchronicznych.
 
 \subsection{Frontend (Angular)}
 \subsubsection{Architektura i stan (sygnały, rxjs)}
