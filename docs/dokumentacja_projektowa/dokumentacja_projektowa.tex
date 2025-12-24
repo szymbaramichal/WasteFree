@@ -47,7 +47,9 @@ urlcolor=BlueViolet}	%%pdfpagemode=FullScreen}
 
 
 %---------------------
-\overfullrule=2mm
+%\usepackage{microtype} % Improved justification
+\usepackage{microtype}
+%\overfullrule=2mm
 \pagestyle{plain}
 \textwidth=15cm \textheight=685pt \topmargin=-25pt \linespread{1.3} 
 \setlength{\parskip}{0pt}
@@ -57,6 +59,35 @@ urlcolor=BlueViolet}	%%pdfpagemode=FullScreen}
 
 \captionsetup{width=.95\linewidth, justification=centering}
 %---------------------
+
+\usepackage{listings}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    literate={ą}{{\k{a}}}1 {ć}{{\'c}}1 {ę}{{\k{e}}}1 {ł}{{\l{}}}1 {ń}{{\'n}}1 {ó}{{\'o}}1 {ś}{{\'s}}1 {ż}{{\.z}}1 {ź}{{\'z}}1 {Ą}{{\k{A}}}1 {Ć}{{\'C}}1 {Ę}{{\k{E}}}1 {Ł}{{\L{}}}1 {Ń}{{\'N}}1 {Ó}{{\'O}}1 {Ś}{{\'S}}1 {Ż}{{\.Z}}1 {Ź}{{\'Z}}1
+}
+
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Listing}
 
 
 
@@ -386,13 +417,119 @@ Takie podejście eliminuje potrzebę zewnętrznego procesu (worker) w prostych w
 \subsection{Frontend (Angular)}
 \subsubsection{Architektura i stan (sygnały, rxjs)}
 \paragraph{Konfiguracja i routing}
-\paragraph{Stan: sygnały i strumienie rxjs}
+Aplikacja frontendowa została zrealizowana w oparciu o architekturę \textbf{Standalone Components}, rezygnując z tradycyjnych modułów \texttt{NgModule} na rzecz lżejszej i bardziej modularnej struktury. Główny punkt wejścia konfiguracji stanowi plik \texttt{app.config.ts}, eksportujący obiekt \texttt{ApplicationConfig}.
+W ramach konfiguracji dostawców (\texttt{providers}) zdefiniowano kluczowe usługi systemowe:
+\begin{enumerate}
+    \item \textbf{Router}: Skonfigurowany za pomocą \texttt{provideRouter(routes)}, obsługuje nawigację w modelu SPA (Single Page Application). Definicja tras w \texttt{app.routes.ts} wykorzystuje zagnieżdżone ścieżki (Nested Routes) dla sekcji \texttt{/portal}, co pozwala na renderowanie podwidoków w ramach \texttt{<router-outlet>} głównego layoutu. Zastosowano \textbf{Lazy Loading} (pośrednio przez importy komponentów) oraz \textbf{Resolvers} (np. \texttt{groupResolver}) do wstępnego ładowania danych przed aktywacją widoku. Bezpieczeństwo tras zapewniają strażnicy (Guards), tacy jak \texttt{authGuard} (blokada dla niezalogowanych) oraz \texttt{garbageAdminGuard} (restrykcja dla ról innych niż administrator). Interesującym elementem jest użycie niestandardowego dopasowania URL (\texttt{UrlMatcher}) w funkcji \texttt{activateAccountMatcher}, co pozwala na elastyczne parsowanie tokenów aktywacyjnych w ścieżce.
+    \item \textbf{Klient HTTP}: Skonfigurowany przez \texttt{provideHttpClient} wraz z łańcuchem interceptorów (\texttt{withInterceptors}). Zaimplementowano:
+    \begin{itemize}
+        \item \texttt{authInterceptor}: Dołącza token JWT do każdego żądania w nagłówku \texttt{Authorization}.
+        \item \texttt{errorInterceptor}: Globalnie przechwytuje błędy HTTP, mapując je na powiadomienia użytkownika.
+        \item \texttt{localeInterceptor}: Przekazuje preferencję językową klienta w nagłówku zapytania.
+    \end{itemize}
+    \item \textbf{Inicjalizacja}: Wykorzystano token \texttt{APP\_INITIALIZER} wraz z fabryką \texttt{initTranslationsFactory}, aby zablokować start aplikacji do momentu załadowania plików tłumaczeń (i18n) przez \texttt{TranslationService}.
+\end{enumerate}
+
+\paragraph{Stan: sygnały i strumienie RxJS}
+Warstwa zarządzania stanem w systemie WasteFree jest hybrydowa, łącząc reaktywność strumieniową \textbf{RxJS} z nowym prymitywem reaktywności w Angularze – \textbf{Sygnałami (Signals)}. Taka architektura pozwala na wykorzystanie zalet obu podejść: deklaratywności RxJS przy obsłudze zdarzeń asynchronicznych oraz wydajności i prostoty Sygnałów przy synchronizacji widoku.
+
+\textbf{Wykorzystanie Sygnałów (Signals)}:
+Implementacja \texttt{CurrentUserService} stanowi wzorcowy przykład zastosowania sygnałów do przechowywania stanu sesji użytkownika. Zastosowano wzorzec enkapsulacji stanu:
+\begin{itemize}
+    \item Prywatny, mutowalny sygnał: \texttt{private \_user = signal<CurrentUser | null>(...)}
+    \item Publiczny, tylko do odczytu sygnał: \texttt{user = this.\_user.asReadonly()}
+\end{itemize}
+Dzięki temu komponenty mogą subskrybować zmiany użytkownika bez ryzyka przypadkowej modyfikacji stanu (gwarancja \textit{Single Source of Truth}). Mechanizm ten jest zintegrowany z \texttt{localStorage} w celu zapewnienia trwałości sesji po odświeżeniu strony. Sygnały automatycznie powiadamiają widok o zmianach w strategii \texttt{OnPush}, eliminując potrzebę ręcznego wywoływania detekcji zmian czy stosowania potoku \texttt{async} w prostych przypadkach.
+
+\textbf{Wykorzystanie RxJS}:
+Biblioteka RxJS pozostaje kluczowa w obsłudze asynchroniczności, szczególnie w warstwie komunikacji z API i obsługi zdarzeń. \texttt{TranslationService} wykorzystuje \texttt{BehaviorSubject<string>} do zarządzania stanem wybranego języka, co pozwala na imperatywne pobranie aktualnej wartości (\texttt{.value}) oraz reaktywną subskrypcję zmian przez potok \texttt{translate} w szablonach. Metody serwisów API (np. \texttt{HttpClient.get/post}) zwracają obiekty \texttt{Observable}, które są obsługiwane w komponentach lub konwertowane na sygnały (interioperacyjność \texttt{toSignal}).
+
+\textbf{Integracja czasu rzeczywistego}:
+Serwis \texttt{SignalRService} stanowi most między zdarzeniami WebSocket a stanem aplikacji. Przykładowo, zdarzenie \texttt{UpdateInboxCounter} z serwera bezpośrednio aktualizuje sygnał licznika w \texttt{InboxService} (\texttt{this.inboxService.counter.set(...)}), co natychmiast odświeża licznik powiadomień na pasku nawigacyjnym, zachowując pełną reaktywność interfejsu.
 \subsubsection{Komponenty}
-\paragraph{Portal/home, grupy i zgody admina}
-\paragraph{Portfel, zamówienia i odbiory}
-\paragraph{Inbox i chat (SignalR)}
+System frontendowy WasteFree został podzielony na moduły funkcjonalne, odzwierciedlające domeny biznesowe aplikacji. Każdy moduł grupuje komponenty o blisko powiązanej odpowiedzialności, co ułatwia nawigację po kodzie i lazy loading.
+
+\paragraph{Architektura widoku i nawigacja (Layout \& Core)}
+Interfejs użytkownika opiera się na komponencie \texttt{TopbarComponent}, który pełni rolę głównego paska nawigacyjnego. Zaimplementowano go w sposób reaktywny, wykorzystując \texttt{EffectRef} do animowania ikony skrzynki odbiorczej (pulsowanie) w momencie otrzymania nowego sygnału z serwisu \texttt{InboxService}. Wygląd paska (kolorystyka, dostępne opcje) jest dynamicznie dostosowywany do roli zalogowanego użytkownika (\texttt{userRole}) poprzez warunkowe klasy CSS (np. \texttt{.role-garbadmin}). Logika komponentu nasłuchuje zdarzeń routera (\texttt{NavigationEnd}), aby automatycznie ukrywać się na widokach autoryzacji i landing page'u, zapewniając czystość interfejsu ("distraction-free") podczas logowania.
+
+Centralnym punktem po zalogowaniu jest \texttt{PortalHomeComponent} (Dashboard). Wykorzystuje on architekturę opartą na \textbf{Angular Signals} do zarządzania stanem statystyk (oszczędności, redukcja odpadów). Dane są pobierane z \texttt{AccountService} i agregowane w reaktywnym sygnale \texttt{stats}, co gwarantuje natychmiastowe odświeżenie widoku bez konieczności ręcznego wywoływania detekcji zmian.
+
+Za globalną informację zwrotną o procesach asynchronicznych odpowiada \texttt{LoaderOverlay}. Jest on sterowany przez \texttt{LoaderService} i sprzężony z interceptorami HTTP, co pozwala na automatyczne wyświetlanie spinnera ładowania podczas trwania zapytań API, blokując interakcje użytkownika w newralgicznych momentach.
+
+\paragraph{Moduł tożsamości i profilu (Identity \& Profile)}
+Uwierzytelnianie obsługuje \texttt{AuthComponent}, który implementuje wzorzec Wizard (Kreator) dla procesu rejestracji. Formularz oparty na \textbf{ReactiveForms} posiada dynamiczną walidację, która dostosowuje wymogi w czasie rzeczywistym – przykładowo, pole wyboru preferencji odbioru (\texttt{pickupOptions}) staje się wymagane tylko wtedy, gdy użytkownik wybierze rolę Administratora Odpadów.
+
+Zarządzanie danymi użytkownika realizuje \texttt{ProfileComponent}. Zaimplementowano tu walidację numeru konta bankowego (IBAN) zgodnie ze standardem \textbf{Modulo 97}, co zapobiega błędnym wypłatom na poziomie frontendu. Komponent obsługuje również przesyłanie awatara, weryfikując typ MIME i rozmiar pliku (limit 5MB) przed wysłaniem żądania do API. Edycja danych adresowych i preferencji odbywa się w trybie "in-place", co poprawia UX poprzez eliminację konieczności przechodzenia do osobnych widoków edycji.
+
+Portfel użytkownika (\texttt{WalletComponent}) umożliwia symulację doładowań (płatność BLIK z walidacją regex kodu 6-cyfrowego) oraz wypłat środków. Stan salda jest odzwierciedlany przez strumień RxJS \texttt{balance\$}, który jest automatycznie synchronizowany z serwisem portfela po każdej transakcji, zapewniając spójność danych finansowych w całym portalu.
+
+\paragraph{Centrum komunikacji (Inbox \& Chat)}
+Komponent \texttt{InboxComponent} służy do zarządzania powiadomieniami systemowymi. Listowanie wiadomości oparto na paginacji po stronie serwera, której stan (strona, rozmiar) jest kontrolowany przez sygnały. Komponent implementuje polimorficzne renderowanie treści – potrafi obsłużyć wiadomości przesyłane jako proste ciągi znaków, obiekty JSON lub struktury złożone. Kluczową funkcją jest mechanizm \textbf{Routing Redirection}: powiadomienia mogą zawierać metadane (np. \texttt{ActionType.MakePayment}), które przekształcają element listy w interaktywny odnośnik, przenoszący użytkownika bezpośrednio do kontekstu akcji (np. do widoku opłacenia konkretnego zamówienia).
+
+Komunikacja grupowa odbywa się w \texttt{GroupChatComponent}, który integruje się z usługą \texttt{SignalR}. Wiadomości są renderowane w czasie rzeczywistym, z uwzględnieniem statusów doręczenia i podziału na wiadomości własne/obce.
+
+\paragraph{Zarządzanie grupami i realizacja (Groups \& Orders)}
+Szczegóły grupy prezentuje \texttt{GroupPanelComponent}. Zastosowano tu zagnieżdżony routing (zakładki: Szczegóły, Odbiory, Czat) oraz mechanizm \textbf{Resolvers}, który pobiera kluczowe dane grupy zanim nastąpi aktywacja komponentu, eliminując efekt "skakania" treści (layout shift). Formularz edycji grupy waliduje adres w czasie rzeczywistym, integrując się z mapami.
+
+Najbardziej złożonym elementem systemu jest \texttt{PickupOrderComponent} – kreator zamówienia odbioru. Jego logika opiera się na maszynie stanów, prowadzącej użytkownika przez kroki: Typ usługi \textrightarrow{} Uczestnicy \textrightarrow{} Adres/Termin \textrightarrow{} Opcje dodatkowe \textrightarrow{} Podsumowanie. Walidacja przejścia do kolejnego kroku (\texttt{primaryActionDisabled}) jest funkcją czystą, zależną od stanu bieżącego kroku i walidatorów formularza. Unikalnym rozwiązaniem jest funkcja \texttt{effect()} (z API Signals), która nasłuchuje zmian w formularzu i automatycznie wyzwala przeliczenie szacowanego kosztu zamówienia (Live Pricing) w API, obsługując stany ładowania i błędy. Zastosowano również niestandardowy \texttt{DateAdapter}, dostosowujący działanie datepickerów Material UI do polskiego formatu daty.
+
+Przegląd historii zamówień zapewnia \texttt{MyPickupsComponent}. Wykorzystuje on \texttt{Signal Inputs} do reaktywnego filtrowania listy zamówień według statusu (np. "Oczekujące na płatność") oraz grupy, odświeżając widok bez przeładowania strony.
+
+\paragraph{Panel Administratora Odpadów (Garbage Admin)}
+Dla użytkowników o podwyższonych uprawnieniach przygotowano dedykowane widoki w module \texttt{garbage-admin}. Komponenty \texttt{OrdersWaiting} i \texttt{OrdersAssigned} prezentują zlecenia w układzie zoptymalizowanym pod kątem procesowania (akceptacja/odrzucenie). Istotnym elementem jest \texttt{UtilizationFeeModal}, który pozwala administratorowi na dołączenie dowodu utylizacji (skan/zdjęcie) i naliczenie dodatkowych opłat, zamykając obieg finansowy zlecenia.
 \subsubsection{Nawigacja i bezpieczeństwo}
+W ramach projektu \textit{WasteFree} zaimplementowano mechanizm nawigacji oparty na \textit{Angular Router}, co pozwala na funkcjonowanie aplikacji w modelu \textit{Single Page Application} (SPA). Dzięki temu rozwiązaniu przełączanie widoków odbywa się po stronie klienta, bez konieczności przeładowywania całej strony, co znacząco poprawia wydajność i komfort użytkowania. Router zarządza stanem adresu URL w przeglądarce, mapując go na odpowiednie komponenty widoku, a także umożliwia przekazywanie parametrów oraz danych do tras.
+
 \paragraph{Routing, guardy}
+Konfiguracja ścieżek aplikacji została zdefiniowana w pliku \texttt{app.routes.ts} w postaci tablicy obiektów typu \texttt{Routes}. Wykorzystano mechanizm zagnieżdżonych tras (\textit{nested routes}), co pozwala na tworzenie hierarchicznej struktury widoków oraz dziedziczenie zabezpieczeń. Główny obszar aplikacji, dostępny dla zalogowanych użytkowników, został zgrupowany pod ścieżką \texttt{/portal}.
+
+\begin{lstlisting}[language=TypeScript, caption=Konfiguracja routingu i zagnieżdżonych tras, label=lst:app-routes]
+export const routes: Routes = [
+    { path: '', component: HomeComponent },
+    {
+        path: 'portal',
+        component: PortalComponent,
+        data: { showTopbar: true },
+        canActivate: [authGuard],
+        children: [
+            { path: '', component: PortalHomeComponent },
+            { path: 'wallet', component: WalletComponent },
+            // ... pozostałe trasy
+            { path: 'garbage-admin/orders/waiting', component: GarbageAdminOrdersWaitingComponent, canActivate: [garbageAdminGuard] },
+            // ...
+        ]
+    },
+    { path: 'auth', component: AuthComponent },
+    { matcher: activateAccountMatcher, component: ActivationComponent },
+    { path: '**', component: NotFoundComponent }
+];
+\end{lstlisting}
+
+W powyższej konfiguracji zastosowano właściwość \texttt{canActivate} na poziomie trasy \texttt{portal}, co wymusza weryfikację uprawnień dla wszystkich tras podrzędnych. Do zabezpieczenia tras wykorzystano podejście \textit{Functional Guards}, które jest rekomendowanym standardem w nowszych wersjach frameworka Angular, zastępującym tradycyjne strażniki oparte na klasach. 
+
+Podstawowym mechanizmem zabezpieczającym jest \texttt{authGuard} (Listing \ref{lst:auth-guard}). Jego rola polega na weryfikacji tożsamości użytkownika przed udzieleniem dostępu do chronionych zasobów. Strażnik sprawdza obecność tokenu uwierzytelniającego w pamięci lokalnej (\textit{localStorage}) lub w stanie serwisu \texttt{CurrentUserService}. W przypadku braku autoryzacji następuje automatyczne przekierowanie do panelu logowania.
+
+\begin{lstlisting}[language=TypeScript, caption=Implementacja funkcjonalnego strażnika autoryzacji (authGuard), label=lst:auth-guard]
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { CurrentUserService } from '../services/current-user.service';
+
+export const authGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+  const currentUser = inject(CurrentUserService);
+  const token = localStorage.getItem('authToken');
+
+  if (token) return true;
+  if (currentUser.user()) return true;
+
+  router.navigate(['/auth']);
+  return false;
+};
+\end{lstlisting}
+
+Dodatkowo zaimplementowano kontrolę dostępu opartą na rolach (\textit{Role-Based Access Control} - RBAC) przy użyciu \texttt{garbageAdminGuard}. Strażnik ten weryfikuje, czy zalogowany użytkownik posiada rolę \texttt{GarbageAdmin}, co jest wymagane do dostępu do panelu zarządzania zleceniami odbioru odpadów. Odwołanie do \texttt{canActivate: [garbageAdminGuard]} widoczne jest w konfiguracji tras dla ścieżek administracyjnych.
+
+Warto również odnotować zastosowanie niestandardowego dopasowania adresu URL (\texttt{UrlMatcher}) w funkcji \texttt{activateAccountMatcher}, co pozwala na obsługę nietypowych schematów linków aktywacyjnych zawierających tokeny, wykraczających poza standardowe dopasowanie ścieżek. Całość konfiguracji jest dostarczana do aplikacji w pliku \texttt{app.config.ts} poprzez funkcję \texttt{provideRouter(routes)}, co integruje system routingu z mechanizmem \textit{Dependency Injection}.
 \subsubsection{Serwisy i integracje}
 \paragraph{Serwisy API}
 \paragraph{SignalR, loader i obsługa błędów}
