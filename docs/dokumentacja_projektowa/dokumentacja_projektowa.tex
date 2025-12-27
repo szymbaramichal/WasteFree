@@ -531,18 +531,119 @@ Dodatkowo zaimplementowano kontrolę dostępu opartą na rolach (\textit{Role-Ba
 
 Warto również odnotować zastosowanie niestandardowego dopasowania adresu URL (\texttt{UrlMatcher}) w funkcji \texttt{activateAccountMatcher}, co pozwala na obsługę nietypowych schematów linków aktywacyjnych zawierających tokeny, wykraczających poza standardowe dopasowanie ścieżek. Całość konfiguracji jest dostarczana do aplikacji w pliku \texttt{app.config.ts} poprzez funkcję \texttt{provideRouter(routes)}, co integruje system routingu z mechanizmem \textit{Dependency Injection}.
 \subsubsection{Serwisy i integracje}
-\paragraph{Serwisy API}
-\paragraph{SignalR, loader i obsługa błędów}
+
+Warstwa serwisowa aplikacji klienckiej pełni kluczową rolę w komunikacji z interfejsem programistycznym (API) oraz w zarządzaniu stanem aplikacji i logiką biznesową po stronie klienta. Implementacja została oparta na paradygmacie programowania reaktywnego z wykorzystaniem biblioteki RxJS oraz mechanizmu Angular Signals.
+
+\paragraph{Serwisy API i komunikacja HTTP}
+W katalogu \texttt{src/app/services} zaimplementowano szereg serwisów domenowych odpowiedzialnych za interakcję z konkretnymi kontrolerami API. Wszystkie serwisy wykorzystują wbudowany w framework klient HTTP (\texttt{HttpClient}) do wykonywania asynchronicznych zapytań. Adres bazowy API pobierany jest dynamicznie z konfiguracji środowiskowej (\texttt{environment.apiUrl}), co umożliwia elastyczne wdrażanie aplikacji w różnych środowiskach (deweloperskim, produkcyjnym).
+
+Każda metoda serwisowa zwraca obiekt typu \texttt{Observable<Result<T>>} lub \texttt{Observable<PaginatedResult<T>>}, co pozwala na obsługę strumieni danych oraz ustandaryzowaną pracę z odpowiedziami zawierającymi dane lub błędy. Przykładem zaawansowanej implementacji jest serwis \texttt{GarbageOrderService}, który oprócz standardowych metod CRUD, implementuje mechanizm buforowania danych (cache) przy użyciu sygnałów (\texttt{ordersSignal}, \texttt{pagerSignal}). Pozwala to na uniknięcie nadmiarowych zapytań sieciowych w przypadku powrotu użytkownika do wcześniej odwiedzonych widoków, znacząco poprawiając responsywność interfejsu.
+
+\paragraph{Komunikacja w czasie rzeczywistym (SignalR)}
+Integracja z protokołem WebSocket została zrealizowana za pośrednictwem serwisu \texttt{SignalRService}. Wykorzystuje on bibliotekę \texttt{@microsoft/signalr} do nawiązywania trwałego połączenia z hubem powiadomień serwera (\texttt{notificationHub}).
+Kluczowe aspekty implementacji obejmują:
+\begin{itemize}
+    \item \textbf{Uwierzytelnianie:} Token JWT jest przekazywany w fabryce tokenów (\texttt{accessTokenFactory}), co zapewnia bezpieczeństwo kanału komunikacyjnego.
+    \item \textbf{Automatyczne wznawianie połączenia:} Zastosowano metodę \texttt{withAutomaticReconnect}, która gwarantuje ciągłość działania w przypadku chwilowych problemów z siecią.
+    \item \textbf{Obsługa zdarzeń:} Serwis nasłuchuje na zdarzenie \texttt{UpdateInboxCounter}, które w czasie rzeczywistym aktualizuje stan licznika nieprzeczytanych wiadomości w serwisie \texttt{InboxService} oraz wyświetla powiadomienie typu "toast" dla użytkownika, informując o nowej aktywności bez konieczności odświeżania strony.
+\end{itemize}
+
+\paragraph{System ładowania (Loader)}
+Dla poprawy doświadczenia użytkownika (User Experience) podczas operacji długotrwałych, zaprojektowano serwis \texttt{LoaderService} współpracujący z komponentem \texttt{LoaderOverlayComponent}. Mechanizm ten opiera się na strumieniu \texttt{BehaviorSubject<boolean>}, sterującym widocznością nakładki blokującej interfejs.
+Istotnym elementem implementacji jest algorytm zapobiegający efektowi "migotania" (flickering), który występuje przy bardzo szybkich zapytaniach. Serwis wymusza minimalny czas wyświetlania loadera (np. 500ms), nawet jeśli operacja zakończy się szybciej. Rozwiązanie to zapewnia płynność wizualną interfejsu. Loader jest wywoływany manualnie w kluczowych punktach nawigacji (np. podczas logowania do portalu), co daje programiście precyzyjną kontrolę nad tym, które operacje powinny blokować interfejs użytkownika.
+
 \subsubsection{Interceptory i i18n}
-\paragraph{Auth, error, locale}
-\paragraph{pl/en, zasoby i tłumaczenia}
+
+Mechanizm interceptorów HTTP w Angularze (\texttt{HttpInterceptorFn}) został wykorzystany do implementacji globalnych polityk bezpieczeństwa, obsługi błędów oraz kontekstualizacji zapytań sieciowych. Dzięki zastosowaniu podejścia funkcyjnego, logika ta jest odseparowana od komponentów i łatwa do utrzymania.
+
+\paragraph{Bezpieczeństwo i autoryzacja (AuthInterceptor)}
+Za uwierzytelnianie zapytań odpowiada \texttt{authInterceptor}. Przed wysłaniem żądania, interceptor pobiera token JWT z pamięci lokalnej i dołącza go w nagłówku \texttt{Authorization: Bearer}. Interceptor pełni również funkcję strażnika sesji: przechwytuje odpowiedzi o kodzie \textbf{401 (Unauthorized)} i w przypadku wygaśnięcia sesji automatycznie czyści dane uwierzytelniające, resetuje stan portfela (\texttt{WalletService}) oraz przekierowuje użytkownika do panelu logowania.
+
+\paragraph{Globalna obsługa błędów (ErrorInterceptor)}
+Zaimplementowano \texttt{error.interceptor.ts} w celu centralizacji obsługi błędów API. Przechwytuje on wyjątki HTTP i przetwarza je na czytelne dla użytkownika komunikaty:
+\begin{itemize}
+    \item \textbf{403 (Forbidden):} Sygnalizuje brak uprawnień.
+    \item \textbf{422 (Unprocessable Entity):} Obsługuje błędy walidacji formularzy, wykorzystując helper \texttt{extractApiErrorPayload} do prezentacji listy niespełnionych reguł biznesowych.
+    \item \textbf{Błędy ogólne (4xx/5xx):} Wyświetla zlokalizowane komunikaty błędów lub oryginalne wiadomości przesłane przez serwer, jeśli są dostępne.
+\end{itemize}
+Integracja z \texttt{ToastrService} zapewnia, że błędy są prezentowane w sposób nieinwazyjny, ale widoczny.
+
+\paragraph{Internacjonalizacja (i18n) i lokalizacja}
+System wielojęzyczności oparto na autorskim rozwiązaniu składającym się z trzech elementów: interceptora, serwisu oraz rury (pipe).
+\begin{itemize}
+    \item \textbf{LocaleInterceptor:} Dba o spójność językową na linii frontend-backend. Na podstawie wybranego języka dodaje nagłówek \texttt{Accept-Language} (np. \texttt{pl-PL}) do każdego zapytania, co pozwala API zwracać zlokalizowane komunikaty błędów.
+    \item \textbf{TranslationService:} Zarządza ładowaniem plików JSON z tłumaczeniami (z katalogu \texttt{assets/i18n}) oraz ich buforowaniem. Udostępnia reaktywny strumień zmiany języka, co pozwala komponentom na dynamiczną aktualizację treści.
+    \item \textbf{TranslatePipe:} Odpowiada za transformację kluczy tłumaczeń w widokach HTML. Jest zdefiniowana jako \texttt{pure: false}, co umożliwia natychmiastowe przerysowanie widoku po zmianie języka bez przeładowania strony. Rura obsługuje również interpolację zmiennych (np. wstawianie wartości dynamicznych w miejsce placeholderów w tekście).
+\end{itemize}
 \subsubsection{Środowiska i build}
 
-\subsection{CI/CD}
-\subsubsection{Pipelines API}
-\subsubsection{Pipelines UI}
-\subsubsection{Konteneryzacja i obrazy}
+Warstwa prezentacji (frontend) wykorzystuje standardowe mechanizmy Angular CLI do zarządzania konfiguracją środowiskową oraz procesem budowania artefaktów produkcyjnych.
 
+\paragraph{Zarządzanie środowiskami}
+Aplikacja definiuje dwa podstawowe profile środowiskowe, realizowane poprzez wymianę plików konfiguracyjnych w czasie kompilacji (file replacements). Pliki \texttt{environment.ts} (dla środowiska lokalnego) oraz \texttt{environment.prod.ts} (dla środowiska produkcyjnego) eksportują obiekt konfiguracyjny o ujednoliconym interfejsie.
+Kluczowe parametry konfiguracyjne obejmują:
+\begin{itemize}
+    \item \texttt{production}: Flaga logiczna sterująca trybem uruchomienia Angulara (np. wyłączenie mechanizmu detekcji zmian w trybie deweloperskim, włączenie dodatkowych optymalizacji).
+    \item \texttt{apiUrl}: Adres bazowy interfejsu REST API, który w obecnej konfiguracji wskazuje na środowisko \texttt{https://dev.wastefreecloud.pl/api}, co umożliwia separację warstwy frontendowej od backendowej nawet w trakcie lokalnego developmentu.
+\end{itemize}
+
+\paragraph{Proces budowania i optymalizacja}
+Proces budowania aplikacji jest zdefiniowany w pliku \texttt{angular.json} i wykorzystuje builder \texttt{@angular-devkit/build-angular:application}. Konfiguracja produkcyjna (\texttt{configurations.production}) wymusza szereg optymalizacji kodu wynikowego:
+\begin{itemize}
+    \item \textbf{Ahead-of-Time (AOT) Compilation:} Kompilacja szablonów HTML i TypeScript do kodu JavaScript przed uruchomieniem w przeglądarce, co skutkuje mniejszym rozmiarem paczki i szybszym renderowaniem.
+    \item \textbf{Build Optimizer \& Minification:} Usuwanie zbędnych białych znaków, komentarzy oraz martwego kodu (tree-shaking).
+    \item \textbf{Output Hashing:} Dodawanie sum skrótu do nazw plików wynikowych (np. \texttt{main.7a2f...js}), co rozwiązuje problem cache'owania zasobów przez przeglądarki (Cache Busting).
+\end{itemize}
+Dodatkowo, zdefiniowano budżety wydajnościowe (ang. \textit{budgets}), które ostrzegają lub przerywają proces budowania w przypadku przekroczenia limitów rozmiaru plików (np. ostrzeżenie przy 500kb dla paczki początkowej, błąd przy 2mb).
+
+\paragraph{Zależności zewnętrze}
+Zarządzanie zależnościami projektu oparte jest o menedżer pakietów NPM. Wśród kluczowych bibliotek zewnętrznych wykorzystywanych w projekcie znajdują się:
+\begin{itemize}
+    \item \textbf{Interfejs użytkownika:} \texttt{Bootstrap 5} (system grid, style bazowe), \texttt{@angular/material} (komponenty interaktywne).
+    \item \textbf{Komunikacja:} \texttt{@microsoft/signalr} (WebSocket), \texttt{ngx-toastr} (powiadomienia).
+    \item \textbf{Programowanie reaktywne:} \texttt{RxJS} (fundament obsługi zdarzeń asynchronicznych).
+\end{itemize}
+
+\subsection{Metodyka CI/CD i wdrożenie}
+
+Proces ciągłej integracji i ciągłego dostarczania (CI/CD) został zrealizowany z wykorzystaniem platformy GitHub Actions. Zdefiniowano dwa niezależne potoki (pipeline’y) wdrożeniowe dla części serwerowej (API) oraz klienckiej (UI), a także potoki weryfikacyjne dla procedury Pull Request.
+
+\subsubsection{Pipeline API (GitHub Actions)}
+Wdrożenie warstwy backendowej realizowane jest przez scenariusz \texttt{api-cicd.yml}, uruchamiany automatycznie po zatwierdzeniu zmian w głównej gałęzi repozytorium (\texttt{main}) lub ręcznie (\texttt{workflow\_dispatch}).
+Kluczowe etapy procesu obejmują:
+\begin{enumerate}
+    \item \textbf{Przygotowanie środowiska:} Konfiguracja maszyny wirtualnej Ubuntu, instalacja .NET SDK 9.0.
+    \item \textbf{Kompilacja i budowanie:} Przywracanie zależności (\texttt{dotnet restore}) oraz kompilacja projektu w konfiguracji Release (\texttt{dotnet build}).
+    \item \textbf{Publikacja i konteneryzacja:} Utworzenie publikowalnego artefaktu aplikacji (\texttt{dotnet publish}) oraz zbudowanie obrazu Docker (\texttt{mcr.microsoft.com/dotnet/aspnet:9.0}) z oznaczeniem \texttt{latest}.
+    \item \textbf{Publikacja obrazu:} Wypchnięcie (push) zbudowanego obrazu do repozytorium Docker Hub z wykorzystaniem bezpiecznych zmiennych sekretnych (\texttt{secrets}).
+    \item \textbf{Wdrożenie SSH:} Zdalne wykonanie skryptu na serwerze docelowym (VPS/Cloud) za pomocą \texttt{appleboy/ssh-action}. Skrypt automatycznie:
+    \begin{itemize}
+        \item Zatrzymuje i usuwa istniejące kontenery.
+        \item Pobiera najnowszy obraz z rejestru.
+        \item Uruchamia nowy kontener, wstrzykując zmienne środowiskowe (connection strings, klucze szyfrujące) bezpośrednio z sekretów repozytorium.
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Pipeline UI (GitHub Actions)}
+Proces wdrożenia interfejsu użytkownika (\texttt{ui-cicd.yml}) przebiega analogicznie, z uwzględnieniem specyfiki ekosystemu Node.js:
+\begin{enumerate}
+    \item \textbf{Instalacja zależności:} Czysta instalacja pakietów NPM (\texttt{npm ci}).
+    \item \textbf{Budowanie aplikacji:} Uruchomienie skryptu budującego wersję produkcyjną Angulara, który generuje zoptymalizowane pliki statyczne.
+    \item \textbf{Konteneryzacja:} Budowa obrazu w oparciu o serwer Nginx (\texttt{nginx:alpine}), który serwuje wygenerowane pliki aplikacji SPA.
+    \item \textbf{Wdrożenie:} Podmiana kontenera na serwerze docelowym i mapowanie portu 5000 hosta na port 80 kontenera.
+\end{enumerate}
+
+\subsubsection{Konteneryzacja i obrazy Docker}
+Architektura wdrożeniowa opiera się na konteneryzacji wszystkich komponentów systemu.
+\paragraph{API Dockerfile}
+Wykorzystano wieloetapowe budowanie obrazu (\textit{Multi-stage building}). Etap \texttt{base} (runtime) jest lekki i zawiera tylko środowisko uruchomieniowe ASP.NET Core, natomiast proces kompilacji odbywa się w cięższym obrazie SDK. Wynikowy obraz jest zoptymalizowany pod kątem rozmiaru i bezpieczeństwa.
+
+\paragraph{UI Dockerfile}
+Obraz frontendowy również korzysta z podejścia wieloetapowego:
+\begin{itemize}
+    \item \textbf{Stage 1 (Build):} Obraz \texttt{node:20-alpine} służy do skompilowania kodu TypeScript i zasobów SCSS.
+    \item \textbf{Stage 2 (Serve):} Obraz \texttt{nginx:alpine} przejmuje rolę lekkiego serwera HTTP. Standardowa konfiguracja Nginx została nadpisana plikiem \texttt{nginx.conf}, aby poprawnie obsługiwać routing aplikacji SPA (przekierowanie wszystkich żądań do \texttt{index.html}).
+\end{itemize}
 
 \renewcommand\refname{Literatura (jeżeli wymagana)}
 \bibliography{references}
