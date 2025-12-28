@@ -148,17 +148,62 @@ Kraków \the\year\\
 
 \section{Informacje na temat wybranego tematu i zespołu projektowego}
 \subsection{Wybrany temat}
-\textit{Należy podać nazwę wybranego tematu.}
+Wybranym tematem projektu jest zaprojektowanie i wykonanie systemu \textbf{WasteFree Cloud} --- dwujęzycznego (PL/EN) systemu wspierającego efektywne zarządzanie procesem zamawiania oraz realizacji wywozu odpadów dla użytkowników indywidualnych, grup domowych i operatorów wywozowych.
+
+System obejmuje pełny cykl obsługi: rejestrację i autoryzację, tworzenie grup i adresów, składanie oraz akceptację zleceń, komunikację w czasie rzeczywistym, rozliczenia oraz dokumentację realizacji (w tym rozliczenie opłaty utylizacyjnej).
 \subsection{Zespół projektowy}
-\textit{Lista osób tworzących zespół projektowy, dane kontaktowe (e-mail).}
+Zespół projektowy:
+\begin{itemize}
+\item Dawid Plata (nr albumu: 165303)
+\item Michał Szymbara (nr albumu: 165297)
+\item Michał Wechmann (nr albumu: 165298)
+\end{itemize}
+
+Założony podział ról w zespole (wstępny) zakłada pracę równoległą nad warstwą interfejsu (UI), API oraz warstwami domenową i infrastrukturalną, przy wspólnym ustalaniu wymagań i scenariuszy testowych.
 \subsection{Opis tematu}
-\textit{Należy skopiować jego krótki opis.}
+WasteFree Cloud to \textbf{system} wspierający uporządkowanie i usprawnienie procesu wywozu odpadów poprzez ujednolicenie komunikacji pomiędzy trzema stronami: użytkownikami, grupami (np. gospodarstwa domowe / sąsiedztwo) oraz operatorami wywozowymi.
+
+W ramach systemu użytkownik może:
+\begin{itemize}
+\item założyć konto (z potwierdzeniem e-mail) oraz zalogować się,
+\item uzupełnić profil (m.in. opis, avatar, IBAN do wypłat, saldo konta pre-paid),
+\item działać w ramach grup: tworzyć grupy, zapraszać członków, przyjmować zaproszenia oraz zarządzać adresem wywozu,
+\item tworzyć zlecenia wywozu (typ odpadu, ilość, preferowane przedziały czasowe, notatki) wraz z podziałem kosztów pomiędzy uczestników,
+\item akceptować/odrzucać zaproszenia i zlecenia poprzez skrzynkę powiadomień (Inbox) oraz otrzymywać notyfikacje (aplikacja, e-mail, push web),
+\item śledzić status zleceń oraz rozliczenia (w tym opłatę utylizacyjną) w ramach historii i powiadomień.
+\end{itemize}
+
+Operator wywozowy otrzymuje listę dostępnych zleceń w danym obszarze (np. mieście), może zaakceptować zlecenie do realizacji, dostarczyć dokumentację wykonania oraz wnioskować o wypłatę środków po zatwierdzeniu przez użytkowników.
+
+System jest dwujęzyczny (PL/EN) i wykorzystuje lokalizację komunikatów po stronie API.
 \subsection{Założenia projektowe}
-\textit{Wstępne założenia projektowe, technologie i narzędzia, oprogramowanie, itp.}
+Poniżej przedstawiono wstępne założenia funkcjonalne i technologiczne wynikające z koncepcji systemu oraz aktualnej implementacji w repozytorium.
+
+\subsubsection*{Założenia funkcjonalne}
+\begin{itemize}
+\item Dwujęzyczność interfejsu i komunikatów (język polski i angielski).
+\item Obsługa ról i scenariuszy: \emph{Użytkownik/Członek grupy}, \emph{Operator wywozowy} oraz konto administracyjne.
+\item Pełny proces biznesowy: rejestracja i aktywacja konta, tworzenie grup i zarządzanie adresem wywozu, składanie zleceń, akceptacje uczestników, przyjęcie zlecenia przez operatora (\emph{garbage admin}), realizacja oraz rozliczenia (w tym dopłaty/zwroty wynikające z opłaty utylizacyjnej).
+\item Komunikacja i aktualizacje w czasie rzeczywistym: czat grupowy oraz powiadomienia (SignalR/WebSocket).
+\item Rejestrowanie kluczowych zdarzeń i zmian (m.in. pola audytowe dla encji utrwalanych w bazie danych).
+\end{itemize}
+
+\subsubsection*{Założenia techniczne (stack)}
+\begin{itemize}
+\item \textbf{Frontend}: Angular 17 (TypeScript), Bootstrap 5, RxJS; komunikacja z API po HTTP oraz w czasie rzeczywistym przez SignalR (biblioteka \texttt{@microsoft/signalr}). 
+\item \textbf{Backend}: ASP.NET (Minimal APIs) na platformie \textbf{.NET}, architektura warstwowa (API / Application / Domain / Infrastructure), obsługa logiki w formie poleceń/zapytań z własnym mechanizmem mediatora, walidacja danych wejściowych przy użyciu FluentValidation.
+\item \textbf{Dane}: Entity Framework Core; środowisko lokalne oparte o MS SQL.
+\item \textbf{Asynchroniczność i zadania}: mechanizm zadań cyklicznych (TickerQ) dla procesów w tle.
+\item \textbf{Storage plików}: składowanie plików użytkowników w zewnętrznym storage (Azure Blob Storage), w tym avatarów oraz dowodu opłaty utylizacyjnej (zdjęcie/skan/PDF) przesyłanego przez operatora (\emph{garbage admin}).
+\item \textbf{Uruchamianie i środowiska}: konteneryzacja Docker; lokalne uruchomienie całości przez Docker Compose (oddzielnie usługa API oraz UI).
+\end{itemize}
+
+\subsubsection*{Założenia bezpieczeństwa}
+\begin{itemize}
+\item Uwierzytelnienie oparte o token JWT oraz autoryzację ról/polityk.
+\item Potwierdzenie konta poprzez aktywację linkiem wysłanym na e-mail.
+\end{itemize}
 \subsection{Wstępny harmonogram pracy}
-\textit{Wstępny harmonogram prac, podział zadań, itp.}
-
-
 
 \renewcommand\refname{Literatura (jeżeli wymagana)}
 \bibliography{references}
