@@ -148,11 +148,143 @@ Kraków \the\year\\
 \newpage
 
 \section{Szczegółowa dokumentacja użytkowa}
-\textit{Dokumentacja użytkowa - kierowana do użytkownika systemu. Pomijana w przypadku, gdy tworzony projekt nie ma charakteru aplikacji użytkowej (np. biblioteki programistyczne).} 
-\subsection{Opis funkcjonaliści projektowanego systemu}
-\textit{Sekcja powinna zawierać wyczerpujący opis wszystkich funkcjonalności systemu (menu, poszczególne okienka ze screenami, opis najistotniejszych ścieżek funkcjonalnych tzn. jak krok po kroku użytkownik powinien realizować najważniejsze funkcjonalności systemu.)}
-\subsection{Przykładowe działanie systemu}
-\textit{Sekcja powinna zawierać tutoriale pokazujące realizację kluczowych funkcjonalności systemu dla przykładowych danych wejściowych.}
+
+\subsection{Role użytkowników i uprawnienia}
+System WasteFree Cloud przewiduje kilka ról użytkowników, które różnią się zakresem dostępnych funkcji. Uprawnienia są nadawane automatycznie na podstawie typu konta oraz autoryzacji (logowania). Dzięki temu użytkownik widzi w aplikacji jedynie te elementy, które są dla niego przeznaczone, a operacje wrażliwe (np. obsługa zleceń) są ograniczone do odpowiednich ról.
+
+\subsubsection{Użytkownik (User)}
+Rola \textbf{Użytkownik} przeznaczona jest dla osób korzystających z aplikacji w celu organizacji i rozliczania odbiorów odpadów w ramach grupy.
+\begin{itemize}
+\item zarządzanie własnym kontem: rejestracja, aktywacja konta, logowanie,
+\item wgląd i edycja profilu (m.in. podstawowe dane, adres, miasto),
+\item korzystanie z portfela: podgląd salda oraz wykonywanie transakcji (wpłata oraz wypłata),
+\item tworzenie i przegląd grup odpadów oraz współpraca z innymi użytkownikami (zaproszenia),
+\item składanie zamówień odbioru odpadów, kalkulacja kosztu oraz realizacja płatności,
+\item korzystanie ze skrzynki odbiorczej (powiadomienia i akcje) oraz czatu grupowego.
+\end{itemize}
+
+\subsubsection{Administrator odpadów (Garbage Admin)}
+Rola \textbf{Administrator odpadów} przeznaczona jest dla podmiotów obsługujących zlecenia odbioru odpadów. Użytkownik z tą rolą ma dostęp do funkcji związanych z przyjmowaniem oraz realizacją zamówień.
+\begin{itemize}
+\item przegląd zleceń oczekujących w przypisanym mieście oraz akceptacja zleceń,
+\item wgląd w zlecenia aktualnie przypisane/aktywne,
+\item uzupełnianie informacji o kosztach (np. zgłoszenie opłaty utylizacyjnej wraz z załącznikiem),
+\item akceptacja wymaganej zgody (treści zgody) dla administratora odpadów.
+\end{itemize}
+
+\subsubsection{Administrator systemu (Admin)}
+Rola \textbf{Administrator systemu} jest przewidziana jako rola o najszerszych uprawnieniach. W aktualnej wersji aplikacji administrator ma dostęp do wszystkich zakładek i treści w interfejsie, natomiast nie posiada dodatkowych, dedykowanych funkcji administracyjnych ponad standardowe możliwości dostępne w aplikacji.
+
+\subsection{Nawigacja i elementy interfejsu}
+Interfejs użytkownika w aplikacji WasteFree Cloud jest oparty o widoki (strony) dostępne z poziomu nawigacji oraz tzw. portalu użytkownika. Po zalogowaniu użytkownik uzyskuje dostęp do panelu \textit{Portal}, w którym znajdują się funkcje operacyjne (portfel, skrzynka odbiorcza, grupy, zamówienia, profil). Część elementów interfejsu (np. przyciski akcji) może różnić się w zależności od roli.
+
+\subsubsection{Strona główna}
+Strona główna jest punktem startowym aplikacji. Z tego miejsca użytkownik może przejść do logowania/rejestracji lub do portalu (jeżeli jest już zalogowany).
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Strona główna (Home)}\vspace{2.2cm}}}
+\captionT{Strona główna aplikacji}
+\end{figure}
+
+\subsubsection{Portal użytkownika}
+Portal użytkownika stanowi główny obszar pracy w aplikacji. W portalu dostępne są podstrony związane z realizacją funkcjonalności systemu, m.in.:
+\begin{itemize}
+\item \textbf{Portfel} (saldo i transakcje),
+\item \textbf{Skrzynka odbiorcza} (wiadomości oraz akcje),
+\item \textbf{Zamówienia odbioru} (tworzenie i podgląd),
+\item \textbf{Grupy} (lista, zarządzanie i panel grupy),
+\item \textbf{Profil} (dane użytkownika).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Widok Portalu (Portal)}\vspace{2.2cm}}}
+\captionT{Widok portalu użytkownika}
+\end{figure}
+
+\subsubsection{Topbar, przełącznik języka i nawigacja}
+W górnej części aplikacji dostępny jest pasek nawigacyjny (topbar), który ułatwia przechodzenie pomiędzy zakładkami. W interfejsie występuje również przełącznik języka, dzięki któremu użytkownik może zmienić język wyświetlanych treści (o ile są dostępne tłumaczenia).
+
+Elementy nawigacji mogą obejmować m.in. przejście do portfela, skrzynki odbiorczej, grup, profilu oraz innych modułów. Dodatkowo w topbarze może pojawiać się informacja o liczbie nowych powiadomień (np. w skrzynce odbiorczej).
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Topbar oraz przełącznik języka}\vspace{2.2cm}}}
+\captionT{Nawigacja w aplikacji (topbar i przełącznik języka)}
+\end{figure}
+
+\subsubsection{Komunikaty, walidacja i obsługa błędów}
+Podczas korzystania z aplikacji użytkownik może otrzymywać komunikaty o poprawnym wykonaniu operacji (np. zapis profilu, utworzenie zamówienia) oraz komunikaty o błędach. Walidacja danych (np. w formularzach rejestracji lub płatności) ma na celu wskazanie brakujących lub niepoprawnych informacji jeszcze przed wysłaniem danych.
+
+W przypadku wystąpienia błędu po stronie systemu aplikacja prezentuje odpowiedni komunikat, a użytkownik może ponowić operację lub skorygować dane wejściowe.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Przykładowy komunikat błędu/walidacji}\vspace{2.2cm}}}
+\captionT{Przykładowe komunikaty i walidacja danych}
+\end{figure}
+
+\subsection{Konto i uwierzytelnianie}
+\subsubsection{Rejestracja konta}
+\subsubsection{Aktywacja konta (link e-mail)}
+\subsubsection{Logowanie i wylogowanie}
+
+\subsection{Profil użytkownika}
+\subsubsection{Podgląd i edycja profilu}
+\subsubsection{Adres i miasto (dostępne miasta)}
+\subsubsection{Avatar użytkownika (upload)}
+\subsubsection{Statystyki użytkownika}
+
+\subsection{Portfel (Wallet)}
+\subsubsection{Saldo}
+\subsubsection{Dostępne metody płatności}
+\subsubsection{Wpłata środków}
+\subsubsection{Wypłata środków}
+
+\subsection{Grupy odpadów (Garbage Groups)}
+\subsubsection{Lista grup}
+\subsubsection{Rejestracja nowej grupy}
+\subsubsection{Szczegóły grupy}
+\subsubsection{Zarządzanie grupą (edycja danych)}
+\subsubsection{Zapraszanie użytkowników do grupy}
+\subsubsection{Zaproszenia oczekujące (akceptacja/odrzucenie)}
+\subsubsection{Usuwanie użytkownika z grupy}
+
+\subsection{Panel grupy i czat (Group Chat)}
+\subsubsection{Historia wiadomości}
+\subsubsection{Dodawanie wiadomości}
+
+\subsection{Zamówienia odbioru odpadów (Garbage Orders)}
+\subsubsection{Utworzenie zamówienia}
+\subsubsection{Kalkulacja kosztu zamówienia}
+\subsubsection{Płatność za zamówienie}
+\subsubsection{Moje odbiory (lista zamówień użytkownika)}
+\subsubsection{Szczegóły zamówienia}
+\subsubsection{Dodatkowa opłata utylizacyjna (udział w koszcie)}
+
+\subsection{Skrzynka odbiorcza (Inbox) i powiadomienia}
+\subsubsection[Licznik wiadomości i powiadomienia]{Licznik wiadomości i powiadomienia w czasie rzeczywistym}
+\subsubsection{Lista wiadomości (paginacja)}
+\subsubsection{Akcje na wiadomościach (akceptacja/odrzucenie)}
+\subsubsection{Usuwanie wiadomości}
+\subsubsection{Czyszczenie skrzynki}
+
+\subsection{Funkcje dla Administratora odpadów (Garbage Admin)}
+\subsubsection{Zgoda administratora odpadów (treść zgody)}
+\subsubsection{Akceptacja zgody}
+\subsubsection{Zlecenia oczekujące (waiting)}
+\subsubsection{Akceptacja zlecenia}
+\subsubsection{Zlecenia przypisane/aktywne (assigned/current)}
+\subsubsection{Zgłoszenie opłaty utylizacyjnej (załącznik)}
+
+\subsection{Przykładowe działanie systemu (scenariusze)}
+\subsubsection{Rejestracja i aktywacja konta}
+\subsubsection{Utworzenie grupy i zaproszenie użytkowników}
+\subsubsection{Złożenie zamówienia oraz płatność}
+\subsubsection{Komunikacja w czacie grupy}
+\subsubsection[Obsługa zaproszeń i akcji]{Obsługa zaproszeń i akcji z poziomu skrzynki odbiorczej}
+\subsubsection[Scenariusz Garbage Admin]{Scenariusz Garbage Admin: akceptacja zlecenia i rozliczenie opłaty}
 
 
 
