@@ -1,0 +1,252 @@
+\documentclass[12pt,a4paper,oneside]{article}
+
+\usepackage[QX]{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{latexsym}
+\usepackage{tgpagella}
+\usepackage{lmodern}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,alltt}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{pdflscape}
+\usepackage{caption}
+\usepackage{indentfirst}
+\usepackage{float}
+\bibliographystyle{plabbrv}
+
+\usepackage{color}
+\usepackage[polish]{babel}
+\usepackage{datetime2}
+\usepackage[x11names,dvipsnames,table]{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+  pdfauthor={Zespół WasteFree},
+  colorlinks=True,
+  linkcolor=darkgray,
+  citecolor=BrickRed,
+  filecolor=Magenta,
+  urlcolor=BlueViolet
+}
+
+% diagramy, grafy itp.
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{arrows}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{chains,fit,shapes,calc}
+
+% algorytmy
+\usepackage[linesnumbered,lined,commentsnumbered]{algorithm2e}
+\SetKwFor{ForEach}{for each}{do}{end for}%
+\SetKwFor{ForAll}{for all}{do}{end for}%
+\newenvironment{myalgorithm}
+{\rule{\textwidth}{0.5mm}\\\SetAlCapSty{}\SetAlgoNoEnd\SetAlgoNoLine\begin{algorithm}}{\end{algorithm}\rule{\textwidth}{0.5mm}}
+
+%---------------------
+% Wyłączamy znacznik overfull boxes (czarne prostokąty na marginesie)
+\overfullrule=0pt
+\pagestyle{plain}
+\textwidth=15cm \textheight=685pt \topmargin=-25pt \linespread{1.3}
+\setlength{\parskip}{0pt}
+\setlength\arraycolsep{2pt}
+\oddsidemargin = 0.9cm
+\evensidemargin =-0.1cm
+\captionsetup{width=.95\linewidth, justification=centering}
+\renewcommand\figurename{Rys.}
+\numberwithin{equation}{section}
+\renewcommand{\thefootnote}{\arabic{footnote})}
+%---------------------
+
+\begin{document}
+
+% TikZ style (po \begin{document} aby uniknąć ostrzeżeń kompilatora)
+  \tikzset{main node/.style={circle,fill=blue!20,draw,minimum size=1cm,inner sep=0pt}}
+
+\thispagestyle{empty}
+\begin{titlepage}
+\begin{center}\Large
+Uniwersytet Komisji Edukacji Narodowej w Krakowie\\
+\large
+Instytut Bezpieczeństwa i Informatyki\\
+\vskip 10pt
+\end{center}
+\begin{center}
+\centering
+\IfFileExists{images/logo.png}{\includegraphics[width=1.0\columnwidth]{images/logo.png}}{\fbox{Brak pliku images/logo.png}}
+\end{center}
+
+\begin{center}
+ {\bf \fontsize{14pt}{14pt}\selectfont PROJEKT INŻYNIERSKI\\ DOKUMENTACJA INSTALACJI I KONFIGURACJI}
+\end{center}
+\vskip 5pt
+\begin{center}
+ {\bf \fontsize{22pt}{22pt}\selectfont System WasteFree Cloud do efektywnego zarządzania odpadami}
+\end{center}
+
+\begin{center}
+ {\fontsize{12pt}{12pt}\selectfont wykonany przez: }
+\end{center}
+\begin{center}
+ {\bf\fontsize{16pt}{16pt}\selectfont Dawid Plata}\\
+ {\fontsize{12pt}{12pt}\selectfont Nr albumu: 165303 \\\&\\}
+ {\bf\fontsize{16pt}{16pt}\selectfont Michał Szymbara}\\
+ {\fontsize{12pt}{12pt}\selectfont Nr albumu: 165297 \\\&\\}
+ {\bf\fontsize{16pt}{16pt}\selectfont Michał Wechmann}\\
+ {\fontsize{12pt}{12pt}\selectfont Nr albumu: 165298}
+\end{center}
+\begin{center}
+ {\fontsize{12pt}{12pt}\selectfont pod opieką:}\\
+ {\bf\fontsize{12pt}{12pt}\selectfont dr Wojciech Gwizdała}\\
+ {\bf\fontsize{12pt}{12pt}\selectfont mgr Wojciech Baran}
+\end{center}
+
+%\mbox{}
+\vspace*{\fill}
+%\vskip 50pt
+\begin{center}
+\large
+Kraków \the\year\\
+(ostatnia aktualizacja: \DTMcurrenttime,\;\today)
+\end{center}
+\end{titlepage}
+\setcounter{page}{0}
+	\tableofcontents
+\newpage
+
+\section{Wstęp}
+\subsection{Cel dokumentu}
+Dokument prowadzi administratora przez pełny proces uruchomienia systemu WasteFree: wymagania, instalację, konfigurację oraz uruchomienie.
+\subsection{Zakres}
+Backend (.NET 9 / ASP.NET Core), frontend (Angular 17), baza danych (EF Core, domyślnie SQLite), usługi dodatkowe i kontenery Docker/Compose.
+
+\section{Wymagania sprzętowe}
+\subsection{Minimalne}
+\begin{itemize}
+  \item CPU: 2 rdzenie; RAM: 8 GB.
+  \item Dysk: 10 GB wolnego miejsca na repozytorium, zależności, obrazy Docker.
+  \item Dostęp do internetu w celu pobrania paczek NuGet/NPM oraz obrazów.
+\end{itemize}
+\subsection{Zalecane}
+\begin{itemize}
+  \item CPU: 4 rdzenie; RAM: 16 GB (komfortowa praca z Docker i buildami Angular).
+  \item Szybki dysk SSD; stałe łącze sieciowe.
+\end{itemize}
+
+\section{Środowisko uruchomieniowe}
+\subsection{System operacyjny}
+Windows 10/11, Ubuntu 22.04+, macOS 12+. W przykładach poniżej ścieżki podano w konwencji Windows/PowerShell.
+\subsection{Narzędzia i wersje}
+\begin{itemize}
+  \item .NET SDK: \textbf{9.0.x} (wymagany przez projekt `WasteFree.Api`).
+  \item Node.js: \textbf{\raisebox{-0.4ex}{\textasciitilde}18.19+} lub 20.x (zalecane 20 LTS) dla Angular 17; npm w zestawie.
+  \item Angular CLI: 17.x (instalacja lokalna w projekcie UI, globalna opcjonalna: \texttt{npm install -g @angular/cli@17}).
+  \item Docker + Docker Compose (opcjonalnie do uruchomienia kontenerowego).
+  \item Git.
+  \item SQLite (domyślna baza danych projektu).
+\end{itemize}
+\subsection{Pobranie kodu}
+\begin{verbatim}
+git clone https://github.com/szymbaramichal/WasteFree.git
+cd WasteFree
+\end{verbatim}
+
+\section{Struktura repozytorium (skrót)}
+\begin{itemize}
+  \item `API/` – backend (.NET 9), główny projekt `WasteFree.Api`.
+  \item `UI/` – frontend Angular 17, pliki konfiguracyjne npm/Angular CLI.
+  \item `docker-compose.yml` – definicje usług (API + opcjonalne usługi).
+  \item `docs/` – dokumentacja projektu (bieżący plik).
+\end{itemize}
+
+\section{Konfiguracja środowiska}
+\subsection{Backend (.NET 9)}
+\begin{verbatim}
+cd API
+dotnet restore
+\end{verbatim}
+Przed uruchomieniem należy uzupełnić brakujące sekrety w pliku: \\
+\texttt{appsettings.Development.json} (lub \texttt{appsettings.json}):
+\begin{itemize}
+  \item \texttt{ConnectionStrings:BlobStorage} – connection string do Azure Blob Storage (lub emulatora Azurite).
+  \item \texttt{Integrations:Smtp} – pełna konfiguracja serwera SMTP (klucze: \texttt{Server}, \texttt{Port}, \texttt{Username}, \texttt{Password}) do wysyłki powiadomień.
+  \item \texttt{Integrations:Nominatim:ContactEmail} – adres email wymagany przez politykę użytkowania OpenStreetMap (opcjonalnie).
+  \item \texttt{Security:Jwt:Key} – klucz do podpisywania tokenów JWT (musi być wystarczająco długi).
+  \item \texttt{Security:AesEncryptionKey} – klucz do szyfrowania danych wrażliwych.
+\end{itemize}
+
+\subsection{Baza danych i migracje}
+Aplikacja automatycznie aplikuje migracje bazy danych przy starcie. Nie jest wymagane ręczne uruchamianie poleceń \texttt{dotnet ef database update}.
+Wystarczy upewnić się, że connection string w pliku konfiguracyjnym jest poprawny.
+
+\subsection{Frontend (Angular 17)}
+\begin{verbatim}
+cd UI
+npm install
+\end{verbatim}
+Konfiguracja środowisk znajduje się w `UI/src/environments/environment*.ts`.
+Domyślnie frontend wskazuje na zdalne API. Aby połączyć się z lokalnym backendem, należy w pliku \texttt{environment.ts} zmienić `apiUrl` na \texttt{http://localhost:8080}.
+
+\subsection{Docker / Docker Compose (opcjonalnie)}
+Wymagane działające Docker Engine i Compose.
+\begin{verbatim}
+docker compose pull   # opcjonalnie, aby pobrać obrazy bazowe
+\end{verbatim}
+
+\section{Instalacja i uruchomienie krok po kroku}
+\subsection{Backend – tryb deweloperski}
+\begin{verbatim}
+cd API
+dotnet run --project WasteFree.Api --launch-profile Development
+\end{verbatim}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/logs.jpg}
+  \caption{Logi startowe backendu}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/docs.png}
+  \caption{Dokumentacja API (Scalar API Reference pod adresem \texttt{/docs})}
+\end{figure}
+
+\subsection{Frontend – tryb deweloperski}
+\begin{verbatim}
+cd UI
+npm run start
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/front.png}
+  \caption{Uruchomienie frontendu}
+\end{figure}
+
+\subsection{Uruchomienie kontenerowe}
+\begin{verbatim}
+docker compose up --build
+\end{verbatim}
+\begin{itemize}
+  \item Usługa `wastefree-api` wystawia port 8080 (mapowanie 8080:8080).
+  \item Aby zatrzymać: \texttt{docker compose down} (opcjonalnie z \texttt{-v} dla wolumenów).
+\end{itemize}
+
+\subsection{Dostęp do systemu (konta testowe)}
+W systemie skonfigurowane są domyślne konta testowe:
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Login} & \textbf{Hasło} \\ \hline
+test1 & Kwakwa5! \\ \hline
+test2 & Kwakwa5! \\ \hline
+test3 & Kwakwa5! \\ \hline
+test4 & Kwakwa5! \\ \hline
+test5 & Kwakwa5! \\ \hline
+garbageadmin1 & Kwakwa5! \\ \hline
+garbageadmin2 & Kwakwa5! \\ \hline
+\end{tabular}
+\caption{Dane logowania do kont testowych}
+\end{table}
+
+\end{document}
