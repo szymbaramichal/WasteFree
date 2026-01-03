@@ -150,7 +150,7 @@ Kraków \the\year\\
 \section{Szczegółowa dokumentacja użytkowa}
 
 \subsection{Role użytkowników i uprawnienia}
-System WasteFree Cloud przewiduje kilka ról użytkowników, które różnią się zakresem dostępnych funkcji. Uprawnienia są nadawane automatycznie na podstawie typu konta oraz autoryzacji (logowania). Dzięki temu użytkownik widzi w aplikacji jedynie te elementy, które są dla niego przeznaczone, a operacje wrażliwe (np. obsługa zleceń) są ograniczone do odpowiednich ról.
+System WasteFree Cloud przewiduje kilka ról użytkowników, które różnią się zakresem dostępnych funkcji. Uprawnienia są nadawane automatycznie na podstawie typu konta oraz autoryzacji (logowania). Dzięki temu użytkownik widzi w aplikacji jedynie te elementy, które są dla niego przeznaczone, a operacje wrażliwe (obsługa zleceń) są ograniczone do odpowiednich ról.
 
 \subsubsection{Użytkownik (User)}
 Rola \textbf{Użytkownik} przeznaczona jest dla osób korzystających z aplikacji w celu organizacji i rozliczania odbiorów odpadów w ramach grupy.
@@ -168,7 +168,7 @@ Rola \textbf{Administrator odpadów} przeznaczona jest dla podmiotów obsługuj�
 \begin{itemize}
 \item przegląd zleceń oczekujących w przypisanym mieście oraz akceptacja zleceń,
 \item wgląd w zlecenia aktualnie przypisane/aktywne,
-\item uzupełnianie informacji o kosztach (np. zgłoszenie opłaty utylizacyjnej wraz z załącznikiem),
+\item uzupełnianie informacji o kosztach, w tym zgłoszenie opłaty utylizacyjnej wraz z załącznikiem,
 \item akceptacja wymaganej zgody (treści zgody) dla administratora odpadów.
 \end{itemize}
 
@@ -176,7 +176,7 @@ Rola \textbf{Administrator odpadów} przeznaczona jest dla podmiotów obsługuj�
 Rola \textbf{Administrator systemu} jest przewidziana jako rola o najszerszych uprawnieniach. W aktualnej wersji aplikacji administrator ma dostęp do wszystkich zakładek i treści w interfejsie, natomiast nie posiada dodatkowych, dedykowanych funkcji administracyjnych ponad standardowe możliwości dostępne w aplikacji.
 
 \subsection{Nawigacja i elementy interfejsu}
-Interfejs użytkownika w aplikacji WasteFree Cloud jest oparty o widoki (strony) dostępne z poziomu nawigacji oraz tzw. portalu użytkownika. Po zalogowaniu użytkownik uzyskuje dostęp do panelu \textit{Portal}, w którym znajdują się funkcje operacyjne (portfel, skrzynka odbiorcza, grupy, zamówienia, profil). Część elementów interfejsu (np. przyciski akcji) może różnić się w zależności od roli.
+Interfejs użytkownika w aplikacji WasteFree Cloud jest oparty o widoki (strony) dostępne z poziomu nawigacji oraz tzw. portalu użytkownika. Po zalogowaniu użytkownik uzyskuje dostęp do panelu \textit{Portal}, w którym znajdują się funkcje operacyjne (portfel, skrzynka odbiorcza, grupy, zamówienia, profil). Część elementów interfejsu (w szczególności przyciski akcji) może różnić się w zależności od roli.
 
 \subsubsection{Strona główna}
 Strona główna jest punktem startowym aplikacji. Z tego miejsca użytkownik może przejść do logowania/rejestracji lub do portalu (jeżeli jest już zalogowany).
@@ -197,6 +197,15 @@ Portal użytkownika stanowi główny obszar pracy w aplikacji. W portalu dostęp
 \item \textbf{Profil} (dane użytkownika).
 \end{itemize}
 
+\subsubsection{Dashboard (widok startowy portalu)}
+Po zalogowaniu użytkownik trafia do widoku startowego portalu (dashboard). Dashboard prezentuje podsumowanie najważniejszych informacji oraz ułatwia szybkie przejście do kluczowych funkcji aplikacji.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Dashboard (Portal --- widok startowy)}\vspace{2.2cm}}}
+\captionT{Dashboard w portalu użytkownika}
+\end{figure}
+
 \begin{figure}[H]
 \centering
 \fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Widok Portalu (Portal)}\vspace{2.2cm}}}
@@ -206,7 +215,8 @@ Portal użytkownika stanowi główny obszar pracy w aplikacji. W portalu dostęp
 \subsubsection{Topbar, przełącznik języka i nawigacja}
 W górnej części aplikacji dostępny jest pasek nawigacyjny (topbar), który ułatwia przechodzenie pomiędzy zakładkami. W interfejsie występuje również przełącznik języka, dzięki któremu użytkownik może zmienić język wyświetlanych treści (o ile są dostępne tłumaczenia).
 
-Elementy nawigacji mogą obejmować m.in. przejście do portfela, skrzynki odbiorczej, grup, profilu oraz innych modułów. Dodatkowo w topbarze może pojawiać się informacja o liczbie nowych powiadomień (np. w skrzynce odbiorczej).
+Elementy nawigacji mogą obejmować m.in. przejście do portfela, skrzynki odbiorczej, grup, profilu oraz innych modułów. Dodatkowo w topbarze może pojawiać się informacja o liczbie nowych powiadomień w skrzynce odbiorczej.
+
 
 \begin{figure}[H]
 \centering
@@ -215,7 +225,7 @@ Elementy nawigacji mogą obejmować m.in. przejście do portfela, skrzynki odbio
 \end{figure}
 
 \subsubsection{Komunikaty, walidacja i obsługa błędów}
-Podczas korzystania z aplikacji użytkownik może otrzymywać komunikaty o poprawnym wykonaniu operacji (np. zapis profilu, utworzenie zamówienia) oraz komunikaty o błędach. Walidacja danych (np. w formularzach rejestracji lub płatności) ma na celu wskazanie brakujących lub niepoprawnych informacji jeszcze przed wysłaniem danych.
+Podczas korzystania z aplikacji użytkownik może otrzymywać komunikaty o poprawnym wykonaniu operacji (zapis profilu, utworzenie zamówienia) oraz komunikaty o błędach. Walidacja danych w formularzach rejestracji lub płatności ma na celu wskazanie brakujących lub niepoprawnych informacji jeszcze przed wysłaniem danych.
 
 W przypadku wystąpienia błędu po stronie systemu aplikacja prezentuje odpowiedni komunikat, a użytkownik może ponowić operację lub skorygować dane wejściowe.
 
@@ -226,42 +236,405 @@ W przypadku wystąpienia błędu po stronie systemu aplikacja prezentuje odpowie
 \end{figure}
 
 \subsection{Konto i uwierzytelnianie}
+Moduł konta i uwierzytelniania umożliwia utworzenie konta w systemie WasteFree Cloud oraz uzyskanie dostępu do funkcji dostępnych w portalu. Proces składa się z trzech podstawowych etapów: rejestracji, aktywacji konta oraz logowania.
+
 \subsubsection{Rejestracja konta}
+Rejestracja polega na założeniu konta poprzez wypełnienie formularza rejestracyjnego. Użytkownik podaje: nazwę użytkownika, adres e-mail, hasło oraz wybiera rolę konta (User lub GarbageAdmin). W kolejnym kroku wybiera preferowany język oraz uzupełnia adres w postaci: miasto, kod pocztowy oraz ulica wraz z numerem.
+
+Miasto wybierane jest z listy pobieranej z systemu w postaci zapytania do API. Podczas wypełniania formularza adres jest weryfikowany: kod pocztowy musi odpowiadać wybranemu miastu, a pole ulicy musi zawierać numer.
+
+Po przesłaniu formularza backend wykonuje dodatkowo weryfikację adresu poprzez \textbf{geokodowanie} z wykorzystaniem usługi \textbf{OpenStreetMap (Nominatim)} w celu wyznaczenia współrzędnych. Jeżeli adres nie zostanie odnaleziony lub nie uda się wyznaczyć współrzędnych, utworzenie konta może zostać odrzucone z komunikatem błędu.
+
+Po poprawnym przesłaniu formularza konto zostaje utworzone, a na podany adres e-mail wysyłana jest wiadomość z linkiem aktywacyjnym.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Formularz rejestracji}\vspace{2.2cm}}}
+\captionT{Rejestracja nowego konta}
+\end{figure}
+
 \subsubsection{Aktywacja konta (link e-mail)}
+Po rejestracji użytkownik otrzymuje e-mail z linkiem aktywacyjnym. Po kliknięciu linku następuje weryfikacja konta i jego aktywacja. Dopiero po aktywacji możliwe jest poprawne zalogowanie się do systemu.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Widok aktywacji konta (potwierdzenie)}\vspace{2.2cm}}}
+\captionT{Aktywacja konta użytkownika}
+\end{figure}
+
 \subsubsection{Logowanie i wylogowanie}
+Logowanie odbywa się poprzez podanie nazwy użytkownika oraz hasła w formularzu logowania. Po poprawnej autoryzacji użytkownik zostaje przeniesiony do portalu aplikacji, a system zapisuje informację o sesji w postaci tokenu JWT wykorzystywanego do uwierzytelniania kolejnych żądań.
+
+Wylogowanie kończy sesję użytkownika i uniemożliwia dostęp do funkcji wymagających uwierzytelnienia. Po wylogowaniu użytkownik może ponownie zalogować się lub przejść do rejestracji.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Formularz logowania/rejestracji}\vspace{2.2cm}}}
+\captionT{Ekran logowania i przejście do rejestracji}
+\end{figure}
 
 \subsection{Profil użytkownika}
+Sekcja profilu użytkownika służy do zarządzania danymi konta widocznymi w systemie oraz do uzupełniania informacji wykorzystywanych w pozostałych modułach (grupy, zamówienia, rozliczenia). Profil jest dostępny po zalogowaniu w portalu aplikacji.
+
 \subsubsection{Podgląd i edycja profilu}
+W widoku profilu użytkownik ma możliwość podglądu oraz edycji podstawowych informacji o koncie. W profilu przechowywane są m.in. opis użytkownika oraz numer rachunku bankowego wykorzystywany do rozliczeń w portfelu.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Widok profilu (podgląd)}\vspace{2.2cm}}}
+\captionT{Podgląd profilu użytkownika}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Edycja profilu (formularz)}\vspace{2.2cm}}}
+\captionT{Edycja danych profilu}
+\end{figure}
+
 \subsubsection{Adres i miasto (dostępne miasta)}
+Adres użytkownika jest wykorzystywany w systemie do dopasowania usług i działania wybranych funkcji. Użytkownik uzupełnia dane adresowe w formie: miasto, kod pocztowy oraz ulica wraz z numerem.
+
+Miasto wybierane jest z listy dostępnych lokalizacji w systemie. Aplikacja obsługuje miasta: Kraków oraz Warszawa.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Sekcja adresu i wyboru miasta}\vspace{2.2cm}}}
+\captionT{Adres i miasto w profilu użytkownika}
+\end{figure}
+
 \subsubsection{Avatar użytkownika (upload)}
-\subsubsection{Statystyki użytkownika}
+Użytkownik może dodać lub zmienić avatar. Avatar służy do identyfikacji użytkownika w aplikacji (m.in. w panelach grup oraz w szczegółach zamówień).
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Upload avatara}\vspace{2.2cm}}}
+\captionT{Dodawanie lub zmiana avatara}
+\end{figure}
 
 \subsection{Portfel (Wallet)}
+Moduł \textbf{Portfel} służy do obsługi środków pieniężnych użytkownika wykorzystywanych w aplikacji. Umożliwia sprawdzenie aktualnego salda oraz wykonanie operacji wpłaty i wypłaty.
+
 \subsubsection{Saldo}
+Saldo portfela prezentowane jest w górnej części widoku portfela w walucie \textbf{PLN}. Wartość salda jest pobierana z systemu po otwarciu widoku oraz odświeżana po poprawnym zakończeniu transakcji.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Portfel --- saldo użytkownika}\vspace{2.2cm}}}
+\captionT{Saldo portfela użytkownika}
+\end{figure}
+
 \subsubsection{Dostępne metody płatności}
+W aplikacji dostępne są metody przypisane do typu operacji:
+\begin{itemize}
+\item \textbf{BLIK} --- metoda wykorzystywana do \textbf{wpłaty środków} do portfela,
+\item \textbf{Wypłata bankowa (IBAN)} --- metoda wykorzystywana do \textbf{wypłaty środków} na numer rachunku bankowego użytkownika.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Portfel --- dostępne metody (BLIK, IBAN)}\vspace{2.2cm}}}
+\captionT{Metody transakcji w portfelu}
+\end{figure}
+
 \subsubsection{Wpłata środków}
+Wpłata środków realizowana jest poprzez formularz wpłaty. Użytkownik podaje kwotę (minimalnie 1) oraz \textbf{kod BLIK} składający się z 6 cyfr. System weryfikuje poprawność kodu, a po udanej operacji saldo portfela zostaje zaktualizowane.
+
+W aktualnej wersji systemu kod BLIK wymagany do poprawnego zaksięgowania wpłaty musi rozpoczynać się od cyfr \textbf{777}.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Portfel --- formularz wpłaty (BLIK)}\vspace{2.2cm}}}
+\captionT{Wpłata środków do portfela (BLIK)}
+\end{figure}
+
 \subsubsection{Wypłata środków}
+Wypłata środków realizowana jest na numer rachunku bankowego użytkownika zapisany w profilu (\textbf{IBAN}). Numer rachunku jest prezentowany w widoku portfela jako informacja tylko do odczytu.
+
+Aby wykonać wypłatę użytkownik podaje kwotę (minimalnie 1). System weryfikuje, czy numer rachunku jest uzupełniony oraz czy użytkownik posiada wystarczające środki w portfelu. Po udanej operacji saldo portfela zostaje zaktualizowane.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Portfel --- formularz wypłaty (IBAN)}\vspace{2.2cm}}}
+\captionT{Wypłata środków z portfela (IBAN)}
+\end{figure}
 
 \subsection{Grupy odpadów (Garbage Groups)}
+Moduł \textbf{Grupy odpadów} umożliwia organizację użytkowników w ramach wspólnego miejsca odbioru odpadów. Grupa posiada nazwę, opis oraz adres (miasto, kod pocztowy, ulica z numerem). Lista dostępnych miast jest pobierana z systemu w postaci zapytania do API. W ramach grupy widoczna jest lista członków oraz dostępne są akcje związane z zapraszaniem nowych osób i zarządzaniem danymi grupy.
+
 \subsubsection{Lista grup}
+W widoku listy grup użytkownik widzi wszystkie grupy, do których należy. Każda pozycja na liście zawiera nazwę grupy oraz informację o roli użytkownika w grupie (właściciel lub członek). Wybranie grupy z listy przenosi do panelu szczegółów grupy.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Lista grup (Portal \textrightarrow{} Grupy)}\vspace{2.2cm}}}
+\captionT{Lista grup użytkownika}
+\end{figure}
+
 \subsubsection{Rejestracja nowej grupy}
+Rejestracja nowej grupy odbywa się poprzez formularz zarządzania grupami. Użytkownik uzupełnia:
+\begin{itemize}
+\item nazwę grupy,
+\item opis grupy,
+\item adres miejsca odbioru (miasto wybierane z listy, kod pocztowy, ulica wraz z numerem).
+\end{itemize}
+Podczas wypełniania formularza adres jest weryfikowany: kod pocztowy musi odpowiadać wybranemu miastu, a pole ulicy musi zawierać numer. Po zatwierdzeniu dane formularza są wysyłane do systemu w zapytaniu, a w przypadku błędów użytkownik otrzymuje komunikaty walidacyjne.
+Backend dodatkowo wykonuje weryfikację adresu poprzez \textbf{geokodowanie} z wykorzystaniem usługi \textbf{OpenStreetMap (Nominatim)} w celu wyznaczenia współrzędnych (szerokość i długość geograficzna). Jeżeli adres nie zostanie odnaleziony lub nie uda się wyznaczyć współrzędnych, zapis danych może zostać odrzucony z komunikatem błędu.
+Po poprawnym utworzeniu grupy użytkownik staje się jej \textbf{właścicielem} i może przejść do szczegółów nowo utworzonej grupy.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Formularz utworzenia grupy (Grupy \textrightarrow{} Zarządzanie)}\vspace{2.2cm}}}
+\captionT{Tworzenie nowej grupy}
+\end{figure}
+
 \subsubsection{Szczegóły grupy}
+Szczegóły grupy są dostępne w panelu grupy po wybraniu jej z listy. W widoku szczegółów prezentowane są:
+\begin{itemize}
+\item opis grupy,
+\item adres miejsca odbioru,
+\item lista członków grupy wraz z rolą oraz informacją, czy zaproszenie użytkownika jest oczekujące.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Szczegóły grupy (opis, adres, członkowie)}\vspace{2.2cm}}}
+\captionT{Szczegóły grupy}
+\end{figure}
+
 \subsubsection{Zarządzanie grupą (edycja danych)}
+Edycja danych grupy jest dostępna dla użytkownika z rolą \textbf{właściciela}. Właściciel może przełączyć widok szczegółów w tryb edycji i zmienić nazwę, opis oraz adres grupy. Po zapisaniu zmian dane są aktualizowane w systemie.
+
+Podczas edycji adres jest weryfikowany w taki sam sposób jak przy tworzeniu grupy, a zapis zmian powoduje wysłanie zapytania aktualizacyjnego do API.
+W ramach zapisu zmian backend ponownie wykonuje geokodowanie adresu w OpenStreetMap (Nominatim), aby zaktualizować współrzędne przypisane do lokalizacji.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Edycja danych grupy (tryb edycji)}\vspace{2.2cm}}}
+\captionT{Edycja danych grupy}
+\end{figure}
+
 \subsubsection{Zapraszanie użytkowników do grupy}
+Zapraszanie nowych osób do grupy jest dostępne dla \textbf{właściciela} w panelu szczegółów grupy. Zaproszenie odbywa się poprzez podanie \textbf{nazwy użytkownika} osoby, która posiada konto w systemie. Po wysłaniu zaproszenia użytkownik pojawia się na liście członków jako osoba oczekująca na akceptację.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zapraszanie do grupy (pole nazwy użytkownika)}\vspace{2.2cm}}}
+\captionT{Zapraszanie użytkowników do grupy}
+\end{figure}
+
 \subsubsection{Zaproszenia oczekujące (akceptacja/odrzucenie)}
+Użytkownik, który otrzymał zaproszenie do grupy, widzi je w sekcji \textbf{zaproszeń oczekujących} w widoku zarządzania grupami. Dla każdego zaproszenia dostępne są akcje \textbf{Akceptuj} oraz \textbf{Odrzuć}. Akceptacja powoduje dołączenie do grupy, a odrzucenie usuwa zaproszenie.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Lista zaproszeń oczekujących (Akceptuj/Odrzuć)}\vspace{2.2cm}}}
+\captionT{Obsługa zaproszeń do grup}
+\end{figure}
+
 \subsubsection{Usuwanie użytkownika z grupy}
+Właściciel grupy może usunąć użytkownika będącego członkiem grupy. Akcja usunięcia jest dostępna przy danym użytkowniku na liście członków. Usunięcie powoduje, że użytkownik przestaje widzieć grupę na swojej liście oraz traci dostęp do jej panelu.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Lista członków grupy z akcją usunięcia}\vspace{2.2cm}}}
+\captionT{Usuwanie członka z grupy}
+\end{figure}
 
 \subsection{Panel grupy i czat (Group Chat)}
+Panel grupy zawiera zakładkę \textbf{Czat}, która umożliwia komunikację pomiędzy członkami danej grupy. Czat jest dostępny wyłącznie dla użytkowników będących \textbf{członkami grupy} (zaproszenie nie może być w stanie oczekującym). W aktualnej wersji systemu rola \textbf{Garbage Admin} nie może dołączyć do czatu grupy.
+
+Komunikacja jest realizowana dwutorowo:
+\begin{itemize}
+\item \textbf{historia wiadomości} jest pobierana z systemu w postaci zapytań do API (paginacja),
+\item \textbf{nowe wiadomości} mogą być dostarczane w czasie rzeczywistym poprzez połączenie \textbf{SignalR} (hub \texttt{/chatHub}).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Panel grupy \textrightarrow{} zakładka Czat}\vspace{2.2cm}}}
+\captionT{Zakładka czatu w panelu grupy}
+\end{figure}
+
 \subsubsection{Historia wiadomości}
+Po otwarciu zakładki czatu aplikacja pobiera ostatnie wiadomości dla wybranej grupy. Historia jest dostępna stronicowana (paginacja) i w interfejsie użytkownik może załadować starsze wiadomości przyciskiem \textit{Wczytaj starsze}.
+
+Wiadomości prezentowane są w kolejności chronologicznej (od najstarszej do najnowszej) i zawierają podstawowe informacje:
+\begin{itemize}
+\item nazwę użytkownika (nadawcy),
+\item treść wiadomości,
+\item czas wysłania.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Historia czatu (lista wiadomości + wczytaj starsze)}\vspace{2.2cm}}}
+\captionT{Historia wiadomości w czacie grupy}
+\end{figure}
+
 \subsubsection{Dodawanie wiadomości}
+Aby dodać wiadomość, użytkownik wpisuje treść w polu edycji i wysyła ją przyciskiem \textit{Wyślij} lub klawiszem \textit{Enter} (z użyciem \textit{Shift+Enter} możliwe jest wstawienie nowej linii). Po poprawnym wysłaniu wiadomość pojawia się na liście.
+
+Treść wiadomości jest walidowana:
+\begin{itemize}
+\item wiadomość nie może być pusta (po usunięciu białych znaków),
+\item maksymalna długość wiadomości wynosi \textbf{2000} znaków.
+\end{itemize}
+
+W interfejsie widoczny jest również stan połączenia: \textit{disconnected}, \textit{connecting}, \textit{connected}, \textit{reconnecting}, \textit{error}. Jeżeli połączenie w czasie rzeczywistym jest niedostępne, użytkownik nadal może korzystać z historii i wysyłania wiadomości poprzez zapytania do API, a aplikacja wyświetla komunikat o stanie połączenia.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Pole wpisywania wiadomości + walidacja + status połączenia}\vspace{2.2cm}}}
+\captionT{Wysyłanie wiadomości w czacie grupy}
+\end{figure}
 
 \subsection{Zamówienia odbioru odpadów (Garbage Orders)}
-\subsubsection{Utworzenie zamówienia}
+Moduł zamówień odbioru odpadów umożliwia złożenie zlecenia odbioru w ramach wybranej grupy oraz rozliczenie kosztów pomiędzy uczestnikami. Z punktu widzenia użytkownika proces składa się z: utworzenia zamówienia (krok po kroku), kalkulacji kosztu, a następnie płatności udziału w kosztach.
+
+\subsubsection{Utworzenie zamówienia (krok po kroku)}
+Tworzenie zamówienia odbywa się w widoku \textit{Zamów wywóz} i jest zorganizowane w formie kreatora (steppera) z pięcioma krokami:
+\begin{itemize}
+\item \textbf{Krok 1 --- Rodzaj wywozu (order type).} Użytkownik wybiera wariant odbioru: \textit{SmallPickup}, \textit{Pickup} albo \textit{Container}. Wariant \textit{SpecialOrder} jest widoczny w interfejsie, ale jest oznaczony jako niedostępny.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zamów wywóz --- kreator (krok 1: rodzaj wywozu)}\vspace{2.2cm}}}
+\captionT{Kreator zamówienia: krok 1 --- wybór rodzaju wywozu}
+\end{figure}
+
+\item \textbf{Krok 2 --- Grupa i uczestnicy.} Użytkownik wybiera grupę (w tym grupę prywatną) i zaznacza uczestników, którzy będą rozliczani za zamówienie. Osoby ze statusem oczekującego członkostwa (pending) są prezentowane na liście, ale nie mogą zostać wybrane.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zamów wywóz --- kreator (krok 2: grupa i uczestnicy)}\vspace{2.2cm}}}
+\captionT{Kreator zamówienia: krok 2 --- wybór grupy i uczestników}
+\end{figure}
+
+\item \textbf{Krok 3 --- Adres i termin.} W kreatorze prezentowany jest adres wybranej grupy (ulica oraz kod pocztowy i miasto). W tym kroku użytkownik ustawia termin odbioru (data + godzina). Dla wariantu \textit{Container} wymagane jest również podanie terminu podstawienia kontenera (data + godzina), a aplikacja waliduje poprawność sekwencji terminów.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zamów wywóz --- kreator (krok 3: adres i harmonogram)}\vspace{2.2cm}}}
+\captionT{Kreator zamówienia: krok 3 --- adres i termin}
+\end{figure}
+
+\item \textbf{Krok 4 --- Szczegóły zamówienia.} Dostępne są dodatkowe opcje: \textit{wysoki priorytet} oraz \textit{usługa wyniesienia}. Dla wariantu \textit{Container} wymagany jest wybór rozmiaru kontenera. 
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zamów wywóz --- kreator (krok 4: szczegóły)}\vspace{2.2cm}}}
+\captionT{Kreator zamówienia: krok 4 --- szczegóły zamówienia}
+\end{figure}
+
+\item \textbf{Krok 5 --- Podsumowanie.} Użytkownik widzi podsumowanie: grupę i adres, typ odbioru, harmonogram oraz wybrane opcje. W tym kroku prezentowany jest również \textbf{szacunkowy koszt wywozu} (kalkulacja). Z tego miejsca możliwe jest wysłanie zamówienia.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zamów wywóz --- kreator (krok 5: podsumowanie)}\vspace{2.2cm}}}
+\captionT{Kreator zamówienia: krok 5 --- podsumowanie}
+\end{figure}
+\end{itemize}
+
+W formularzu kreatora obowiązują walidacje wymaganych pól (m.in. wybór typu, grupy, uczestników, terminu). Dodatkowo aplikacja blokuje wskazanie terminu w przeszłości.
+
 \subsubsection{Kalkulacja kosztu zamówienia}
-\subsubsection{Płatność za zamówienie}
+W kroku \textit{Podsumowanie} aplikacja automatycznie wykonuje kalkulację kosztu poprzez zapytanie do API. Kalkulacja jest prezentowana w interfejsie jako wartość szacunkowa (estimate) i składa się z:
+\begin{itemize}
+\item \textbf{EstimatedCost} --- koszt bazowy usługi (po uwzględnieniu wybranych opcji),
+\item \textbf{PrepaidUtilizationFee} --- część przedpłacona na poczet opłaty utylizacyjnej,
+\item \textbf{EstimatedTotalCost} --- koszt całkowity (suma kosztu bazowego i części przedpłaconej).
+\end{itemize}
+
+W aktualnej implementacji koszt bazowy jest wyliczany na podstawie typu usługi i opcji:
+\begin{itemize}
+\item \textit{SmallPickup}: 50.00,
+\item \textit{Pickup}: 80.00,
+\item \textit{Container}: 120.00 + dopłata za rozmiar kontenera (40.00 / 60.00 / 90.00) + opłata dzienna za wynajem kontenera 15.00 za każdy dzień pomiędzy datą podstawienia a datą odbioru,
+\item \textit{CollectingService}: +35.00 (jeżeli włączone),
+\item \textit{HighPriority}: mnożnik 1.25 (jeżeli włączone).
+\end{itemize}
+
+Po wyliczeniu kosztu bazowego jest on zaokrąglany do dwóch miejsc po przecinku, a następnie koszt całkowity powstaje przez zastosowanie mnożnika 1.25 (wbudowana przedpłata na opłatę utylizacyjną). Część \textit{PrepaidUtilizationFee} jest różnicą: \textit{EstimatedTotalCost} $-$ \textit{EstimatedCost}.
+
+Jeżeli użytkownik nie uzupełni wymaganych danych potrzebnych do kalkulacji, w podsumowaniu wyświetlany jest komunikat o braku możliwości wyliczenia kosztu. Dla \textit{SpecialOrder} kalkulacja w podsumowaniu nie jest wykonywana.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Podsumowanie zamówienia + panel kalkulacji kosztu}\vspace{2.2cm}}}
+\captionT{Kalkulacja kosztu w podsumowaniu zamówienia}
+\end{figure}
+
+\subsection{Rozliczenie zamówień (płatność, szczegóły i opłaty)}
+Ta sekcja opisuje etapy po złożeniu zamówienia: opłacenie udziału w koszcie, przegląd własnych zleceń, wgląd w szczegóły zamówienia oraz rozliczenie ewentualnej opłaty utylizacyjnej.
+
+\subsubsection{Płatność za zamówienie (udział uczestnika)}
+Po wysłaniu zamówienia z kreatora zlecenie zostaje utworzone ze statusem \textit{WaitingForPayment}. W tym statusie każdy uczestnik widzi w szczegółach zamówienia swój udział w koszcie (\textit{ShareAmount}) i może zrealizować płatność.
+
+Płatność jest realizowana z portfela użytkownika:
+\begin{itemize}
+\item jeżeli saldo jest niewystarczające, API zwraca błąd \textit{NotEnoughFunds} i płatność nie zostaje wykonana,
+\item jeżeli udział użytkownika wynosi 0.00, płatność zostaje oznaczona jako wykonana bez obciążenia portfela,
+\item po wykonaniu płatności użytkownik jest oznaczany jako opłacony (\textit{HasAcceptedPayment}).
+\end{itemize}
+
+Po opłaceniu udziałów przez wszystkich uczestników status zamówienia automatycznie przechodzi na \textit{WaitingForAccept} (oczekiwanie na akceptację przez Administratora odpadów).
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Szczegóły zamówienia --- sekcja płatności (WaitingForPayment)}\vspace{2.2cm}}}
+\captionT{Płatność udziału w koszcie zamówienia}
+\end{figure}
+
 \subsubsection{Moje odbiory (lista zamówień użytkownika)}
+Widok \textit{Moje odbiory} prezentuje listę zamówień użytkownika w formie tabeli. Lista jest stronicowana oraz umożliwia filtrowanie:
+\begin{itemize}
+\item po statusie (m.in. \textit{WaitingForPayment}, \textit{WaitingForAccept}, \textit{WaitingForPickup}, \textit{WaitingForUtilizationFee}, \textit{Completed}, \textit{Complained}, \textit{Resolved}, \textit{Cancelled}),
+\item po grupie (wybrana grupa lub wszystkie).
+\end{itemize}
+
+W tabeli widoczne są: numer zamówienia, grupa, status, koszt, termin odbioru, typ usługi oraz przycisk przejścia do szczegółów.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Moje odbiory --- lista zamówień + filtry + paginacja}\vspace{2.2cm}}}
+\captionT{Lista zamówień w widoku Moje odbiory}
+\end{figure}
+
 \subsubsection{Szczegóły zamówienia}
+Widok szczegółów zamówienia zawiera:
+\begin{itemize}
+\item podsumowanie (termin, typ odbioru, koszt, grupa, opcje \textit{wysoki priorytet} i \textit{usługa wyniesienia}),
+\item sekcję przypisanego Administratora odpadów (widoczna po akceptacji zamówienia przez administratora),
+\item tabelę uczestników z udziałami w kosztach oraz informacją, czy uczestnik opłacił zamówienie,
+\item w zależności od statusu: sekcję płatności zamówienia (\textit{WaitingForPayment}) lub sekcję opłaty utylizacyjnej (\textit{WaitingForUtilizationFee}).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Szczegóły zamówienia --- podsumowanie + tabela uczestników}\vspace{2.2cm}}}
+\captionT{Szczegóły zamówienia: podsumowanie i uczestnicy}
+\end{figure}
+
 \subsubsection{Dodatkowa opłata utylizacyjna (udział w koszcie)}
+Po akceptacji zamówienia przez Administratora odpadów (status \textit{WaitingForPickup}) zamówienie jest realizowane. Po wykonaniu usługi Administrator odpadów zgłasza opłatę utylizacyjną wraz z dowodem (załącznikiem). Wymagania dla załącznika po stronie systemu:
+\begin{itemize}
+\item typ pliku: JPG, PNG, WEBP, GIF lub PDF,
+\item maksymalny rozmiar: 10 MB.
+\end{itemize}
+
+Po zgłoszeniu opłaty utylizacyjnej status zamówienia przechodzi na \textit{WaitingForUtilizationFee}. Użytkownik w szczegółach zamówienia widzi dowód (załącznik) oraz kwotę dopłaty przypisaną do swojego udziału (\textit{AdditionalUtilizationFeeShareAmount}).
+
+Rozliczenie działa w następujący sposób:
+\begin{itemize}
+\item Jeżeli zgłoszona opłata utylizacyjna jest mniejsza lub równa części przedpłaconej (\textit{PrepaidUtilizationFee}), zamówienie zostaje zakończone (\textit{Completed}), a niewykorzystana część przedpłaty jest zwracana na portfele uczestników.
+\item Jeżeli zgłoszona opłata utylizacyjna przekracza część przedpłaconą, system wylicza kwotę dopłaty i rozdziela ją na uczestników. Każdy użytkownik opłaca swój udział w dopłacie z portfela. Po opłaceniu dopłaty przez wszystkich uczestników status zamówienia przechodzi na \textit{Completed}.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Szczegóły zamówienia --- opłata utylizacyjna (WaitingForUtilizationFee)}\vspace{2.2cm}}}
+\captionT{Dodatkowa opłata utylizacyjna i płatność udziału}
+\end{figure}
 
 \subsection{Skrzynka odbiorcza (Inbox) i powiadomienia}
 \subsubsection[Licznik wiadomości i powiadomienia]{Licznik wiadomości i powiadomienia w czasie rzeczywistym}
