@@ -192,7 +192,8 @@ Poniżej przedstawiono wstępne założenia funkcjonalne i technologiczne wynika
 \begin{itemize}
 \item \textbf{Frontend}: Angular 17 (TypeScript), Bootstrap 5, RxJS; komunikacja z API po HTTP oraz w czasie rzeczywistym przez SignalR (biblioteka \texttt{@microsoft/signalr}). 
 \item \textbf{Backend}: ASP.NET (Minimal APIs) na platformie \textbf{.NET}, architektura warstwowa (API / Application / Domain / Infrastructure), obsługa logiki w formie poleceń/zapytań z własnym mechanizmem mediatora, walidacja danych wejściowych przy użyciu FluentValidation.
-\item \textbf{Dane}: Entity Framework Core; środowisko lokalne oparte o MS SQL.
+\item \textbf{Dane}: Entity Framework Core; środowisko lokalne oparte o SQLite.
+\item \textbf{Geokodowanie i adresy}: integracja z \textbf{Nominatim API} (OpenStreetMap) do wyszukiwania/adresowania lokalizacji.
 \item \textbf{Asynchroniczność i zadania}: mechanizm zadań cyklicznych (TickerQ) dla procesów w tle.
 \item \textbf{Storage plików}: składowanie plików użytkowników w zewnętrznym storage (Azure Blob Storage), w tym avatarów oraz dowodu opłaty utylizacyjnej (zdjęcie/skan/PDF) przesyłanego przez operatora (\emph{garbage admin}).
 \item \textbf{Uruchamianie i środowiska}: konteneryzacja Docker; lokalne uruchomienie całości przez Docker Compose (oddzielnie usługa API oraz UI).
