@@ -637,27 +637,329 @@ Rozliczenie działa w następujący sposób:
 \end{figure}
 
 \subsection{Skrzynka odbiorcza (Inbox) i powiadomienia}
+Skrzynka odbiorcza (Inbox) jest dostępna w portalu użytkownika i służy do prezentowania powiadomień systemowych oraz wykonywania akcji powiązanych z wybranymi komunikatami.
+
 \subsubsection[Licznik wiadomości i powiadomienia]{Licznik wiadomości i powiadomienia w czasie rzeczywistym}
+\begin{sloppypar}
+W topbarze aplikacji widoczna jest ikona dzwonka prowadząca do widoku skrzynki odbiorczej. Jeżeli w skrzynce znajdują się wiadomości, obok ikony wyświetlany jest licznik przedstawiający łączną liczbę wiadomości w Inbox.
+\end{sloppypar}
+
+Licznik jest aktualizowany dwoma kanałami:
+\begin{itemize}
+\item przez odświeżenie stanu z API (zapytanie o licznik wiadomości),
+\item w czasie rzeczywistym poprzez SignalR (hub \texttt{/notificationHub}) dla zdarzeń, które wysyłają aktualizację licznika.
+\end{itemize}
+
+Po odebraniu aktualizacji w czasie rzeczywistym interfejs wyświetla informację o nowym powiadomieniu oraz animuje ikonę skrzynki w topbarze.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Topbar --- ikona skrzynki odbiorczej z licznikiem wiadomości}\vspace{2.2cm}}}
+\captionT{Licznik wiadomości w skrzynce odbiorczej (topbar)}
+\end{figure}
+
 \subsubsection{Lista wiadomości (paginacja)}
+Widok Inbox prezentuje listę wiadomości w formie listy kart/pozycji. Wiadomości pobierane są z API w sposób stronicowany (paginacja) z parametrami \textit{pageNumber} i \textit{pageSize}. Domyślny rozmiar strony to 10 elementów.
+
+Wiadomości są sortowane malejąco po czasie utworzenia (od najnowszych do najstarszych). Każda wiadomość zawiera:
+\begin{itemize}
+\item tytuł,
+\item treść,
+\item czas utworzenia (prezentowany w formacie lokalnym w zależności od wybranego języka interfejsu).
+\end{itemize}
+
+W nagłówku widoku Inbox widoczna jest również liczba wiadomości na aktualnie wyświetlanej stronie.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Inbox --- lista wiadomości + sterowanie paginacją i rozmiarem strony}\vspace{2.2cm}}}
+\captionT{Lista wiadomości w skrzynce odbiorczej (paginacja)}
+\end{figure}
+
 \subsubsection{Akcje na wiadomościach (akceptacja/odrzucenie)}
+\begin{sloppypar}
+Wybrane wiadomości mogą posiadać typ akcji (\textit{Action\allowbreak Type}) i identyfikator obiektu powiązanego (\textit{Related\allowbreak Entity\allowbreak Id}). W zależności od typu wiadomości, w interfejsie mogą pojawić się przyciski akcji.
+\end{sloppypar}
+
+W aktualnej implementacji akcje \textbf{Akceptuj} / \textbf{Odrzuć} są dostępne wyłącznie dla wiadomości typu \textit{GroupInvitation} (zaproszenie do grupy):
+\begin{itemize}
+\item \textbf{Akceptuj} --- użytkownik dołącza do grupy, a zaproszenie przestaje być oczekujące,
+\item \textbf{Odrzuć} --- zaproszenie jest usuwane, a użytkownik nie dołącza do grupy.
+\end{itemize}
+Po wykonaniu akcji wiadomość jest usuwana ze skrzynki, a licznik w topbarze jest odświeżany.
+
+Niezależnie od powyższego, dla wybranych typów wiadomości w interfejsie dostępny jest przycisk \textbf{Otwórz}, który przenosi użytkownika do powiązanego miejsca w portalu.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Inbox --- wiadomość z przyciskami Akceptuj/Odrzuć oraz Otwórz}\vspace{2.2cm}}}
+\captionT{Akcje na wiadomościach w skrzynce odbiorczej}
+\end{figure}
+
 \subsubsection{Usuwanie wiadomości}
+Każda wiadomość może zostać usunięta ręcznie z poziomu listy poprzez przycisk zamknięcia (\textit{X}) widoczny przy danej pozycji. Usunięcie powoduje trwałe skasowanie wiadomości z Inbox dla danego użytkownika.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Inbox --- usuwanie pojedynczej wiadomości (przycisk X)}\vspace{2.2cm}}}
+\captionT{Usuwanie pojedynczej wiadomości ze skrzynki}
+\end{figure}
+
 \subsubsection{Czyszczenie skrzynki}
+W nagłówku widoku Inbox dostępny jest przycisk \textbf{Wyczyść wszystko}, który usuwa wszystkie wiadomości użytkownika ze skrzynki. Przycisk jest widoczny tylko wtedy, gdy lista zawiera co najmniej jedną wiadomość. Po poprawnym czyszczeniu użytkownik otrzymuje komunikat potwierdzający, a lista jest odświeżana.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Inbox --- przycisk Wyczyść wszystko (czyszczenie skrzynki)}\vspace{2.2cm}}}
+\captionT{Czyszczenie skrzynki odbiorczej}
+\end{figure}
 
 \subsection{Funkcje dla Administratora odpadów (Garbage Admin)}
-\subsubsection{Zgoda administratora odpadów (treść zgody)}
-\subsubsection{Akceptacja zgody}
+\subsubsection{Zgoda administratora odpadów (treść i akceptacja)}
+Po zalogowaniu do portalu użytkownik z rolą \textbf{GarbageAdmin} może zostać poproszony o zaakceptowanie wymaganej zgody. Treść zgody jest pobierana z API (dedykowany endpoint \texttt{/garbage-admin-\allowbreak consents}) i prezentowana w modalu w formie tekstu.
+
+Modal zgody jest wyświetlany automatycznie, jeżeli w danych bieżącego użytkownika pole \textit{acceptedConsents} ma wartość \textit{false}. Do czasu rozstrzygnięcia zgody modal pozostaje na wierzchu interfejsu.
+
+W modalu dostępne są dwie akcje:
+\begin{itemize}
+\item \textbf{Akceptuj} --- aplikacja wysyła żądanie akceptacji zgody do API (\texttt{PATCH /user/\allowbreak consents/\allowbreak accept}). Po powodzeniu pole \textit{acceptedConsents} jest ustawiane na \textit{true}, a modal zostaje zamknięty.
+\item \textbf{Odrzuć} --- aplikacja wylogowuje użytkownika i przenosi do ekranu logowania (\texttt{/auth}).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Modal zgody Garbage Admin (treść zgody)}\vspace{2.2cm}}}
+\captionT{Zgoda Administratora odpadów: prezentacja treści}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Modal zgody (przyciski Akceptuj/Odrzuć)}\vspace{2.2cm}}}
+\captionT{Zgoda Administratora odpadów: akcje użytkownika}
+\end{figure}
+
 \subsubsection{Zlecenia oczekujące (waiting)}
+Widok \textit{Zlecenia oczekujące} jest dostępny w portalu pod ścieżką \texttt{/portal/\allowbreak garbage-admin/\allowbreak orders/\allowbreak waiting}. Prezentuje listę zleceń w statusie \textit{WaitingForAccept} (oczekujących na przyjęcie przez administratora).
+
+Lista jest stronicowana (domyślny rozmiar strony: 10). Dla każdego zlecenia prezentowane są m.in.:
+\begin{itemize}
+\item skrócony kod zlecenia (identyfikator w formie \texttt{XXXX-YYYY}),
+\item status zlecenia,
+\item rodzaj wywozu (\textit{PickupOption}),
+\item termin(y) realizacji: \textit{Schedule} (dla usług innych niż kontener) lub osobno \textit{Drop-off} i \textit{Pickup} (dla kontenera),
+\item rozmiar kontenera (jeżeli dotyczy),
+\item koszt w PLN,
+\item odległość w km (jeżeli jest dostępna),
+\item adres grupy (formatowany zgodnie z aktualnym językiem interfejsu).
+\end{itemize}
+
+Na karcie zlecenia mogą pojawić się oznaczenia: \textbf{wysoki priorytet} oraz \textbf{usługa wyniesienia} (\textit{collectingService}).
+
+Widok udostępnia przycisk \textbf{Odśwież} oraz stany: ładowanie, błąd pobierania oraz pustą listę (brak zleceń oczekujących).
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zlecenia oczekujące (waiting) --- lista kart + paginacja + Odśwież}\vspace{2.2cm}}}
+\captionT{Zlecenia oczekujące (waiting) w panelu Garbage Admin}
+\end{figure}
+
 \subsubsection{Akceptacja zlecenia}
+Na każdej karcie zlecenia oczekującego dostępny jest przycisk \textbf{Akceptuj}. Po jego użyciu aplikacja wysyła żądanie akceptacji zlecenia do API, a następnie odświeża listę. W trakcie wykonywania operacji przycisk jest blokowany, a w interfejsie widoczny jest wskaźnik ładowania.
+
+Po poprawnej akceptacji zlecenie znika z listy \textit{waiting} i staje się zleceniem przypisanym do administratora (widocznym w widoku zleceń przypisanych/aktywnych).
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zlecenie oczekujące --- przycisk Akceptuj (stan ładowania)}\vspace{2.2cm}}}
+\captionT{Akceptacja zlecenia w widoku waiting}
+\end{figure}
+
 \subsubsection{Zlecenia przypisane/aktywne (assigned/current)}
+Widok \textit{Zlecenia przypisane} jest dostępny w portalu pod ścieżką \texttt{/portal/\allowbreak garbage-admin/\allowbreak orders/\allowbreak assigned}. Prezentuje zlecenia przypisane do zalogowanego administratora.
+
+W porównaniu do listy \textit{waiting}, na karcie zlecenia widoczna jest również informacja o \textbf{nazwie grupy} oraz oznaczenie, czy jest to \textbf{grupa prywatna} (tag \textit{private}). Widok oferuje przycisk \textbf{Odśwież}, stronicowanie (10 elementów na stronę) oraz stany: ładowanie, błąd oraz pustą listę.
+
+W dolnej części karty dostępne są akcje:
+\begin{itemize}
+\item \textbf{Czat} --- w aktualnej wersji jest to funkcja poglądowa (wyświetla komunikat o braku implementacji czatu dla zlecenia),
+\item \textbf{Zgłoś opłatę} --- otwiera modal zgłoszenia opłaty utylizacyjnej.
+\end{itemize}
+
+Jeżeli opłata utylizacyjna została już zgłoszona, przycisk \textbf{Zgłoś opłatę} jest nieaktywny, a na karcie pojawia się dodatkowa informacja o oczekiwaniu na rozliczenie.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zlecenia przypisane (assigned/current) --- akcje Czat/Zgłoś opłatę}\vspace{2.2cm}}}
+\captionT{Zlecenia przypisane/aktywne (assigned/current) w panelu Garbage Admin}
+\end{figure}
+
 \subsubsection{Zgłoszenie opłaty utylizacyjnej (załącznik)}
+Zgłoszenie opłaty utylizacyjnej odbywa się z poziomu widoku \textit{Zlecenia przypisane} przez przycisk \textbf{Zgłoś opłatę}. Aplikacja otwiera modal, w którym administrator uzupełnia:
+\begin{itemize}
+\item \textbf{kwotę} (pole liczbowe z krokiem 0.01),
+\item \textbf{załącznik} (plik typu obraz lub PDF; pole wyboru pliku akceptuje \texttt{image/*} oraz \texttt{application/pdf}).
+\end{itemize}
+Przycisk wysłania zgłoszenia jest aktywny dopiero po podaniu kwoty oraz załączeniu pliku.
+
+Po zatwierdzeniu aplikacja wysyła zgłoszenie do API jako żądanie \textit{multipart/form-data}. W przypadku błędu API może zwrócić m.in.:
+\begin{itemize}
+\item \textit{UNSUPPORTED\_\allowbreak IMAGE\_\allowbreak TYPE} --- gdy załącznik ma niedozwolony typ,
+\item \textit{INVALID\_\allowbreak ORDER\_\allowbreak STATUS} --- gdy zlecenie nie jest w statusie pozwalającym na zgłoszenie opłaty.
+\end{itemize}
+
+W aktualnej implementacji system dopuszcza załączniki: JPG, PNG, WEBP, GIF lub PDF (maks. 10 MB), zgodnie z ograniczeniami opisanymi w sekcji o rozliczeniu opłaty utylizacyjnej.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Modal zgłoszenia opłaty utylizacyjnej (kwota + wybór pliku)}\vspace{2.2cm}}}
+\captionT{Zgłoszenie opłaty utylizacyjnej przez Administratora odpadów}
+\end{figure}
 
 \subsection{Przykładowe działanie systemu (scenariusze)}
 \subsubsection{Rejestracja i aktywacja konta}
+Ten scenariusz opisuje utworzenie konta w aplikacji oraz aktywację konta z wykorzystaniem linku przesłanego e-mailem.
+
+\begin{enumerate}
+\item Użytkownik przechodzi do ekranu logowania/rejestracji (\textit{Auth}). Następnie wybiera tryb rejestracji.
+\item W kroku 1 rejestracji uzupełnia \textbf{nazwę użytkownika}, \textbf{adres e-mail} oraz \textbf{hasło}. Wybiera również rolę konta: \textbf{User} lub \textbf{GarbageAdmin}.
+\item W kroku 2 rejestracji wybiera \textbf{język} interfejsu oraz uzupełnia \textbf{adres} (miasto z listy, kod pocztowy oraz ulica z numerem).
+\item Jeżeli wybrano rolę \textbf{GarbageAdmin}, w kroku 3 rejestracji użytkownik wskazuje co najmniej jedną \textbf{preferencję rodzaju odbioru} (lista typów odbioru). Bez wyboru preferencji zakończenie rejestracji jest blokowane walidacją formularza.
+\item Po poprawnym wysłaniu formularza system wyświetla komunikat informujący o utworzeniu konta oraz wysyła wiadomość e-mail z linkiem aktywacyjnym w formacie \texttt{/activate-account/\allowbreak TOKEN}.
+\item Użytkownik otwiera link aktywacyjny. Aplikacja uruchamia widok aktywacji i wysyła żądanie aktywacji konta do API. Po poprawnym zakończeniu operacji konto zostaje aktywowane.
+\item Po aktywacji system tworzy dla użytkownika \textbf{portfel} (saldo początkowe 0.00) oraz \textbf{grupę prywatną} przypisaną do użytkownika (członkostwo w roli właściciela).
+\item Użytkownik może przejść do logowania i uzyskać dostęp do portalu.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Rejestracja --- krok 1 (dane + wybór roli)}\vspace{2.2cm}}}
+\captionT{Scenariusz: rejestracja konta (krok 1)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Aktywacja konta (widok /activate-account/TOKEN)}\vspace{2.2cm}}}
+\captionT{Scenariusz: aktywacja konta z linku e-mail}
+\end{figure}
+
 \subsubsection{Utworzenie grupy i zaproszenie użytkowników}
+Ten scenariusz opisuje utworzenie nowej grupy odpadów oraz wysłanie zaproszenia do istniejącego użytkownika. Zaproszenie jest realizowane przez podanie \textbf{nazwy użytkownika} osoby zapraszanej.
+
+\begin{enumerate}
+\item Użytkownik (właściciel) przechodzi do \textit{Portal \textrightarrow{} Grupy \textrightarrow{} Zarządzanie}.
+\item Uzupełnia formularz tworzenia grupy: \textbf{nazwa}, \textbf{opis} oraz \textbf{adres} (miasto, kod pocztowy, ulica z numerem).
+\item Po utworzeniu grupy aplikacja przechodzi do panelu grupy (szczegóły).
+\item W panelu grupy, w sekcji zaproszeń, właściciel wpisuje \textbf{nazwę użytkownika} osoby zapraszanej i zatwierdza zaproszenie.
+\item Zaproszony użytkownik widzi zaproszenie jako \textbf{oczekujące}: (1) w widoku zarządzania grupami jako pozycję na liście zaproszeń oczekujących, oraz (2) w skrzynce odbiorczej (Inbox) jako wiadomość z akcją \textit{GroupInvitation}.
+\item Do czasu zaakceptowania zaproszenia użytkownik jest oznaczony jako \textit{pending} w członkach grupy.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Tworzenie grupy (Grupy \textrightarrow{} Zarządzanie)}\vspace{2.2cm}}}
+\captionT{Scenariusz: utworzenie grupy odpadów}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Panel grupy --- sekcja zaproszeń (pole nazwy użytkownika)}\vspace{2.2cm}}}
+\captionT{Scenariusz: wysłanie zaproszenia do grupy}
+\end{figure}
+
 \subsubsection{Złożenie zamówienia oraz płatność}
+Ten scenariusz opisuje utworzenie zamówienia odbioru odpadów dla wybranej grupy oraz opłacenie udziałów przez uczestników.
+
+\begin{enumerate}
+\item Użytkownik przechodzi do widoku \textit{Portal \textrightarrow{} Zamówienia odbioru \textrightarrow{} Zamów wywóz}.
+\item W kreatorze zamówienia wybiera \textbf{rodzaj wywozu}, następnie wskazuje \textbf{grupę} oraz \textbf{uczestników}.
+\item Ustawia \textbf{termin odbioru} (data i godzina). Dla wariantu \textit{Container} uzupełnia również termin podstawienia kontenera.
+\item W kroku podsumowania aplikacja wyświetla \textbf{szacunkowy koszt wywozu} (kalkulacja) oraz umożliwia wysłanie zamówienia.
+\item Po utworzeniu zamówienia zlecenie otrzymuje status \textit{WaitingForPayment}.
+\item Każdy uczestnik przechodzi do widoku \textit{Portal \textrightarrow{} Moje odbiory}, otwiera szczegóły zamówienia i wykonuje płatność swojego udziału.
+\item Jeżeli saldo w portfelu jest niewystarczające, płatność nie jest wykonywana, a API zwraca błąd \textit{NotEnoughFunds}.
+\item Gdy wszyscy uczestnicy opłacą swoje udziały, status zamówienia przechodzi na \textit{WaitingForAccept} i zamówienie oczekuje na akceptację przez Administratora odpadów.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Kreator zamówienia --- krok podsumowania (szacunkowy koszt)}\vspace{2.2cm}}}
+\captionT{Scenariusz: podsumowanie zamówienia i szacunkowy koszt}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Szczegóły zamówienia (WaitingForPayment) + przycisk płatności udziału}\vspace{2.2cm}}}
+\captionT{Scenariusz: płatność udziału w zamówieniu}
+\end{figure}
+
 \subsubsection{Komunikacja w czacie grupy}
+Ten scenariusz opisuje komunikację w czacie przypisanym do grupy.
+
+\begin{enumerate}
+\item Użytkownik będący członkiem grupy (zaproszenie nie może być w stanie \textit{pending}) przechodzi do panelu grupy: \textit{Portal \textrightarrow{} Grupy \textrightarrow{} (wybór grupy)}.
+\item W panelu wybiera zakładkę \textbf{Czat}. Po aktywowaniu zakładki aplikacja pobiera historię wiadomości (stronicowanie) oraz inicjuje połączenie w czasie rzeczywistym z hubem \texttt{/chatHub}.
+\item W czacie użytkownik wpisuje treść wiadomości i wysyła ją klawiszem \textit{Enter} lub przyciskiem wysyłania. \textit{Shift+Enter} pozwala wstawić nową linię.
+\item Treść wiadomości nie może być pusta oraz nie może przekroczyć \textbf{2000} znaków.
+\item Nowe wiadomości są dodawane do listy oraz mogą być dostarczane innym członkom grupy w czasie rzeczywistym.
+\item Rola \textbf{GarbageAdmin} nie może dołączyć do czatu grupy (połączenie jest odrzucane).
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Panel grupy --- zakładka Czat (historia + pole wiadomości + status połączenia)}\vspace{2.2cm}}}
+\captionT{Scenariusz: komunikacja w czacie grupy}
+\end{figure}
+
 \subsubsection[Obsługa zaproszeń i akcji]{Obsługa zaproszeń i akcji z poziomu skrzynki odbiorczej}
+Ten scenariusz opisuje przyjęcie lub odrzucenie zaproszenia do grupy z poziomu Inbox.
+
+\begin{enumerate}
+\item Właściciel grupy wysyła zaproszenie do użytkownika (podając jego nazwę użytkownika w panelu grupy).
+\item Zaproszony użytkownik przechodzi do skrzynki odbiorczej: \textit{Portal \textrightarrow{} Skrzynka odbiorcza}.
+\item W Inbox pojawia się wiadomość z akcją \textit{GroupInvitation}. Dla tej wiadomości dostępne są przyciski \textbf{Akceptuj} oraz \textbf{Odrzuć}.
+\item Po wybraniu \textbf{Akceptuj} użytkownik zostaje dodany do grupy, a zaproszenie przestaje być oczekujące.
+\item Po wybraniu \textbf{Odrzuć} zaproszenie jest usuwane, a użytkownik nie dołącza do grupy.
+\item Po wykonaniu akcji wiadomość jest usuwana ze skrzynki odbiorczej, a licznik wiadomości w topbarze jest odświeżany.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Inbox --- zaproszenie do grupy (Akceptuj/Odrzuć)}\vspace{2.2cm}}}
+\captionT{Scenariusz: obsługa zaproszenia do grupy w Inbox}
+\end{figure}
+
 \subsubsection[Scenariusz Garbage Admin]{Scenariusz Garbage Admin: akceptacja zlecenia i rozliczenie opłaty}
+Ten scenariusz opisuje działania użytkownika z rolą \textbf{GarbageAdmin}: akceptację wymaganej zgody, przyjęcie zlecenia oraz zgłoszenie opłaty utylizacyjnej.
+
+\begin{enumerate}
+\item Użytkownik loguje się na konto o roli \textbf{GarbageAdmin}.
+\item Po wejściu do portalu, jeżeli zgody administratora nie zostały zaakceptowane, aplikacja wyświetla modal z treścią zgody (pobieraną z API).
+\item Użytkownik wybiera \textbf{Akceptuj} (zgoda zostaje zapisana w systemie) albo \textbf{Odrzuć} (użytkownik zostaje wylogowany i przeniesiony do ekranu logowania).
+\item Po akceptacji zgody administrator przechodzi do listy zleceń oczekujących: \textit{Portal \textrightarrow{} Garbage Admin \textrightarrow{} Zlecenia oczekujące}.
+\item Administrator wybiera zlecenie i wykonuje akcję \textbf{Akceptuj}. Operacja przypisuje zlecenie do administratora i ustawia status \textit{WaitingForPickup}.
+\item Następnie administrator przechodzi do listy zleceń przypisanych/aktywnych: \textit{Portal \textrightarrow{} Garbage Admin \textrightarrow{} Zlecenia przypisane}.
+\item Po wykonaniu usługi administrator zgłasza opłatę utylizacyjną: otwiera modal, podaje \textbf{kwotę} oraz dołącza \textbf{załącznik} (JPG, PNG, WEBP, GIF lub PDF; maks. 10 MB) i zatwierdza.
+\item Po zgłoszeniu opłaty utylizacyjnej zamówienie przechodzi na status \textit{WaitingForUtilizationFee}, a użytkownicy mogą opłacić ewentualne udziały w dopłacie z poziomu szczegółów zamówienia.
+\item W widoku zleceń przypisanych dostępny jest również przycisk otwarcia czatu dla zlecenia, jednak w aktualnej wersji jest to funkcja poglądowa i wyświetla komunikat o braku implementacji.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Modal zgody Garbage Admin (treść + Akceptuj/Odrzuć)}\vspace{2.2cm}}}
+\captionT{Scenariusz Garbage Admin: akceptacja zgody}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zlecenia oczekujące (waiting) + akcja Akceptuj}\vspace{2.2cm}}}
+\captionT{Scenariusz Garbage Admin: akceptacja zlecenia}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.9\linewidth}{\vspace{2.2cm}\centering\textit{Miejsce na zrzut ekranu: Zlecenia przypisane/aktywne (assigned/current) + modal zgłoszenia opłaty utylizacyjnej}\vspace{2.2cm}}}
+\captionT{Scenariusz Garbage Admin: zgłoszenie opłaty utylizacyjnej}
+\end{figure}
 
 
 
