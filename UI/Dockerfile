@@ -8,7 +8,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-RUN npm run production
+ARG BUILD_SCRIPT=production
+RUN npm run ${BUILD_SCRIPT}
 RUN ls -la
 
 # STEP 2: Nginx serving
