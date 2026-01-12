@@ -247,8 +247,8 @@ Implementacja relacyjna odwzorowuje powyższy model: tabelom odpowiadają encje 
 \subsection{Środowisko deweloperskie (Docker Compose)}
 Do lokalnego uruchomienia projektu wykorzystujemy plik \texttt{docker-compose.yml} w katalogu głównym repozytorium. Skład odwzorowuje podstawowe komponenty produkcyjne, z uproszczeniem bazy (SQLite zamiast MSSQL):
 \begin{itemize}
-\item \textbf{wastefree-api} — obraz budowany z katalogu \texttt{API}, ekspozycja \texttt{5001:5001}, zmienne: \texttt{ASPNETCORE\_ENVIRONMENT=Docker} i \texttt{ASPNETCORE\_URLS=http://+:5001}. API korzysta z SQLite skonfigurowanego w profilu Docker.
-\item \textbf{wastefree-ui} — obraz budowany z katalogu \texttt{UI}, ekspozycja \texttt{4200:80}, zależność od \textbf{wastefree-api}. UI komunikuje się z API pod adresem hosta (np. \texttt{http://localhost:5001}).
+\item \textbf{wastefree-api} — obraz budowany z katalogu \texttt{API}, ekspozycja \texttt{8080:8080}, zmienne: \texttt{ASPNETCORE\_ENVIRONMENT=Docker} i \texttt{ASPNETCORE\_URLS=http://+:8080}. API korzysta z SQLite skonfigurowanego w profilu Docker.
+\item \textbf{wastefree-ui} — obraz budowany z katalogu \texttt{UI}, ekspozycja \texttt{4200:80}, zależność od \textbf{wastefree-api}. UI komunikuje się z API pod adresem hosta (np. \texttt{http://localhost:8080}).
 \end{itemize}
 Uruchomienie: \texttt{docker compose up}. Różnice względem produkcji: brak zewnętrznego MSSQL, brak zewnętrznych usług (SMTP, Blob Storage) — ich poświadczenia mogą być podane opcjonalnie jako zmienne środowiskowe, jeśli chcemy testować pełne ścieżki. Debugowanie: mapowanie portów umożliwia podłączenie profilerów i narzędzi przeglądarki; kontenery można uruchomić z \texttt{docker compose up --build} po zmianach w kodzie.
 \subsection{Środowiska CI/CD i hosting}
