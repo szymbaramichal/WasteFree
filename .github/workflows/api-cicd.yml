@@ -16,7 +16,7 @@ jobs:
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: "9.0.x"
 
       - name: Restore dependencies
         run: dotnet restore API/WasteFree.sln
@@ -43,6 +43,7 @@ jobs:
         uses: appleboy/ssh-action@v1
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
           DB_CONN_STRING: ${{ secrets.DB_CONN_STRING }}
           AZURE_BLOB_STORAGE_CONN_STRING: ${{ secrets.AZURE_BLOB_STORAGE_CONN_STRING }}
           INTEGRATIONS__SMTP__PASSWORD: ${{ secrets.INTEGRATIONS__SMTP__PASSWORD }}
@@ -55,7 +56,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
-          envs: DOCKERHUB_USERNAME,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD,SECURITY__AESENCRYPTIONKEY,TICKERQBASICAUTH__USERNAME,TICKERQBASICAUTH__PASSWORD,SECURITY__JWT__KEY,AZURE_BLOB_STORAGE_CONN_STRING
+          envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD,SECURITY__AESENCRYPTIONKEY,TICKERQBASICAUTH__USERNAME,TICKERQBASICAUTH__PASSWORD,SECURITY__JWT__KEY,AZURE_BLOB_STORAGE_CONN_STRING
           script: |
             set -euo pipefail
 
@@ -67,6 +68,7 @@ jobs:
             docker stop wastefree-api || true
             docker rm wastefree-api || true
 
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker pull "$IMAGE"
             docker run -d --restart unless-stopped --name wastefree-api \
               -p 8080:8080 \
