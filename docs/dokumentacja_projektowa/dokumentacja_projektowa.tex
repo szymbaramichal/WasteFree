@@ -51,7 +51,7 @@ urlcolor=BlueViolet}	%%pdfpagemode=FullScreen}
 \usepackage{microtype}
 %\overfullrule=2mm
 \pagestyle{plain}
-\textwidth=15cm \textheight=685pt \topmargin=-25pt \linespread{1.3} 
+\textwidth=15cm \textheight=685pt \topmargin=-25pt \linespread{1.3}
 \setlength{\parskip}{0pt}
 \setlength\arraycolsep{2pt}
 \oddsidemargin = 0.9cm
@@ -67,21 +67,21 @@ urlcolor=BlueViolet}	%%pdfpagemode=FullScreen}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
 \lstdefinestyle{mystyle}{
-    backgroundcolor=\color{backcolour},   
+    backgroundcolor=\color{backcolour},
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
     numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
     basicstyle=\ttfamily\footnotesize,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    captionpos=b,                    
-    keepspaces=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
     showstringspaces=false,
-    showtabs=false,                  
+    showtabs=false,
     tabsize=2,
     literate={ą}{{\k{a}}}1 {ć}{{\'c}}1 {ę}{{\k{e}}}1 {ł}{{\l{}}}1 {ń}{{\'n}}1 {ó}{{\'o}}1 {ś}{{\'s}}1 {ż}{{\.z}}1 {ź}{{\'z}}1 {Ą}{{\k{A}}}1 {Ć}{{\'C}}1 {Ę}{{\k{E}}}1 {Ł}{{\L{}}}1 {Ń}{{\'N}}1 {Ó}{{\'O}}1 {Ś}{{\'S}}1 {Ż}{{\.Z}}1 {Ź}{{\'Z}}1
 }
@@ -172,12 +172,11 @@ Instytut Bezpieczeństwa i Informatyki\\
 \begin{center}
 \large
 Kraków \the\year\\
-(ostatnia aktualizacja: \DTMcurrenttime,\;\today)
 \end{center}
 \end{titlepage}
-\setcounter{page}{0} 
+\setcounter{page}{0}
 \newpage\null\thispagestyle{empty}
-%\setcounter{page}{0} 
+%\setcounter{page}{0}
 %\newpage
 %\thispagestyle{empty}
 
@@ -196,7 +195,6 @@ Wymagania niefunkcjonalne (NFR):
 \item \textbf{Niezawodność i odporność}: restartowalne kontenery \\ (\texttt{--restart unless-stopped}), idempotentne komendy (np. walidacja statusów zamówień), walidacja wejścia po stronie Application.
 \item \textbf{Bezpieczeństwo}: autoryzacja JWT, szyfrowanie kluczem symetrycznym (Security\_\_AesEncryptionKey) dla wrażliwych pól, separacja sekretów w zmiennych środowiskowych, kontrola ról w grupach (admin/członek).
 \item \textbf{Wydajność i responsywność}: minimal API bez nadmiarowych middleware, cache klienta po stronie UI, strumienie SignalR dla zdarzeń czasu rzeczywistego; cele operacyjne: czas odpowiedzi API $<300\,\mathrm{ms}$ dla standardowych zapytań, dostępność $\geq 99\%$ w oknie miesiąca.
-\item \textbf{Obserwowalność}: logowanie strukturalne, możliwość rozszerzenia o metryki (Prometheus) i centralne logi; korelacja żądań przez identyfikatory w middleware.
 \item \textbf{Utrzymywalność i spójność}: silna separacja warstw (Clean Architecture), migracje EF Core, testowalność use case'ów bez infrastruktury.
 \end{itemize}
 
@@ -505,7 +503,7 @@ export const routes: Routes = [
 ];
 \end{lstlisting}
 
-W powyższej konfiguracji zastosowano właściwość \texttt{canActivate} na poziomie trasy \texttt{portal}, co wymusza weryfikację uprawnień dla wszystkich tras podrzędnych. Do zabezpieczenia tras wykorzystano podejście \textit{Functional Guards}, które jest rekomendowanym standardem w nowszych wersjach frameworka Angular, zastępującym tradycyjne strażniki oparte na klasach. 
+W powyższej konfiguracji zastosowano właściwość \texttt{canActivate} na poziomie trasy \texttt{portal}, co wymusza weryfikację uprawnień dla wszystkich tras podrzędnych. Do zabezpieczenia tras wykorzystano podejście \textit{Functional Guards}, które jest rekomendowanym standardem w nowszych wersjach frameworka Angular, zastępującym tradycyjne strażniki oparte na klasach.
 
 Podstawowym mechanizmem zabezpieczającym jest \texttt{authGuard} (Listing \ref{lst:auth-guard}). Jego rola polega na weryfikacji tożsamości użytkownika przed udzieleniem dostępu do chronionych zasobów. Strażnik sprawdza obecność tokenu uwierzytelniającego w pamięci lokalnej (\textit{localStorage}) lub w stanie serwisu \texttt{CurrentUserService}. W przypadku braku autoryzacji następuje automatyczne przekierowanie do panelu logowania.
 
@@ -644,10 +642,6 @@ Obraz frontendowy również korzysta z podejścia wieloetapowego:
     \item \textbf{Stage 1 (Build):} Obraz \texttt{node:20-alpine} służy do skompilowania kodu TypeScript i zasobów SCSS.
     \item \textbf{Stage 2 (Serve):} Obraz \texttt{nginx:alpine} przejmuje rolę lekkiego serwera HTTP. Standardowa konfiguracja Nginx została nadpisana plikiem \texttt{nginx.conf}, aby poprawnie obsługiwać routing aplikacji SPA (przekierowanie wszystkich żądań do \texttt{index.html}).
 \end{itemize}
-
-\renewcommand\refname{Literatura (jeżeli wymagana)}
-\bibliography{references}
-\addcontentsline{toc}{section}{Literatura}
 % --------------------------------------------------------------------
 %%%%%%% odkomentować gdy bibliografia ma być wewnątrz dokumentu
 % --------------------------------------------------------------------
@@ -656,10 +650,9 @@ Obraz frontendowy również korzysta z podejścia wieloetapowego:
 %\addcontentsline{toc}{section}{Literatura}
 %
 %\bibitem{ZAN}
-%C. Zannoni and P. Pasini, 
+%C. Zannoni and P. Pasini,
 %\emph{Advances in the Computer Simulatons of Liquid Crystals}, Kluwer Academic Publishers, 2000.
 %
 %\end{thebibliography}
 
 \end{document}
-
