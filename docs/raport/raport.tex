@@ -47,7 +47,7 @@ urlcolor=BlueViolet}	%%pdfpagemode=FullScreen}
 %---------------------
 \overfullrule=2mm
 \pagestyle{plain}
-\textwidth=15cm \textheight=685pt \topmargin=-25pt \linespread{1.3} 
+\textwidth=15cm \textheight=685pt \topmargin=-25pt \linespread{1.3}
 \setlength{\parskip}{0pt}
 \setlength\arraycolsep{2pt}
 \oddsidemargin =0.9cm
@@ -105,7 +105,7 @@ Instytut Bezpieczeństwa i Informatyki\\
 \begin{center}
  {\bf \fontsize{14pt}{14pt}\selectfont PROJEKT INŻYNIERSKI \\ RAPORT Z REALIZACJI PROJEKTU\\
  }
- {\fontsize{12pt}{12pt} raport z okres: 01.10.2025 - 03.01.2026}
+ {\fontsize{12pt}{12pt} raport z okres: 01.10.2025 - 20.01.2026}
 \end{center}
 \vskip 5pt
 \begin{center}
@@ -125,7 +125,8 @@ Instytut Bezpieczeństwa i Informatyki\\
 \end{center}
 \begin{center}
  {\fontsize{12pt}{12pt}\selectfont pod opieką:}\\
- {\bf\fontsize{12pt}{12pt}\selectfont tytuł, imię i nazwisko opiekuna projektu}
+ {\bf\fontsize{12pt}{12pt}\selectfont dr Wojciech Gwizdała}\\
+ {\bf\fontsize{12pt}{12pt}\selectfont mgr Wojciech Baran}
 \end{center}
 
 %\mbox{}
@@ -134,12 +135,11 @@ Instytut Bezpieczeństwa i Informatyki\\
 \begin{center}
 \large
 Kraków \the\year\\
-(ostatnia aktualizacja: \DTMcurrenttime,\;\today)
 \end{center}
 \end{titlepage}
-\setcounter{page}{0} 
+\setcounter{page}{0}
 \newpage\null\thispagestyle{empty}
-%\setcounter{page}{0} 
+%\setcounter{page}{0}
 %\newpage
 %\thispagestyle{empty}
 
@@ -152,9 +152,9 @@ Kraków \the\year\\
 \subsection{Zespół projektowy}
 Zespół projektowy składa się z następujących osób:
 \begin{itemize}
-    \item \textbf{Dawid Plata} (e-mail: 165303@student.uken.krakow.pl)
-    \item \textbf{Michał Szymbara} (e-mail: 165297@student.uken.krakow.pl)
-    \item \textbf{Michał Wechmann} (e-mail: 165298@student.uken.krakow.pl)
+    \item \textbf{Dawid Plata} (nr albumu: 165303;\\ e-mail: dawid.plata@student.up.krakow.pl)
+    \item \textbf{Michał Szymbara} (nr albumu: 165297; \\ e-mail: michal.szymbara@student.up.krakow.pl)
+    \item \textbf{Michał Wechmann} (nr albumu: 165298; \\ e-mail: michal.wechmann@student.up.krakow.pl)
 \end{itemize}
 
 \subsection{Zrealizowane zadania}
@@ -198,49 +198,39 @@ W ramach prac nad projektem zrealizowano następujące zadania z podziałem na c
 Implementacja warstwy serwerowej aplikacji stanowiącej fundament dla wszystkich funkcji opisanych w dokumentacji. Konfiguracja serwerów NGINX, środowiska VPS (Mikrus), Cloudflare oraz procesów CI/CD zapewniających ciągłe wdrażanie zmian.
 
 \paragraph{Nawigacja i elementy interfejsu - Strona główna}
-Współpraca przy tworzeniu strony głównej aplikacji, opisanej w sekcji \textbf{1.2.1 Strona główna}. Zadanie obejmowało integrację interfejsu z systemem uwierzytelniania.
+Współpraca przy tworzeniu \\ strony głównej aplikacji. Zadanie obejmowało integrację interfejsu z systemem uwierzytelniania.
 
 \paragraph{Rejestracja konta}
-Wsparcie implementacji formularza rejestracji użytkownika, zgodnie z opisem w sekcji \textbf{1.3.1 Rejestracja konta}, w tym obsługa walidacji danych przesyłanych do API.
+Wsparcie implementacji formularza rejestracji użytkownika, w tym obsługa walidacji danych przesyłanych do API.
 
 \paragraph{Skrzynka odbiorcza (Inbox)}
-Realizacja modułu powiadomień i wiadomości wewnętrznych, opisanego w sekcji \textbf{1.9 Skrzynka odbiorcza (Inbox) i powiadomienia}. Funkcjonalność obejmuje licznik wiadomości, paginację listy wiadomości oraz akcje (akceptacja/odrzucenie) i usuwanie wiadomości.
+Realizacja modułu powiadomień i wiadomości wewnętrznych. Funkcjonalność obejmuje licznik wiadomości, paginację listy wiadomości oraz akcje (akceptacja/odrzucenie) i usuwanie wiadomości.
 
 \subsubsection{Dawid Plata}
 \paragraph{Infrastruktura - Konteneryzacja}
 Pomoc w przygotowaniu obrazów Dockerowych aplikacji i konfiguracji środowiska uruchomieniowego na VPS.
 
 \paragraph{Profil użytkownika}
-Implementacja widoków zarządzania danymi użytkownika, w tym edycji adresu i awatara, opisana w sekcji \textbf{1.4 Profil użytkownika}.
+Implementacja widoków zarządzania danymi użytkownika, w tym edycji adresu i awatara.
 
 \paragraph{Zamówienia odbioru - Formularz i Moje odbiory}
-Stworzenie formularza do składania zamówień na odbiór odpadów (sekcja \textbf{1.8.1 Utworzenie zamówienia}) oraz widoku historii zamówień użytkownika (sekcja \textbf{1.8.4 Moje odbiory}), włączając mechanizmy filtrowania i podglądu zdjęć.
+Stworzenie formularza do składania zamówień na odbiór odpadów oraz widoku historii zamówień użytkownika, włączając mechanizmy filtrowania i podglądu zdjęć.
 
 \paragraph{Funkcje dla Administratora odpadów}
-Implementacja dedykowanego panelu dla podmiotów obsługujących odbiory, zgodnie z sekcją \textbf{1.10 Funkcje dla Administratora odpadów}, obejmująca przegląd zleceń, akceptację oraz zgłaszanie kosztów dodatkowych.
+Implementacja dedykowanego panelu dla podmiotów obsługujących odbiory, obejmująca przegląd zleceń, akceptację oraz zgłaszanie kosztów dodatkowych.
 
 \subsubsection{Michał Wechmann}
 \paragraph{Analityka i Konfiguracja}
 Przeprowadzenie analizy wymagań funkcjonalnych oraz wsparcie w konfiguracji początkowej projektu Frontend.
 
 \paragraph{Portfel (Wallet)}
-Opracowanie modułu finansowego aplikacji, opisanego w sekcji \textbf{1.5 Portfel (Wallet)}, umożliwiającego użytkownikom kontrolę salda oraz wpłaty i wypłaty środków.
+Opracowanie modułu finansowego aplikacji, umożliwiającego \\ użytkownikom kontrolę salda oraz wpłaty i wypłaty środków.
 
 \paragraph{Grupy odpadów i Czat}
-Kompleksowa realizacja funkcjonalności grupowej (sekcja \textbf{1.6 Grupy odpadów}) oraz modułu komunikacji wewnątrz grupy (sekcja \textbf{1.7 Panel grupy i czat}), w tym obsługa zaproszeń, dołączania do grup i wspólnego organizowania wywozów.
+Kompleksowa realizacja funkcjonalności grupowej oraz modułu komunikacji wewnątrz grupy, w tym obsługa zaproszeń, dołączania do grup i wspólnego organizowania wywozów.
 
 \paragraph{Finalizacja zamówień}
-Implementacja procesów zamykania i opłacania zamówień (sekcja \textbf{1.8.2 Kalkulacja kosztu zamówienia} i \textbf{1.8.3 Płatność za zamówienie}).
-
-
-\subsection{Załączniki}
-\textit{Brak dodatkowych załączników w tej wersji raportu.}
-
-
-
-\renewcommand\refname{Literatura (jeżeli wymagana)}
-\bibliography{references}
-\addcontentsline{toc}{section}{Literatura}
+Implementacja procesów zamykania i opłacania zamówień.
 % --------------------------------------------------------------------
 %%%%%%% odkomentować gdy bibliografia ma być wewnątrz dokumentu
 % --------------------------------------------------------------------
@@ -249,7 +239,7 @@ Implementacja procesów zamykania i opłacania zamówień (sekcja \textbf{1.8.2 
 %\addcontentsline{toc}{section}{Literatura}
 %
 %\bibitem{ZAN}
-%C. Zannoni and P. Pasini, 
+%C. Zannoni and P. Pasini,
 %\emph{Advances in the Computer Simulatons of Liquid Crystals}, Kluwer Academic Publishers, 2000.
 %
 %\end{thebibliography}
