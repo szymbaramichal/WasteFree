@@ -124,7 +124,8 @@ Instytut Bezpieczeństwa i Informatyki\\
 \end{center}
 \begin{center}
  {\fontsize{12pt}{12pt}\selectfont pod opieką:}\\
- {\bf\fontsize{12pt}{12pt}\selectfont tytuł, imię i nazwisko opiekuna projektu}
+ {\bf\fontsize{12pt}{12pt}\selectfont dr Wojciech Gwizdała}\\
+ {\bf\fontsize{12pt}{12pt}\selectfont mgr Wojciech Baran}
 \end{center}
 
 %\mbox{}
@@ -132,8 +133,7 @@ Instytut Bezpieczeństwa i Informatyki\\
 %\vskip 50pt
 \begin{center}
 \large
-Kraków \the\year\\
-(ostatnia aktualizacja: \DTMcurrenttime,\;\today)
+Kraków \the\year
 \end{center}
 \end{titlepage}
 \setcounter{page}{0} 
@@ -192,7 +192,7 @@ Portal użytkownika stanowi główny obszar pracy w aplikacji. W portalu dostęp
 \begin{itemize}
 \item \textbf{Portfel} (saldo i transakcje),
 \item \textbf{Skrzynka odbiorcza} (wiadomości oraz akcje),
-\item \textbf{Zamówienia odbioru} (tworzenie i podgląd),
+\item \textbf{Zamówienia wywozu} (tworzenie i podgląd),
 \item \textbf{Grupy} (lista, zarządzanie i panel grupy),
 \item \textbf{Profil} (dane użytkownika).
 \end{itemize}
@@ -360,8 +360,8 @@ Aby wykonać wypłatę użytkownik podaje kwotę (minimalnie 1). System weryfiku
 \captionT{Wypłata środków z portfela (IBAN)}
 \end{figure}
 
-\subsection{Grupy odpadów (Garbage Groups)}
-Moduł \textbf{Grupy odpadów} umożliwia organizację użytkowników w ramach wspólnego miejsca odbioru odpadów. Grupa posiada nazwę, opis oraz adres (miasto, kod pocztowy, ulica z numerem). Lista dostępnych miast jest pobierana z systemu w postaci zapytania do API. W ramach grupy widoczna jest lista członków oraz dostępne są akcje związane z zapraszaniem nowych osób i zarządzaniem danymi grupy.
+\subsection{Grupy wywozowe (Garbage Groups)}
+Moduł \textbf{Grupy wywozowe} umożliwia organizację użytkowników w ramach wspólnego miejsca odbioru odpadów. Grupa posiada nazwę, opis oraz adres (miasto, kod pocztowy, ulica z numerem). Lista dostępnych miast jest pobierana z systemu w postaci zapytania do API. W ramach grupy widoczna jest lista członków oraz dostępne są akcje związane z zapraszaniem nowych osób i zarządzaniem danymi grupy.
 
 \subsubsection{Lista grup}
 W widoku listy grup użytkownik widzi wszystkie grupy, do których należy. Każda pozycja na liście zawiera nazwę grupy oraz informację o roli użytkownika w grupie (właściciel lub członek). Wybranie grupy z listy przenosi do panelu szczegółów grupy.
@@ -484,8 +484,8 @@ W interfejsie widoczny jest również stan połączenia: \textit{disconnected}, 
 \captionT{Wysyłanie wiadomości w czacie grupy}
 \end{figure}
 
-\subsection{Zamówienia odbioru odpadów (Garbage Orders)}
-Moduł zamówień odbioru odpadów umożliwia złożenie zlecenia odbioru w ramach wybranej grupy oraz rozliczenie kosztów pomiędzy uczestnikami. Z punktu widzenia użytkownika proces składa się z: utworzenia zamówienia (krok po kroku), kalkulacji kosztu, a następnie płatności udziału w kosztach.
+\subsection{Zamówienia wywozu odpadów (Garbage Orders)}
+Moduł zamówień wywozu odpadów umożliwia złożenie zlecenia odbioru w ramach wybranej grupy oraz rozliczenie kosztów pomiędzy uczestnikami. Z punktu widzenia użytkownika proces składa się z: utworzenia zamówienia (krok po kroku), kalkulacji kosztu, a następnie płatności udziału w kosztach.
 
 \subsubsection{Utworzenie zamówienia (krok po kroku)}
 Tworzenie zamówienia odbywa się w widoku \textit{Zamów wywóz} i jest zorganizowane w formie kreatora (steppera) z pięcioma krokami:
@@ -581,8 +581,8 @@ Po opłaceniu udziałów przez wszystkich uczestników status zamówienia automa
 \captionT{Płatność udziału w koszcie zamówienia}
 \end{figure}
 
-\subsubsection{Moje odbiory (lista zamówień użytkownika)}
-Widok \textit{Moje odbiory} prezentuje listę zamówień użytkownika w formie tabeli. Lista jest stronicowana oraz umożliwia filtrowanie:
+\subsubsection{Moje wywozy (lista zamówień użytkownika)}
+Widok \textit{Moje wywozy} prezentuje listę zamówień użytkownika w formie tabeli. Lista jest stronicowana oraz umożliwia filtrowanie:
 \begin{itemize}
 \item po statusie (m.in. \textit{WaitingForPayment}, \textit{WaitingForAccept}, \textit{WaitingForPickup}, \textit{WaitingForUtilizationFee}, \textit{Completed}, \textit{Complained}, \textit{Resolved}, \textit{Cancelled}),
 \item po grupie (wybrana grupa lub wszystkie).
@@ -593,10 +593,10 @@ W tabeli widoczne są: numer zamówienia, grupa, status, koszt, termin odbioru, 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{images/Rysunek34.png}
-\captionT{Lista zamówień w widoku Moje odbiory}
+\captionT{Lista zamówień w widoku Moje wywozy}
 \end{figure}
 
-\subsubsection{Szczegóły zamówienia}
+\subsubsection{Szczegóły zamówienia wywozu}
 Widok szczegółów zamówienia zawiera:
 \begin{itemize}
 \item podsumowanie (termin, typ odbioru, koszt, grupa, opcje \textit{wysoki priorytet} i \textit{usługa wyniesienia}),
@@ -701,7 +701,7 @@ Każda wiadomość może zostać usunięta ręcznie z poziomu listy poprzez przy
 \captionT{Usuwanie pojedynczej wiadomości ze skrzynki}
 \end{figure}
 
-\subsubsection{Czyszczenie skrzynki}
+\subsubsection{Czyszczenie powiadomień}
 W nagłówku widoku Inbox dostępny jest przycisk \textbf{Wyczyść wszystko}, który usuwa wszystkie wiadomości użytkownika ze skrzynki. Przycisk jest widoczny tylko wtedy, gdy lista zawiera co najmniej jedną wiadomość. Po poprawnym czyszczeniu użytkownik otrzymuje komunikat potwierdzający, a lista jest odświeżana.
 
 \begin{figure}[H]
@@ -734,8 +734,8 @@ W modalu dostępne są dwie akcje:
 \captionT{Zgoda Administratora odpadów: akcje użytkownika}
 \end{figure}
 
-\subsubsection{Zlecenia oczekujące (waiting)}
-Widok \textit{Zlecenia oczekujące} jest dostępny w portalu pod ścieżką \texttt{/portal/\allowbreak garbage-admin/\allowbreak orders/\allowbreak waiting}. Prezentuje listę zleceń w statusie \textit{WaitingForAccept} (oczekujących na przyjęcie przez administratora).
+\subsubsection{Oczekujące na przyjęcie}
+Widok \textit{Oczekujące na przyjęcie} jest dostępny w portalu pod ścieżką \texttt{/portal/\allowbreak garbage-admin/\allowbreak orders/\allowbreak waiting}. Prezentuje listę zleceń w statusie \textit{WaitingForAccept} (oczekujących na przyjęcie przez administratora).
 
 Lista jest stronicowana (domyślny rozmiar strony: 10). Dla każdego zlecenia prezentowane są m.in.:
 \begin{itemize}
@@ -770,8 +770,8 @@ Po poprawnej akceptacji zlecenie znika z listy \textit{waiting} i staje się zle
 \captionT{Akceptacja zlecenia w widoku waiting}
 \end{figure}
 
-\subsubsection{Zlecenia przypisane/aktywne (assigned/current)}
-Widok \textit{Zlecenia przypisane} jest dostępny w portalu pod ścieżką \texttt{/portal/\allowbreak garbage-admin/\allowbreak orders/\allowbreak assigned}. Prezentuje zlecenia przypisane do zalogowanego administratora.
+\subsubsection{Przydzielone zlecenia}
+Widok \textit{Przydzielone zlecenia} jest dostępny w portalu pod ścieżką \texttt{/portal/\allowbreak garbage-admin/\allowbreak orders/\allowbreak assigned}. Prezentuje zlecenia przypisane do zalogowanego administratora.
 
 W porównaniu do listy \textit{waiting}, na karcie zlecenia widoczna jest również informacja o \textbf{nazwie grupy} oraz oznaczenie, czy jest to \textbf{grupa prywatna} (tag \textit{private}). Widok oferuje przycisk \textbf{Odśwież}, stronicowanie (10 elementów na stronę) oraz stany: ładowanie, błąd oraz pustą listę.
 
@@ -839,7 +839,7 @@ Ten scenariusz opisuje utworzenie konta w aplikacji oraz aktywację konta z wyko
 \end{figure}
 
 \subsubsection{Utworzenie grupy i zaproszenie użytkowników}
-Ten scenariusz opisuje utworzenie nowej grupy odpadów oraz wysłanie zaproszenia do istniejącego użytkownika. Zaproszenie jest realizowane przez podanie \textbf{nazwy użytkownika} osoby zapraszanej.
+Ten scenariusz opisuje utworzenie nowej grupy wywozowej oraz wysłanie zaproszenia do istniejącego użytkownika. Zaproszenie jest realizowane przez podanie \textbf{nazwy użytkownika} osoby zapraszanej.
 
 \begin{enumerate}
 \item Użytkownik (właściciel) przechodzi do \textit{Portal \textrightarrow{} Grupy \textrightarrow{} Zarządzanie}.
@@ -853,7 +853,7 @@ Ten scenariusz opisuje utworzenie nowej grupy odpadów oraz wysłanie zaproszeni
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\linewidth]{images/Rysunek50.png}
-\captionT{Scenariusz: utworzenie grupy odpadów}
+\captionT{Scenariusz: utworzenie grupy wywozowej}
 \end{figure}
 
 \begin{figure}[H]
@@ -863,15 +863,15 @@ Ten scenariusz opisuje utworzenie nowej grupy odpadów oraz wysłanie zaproszeni
 \end{figure}
 
 \subsubsection{Złożenie zamówienia oraz płatność}
-Ten scenariusz opisuje utworzenie zamówienia odbioru odpadów dla wybranej grupy oraz opłacenie udziałów przez uczestników.
+Ten scenariusz opisuje utworzenie zamówienia wywozu odpadów dla wybranej grupy oraz opłacenie udziałów przez uczestników.
 
 \begin{enumerate}
-\item Użytkownik przechodzi do widoku \textit{Portal \textrightarrow{} Zamówienia odbioru \textrightarrow{} Zamów wywóz}.
+\item Użytkownik przechodzi do widoku \textit{Portal \textrightarrow{} Zamówienia wywozu \textrightarrow{} Zamów wywóz}.
 \item W kreatorze zamówienia wybiera \textbf{rodzaj wywozu}, następnie wskazuje \textbf{grupę} oraz \textbf{uczestników}.
-\item Ustawia \textbf{termin odbioru} (data i godzina). Dla wariantu \textit{Container} uzupełnia również termin podstawienia kontenera.
+\item Ustawia \textbf{termin odbioru} (data i godzina). Dla wariantu \textit{Container} uzupełnia również termin podstawienia kontełynera.
 \item W kroku podsumowania aplikacja wyświetla \textbf{szacunkowy koszt wywozu} (kalkulacja) oraz umożliwia wysłanie zamówienia.
 \item Po utworzeniu zamówienia zlecenie otrzymuje status \textit{WaitingForPayment}.
-\item Każdy uczestnik przechodzi do widoku \textit{Portal \textrightarrow{} Moje odbiory}, otwiera szczegóły zamówienia i wykonuje płatność swojego udziału.
+\item Każdy uczestnik przechodzi do widoku \textit{Portal \textrightarrow{} Moje wywozy}, otwiera łyły zamówienia i wykonuje płatność swojego udziału.
 \item Jeżeli saldo w portfelu jest niewystarczające, płatność nie jest wykonywana, a API zwraca błąd \textit{NotEnoughFunds}.
 \item Gdy wszyscy uczestnicy opłacą swoje udziały, status zamówienia przechodzi na \textit{WaitingForAccept} i zamówienie oczekuje na akceptację przez Administratora odpadów.
 \end{enumerate}
@@ -961,9 +961,6 @@ Ten scenariusz opisuje działania użytkownika z rolą \textbf{GarbageAdmin}: ak
 
 
 
-\renewcommand\refname{Literatura (jeżeli wymagana)}
-\bibliography{references}
-\addcontentsline{toc}{section}{Literatura}
 % --------------------------------------------------------------------
 %%%%%%% odkomentować gdy bibliografia ma być wewnątrz dokumentu
 % --------------------------------------------------------------------
@@ -978,4 +975,3 @@ Ten scenariusz opisuje działania użytkownika z rolą \textbf{GarbageAdmin}: ak
 %\end{thebibliography}
 
 \end{document}
-
