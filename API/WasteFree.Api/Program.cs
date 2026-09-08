@@ -6,9 +6,9 @@ using WasteFree.Api.Middlewares;
 using WasteFree.Infrastructure;
 
 const string allowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
- 
+
 var builder = WebApplication.CreateBuilder(args);
- 
+
 builder.Services.AddOpenApi()
     .AddEndpointsApiExplorer()
     .AddSwaggerWithAuth();
@@ -18,6 +18,8 @@ builder.Services.RegisterLayers(builder.Configuration)
     .RegisterServices();
 
 builder.Services.AddLocalizationSetup();
+
+builder.Services.AddHealthChecks();
 
 builder.Services
     .AddValidatorsFromAssembly(Assembly.GetCallingAssembly());
@@ -44,6 +46,7 @@ app.UseAuthorization();
 
 app.MapApplicationEndpoints();
 app.MapApplicationHubs(allowLocalFrontendOrigins);
+app.MapHealthChecks("/healthz");
 
 app.UseStaticFiles();
 
