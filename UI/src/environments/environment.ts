@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://dev.wastefreecloud.pl/api'
+  apiUrl: 'http://wastefree-api.aee9aza0a7c8cmf0.polandcentral.azurecontainer.io:8080'
 };
