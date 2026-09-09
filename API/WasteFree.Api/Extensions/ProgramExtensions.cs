@@ -128,13 +128,11 @@ public static class ProgramExtensions
         return app;
     }
 
-    public static WebApplication MapApplicationHubs(this WebApplication app, string allowLocalFrontendOrigins)
+    public static WebApplication MapApplicationHubs(this WebApplication app)
     {
-        app.MapHub<NotificationHub>("/notificationHub")
-           .RequireCors(allowLocalFrontendOrigins);
+        app.MapHub<NotificationHub>("/notificationHub");
 
-        app.MapHub<GroupChatHub>("/chatHub")
-           .RequireCors(allowLocalFrontendOrigins);
+        app.MapHub<GroupChatHub>("/chatHub");
 
         return app;
     }
