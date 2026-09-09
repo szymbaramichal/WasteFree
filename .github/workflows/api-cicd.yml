@@ -27,57 +27,20 @@ jobs:
       - name: Publish API
         run: dotnet publish API/WasteFree.Api/WasteFree.Api.csproj --configuration Release --output ./publish
 
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Login to ACR
+        run: az acr login --name ${{ secrets.AZURE_ACR_NAME }}
+
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest -f API/Dockerfile ./API
+        run: docker build -t ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/wastefree-api:${{ github.sha }} -f API/Dockerfile ./API
 
-      - name: Log in to DockerHub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Push Docker image
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/wastefree-api:latest
-
-      - name: Deploy API over SSH
-        uses: appleboy/ssh-action@v1
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-          DB_CONN_STRING: ${{ secrets.DB_CONN_STRING }}
-          AZURE_BLOB_STORAGE_CONN_STRING: ${{ secrets.AZURE_BLOB_STORAGE_CONN_STRING }}
-          INTEGRATIONS__SMTP__PASSWORD: ${{ secrets.INTEGRATIONS__SMTP__PASSWORD }}
-          SECURITY__AESENCRYPTIONKEY: ${{ secrets.SECURITY__AESENCRYPTIONKEY }}
-          TICKERQBASICAUTH__USERNAME: ${{ secrets.TICKERQBASICAUTH__USERNAME }}
-          TICKERQBASICAUTH__PASSWORD: ${{ secrets.TICKERQBASICAUTH__PASSWORD }}
-          SECURITY__JWT__KEY: ${{ secrets.SECURITY__JWT__KEY }}
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          envs: DOCKERHUB_USERNAME,DOCKERHUB_TOKEN,DB_CONN_STRING,INTEGRATIONS__SMTP__PASSWORD,SECURITY__AESENCRYPTIONKEY,TICKERQBASICAUTH__USERNAME,TICKERQBASICAUTH__PASSWORD,SECURITY__JWT__KEY,AZURE_BLOB_STORAGE_CONN_STRING
-          script: |
-            set -euo pipefail
-
-            U=${DOCKERHUB_USERNAME,,}
-
-            IMAGE="${U}/wastefree-api:latest"
-            echo "Using IMAGE=${IMAGE}"
-
-            docker stop wastefree-api || true
-            docker rm wastefree-api || true
-
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker pull "$IMAGE"
-            docker run -d --restart unless-stopped --name wastefree-api \
-              -p 8080:8080 \
-              -e "ConnectionStrings__Database=$DB_CONN_STRING" \
-              -e "ConnectionStrings__BlobStorage=$AZURE_BLOB_STORAGE_CONN_STRING" \
-              -e "Integrations__Smtp__Password=$INTEGRATIONS__SMTP__PASSWORD" \
-              -e "Security__AesEncryptionKey=$SECURITY__AESENCRYPTIONKEY" \
-              -e "TickerQBasicAuth__Username=$TICKERQBASICAUTH__USERNAME" \
-              -e "TickerQBasicAuth__Password=$TICKERQBASICAUTH__PASSWORD" \
-              -e "Security__Jwt__Key=$SECURITY__JWT__KEY" \
-              "$IMAGE"
-            docker image prune -f || true
+      - name: Push Docker image to ACR
+        run: |
+          docker push \
+            ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/wastefree-api:${{ github.sha }}
