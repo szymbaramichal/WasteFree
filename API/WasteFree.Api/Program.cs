@@ -5,8 +5,6 @@ using WasteFree.Api.Extensions;
 using WasteFree.Api.Middlewares;
 using WasteFree.Infrastructure;
 
-const string allowLocalFrontendOrigins = "_allowLocalFrontendOrigins";
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi()
@@ -27,7 +25,15 @@ builder.Services
 builder.Services.AddOutputCache();
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
-builder.Services.RegisterCorsPolicy(allowLocalFrontendOrigins);
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 builder.Services.RegisterRateLimiting();
 
 var app = builder.Build();
@@ -40,12 +46,12 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MigrateDatabase<ApplicationDataContext>();
 
 app.UseHttpsRedirection();
-app.UseCors(allowLocalFrontendOrigins);
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapApplicationEndpoints();
-app.MapApplicationHubs(allowLocalFrontendOrigins);
+app.MapApplicationHubs();
 app.MapHealthChecks("/healthz");
 
 app.UseStaticFiles();

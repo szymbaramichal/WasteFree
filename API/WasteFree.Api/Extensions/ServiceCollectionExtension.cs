@@ -86,20 +86,4 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-    public static IServiceCollection RegisterCorsPolicy(this IServiceCollection services, string corsPolicyName)
-    {
-        services.AddCors(options =>
-        {
-            options.AddPolicy(name: corsPolicyName,
-                policy  =>
-                {
-                    policy.AllowAnyHeader()
-                        .AllowCredentials()
-                        .AllowAnyMethod()
-                        .WithOrigins("http://localhost:4200", "https://localhost:4200", "http://localhost:5000", "https://localhost:5000");
-                });
-        });
-        
-        return services;
-    }
 }
