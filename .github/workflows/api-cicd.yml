@@ -38,12 +38,12 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Login to ACR
-        run: az acr login --name ${{ secrets.AZURE_ACR_NAME }}
+        run: az acr login --name ${{ secrets.AZURE_ACR_NAME }} --suffix ${{ secrets.AZURE_ACR_SUFFIX }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/wastefree-api:${{ github.sha }} -f API/Dockerfile ./API
+        run: docker build -t ${{ secrets.AZURE_ACR_NAME }}-${{ secrets.AZURE_ACR_SUFFIX }}.azurecr.io/wastefree-api:${{ github.sha }} -f API/Dockerfile ./API
 
       - name: Push Docker image to ACR
         run: |
           docker push \
-            ${{ secrets.AZURE_ACR_NAME }}.azurecr.io/wastefree-api:${{ github.sha }}
+            ${{ secrets.AZURE_ACR_NAME }}-${{ secrets.AZURE_ACR_SUFFIX }}.azurecr.io/wastefree-api:${{ github.sha }}
