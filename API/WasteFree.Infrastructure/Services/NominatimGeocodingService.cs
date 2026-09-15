@@ -36,6 +36,8 @@ public class NominatimGeocodingService : IGeocodingService
 
     public async Task<(double Latitude, double Longitude)?> TryGetCoordinatesAsync(Address address, CancellationToken cancellationToken = default)
     {
+        return (50.0647, 19.9450);
+
         ArgumentNullException.ThrowIfNull(address);
 
         if (string.IsNullOrWhiteSpace(address.Street) ||
